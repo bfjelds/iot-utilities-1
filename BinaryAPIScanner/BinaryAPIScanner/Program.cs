@@ -12,10 +12,10 @@ namespace BinaryAPIScanner
         static void Main(string[] args)
         {
             //TODO: update to the ACTUAL file locations::
-            string UD_XMLFolder = @"C:\Users\t-jdeck\Development\Temp_Kit_content\WdkBuildUniversalDDIsRoot";
-            string UAP_ApiList_filepath = @"C:\\Users\\t-jdeck\\Desktop\\Obi-Wan-Lib-Walker\\Debug\\onecoreuap.lib.txt";
-            string WIN32_ApiList_filepath = @"C:\\Users\\t-jdeck\\Development\\MS-IOT\\IoT_Utilities\\BinaryAPIScanner\\BinaryAPIScanner\\APIs\\ModernApis.xml";
-            string CRT_ApitList_folder = @"C:\\Users\\t-jdeck\\Development\\MS-IOT\\IoT_Utilities\\BinaryAPIScanner\\BinaryAPIScanner\\APIs";
+            string UD_XMLFolder = @"C:\Users\t-jdeck\Development\MS-IOT\athens-utilities\BinaryAPIScanner\BinaryAPIScanner\APIs\WdkBuildUniversalDDIsRoot";
+            string UAP_ApiList_filepath = @"C:\Users\t-jdeck\Development\MS-IOT\athens-utilities\BinaryAPIScanner\BinaryAPIScanner\APIs\onecoreuap.lib.txt";
+            string WIN32_ApiList_filepath = @"C:\Users\t-jdeck\Development\MS-IOT\athens-utilities\BinaryAPIScanner\BinaryAPIScanner\APIs\ModernApis.xml";
+            string system32_folder = @"C:\Windows\System32";
             if (args.Length < 1 || args.Length > 2)
             {
                 InvalidUsage();
@@ -25,8 +25,10 @@ namespace BinaryAPIScanner
                 //Updates the API lookup database
                 if (args[0].Equals("-update"))
                 {
+                    Console.Out.WriteLine("Are you sure you want to overwrite the database???!?!?!??");
+                    Console.Read();
                     UAPApiParser.Init();
-                    UAPApiParser.GenerateCRTDatabase(CRT_ApitList_folder);
+                    UAPApiParser.GenerateCRTDatabase(system32_folder);
                     UAPApiParser.GenerateUAPDatabase(UAP_ApiList_filepath);
                     UAPApiParser.GenerateUDDatabase(UD_XMLFolder);
                     UAPApiParser.GenerateWin32Database(WIN32_ApiList_filepath);

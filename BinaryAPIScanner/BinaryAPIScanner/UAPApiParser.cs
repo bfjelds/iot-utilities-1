@@ -381,7 +381,6 @@ namespace BinaryAPIScanner
         {
             using (var reader = new StreamReader(pathToAPIFile))
             {
-                var watch = new System.Diagnostics.Stopwatch();
                 string currentLine = null;
                 if (!reader.EndOfStream)
                 {
@@ -395,10 +394,11 @@ namespace BinaryAPIScanner
                     string[] parts = currentLine.Split(',');
                     var function = parts[1];
                     var dll = parts[2];
-
-                    watch.Start();
+                    if (function.StartsWith("_"))
+                    {
+                        function = function.Substring(1);
+                    }
                     KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
-                    watch.Stop();
 
                     attemptToAddDll(dll);
 
@@ -596,11 +596,13 @@ namespace BinaryAPIScanner
          */
         public static void GenerateCRTDatabase(string pathToDLLDirectory)
         {
-            //CheckDeveloperPrompt();
-
-            string[] linesFromDump = GetDumpbinOutput(pathToDLLDirectory + "\\vcruntime140.dll");
-            parseCRTDump(linesFromDump, "vcruntime140.dll");
-            parseCRTDump(linesFromDump, "ucrtbase.dll");
+            CheckDeveloperPrompt();
+            string[] crtDlls = { "vcruntime140.dll", "ucrtbase.dll"};
+            foreach(string dll in crtDlls)
+            {
+                string[] linesFromDump = GetDumpbinOutput(pathToDLLDirectory + "\\" + dll);
+                parseCRTDump(linesFromDump, dll);
+            }
 
             using (var connection = new SQLiteConnection("Data Source=" + dbPath))
             {
@@ -636,12 +638,12 @@ namespace BinaryAPIScanner
         {
             dllList.Add(dll);
             const int lineOffset = 17 + 2;//17 is where the ordinal "table" begins, 19 is where the first line STARTS...
-            const int ordinalOffset = 9;
+            const int ordinalOffset = 11;
             const int funcOffset = 26;
             for (int i = lineOffset; i < lines.Length && lines[i].Length > 1; i++)
             {
                 string line = lines[i];
-                var ordinal = line.Substring(ordinalOffset,2);
+                var ordinal = line.Substring(0, ordinalOffset);
                 var func = line.Substring(funcOffset);
                 fnList.Add(new KeyValuePair<string, string>(func + '@' + ordinal, dll));
             }

@@ -41,13 +41,14 @@ namespace BinaryAPIScanner
             {
                 Console.Out.WriteLine("Congrats! All your APIS are belong to us!");
             }
-            GenerateCSV();
-            GenerateHtml();
+            string csvFile = "output\\" + filePath.Split('\\').Last() + "_anal.csv";
+            GenerateCSV(csvFile);
+            GenerateHtml(csvFile);
         }
 
         /* Output Files (CSV and html) Generation */
         #region Output Generation
-        private static void GenerateCSV()
+        private static void GenerateCSV(string fileOutput)
         {
             string current = null;
             string output = "ok,failed";
@@ -63,10 +64,10 @@ namespace BinaryAPIScanner
                 output += "\n"+ current + "," ;
                 APIsUsed.Remove(current);
             }
-            File.WriteAllText("analysis.csv", output);
+            File.WriteAllText(fileOutput, output);
         }
 
-        private static void GenerateHtml()
+        private static void GenerateHtml(string outputFile)
         {
             // need to do two pass
             // first pass - count number of columns based on commas
@@ -79,7 +80,7 @@ namespace BinaryAPIScanner
             int iTotalEscapedStrings = 0;
             string sLongestLine = string.Empty;
 
-            StreamReader sr = new StreamReader("analysis.csv");
+            StreamReader sr = new StreamReader(outputFile);
             string sLine = string.Empty;
             while (!sr.EndOfStream)
             {
@@ -103,8 +104,8 @@ namespace BinaryAPIScanner
             //Console.WriteLine(string.Format("Most Elements:\n{0}", sLongestLine));
 
             // go through the file again and build the HTML table.
-            sr = new StreamReader("analysis.csv");
-            string sOutFile = "analysis.csv" + ".html";
+            sr = new StreamReader(outputFile);
+            string sOutFile = outputFile + ".html";
             if (File.Exists(sOutFile))
                 File.Delete(sOutFile);
 
@@ -221,32 +222,51 @@ namespace BinaryAPIScanner
                     currentLib = "";
                     continue;
                 }
-                else if (line.ToLower().EndsWith(".dll") || line.ToLower().EndsWith(".exe") || line.ToLower().EndsWith(".dll") || line.ToLower().EndsWith(".sys"))
+                else if (line.Length > 20)
+                {
+                    continue;
+                }
+                else if (line.Contains('.'))//TODO:: find a better solution of determining whether or not its a dll
                 {
                     i += 5;
                     currentLib = line;
+                    if (currentLib.ToLower().StartsWith("msv"))
+                    {
+                        currentLib = "msvcrt.dll";
+                    }
                 }
                 else if(line.StartsWith("Ordinal"))//If the line begins with ordinal, then a remapping is required.
                 {
+                   
                     int ordinal = Convert.ToInt32(line.Substring(7));
+                    if(ordinal == 1044)
+                    {
+                        Console.Out.WriteLine();
+                    }
                     if (currentLib.ToLower().Equals("coredll.dll"))//if coredll.dll is the currentLib, then we need to remap with the WinCEOrdinalMap
                     {
                         var selectedApi = from api in WinCEOrdinalMap
                                           where api.Value == ordinal
                                           select api.Key;
-                        foreach (var api in selectedApi)
+                        foreach (var apiCheck in selectedApi)
                         {
-                            var apiFound = from a in AvailableFunctionMap
-                                           where a.Key.Equals(api)
-                                           select a;
-                            if (apiFound.Count() > 0)
+                            string apiFound = null;
+                            foreach(var a in AvailableFunctionMap)
                             {
-                                APIsUsed.Add(api);
+                                if (a.Key.Equals(apiCheck))
+                                {
+                                    apiFound = (apiCheck);
+                                    break;
+                                }
+                            }
+                            if (apiFound != null)
+                            {
+                                APIsUsed.Add(apiFound);
                             }
                             else
                             {
-                                Console.Out.WriteLine("API in DLL:: '" + currentLib + "' NOT FOUND:: " + api);
-                                APIsFailed.Add(new KeyValuePair<string, string>(api,currentLib));
+                                Console.Out.WriteLine("API in DLL:: '" + currentLib + "' NOT FOUND:: " + apiCheck);
+                                APIsFailed.Add(new KeyValuePair<string, string>(apiCheck, currentLib));
                             }
                         }
                     }
@@ -255,17 +275,17 @@ namespace BinaryAPIScanner
                         var selectedApis = from api in AvailableFunctionMap
                                            where api.Value.Key.ToLower().Equals(currentLib) && ordinal == api.Value.Value
                                            select api.Key;
-                        foreach (var api in selectedApis)
+                        if (selectedApis.Count() == 1)
                         {
-                            if (selectedApis.Count() > 0)
+                            foreach (var api in selectedApis)
                             {
                                 APIsUsed.Add(api);
                             }
-                            else
-                            {
-                                Console.Out.WriteLine("API in DLL:: '" + currentLib + "' NOT FOUND:: " + api);
-                                APIsFailed.Add(new KeyValuePair<string, string>(api, currentLib));
-                            }
+                        }
+                        else
+                        {
+                            Console.Out.WriteLine("API in DLL:: '" + currentLib + "' NOT FOUND; Ordinal::" + ordinal);
+                            APIsFailed.Add(new KeyValuePair<string, string>(Convert.ToString(ordinal), currentLib));
                         }
                     }
                 }
@@ -273,19 +293,17 @@ namespace BinaryAPIScanner
                 {
                     string apiName = line.Split(' ')[1];
                     var selectedApis = from api in AvailableFunctionMap
-                                       where api.Value.Key.ToLower().Equals(currentLib.ToLower()) && api.Key.Equals(apiName)
+                                       where api.Key.Equals(apiName)
                                        select api.Key;
-                    foreach(var api in selectedApis)
+
+                    if (selectedApis.Count() > 0)
                     {
-                        if (selectedApis.Count() > 0)
-                        {
-                            APIsUsed.Add(api);
-                        }
-                        else
-                        {
-                            Console.Out.WriteLine("API in DLL:: '" + currentLib + "' NOT FOUND:: " + api);
-                            APIsFailed.Add(new KeyValuePair<string, string>(api, currentLib));
-                        }
+                        APIsUsed.Add(apiName);
+                    }
+                    else
+                    {
+                        Console.Out.WriteLine("API in DLL:: '" + currentLib + "' NOT FOUND:: " + apiName);
+                        APIsFailed.Add(new KeyValuePair<string, string>(apiName, currentLib));
                     }
                 }
             }
@@ -351,7 +369,7 @@ namespace BinaryAPIScanner
                     AvailableFunctionMap = new List<KeyValuePair<string, KeyValuePair<string,int>>>();
                     while (reader.Read())
                     {
-                        string apiName = reader.GetString(0);
+                        string apiName = reader.GetString(0).Replace("\r", "");
                         //Console.Out.WriteLine("apiName: " + apiName);
                         string dll = reader.GetString(1);
                         //Console.Out.WriteLine("dll: " + dll);
@@ -422,7 +440,7 @@ namespace BinaryAPIScanner
             }
             else
             {
-                return File.ReadAllLines("C:\\Users\\t-jdeck\\Development\\MS-IOT\\IoT_Utilities\\BinaryAPIScanner\\BinaryAPIScanner\\APIs\\dump.test");
+                return File.ReadAllLines(@"C:\Users\t-jdeck\Development\MS-IOT\athens-utilities\BinaryAPIScanner\BinaryAPIScanner\APIs\dump.test");
             }
         }
     }
