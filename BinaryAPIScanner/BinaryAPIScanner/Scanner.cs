@@ -41,28 +41,19 @@ namespace BinaryAPIScanner
             {
                 Console.Out.WriteLine("Congrats! All your APIS are belong to us!");
             }
-<<<<<<< HEAD
-            string csvFile = "output\\" + filePath.Split('\\').Last() + "_analysis";
-            GenerateHtml(csvFile, type);
-=======
             string binaryName = filePath.Split('\\').Last();
             string outFile = binaryName + "_analysis";
             GenerateHtml(outFile, type, binaryName);
->>>>>>> - Altered output file generated to be ONLY an html with a better name
         }
 
         /* Output Files (CSV and html) Generation */
         #region Output Generation
 
-<<<<<<< HEAD
-        private static void GenerateHtml(string outputFileName, UAPApiParser.DllType type)
-=======
+
         private static void GenerateHtml(string outputFileName, UAPApiParser.DllType type,string binaryName)
->>>>>>> - Altered output file generated to be ONLY an html with a better name
         {
 
             int uiRowCount = (APIsUsed.Count > APIsFailed.Count) ? APIsUsed.Count : APIsFailed.Count;
-            int uiColCount = 3;
 
             // go through the file again and build the HTML table.
             string sOutFile = "output\\" + outputFileName + UAPApiParser.DllTypeToString(type) + ".html";
@@ -70,11 +61,6 @@ namespace BinaryAPIScanner
             {
                 Directory.CreateDirectory("output");
             }
-<<<<<<< HEAD
-            if (File.Exists(sOutFile))
-                File.Delete(sOutFile);
-=======
->>>>>>> - Altered output file generated to be ONLY an html with a better name
 
             StreamWriter sw = new StreamWriter(sOutFile);
             sw.Write("<!DOCTYPE html><html><body><table border=\"1\">");
@@ -90,11 +76,7 @@ namespace BinaryAPIScanner
                     sw.Write("<tr>");
                     if (APIsUsed.Count > 0)
                     {
-<<<<<<< HEAD
-                        sw.Write(string.Format("<td>{0}</td>", APIsUsed.ElementAt(0)));
-=======
                         sw.Write(string.Format("<td><font color=\"green\">{0}</font></td>", APIsUsed.ElementAt(0)));
->>>>>>> - Altered output file generated to be ONLY an html with a better name
                         APIsUsed.RemoveAt(0);
                     }
                     else
@@ -103,18 +85,13 @@ namespace BinaryAPIScanner
                     }
                     if (APIsFailed.Count > 0)
                     {
-<<<<<<< HEAD
-                        sw.Write(string.Format("<td>{0}</td><td>{1}</td>", APIsFailed.ElementAt(0).Key, APIsFailed.ElementAt(0).Value));
-=======
                         sw.Write(string.Format("<td><font color=\"red\">{0}</font></td><td><font color=\"red\">{1}</font></td>", APIsFailed.ElementAt(0).Key, APIsFailed.ElementAt(0).Value));
->>>>>>> - Altered output file generated to be ONLY an html with a better name
                         APIsFailed.RemoveAt(0);
                     }
                     else
                     {
                         sw.Write("<td></td><td></td>");
                     }
-
                     sw.Write("</tr>");  // end of table row
                 }
             }
@@ -128,8 +105,6 @@ namespace BinaryAPIScanner
                     APIsUsed.RemoveAt(0);
                 }
             }
-            
-
             sw.Write("</table></body></html> ");
 
             sw.Flush();
@@ -169,11 +144,6 @@ namespace BinaryAPIScanner
                     {
                         Console.Out.Write("WARNING:: Some of the following APIS may be included for Debug purposes only; Please verify the binary is a release client");
                     }
- /*                 else if (currentLib.ToLower().StartsWith("msv"))
-                    {
-                        currentLib = "msvcrt.dll";
-                    }
-                    */
                 }
                 else if(line.StartsWith("Ordinal"))//If the line begins with ordinal, then a remapping is required.
                 {
