@@ -41,164 +41,76 @@ namespace BinaryAPIScanner
             {
                 Console.Out.WriteLine("Congrats! All your APIS are belong to us!");
             }
-            string csvFile = "output\\" + filePath.Split('\\').Last() + "_anal.csv";
-            GenerateCSV(csvFile);
-            GenerateHtml(csvFile);
+            string csvFile = "output\\" + filePath.Split('\\').Last() + "_analysis";
+            GenerateHtml(csvFile, type);
         }
 
         /* Output Files (CSV and html) Generation */
         #region Output Generation
-        private static void GenerateCSV(string fileOutput)
+
+        private static void GenerateHtml(string outputFileName, UAPApiParser.DllType type)
         {
-            string current = null;
-            string output = "ok,failed";
-            while (APIsFailed.Count > 0)
-            {
-                current = APIsFailed.ElementAt(0).Key;
-                output += "\n," + current;
-                APIsFailed.Remove(APIsFailed.ElementAt(0));
-            }
-            while(APIsUsed.Count > 0)
-            {
-                current = APIsUsed.ElementAt(0);
-                output += "\n"+ current + "," ;
-                APIsUsed.Remove(current);
-            }
-            File.WriteAllText(fileOutput, output);
-        }
 
-        private static void GenerateHtml(string outputFile)
-        {
-            // need to do two pass
-            // first pass - count number of columns based on commas
-            // Note: need to look for "Escaped Strings"
-            // can also count number of rows (lines) on first pass
-            // second pass - build HTML table and populate.
-
-            int uiRowCount = 0;
-            int uiColCount = 0;
-            int iTotalEscapedStrings = 0;
-            string sLongestLine = string.Empty;
-
-            StreamReader sr = new StreamReader(outputFile);
-            string sLine = string.Empty;
-            while (!sr.EndOfStream)
-            {
-                sLine = sr.ReadLine();
-                uiRowCount++;   // add a new line.
-                string[] strArray = sLine.Split(',');
-                int iArrayCount = strArray.Count();
-                int iEscapedCount = CheckForEscapedStrings(strArray);
-                iArrayCount -= iEscapedCount;
-                iTotalEscapedStrings += iEscapedCount;
-
-                if (iArrayCount > uiColCount)
-                {
-                    uiColCount = iArrayCount;
-                    sLongestLine = sLine;
-                }
-            }
-            sr.Close();
-            //Console.WriteLine(string.Format("Rows: {0}\nCols: {1}", uiRowCount, uiColCount));
-            //Console.WriteLine(string.Format("Total Escapes: {0}", iTotalEscapedStrings));
-            //Console.WriteLine(string.Format("Most Elements:\n{0}", sLongestLine));
+            int uiRowCount = (APIsUsed.Count > APIsFailed.Count) ? APIsUsed.Count : APIsFailed.Count;
+            int uiColCount = 3;
 
             // go through the file again and build the HTML table.
-            sr = new StreamReader(outputFile);
-            string sOutFile = outputFile + ".html";
+            string sOutFile = "output\\" + outputFileName + UAPApiParser.DllTypeToString(type) + ".html";
+            if (!Directory.Exists("output"))
+            {
+                Directory.CreateDirectory("output");
+            }
             if (File.Exists(sOutFile))
                 File.Delete(sOutFile);
 
             StreamWriter sw = new StreamWriter(sOutFile);
             sw.Write("<!DOCTYPE html><html><body><table border=\"1\">");
             // tablecontents go here.
-            while (!sr.EndOfStream)
+            if (APIsFailed.Count > 0)
             {
-                sLine = sr.ReadLine();
-                List<string> LineElements = CreateElementList(sLine);
-                sw.Write("<tr>");   // table row.
-
-                foreach (string s in LineElements)
+                sw.Write("Failure! {0} of the {1} total APIS are not supported",APIsFailed.Count,APIsUsed.Count + APIsFailed.Count);
+                sw.Write("<tr><td>Supported Apis</td><td>Unsupported Apis</td><td>DLL referenced</td></tr>");
+                while (APIsFailed.Count > 0 || APIsUsed.Count > 0)
                 {
-                    sw.Write(string.Format("<td>{0}</td>", s));
-                }
+                    sw.Write("<tr>");
+                    if (APIsUsed.Count > 0)
+                    {
+                        sw.Write(string.Format("<td>{0}</td>", APIsUsed.ElementAt(0)));
+                        APIsUsed.RemoveAt(0);
+                    }
+                    else
+                    {
+                        sw.Write("<td></td>");
+                    }
+                    if (APIsFailed.Count > 0)
+                    {
+                        sw.Write(string.Format("<td>{0}</td><td>{1}</td>", APIsFailed.ElementAt(0).Key, APIsFailed.ElementAt(0).Value));
+                        APIsFailed.RemoveAt(0);
+                    }
+                    else
+                    {
+                        sw.Write("<td></td><td></td>");
+                    }
 
-                sw.Write("</tr>");  // end of table row
+                    sw.Write("</tr>");  // end of table row
+                }
             }
+            else
+            {
+                sw.Write("All apis used are supported!");
+                sw.Write("<tr><td>Supported Apis</td></tr>");
+                while(APIsUsed.Count > 0)
+                {
+                    sw.Write("<tr><td>{0}</td></tr>",APIsUsed.ElementAt(0));
+                    APIsUsed.RemoveAt(0);
+                }
+            }
+            
 
             sw.Write("</table></body></html> ");
 
             sw.Flush();
             sw.Close();
-            sr.Close();
-        }
-
-        private static int CheckForEscapedStrings(string[] strArray)
-        {
-            bool bInEscape = false;
-            int iEscapeCount = 0;
-            int iEscapeElementCount = 0;
-
-            for (int x = 0; x < strArray.Count(); x++)
-            {
-                string s = strArray[x];
-
-                if (bInEscape)
-                    iEscapeElementCount++;
-
-
-                if (s.EndsWith("\""))
-                {
-                    iEscapeCount += iEscapeElementCount;
-                    bInEscape = false;
-                }
-
-                if (s.StartsWith("\""))
-                {
-                    bInEscape = true;
-                    iEscapeElementCount = 0;
-                }
-            }
-            return iEscapeCount;
-        }
-
-        private static List<string> CreateElementList(string sLine)
-        {
-            string[] sArray = sLine.Split(',');
-            List<string> LineElements = new List<string>();
-            string sItem = string.Empty;
-
-            bool bInEscape = false;
-
-            for (int x = 0; x < sArray.Count(); x++)
-            {
-                string s = sArray[x];
-
-                if (!bInEscape && !s.StartsWith("\""))
-                {
-                    LineElements.Add(s);
-                }
-
-                if (bInEscape)
-                    sItem = sItem + "," + s;
-
-                if (s.EndsWith("\""))
-                {
-                    bInEscape = false;
-                    // assume string starts and ends with \"
-                    // remove quotes
-                    sItem = sItem.Substring(1, sItem.Length - 2);
-                    LineElements.Add(sItem);
-                }
-
-                if (s.StartsWith("\""))
-                {
-                    bInEscape = true;
-                    sItem = s;
-                }
-
-            }
-            return LineElements;
         }
         #endregion End Output Gen
         /* End Output File Gen */
@@ -230,10 +142,15 @@ namespace BinaryAPIScanner
                 {
                     i += 5;
                     currentLib = line;
-                    if (currentLib.ToLower().StartsWith("msv"))
+                    if(currentLib.ToLower().Equals("ucrtbased.dll") || (currentLib.ToLower().StartsWith("vcruntime") && currentLib.ToLower().EndsWith("d.dll")))
+                    {
+                        Console.Out.Write("WARNING:: Some of the following APIS may be included for Debug purposes only; Please verify the binary is a release client");
+                    }
+ /*                 else if (currentLib.ToLower().StartsWith("msv"))
                     {
                         currentLib = "msvcrt.dll";
                     }
+                    */
                 }
                 else if(line.StartsWith("Ordinal"))//If the line begins with ordinal, then a remapping is required.
                 {
