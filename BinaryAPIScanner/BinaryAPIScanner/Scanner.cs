@@ -41,14 +41,24 @@ namespace BinaryAPIScanner
             {
                 Console.Out.WriteLine("Congrats! All your APIS are belong to us!");
             }
+<<<<<<< HEAD
             string csvFile = "output\\" + filePath.Split('\\').Last() + "_analysis";
             GenerateHtml(csvFile, type);
+=======
+            string binaryName = filePath.Split('\\').Last();
+            string outFile = binaryName + "_analysis";
+            GenerateHtml(outFile, type, binaryName);
+>>>>>>> - Altered output file generated to be ONLY an html with a better name
         }
 
         /* Output Files (CSV and html) Generation */
         #region Output Generation
 
+<<<<<<< HEAD
         private static void GenerateHtml(string outputFileName, UAPApiParser.DllType type)
+=======
+        private static void GenerateHtml(string outputFileName, UAPApiParser.DllType type,string binaryName)
+>>>>>>> - Altered output file generated to be ONLY an html with a better name
         {
 
             int uiRowCount = (APIsUsed.Count > APIsFailed.Count) ? APIsUsed.Count : APIsFailed.Count;
@@ -60,11 +70,16 @@ namespace BinaryAPIScanner
             {
                 Directory.CreateDirectory("output");
             }
+<<<<<<< HEAD
             if (File.Exists(sOutFile))
                 File.Delete(sOutFile);
+=======
+>>>>>>> - Altered output file generated to be ONLY an html with a better name
 
             StreamWriter sw = new StreamWriter(sOutFile);
             sw.Write("<!DOCTYPE html><html><body><table border=\"1\">");
+            sw.Write("<h1>Microsoft IoT Binary API Scanner for IoT Compatability</h1>");
+            sw.Write(string.Format("<h2>Scanning: {0}</h2>",binaryName));
             // tablecontents go here.
             if (APIsFailed.Count > 0)
             {
@@ -75,7 +90,11 @@ namespace BinaryAPIScanner
                     sw.Write("<tr>");
                     if (APIsUsed.Count > 0)
                     {
+<<<<<<< HEAD
                         sw.Write(string.Format("<td>{0}</td>", APIsUsed.ElementAt(0)));
+=======
+                        sw.Write(string.Format("<td><font color=\"green\">{0}</font></td>", APIsUsed.ElementAt(0)));
+>>>>>>> - Altered output file generated to be ONLY an html with a better name
                         APIsUsed.RemoveAt(0);
                     }
                     else
@@ -84,7 +103,11 @@ namespace BinaryAPIScanner
                     }
                     if (APIsFailed.Count > 0)
                     {
+<<<<<<< HEAD
                         sw.Write(string.Format("<td>{0}</td><td>{1}</td>", APIsFailed.ElementAt(0).Key, APIsFailed.ElementAt(0).Value));
+=======
+                        sw.Write(string.Format("<td><font color=\"red\">{0}</font></td><td><font color=\"red\">{1}</font></td>", APIsFailed.ElementAt(0).Key, APIsFailed.ElementAt(0).Value));
+>>>>>>> - Altered output file generated to be ONLY an html with a better name
                         APIsFailed.RemoveAt(0);
                     }
                     else

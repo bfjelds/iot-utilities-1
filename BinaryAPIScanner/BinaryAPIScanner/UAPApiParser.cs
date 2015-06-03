@@ -359,6 +359,7 @@ namespace BinaryAPIScanner
 
                         watch.Stop();
                         updateTables(command,DllType.OS);
+                        command.CommandText = "UPDATE DLL SET D_OS=1 WHERE D_NAME='msvcrt.dll';";
                         Console.WriteLine("Time for UAP Api List:: " + watch.ElapsedMilliseconds);
                         watch.Reset();
                         
