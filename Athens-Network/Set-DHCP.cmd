@@ -9,9 +9,8 @@ echo.
 for %%i in (%*) do set /A _argcActual+=1
 
 if %_argcActual% NEQ %_argcExpected% (
+  call :_ShowUsage %0%, ""
 
-  call :_ShowUsage %0%, "Bad human...bad args."
-  
   set _exitStatus=1
   
   goto:_EOF
@@ -25,7 +24,8 @@ goto:_EOF
 
 :_ShowUsage
   
-  echo Usage: Set-DHCP "Local Area Connection"
+  echo Usage: Set-DHCP <Adapter name>
+  echo Example: Set-DHCP "Ethernet"
 
   echo.
     

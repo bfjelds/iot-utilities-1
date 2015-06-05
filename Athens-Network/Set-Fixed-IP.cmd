@@ -10,7 +10,7 @@ for %%i in (%*) do set /A _argcActual+=1
 
 if %_argcActual% NEQ %_argcExpected% (
 
-  call :_ShowUsage %0%, "Bad human...bad args."
+  call :_ShowUsage
   
   set _exitStatus=1
   
@@ -30,11 +30,6 @@ goto:_EOF
 
   echo.
   
-  if NOT "%~2" == "" (
-
-    echo %~2
-    
-    echo.
   )
   
   goto:eof
