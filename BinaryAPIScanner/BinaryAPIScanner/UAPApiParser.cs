@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Diagnostics;
+using System.Net;
 
 namespace BinaryAPIScanner
 {
@@ -23,7 +24,7 @@ namespace BinaryAPIScanner
             UAP = 1,
             UD = 2
         }
-
+        private const int maxInsert = 200;
         private const string functionSelect = "SELECT * FROM FUNCTION WHERE F_NAME = \'{0}\'";
         private const string functionSelectWithDll = functionSelect  + " AND F_DLL_NAME = '{1}';";
         private const string selectDll = "SELECT * FROM DLL WHERE D_NAME = '{0}'";
@@ -34,9 +35,12 @@ namespace BinaryAPIScanner
 
         private const string updateDll = "UPDATE DLL SET D_{0}=1 WHERE D_NAME='{1}';";
 
+        private const string insertResolutions = "INSERT INTO RESOLUTION (A_API,A_DLL,A_ALTERNATEAPI,A_NOTES) VALUES ";
+
         private static List<KeyValuePair<string, string>> fnList = new List<KeyValuePair<string, string>>();
         private static List<string> dllList = new List<string>();
         private static List<string> storedDlls;
+        private static List<Resolution> resolutionList = new List<Resolution>();
         private const string dbPath = @"apis.db";
         private static bool firstPush = true;
 
@@ -76,6 +80,17 @@ namespace BinaryAPIScanner
                                             );";
                     command.ExecuteNonQuery();
 
+                    //JAMES EDIT MISMATCH ERROR!
+                    command.CommandText = @"CREATE TABLE IF NOT EXISTS RESOLUTION 
+                                            (
+                                                A_ID INTEGER PRIMARY KEY,
+                                                A_API INTEGER NOT NULL,
+                                                A_DLL INTEGER NOT NULL,
+                                                A_ALTERNATEAPI INTEGER,
+                                                A_NOTES INTEGER
+                                            );";
+                    command.ExecuteNonQuery();
+
                 }
                 connection.Close();
             }
@@ -89,7 +104,6 @@ namespace BinaryAPIScanner
         {
             string additionalElementWithOrdinal = "('{0}', '{1}', {2}),";
             string additionalDllElement = "('{0}', 1),";
-            const int maxInsert = 200;
             storedDlls = PullDllsFromDB(command);
             string finalCommand = null;
 
@@ -185,6 +199,22 @@ namespace BinaryAPIScanner
             return dlls;
         }
 
+        private static void updateResolutionTable(SQLiteCommand command)
+        {
+            string additionalResolutionElement = "('{0}', '{1}','{2}','{3}'),";
+            while (resolutionList.Count > 0)
+            {
+                command.CommandText = insertResolutions;
+                for (int i = 0; i < maxInsert && resolutionList.Count > 0; i++)
+                {
+                    Resolution curr = resolutionList.ElementAt(0);
+                    command.CommandText += string.Format(additionalResolutionElement, curr.apiName,curr.dll,curr.alternateAPI,curr.notes);
+                    resolutionList.RemoveAt(0);
+                }
+                command.CommandText = command.CommandText.Remove(command.CommandText.Length - 1) + ';';
+                command.ExecuteNonQuery();
+            }
+        }
 
         #endregion
         /* end DB Management*/
@@ -302,6 +332,10 @@ namespace BinaryAPIScanner
                     var dll = reader.GetAttribute("ModuleName");
 
                     watch.Start();
+                    if(dll == null)
+                    {
+                        dll = "UNKNOWN";
+                    }
                     KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
                     if (checkForDuplicates == true)
                     {
@@ -321,10 +355,6 @@ namespace BinaryAPIScanner
 
         private static void attemptToAddDll(string dll)
         {
-            if (dll == null)
-            {
-                dll = "0";
-            }
             var exists = dllList.Contains(dll);
 
             if (!exists)
@@ -398,6 +428,10 @@ namespace BinaryAPIScanner
                     if (function.StartsWith("_"))
                     {
                         function = function.Substring(1);
+                    }
+                    if(dll == null)
+                    {
+                        dll = "UNKNOWN";
                     }
                     KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
 
@@ -517,6 +551,10 @@ namespace BinaryAPIScanner
                     
 
                     watch.Start();
+                    if(dll == null)
+                    {
+                        dll = "UNKNOWN";
+                    }
                     KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
                     if (checkForDuplicates == true)
                     {
@@ -653,8 +691,83 @@ namespace BinaryAPIScanner
         /* End  CRT Api Database */
 
         /* Generate Substituation Database */
-        #region Substitutions
+        #region Resolutions
+        public static void GenerateAPIResolutionsDatabase()
+        {
+            WebClient client = new WebClient();
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://onecoresdk/Substitutions/default.htm");
+            HttpWebResponse res = (HttpWebResponse)req.GetResponse();
+            if (res.StatusCode == HttpStatusCode.OK)
+            {
+                Stream responseStream = res.GetResponseStream();
+                StreamReader sw = null;
 
+                if(res.CharacterSet == null)
+                {
+                    sw = new StreamReader(responseStream);
+                }
+                else
+                {
+                    sw = new StreamReader(responseStream, Encoding.GetEncoding(res.CharacterSet));
+                }
+                string htmlOut = "";
+                while (!sw.EndOfStream)
+                {
+                    string currentLine = sw.ReadLine();
+                    if (!currentLine.Contains("<!") && currentLine.Contains('!'))
+                    {
+                        htmlOut += currentLine;
+                    }
+                }
+                htmlOut = htmlOut.Replace("<tr>", "");
+                htmlOut = htmlOut.Replace("<td>", "");
+                htmlOut = htmlOut.Replace("</tr>","~");
+                string[] lines = htmlOut.Split('~');
+                foreach(string line in lines)
+                {
+
+                    if (line.Contains("<p>"))
+                    {
+                        continue;
+                    }
+                    if (line.Contains("</table>"))
+                    {
+                        break;
+                    }
+                    string newLine = line.Replace("<td />", "~");
+                    newLine = newLine.Replace("</td>", "~");
+                    string[] lineSplit = newLine.Split('~');
+                    string[] apiSplit = lineSplit[0].Split('!');
+                    Resolution sub = new Resolution();
+                    sub.dll = apiSplit[0];
+                    sub.apiName = apiSplit[1];
+                    sub.alternateAPI = lineSplit[1];
+                    sub.notes = lineSplit[2];
+                    resolutionList.Add(sub);
+                }
+                using (var connection = new SQLiteConnection("Data Source=" + dbPath))
+                {
+                    connection.Open();
+                    //WhiteList.xml first, this is shared by all, so we'll just use x86 for now
+                    using (var command = new SQLiteCommand(connection))
+                    {
+                        updateResolutionTable(command);
+                    }
+                }
+            }
+            else
+            {
+                Console.Out.WriteLine("ERROR: Unable to read API Alternate API list");
+            }
+        }
+
+        public class Resolution
+        {
+            public string dll;
+            public string apiName;
+            public string alternateAPI;
+            public string notes;
+        }
         #endregion
         /* End Sub database */
 

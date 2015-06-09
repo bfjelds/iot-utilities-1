@@ -23,16 +23,13 @@ namespace BinaryAPIScanner
         private static List<string> APIsUsed = null;//holds a list of all APIS from the Available function mappings that were used
         private static List<KeyValuePair<string,string>> APIsFailed = null;//function to dll mapping for all apis that are not permitted but utilized
         private static List<string> allowedDlls = null;//a list of all dlls that are permitted within this specification
+        private static List<UAPApiParser.Resolution> resolutionList;
 
         public static void Scan(string filePath, UAPApiParser.DllType type)
         {
             CheckDeveloperPrompt();
             PullFromDB(type);
             GetBinaryDependencies(filePath);
-            foreach(var api in APIsFailed)
-            {
-                //TODO:: Look for Potential solutions to missing APIs
-            }
 
             if (APIsFailed.Count > 0) {
                Console.Out.WriteLine("EPIC FAILURE, You sad should be :( :: " + APIsFailed.Count + " of the " + (APIsUsed.Count + APIsFailed.Count) + " APIs used are unsupported");
@@ -63,49 +60,54 @@ namespace BinaryAPIScanner
             }
 
             StreamWriter sw = new StreamWriter(sOutFile);
-            sw.Write("<!DOCTYPE html><html><body><table border=\"1\">");
-            sw.Write("<h1>Microsoft IoT Binary API Scanner for IoT Compatability</h1>");
-            sw.Write(string.Format("<h2>Scanning: {0}</h2>",binaryName));
+            sw.Write("<!DOCTYPE html><html><body><style>th{background-color: #00FFFF;}</style>");
+            sw.Write("<font color=\"blue\"><h1>Windows 10 IoT Core API Scanner</h1></font>");
+            sw.Write(string.Format("<font color=\"blue\"><h2>Scanning: {0}</h2></font>", binaryName));
+            sw.Write("<h3>The following issues have been found:</h3>");
+
+            int unsupportedAPICount = APIsFailed.Count();
+            int totalAPIsScanned = unsupportedAPICount + APIsUsed.Count();
+            int unsupportedDllCount = 0;
             // tablecontents go here.
             if (APIsFailed.Count > 0)
             {
-                sw.Write("Failure! {0} of the {1} total APIS are not supported",APIsFailed.Count,APIsUsed.Count + APIsFailed.Count);
-                sw.Write("<tr><td>Supported Apis</td><td>Unsupported Apis</td><td>DLL referenced</td></tr>");
-                while (APIsFailed.Count > 0 || APIsUsed.Count > 0)
+                List<string> unsupportedDlls = new List<string>();
+                sw.Write("<table border=\"1\"><tr><th>API</th><th>Import DLL</th><th>API Resolution</th><th>Resolution Notes</th></tr>");
+                while (APIsFailed.Count > 0)
                 {
                     sw.Write("<tr>");
-                    if (APIsUsed.Count > 0)
-                    {
-                        sw.Write(string.Format("<td><font color=\"green\">{0}</font></td>", APIsUsed.ElementAt(0)));
-                        APIsUsed.RemoveAt(0);
-                    }
-                    else
-                    {
-                        sw.Write("<td></td>");
-                    }
+                    string altAPI = "<font color=\"red\">No Resolution Found</font>";
+                    string resNotes = "";
                     if (APIsFailed.Count > 0)
                     {
-                        sw.Write(string.Format("<td><font color=\"red\">{0}</font></td><td><font color=\"red\">{1}</font></td>", APIsFailed.ElementAt(0).Key, APIsFailed.ElementAt(0).Value));
+                        var resolution = from res in resolutionList
+                                         where res.apiName.Equals(APIsFailed.ElementAt(0).Key) && res.dll.Equals(APIsFailed.ElementAt(0).Value.ToLower())
+                                         select res;
+                        if(resolution.Count() == 1)
+                        {
+                            UAPApiParser.Resolution res = resolution.ElementAt(0);
+                            altAPI = res.alternateAPI;
+                            resNotes = "<font color=\"green\">" + res.notes + " </font>";
+                        }
+                        sw.Write(string.Format("<td><font color=\"red\">{0}</font></td><td><font color=\"red\">{1}</font></td><td>{2}</td><td>{3}</td>", APIsFailed.ElementAt(0).Key, APIsFailed.ElementAt(0).Value, altAPI,resNotes));
+                        if (!unsupportedDlls.Contains(APIsFailed.ElementAt(0).Value))
+                        {
+                            unsupportedDlls.Add(APIsFailed.ElementAt(0).Value);
+                            unsupportedDllCount++;
+                        }
                         APIsFailed.RemoveAt(0);
-                    }
-                    else
-                    {
-                        sw.Write("<td></td><td></td>");
                     }
                     sw.Write("</tr>");  // end of table row
                 }
             }
             else
             {
-                sw.Write("All apis used are supported!");
-                sw.Write("<tr><td>Supported Apis</td></tr>");
-                while(APIsUsed.Count > 0)
-                {
-                    sw.Write("<tr><td>{0}</td></tr>",APIsUsed.ElementAt(0));
-                    APIsUsed.RemoveAt(0);
-                }
+                sw.Write("<h3><font color=\"green\">All apis used are supported!<font><h3>");
             }
-            sw.Write("</table></body></html> ");
+            sw.WriteLine("</table><br>Summary:");
+            sw.WriteLine(string.Format("<br><br>Scanned {0} Import Libraries", totalAPIsScanned));
+            sw.WriteLine(string.Format("<br>Found {0} unsupported APIS across {1} import DLLs", unsupportedAPICount, unsupportedDllCount));
+            sw.Write("</body></html> ");
 
             sw.Flush();
             sw.Close();
@@ -195,7 +197,7 @@ namespace BinaryAPIScanner
                         else
                         {
                             Console.Out.WriteLine("API in DLL:: '" + currentLib + "' NOT FOUND; Ordinal::" + ordinal);
-                            APIsFailed.Add(new KeyValuePair<string, string>(Convert.ToString(ordinal), currentLib));
+                            APIsFailed.Add(new KeyValuePair<string, string>("Ordinal#: "+Convert.ToString(ordinal), currentLib));
                         }
                     }
                 }
@@ -229,6 +231,7 @@ namespace BinaryAPIScanner
             const string retrieveWinCEMap = "SELECT * FROM COREDLL;";
             const string retrieveFunc = "SELECT F_NAME,F_DLL_NAME,F_ORDINAL FROM FUNCTION WHERE F_DLL_NAME='{0}'";
             const string additionalDllForRetrieveFunc = " OR F_DLL_NAME='{0}'";
+            const string retrieveResolutions = "SELECT A_API,A_DLL,A_ALTERNATEAPI,A_NOTES FROM RESOLUTION;";
 
 
             /* Pull Everything from COREDLL table in WinCE.db */
@@ -249,6 +252,7 @@ namespace BinaryAPIScanner
                 }
                 connection.Close();
             }
+
             
 
             /* Pull ONLY the necessary entries from DLL/FUNCTION tables */
@@ -288,6 +292,20 @@ namespace BinaryAPIScanner
                         AvailableFunctionMap.Add(new KeyValuePair<string, KeyValuePair<string, int>>(apiName,new KeyValuePair<string, int>(dll,ordinal)));
                     }
                     reader.Close();
+
+                    /* Pull Everything from the Resolution Database */
+                    resolutionList = new List<UAPApiParser.Resolution>();
+                    command.CommandText = retrieveResolutions;
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        UAPApiParser.Resolution resolution = new UAPApiParser.Resolution();
+                        resolution.apiName = reader.GetString(0);
+                        resolution.dll = reader.GetString(1) + ".dll";
+                        resolution.alternateAPI = reader.GetString(2);
+                        resolution.notes = reader.GetString(3);
+                        resolutionList.Add(resolution);
+                    }
                 }
                 connection.Close();
             }
