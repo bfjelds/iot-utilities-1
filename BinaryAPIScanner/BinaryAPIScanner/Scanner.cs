@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
+using APIScannerDatabaseUpdater;
 
 namespace BinaryAPIScanner
 {
@@ -138,7 +139,7 @@ namespace BinaryAPIScanner
                 {
                     continue;
                 }
-                else if (line.Contains('.'))//TODO:: find a better solution of determining whether or not its a dll
+                else if (line.Contains('.'))
                 {
                     i += 5;
                     currentLib = line;
@@ -263,7 +264,7 @@ namespace BinaryAPIScanner
                 using (var command = new SQLiteCommand(connection))
                 {
                     allowedDlls = new List<string>();
-                    command.CommandText = string.Format(retrieveDll,UAPApiParser.DllTypeToString(type));
+                    command.CommandText = string.Format(retrieveDll, UAPApiParser.DllTypeToString(type));
                     SQLiteDataReader reader = command.ExecuteReader();
                     
                     while (reader.Read())

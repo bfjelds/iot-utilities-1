@@ -10,7 +10,7 @@ using System.Xml;
 using System.Diagnostics;
 using System.Net;
 
-namespace BinaryAPIScanner
+namespace APIScannerDatabaseUpdater
 {
     /**
      * UAPApiParser class is used to collect the api lists and group them in a meaningful way into a sqlite database
