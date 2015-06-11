@@ -66,15 +66,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HtmlFormatter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanner.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="databases\apis.db" />
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="databases\WinCE.db" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\APIScannerDatabaseUpdater\APIScannerDatabaseUpdater.csproj">

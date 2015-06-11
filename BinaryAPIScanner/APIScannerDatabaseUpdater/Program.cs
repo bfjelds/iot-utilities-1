@@ -1,27 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace APIScannerDatabaseUpdater
 {
+    /**
+     * Updates the API Database used by the BinaryAPIScanner tool to include the most up-to-date api lists
+     * for each type of scope; UAP/UWP, OS level, and Universal Drivers
+     */
     class Program
     {
         static void Main(string[] args)
         {
-            string UD_XMLFolder = @"C:\Users\t-jdeck\Development\MS-IOT\athens-utilities\BinaryAPIScanner\BinaryAPIScanner\APIs\WdkBuildUniversalDDIsRoot";
-            string UAP_ApiList_filepath = @"C:\Users\t-jdeck\Development\MS-IOT\athens-utilities\BinaryAPIScanner\BinaryAPIScanner\APIs\onecoreuap.lib.txt";
-            string WIN32_ApiList_filepath = @"C:\Users\t-jdeck\Development\MS-IOT\athens-utilities\BinaryAPIScanner\BinaryAPIScanner\APIs\ModernApis.xml";
-            string system32_folder = @"C:\Windows\System32";
+            if (args == null) throw new ArgumentNullException(nameof(args));
+            string udXmlFolder = @"C:\Users\t-jdeck\Development\MS-IOT\athens-utilities\BinaryAPIScanner\BinaryAPIScanner\APIs\WdkBuildUniversalDDIsRoot";
+            string uapApiListFilepath = @"C:\Users\t-jdeck\Development\MS-IOT\athens-utilities\BinaryAPIScanner\BinaryAPIScanner\APIs\onecoreuap.lib.txt";
+            string win32ApiListFilepath = @"C:\Users\t-jdeck\Development\MS-IOT\athens-utilities\BinaryAPIScanner\BinaryAPIScanner\APIs\ModernApis.xml";
+            string system32Folder = @"C:\Windows\System32";
             Console.Out.WriteLine("Are you sure you want to overwrite the database???!?!?!??");
             Console.Read();
-            UAPApiParser.Init();
-            UAPApiParser.GenerateAPIResolutionsDatabase();
-            UAPApiParser.GenerateCRTDatabase(system32_folder);
-            UAPApiParser.GenerateUAPDatabase(UAP_ApiList_filepath);
-            UAPApiParser.GenerateUDDatabase(UD_XMLFolder);
-            UAPApiParser.GenerateWin32Database(WIN32_ApiList_filepath);
+            UapApiParser.Init();
+            UapApiParser.GenerateApiResolutionsDatabase();
+            UapApiParser.GenerateCrtDatabase(system32Folder);
+            UapApiParser.GenerateUapDatabase(uapApiListFilepath);
+            UapApiParser.GenerateUdDatabase(udXmlFolder);
+            UapApiParser.GenerateWin32Database(win32ApiListFilepath);
         }
     }
 }

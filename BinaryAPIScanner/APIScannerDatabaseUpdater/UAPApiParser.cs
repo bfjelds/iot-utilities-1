@@ -1,48 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
-using System.IO;
-using System.Reflection;
-using System.Xml;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Net;
+using System.Text;
+using System.Xml;
 
 namespace APIScannerDatabaseUpdater
 {
     /**
      * UAPApiParser class is used to collect the api lists and group them in a meaningful way into a sqlite database
      */
-    public class UAPApiParser
+    public class UapApiParser
     {
 
         public enum DllType
         {
-            OS = 0,
-            UAP = 1,
-            UD = 2
+            Os = 0,
+            Uap = 1,
+            Ud = 2
         }
-        private const int maxInsert = 200;
-        private const string functionSelect = "SELECT * FROM FUNCTION WHERE F_NAME = \'{0}\'";
-        private const string functionSelectWithDll = functionSelect  + " AND F_DLL_NAME = '{1}';";
-        private const string selectDll = "SELECT * FROM DLL WHERE D_NAME = '{0}'";
-        private const string insertDll = "INSERT INTO DLL (D_NAME, D_{0}) VALUES";
-        private const string retrieveDll = "SELECT * FROM DLL;";
-        private const string insertFunction = "INSERT INTO FUNCTION (F_NAME, F_DLL_NAME, F_ORDINAL) VALUES('{0}', '{1}', 0)";
-        private const string insertFunctionWithOrdinal = "INSERT INTO FUNCTION (F_NAME, F_DLL_NAME, F_ORDINAL) VALUES";
+        private const int MaxInsert = 200;
+        private const string InsertDll = "INSERT INTO DLL (D_NAME, D_{0}) VALUES";
+        private const string RetrieveDll = "SELECT * FROM DLL;";
+        private const string InsertFunctionWithOrdinal = "INSERT INTO FUNCTION (F_NAME, F_DLL_NAME, F_ORDINAL) VALUES";
 
-        private const string updateDll = "UPDATE DLL SET D_{0}=1 WHERE D_NAME='{1}';";
+        private const string UpdateDll = "UPDATE DLL SET D_{0}=1 WHERE D_NAME='{1}';";
 
-        private const string insertResolutions = "INSERT INTO RESOLUTION (A_API,A_DLL,A_ALTERNATEAPI,A_NOTES) VALUES ";
+        private const string InsertResolutions = "INSERT INTO RESOLUTION (A_API,A_DLL,A_ALTERNATEAPI,A_NOTES) VALUES ";
 
-        private static List<KeyValuePair<string, string>> fnList = new List<KeyValuePair<string, string>>();
-        private static List<string> dllList = new List<string>();
-        private static List<string> storedDlls;
-        private static List<Resolution> resolutionList = new List<Resolution>();
-        private const string dbPath = @"apis.db";
-        private static bool firstPush = true;
+        private static List<KeyValuePair<string, string>> _fnList = new List<KeyValuePair<string, string>>();
+        private static List<string> _dllList = new List<string>();
+        private static List<string> _storedDlls;
+        private static List<Resolution> _resolutionList = new List<Resolution>();
+        private const string DbPath = @"apis.db";
+        private static bool _firstPush = true;
 
         /* Database management */
         #region DB Management
@@ -52,9 +46,9 @@ namespace APIScannerDatabaseUpdater
          */
         public static void Init()
         {
-            using (var connection = new SQLiteConnection("Data Source=" + dbPath))
+            using (var connection = new SQLiteConnection("Data Source=" + DbPath))
             {
-                SQLiteConnection.CreateFile(dbPath);
+                SQLiteConnection.CreateFile(DbPath);
                 connection.Open();
                 //WhiteList.xml first, this is shared by all, so we'll just use x86 for now
                 using (var command = new SQLiteCommand(connection))
@@ -100,32 +94,31 @@ namespace APIScannerDatabaseUpdater
          * Pushes all functions and Dlls collected in fnList and dllList respectively to the
          * database
          */
-        private static void updateTables(SQLiteCommand command, DllType type,bool deleteDlls = true)
+        private static void UpdateTables(SQLiteCommand command, DllType type,bool deleteDlls = true)
         {
             string additionalElementWithOrdinal = "('{0}', '{1}', {2}),";
             string additionalDllElement = "('{0}', 1),";
-            storedDlls = PullDllsFromDB(command);
-            string finalCommand = null;
+            _storedDlls = PullDllsFromDb(command);
 
             string typeString = DllTypeToString(type);
 
             int iterations = 0;
-            while (dllList.Count > iterations*maxInsert)
+            while (_dllList.Count > iterations*MaxInsert)
             {
-                finalCommand = string.Format(insertDll,typeString);
+                var finalCommand = string.Format(InsertDll,typeString);
                 bool addingAtLeastOneDll = false;
-                for (int i = 0; i < maxInsert && (i + iterations * maxInsert) < dllList.Count; i++)
+                for (int i = 0; i < MaxInsert && (i + iterations * MaxInsert) < _dllList.Count; i++)
                 {
-                    string curr = dllList.ElementAt(i + iterations*maxInsert);
-                    if (!storedDlls.Contains(curr))
+                    string curr = _dllList.ElementAt(i + iterations*MaxInsert);
+                    if (!_storedDlls.Contains(curr))
                     {
                         addingAtLeastOneDll = true;
                         finalCommand += string.Format(additionalDllElement, curr);
-                        storedDlls.Add(curr);
+                        _storedDlls.Add(curr);
                     }
                     else
                     {
-                        command.CommandText = string.Format(updateDll, typeString, curr);
+                        command.CommandText = string.Format(UpdateDll, typeString, curr);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -136,18 +129,18 @@ namespace APIScannerDatabaseUpdater
                 }
                 iterations++;
             }
-            if(deleteDlls == true)
+            if(deleteDlls)
             {
-                dllList.Clear();
+                _dllList.Clear();
             }
 
 
-            while (fnList.Count > 0)
+            while (_fnList.Count > 0)
             {
-                command.CommandText = insertFunctionWithOrdinal;
-                for (int i = 0; i < maxInsert && fnList.Count > 0; i++)
+                command.CommandText = InsertFunctionWithOrdinal;
+                for (int i = 0; i < MaxInsert && _fnList.Count > 0; i++)
                 {
-                    KeyValuePair<string, string> curr = fnList.ElementAt(0);
+                    KeyValuePair<string, string> curr = _fnList.ElementAt(0);
 
                     string func = curr.Key;
                     string dll = curr.Value;
@@ -169,7 +162,7 @@ namespace APIScannerDatabaseUpdater
                     }
                     func = func.Replace("'", "''");
                     command.CommandText += string.Format(additionalElementWithOrdinal, func, dll, ordinal);
-                    fnList.Remove(curr);
+                    _fnList.Remove(curr);
                 }
                 command.CommandText = command.CommandText.Remove(command.CommandText.Length - 1) + ';';
                 command.ExecuteNonQuery();
@@ -179,12 +172,12 @@ namespace APIScannerDatabaseUpdater
         /**
          * Pulls all stored Dlls from the database
          */
-        private static List<string> PullDllsFromDB(SQLiteCommand command)
+        private static List<string> PullDllsFromDb(SQLiteCommand command)
         {
             List <string>  dlls = new List<string>();
-            if (!firstPush)
+            if (!_firstPush)
             {
-                command.CommandText = retrieveDll;
+                command.CommandText = RetrieveDll;
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -194,22 +187,22 @@ namespace APIScannerDatabaseUpdater
             }
             else
             {
-                firstPush = false;
+                _firstPush = false;
             }
             return dlls;
         }
 
-        private static void updateResolutionTable(SQLiteCommand command)
+        private static void UpdateResolutionTable(SQLiteCommand command)
         {
             string additionalResolutionElement = "('{0}', '{1}','{2}','{3}'),";
-            while (resolutionList.Count > 0)
+            while (_resolutionList.Count > 0)
             {
-                command.CommandText = insertResolutions;
-                for (int i = 0; i < maxInsert && resolutionList.Count > 0; i++)
+                command.CommandText = InsertResolutions;
+                for (int i = 0; i < MaxInsert && _resolutionList.Count > 0; i++)
                 {
-                    Resolution curr = resolutionList.ElementAt(0);
-                    command.CommandText += string.Format(additionalResolutionElement, curr.apiName,curr.dll,curr.alternateAPI,curr.notes);
-                    resolutionList.RemoveAt(0);
+                    Resolution curr = _resolutionList.ElementAt(0);
+                    command.CommandText += string.Format(additionalResolutionElement, curr.ApiName,curr.Dll,curr.AlternateApi,curr.Notes);
+                    _resolutionList.RemoveAt(0);
                 }
                 command.CommandText = command.CommandText.Remove(command.CommandText.Length - 1) + ';';
                 command.ExecuteNonQuery();
@@ -226,9 +219,9 @@ namespace APIScannerDatabaseUpdater
          * Collects and stores all APIs that are permitted within the Universal Driver specification
          * in the database
          */
-        public static void GenerateUDDatabase(string apiPath)
+        public static void GenerateUdDatabase(string apiPath)
         {
-            using (var connection = new SQLiteConnection("Data Source=" + dbPath))
+            using (var connection = new SQLiteConnection("Data Source=" + DbPath))
             {
                 connection.Open();
                 //WhiteList.xml first, this is shared by all, so we'll just use x86 for now
@@ -237,11 +230,11 @@ namespace APIScannerDatabaseUpdater
 
                     try
                     {
-                        var watch = new System.Diagnostics.Stopwatch();
+                        var watch = new Stopwatch();
                         long totalTimeElapsed = 0;
                         watch.Start();
                         //first, retrieve the whitelist, shared by all cores; x86 was chosen arbitrarily
-                        parseXML(apiPath + "\\x86\\ModuleWhitelist.xml",command,false);
+                        ParseXml(apiPath + "\\x86\\ModuleWhitelist.xml",false);
 
                         watch.Stop();
                         totalTimeElapsed += watch.ElapsedMilliseconds;
@@ -250,7 +243,7 @@ namespace APIScannerDatabaseUpdater
 
                         watch.Start();
                         //Next, go through the arm non-whitelist apis
-                        parseXML(apiPath + "\\arm\\UniversalDDIs.xml", command,false);
+                        ParseXml(apiPath + "\\arm\\UniversalDDIs.xml",false);
 
                         watch.Stop();
                         totalTimeElapsed += watch.ElapsedMilliseconds;
@@ -259,7 +252,7 @@ namespace APIScannerDatabaseUpdater
 
                         watch.Start();
                         //Next, go through the arm64 non-whitelist apis
-                        parseXML(apiPath + "\\arm64\\UniversalDDIs.xml", command);
+                        ParseXml(apiPath + "\\arm64\\UniversalDDIs.xml");
                         watch.Stop();
                         totalTimeElapsed += watch.ElapsedMilliseconds;
                         Console.WriteLine("Time for arm64:: " + watch.ElapsedMilliseconds);
@@ -268,7 +261,7 @@ namespace APIScannerDatabaseUpdater
 
                         watch.Start();
                         //Next, go through the x86 non-whitelist apis
-                        parseXML(apiPath + "\\x86\\UniversalDDIs.xml", command);
+                        ParseXml(apiPath + "\\x86\\UniversalDDIs.xml");
 
 
                         watch.Stop();
@@ -278,7 +271,7 @@ namespace APIScannerDatabaseUpdater
 
                         watch.Start();
                         //Next, go through the x64 non-whitelist apis
-                        parseXML(apiPath + "\\x64\\UniversalDDIs.xml", command);
+                        ParseXml(apiPath + "\\x64\\UniversalDDIs.xml");
 
                         watch.Stop();
                         totalTimeElapsed += watch.ElapsedMilliseconds;
@@ -289,7 +282,7 @@ namespace APIScannerDatabaseUpdater
 
                         //Then, make be sure to add all the functions to the database
                         watch.Start();
-                        updateTables(command, DllType.UD);
+                        UpdateTables(command, DllType.Ud);
                         watch.Stop();
                         totalTimeElapsed += watch.ElapsedMilliseconds;
                         Console.WriteLine("Time for Update Table:: " + watch.ElapsedMilliseconds);
@@ -310,13 +303,15 @@ namespace APIScannerDatabaseUpdater
          * Stores all APIs that are permitted within the Universal Driver specification
          * in memory
          */
-        private static void parseXML(string pathToUDXml, SQLiteCommand command, bool checkForDuplicates = true)
+        private static void ParseXml(string pathToUdXml, bool checkForDuplicates = true)
         {
-            using (XmlReader reader = XmlReader.Create(new StreamReader(pathToUDXml)))
+            const int xmlNodesToSkip = 6;
+            using (XmlReader reader = XmlReader.Create(new StreamReader(pathToUdXml)))
             {
-                var watch = new System.Diagnostics.Stopwatch();
+                var watch = new Stopwatch();
 
-                for (int i = 0; i < 6 && !reader.EOF; i++)
+                //Skips the first 6 nodes because they do not give us any meaningful data
+                for (int i = 0; i < xmlNodesToSkip && !reader.EOF; i++)
                 {
                     reader.Read();
                 }
@@ -337,29 +332,29 @@ namespace APIScannerDatabaseUpdater
                         dll = "UNKNOWN";
                     }
                     KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
-                    if (checkForDuplicates == true)
+                    if (checkForDuplicates)
                     {
-                        if (fnList.Contains(pair))
+                        if (_fnList.Contains(pair))
                         {
                             continue;
                         }
                     }
                     watch.Stop();
 
-                    attemptToAddDll(dll);
-                    fnList.Add(pair);
+                    AttemptToAddDll(dll);
+                    _fnList.Add(pair);
                 }
                 reader.Close();
             }
         }
 
-        private static void attemptToAddDll(string dll)
+        private static void AttemptToAddDll(string dll)
         {
-            var exists = dllList.Contains(dll);
+            var exists = _dllList.Contains(dll);
 
             if (!exists)
             {
-                dllList.Add(dll);
+                _dllList.Add(dll);
             }
         }
         #endregion
@@ -371,9 +366,9 @@ namespace APIScannerDatabaseUpdater
          * Collects and stores all APIs that are permitted within the OS level specification
          * in the database
          */
-        public static void GenerateUAPDatabase(string pathToAPIFile)
+        public static void GenerateUapDatabase(string pathToApiFile)
         {
-            using (var connection = new SQLiteConnection("Data Source=" + dbPath))
+            using (var connection = new SQLiteConnection("Data Source=" + DbPath))
             {
                 connection.Open();
                 //WhiteList.xml first, this is shared by all, so we'll just use x86 for now
@@ -382,13 +377,13 @@ namespace APIScannerDatabaseUpdater
 
                     try
                     {
-                        var watch = new System.Diagnostics.Stopwatch();
+                        var watch = new Stopwatch();
                         watch.Start();
                         //first, retrieve the whitelist, shared by all cores; x86 was chosen arbitrarily
-                        parseUAPApis(pathToAPIFile);
+                        ParseUapApis(pathToApiFile);
 
                         watch.Stop();
-                        updateTables(command,DllType.OS);
+                        UpdateTables(command,DllType.Os);
                         command.CommandText = "UPDATE DLL SET D_OS=1 WHERE D_NAME='msvcrt.dll';";
                         Console.WriteLine("Time for UAP Api List:: " + watch.ElapsedMilliseconds);
                         watch.Reset();
@@ -408,36 +403,38 @@ namespace APIScannerDatabaseUpdater
          * Stores all APIs that are permitted within the OS level specification
          * in memory
          */
-        private static void parseUAPApis(string pathToAPIFile)
+        private static void ParseUapApis(string pathToApiFile)
         {
-            using (var reader = new StreamReader(pathToAPIFile))
+            using (var reader = new StreamReader(pathToApiFile))
             {
-                string currentLine = null;
                 if (!reader.EndOfStream)
                 {
                     reader.ReadLine();
                 }
                 while (!reader.EndOfStream)
                 {
-                    currentLine = reader.ReadLine();
+                    var currentLine = reader.ReadLine();
 
                     //break the string into seperate parts::
-                    string[] parts = currentLine.Split(',');
-                    var function = parts[1];
-                    var dll = parts[2];
-                    if (function.StartsWith("_"))
+                    if (currentLine != null)
                     {
-                        function = function.Substring(1);
-                    }
-                    if(dll == null)
-                    {
-                        dll = "UNKNOWN";
-                    }
-                    KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
+                        string[] parts = currentLine.Split(',');
+                        var function = parts[1];
+                        var dll = parts[2];
+                        if (function.StartsWith("_"))
+                        {
+                            function = function.Substring(1);
+                        }
+                        if(dll == null)
+                        {
+                            dll = "UNKNOWN";
+                        }
+                        KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
 
-                    attemptToAddDll(dll);
+                        AttemptToAddDll(dll);
 
-                    fnList.Add(pair);
+                        _fnList.Add(pair);
+                    }
                 }
                 reader.Close();
             }
@@ -452,9 +449,9 @@ namespace APIScannerDatabaseUpdater
          * Collects and stores all win32 APIs that are permitted within the UAP specification
          * in the database
          */
-        public static void GenerateWin32Database(string pathToXML)
+        public static void GenerateWin32Database(string pathToXml)
         {
-            using (var connection = new SQLiteConnection("Data Source=" + dbPath))
+            using (var connection = new SQLiteConnection("Data Source=" + DbPath))
             {
                 connection.Open();
                 using (var command = new SQLiteCommand(connection))
@@ -462,13 +459,13 @@ namespace APIScannerDatabaseUpdater
 
                     try
                     {
-                        var watch = new System.Diagnostics.Stopwatch();
+                        var watch = new Stopwatch();
                         watch.Start();
                         //first, retrieve the whitelist, shared by all cores; x86 was chosen arbitrarily
-                        parseWin32Apis(pathToXML);
+                        ParseWin32Apis(pathToXml);
 
-                        updateTables(command, DllType.UAP,false);
-                        updateTables(command, DllType.OS);
+                        UpdateTables(command, DllType.Uap,false);
+                        UpdateTables(command, DllType.Os);
                         watch.Stop();
                         Console.WriteLine("Time for Win32 UAP Api List:: " + watch.ElapsedMilliseconds);
                         watch.Reset();
@@ -489,11 +486,11 @@ namespace APIScannerDatabaseUpdater
          * Stores all win32 APIs that are permitted within the UAP specification
          * in memory
          */
-        private static void parseWin32Apis(string pathToXML, bool checkForDuplicates = true)
+        private static void ParseWin32Apis(string pathToXml, bool checkForDuplicates = true)
         {
-            using (XmlReader reader = XmlReader.Create(new StreamReader(pathToXML)))
+            using (XmlReader reader = XmlReader.Create(new StreamReader(pathToXml)))
             {
-                var watch = new System.Diagnostics.Stopwatch();
+                var watch = new Stopwatch();
 
                 for (int i = 0; i < 6 && !reader.EOF; i++)
                 {
@@ -502,53 +499,45 @@ namespace APIScannerDatabaseUpdater
 
                 while (reader.Read())
                 {
-                    string function = null;
-                    string header = null;
                     string dll = null;
-                    string lib = null;
-                    string idl = null;
-                    string guid = null;
                     if (!((reader.NodeType == XmlNodeType.Element) && reader.HasAttributes))
                     {
                         continue;
                     }
-                    else
+                    XmlReader tree = reader.ReadSubtree();
+                    tree.Read();
+                    var function = tree.GetAttribute("Name");
+                    if (reader.Name == "Export")
                     {
-                        XmlReader tree = reader.ReadSubtree();
-                        tree.Read();
-                        function = tree.GetAttribute("Name");
-                        if (reader.Name == "Export")
-                        {
-                            if (tree.ReadToDescendant("Header"))
-                                header = tree.GetAttribute("Name");
-                            if (tree.ReadToNextSibling("Lib"))
-                                lib = tree.GetAttribute("Name");
-                            if (tree.ReadToNextSibling("Module"))
-                                dll = tree.GetAttribute("Name");
-                        }
-                        else if (reader.Name == "ComInterface")
-                        {
-                            if(tree.ReadToDescendant("Header"))
-                                header = tree.GetAttribute("Name");
-                            if(tree.ReadToNextSibling("Idl"))
-                                idl = tree.GetAttribute("Name");
-                        }
-                        else if (reader.Name == "ComClass")
-                        {
-                            if (tree.ReadToDescendant("Header"))
-                                header = tree.GetAttribute("Name");
-                            if (tree.ReadToNextSibling("Idl"))
-                                idl = tree.GetAttribute("Name");
-                            if (tree.ReadToNextSibling("GUID"))
-                                guid = tree.GetAttribute("Name");
-                        }
-                        else if(reader.Name == "Inline")
-                        {
-                            if (tree.ReadToDescendant("Header"))
-                                header = tree.GetAttribute("Name");
-                        }
+                        if (tree.ReadToDescendant("Header"))
+                            tree.GetAttribute("Name");
+                        if (tree.ReadToNextSibling("Lib"))
+                            tree.GetAttribute("Name");
+                        if (tree.ReadToNextSibling("Module"))
+                            dll = tree.GetAttribute("Name");
                     }
-                    
+                    else if (reader.Name == "ComInterface")
+                    {
+                        if(tree.ReadToDescendant("Header"))
+                            tree.GetAttribute("Name");
+                        if(tree.ReadToNextSibling("Idl"))
+                            tree.GetAttribute("Name");
+                    }
+                    else if (reader.Name == "ComClass")
+                    {
+                        if (tree.ReadToDescendant("Header"))
+                            tree.GetAttribute("Name");
+                        if (tree.ReadToNextSibling("Idl"))
+                            tree.GetAttribute("Name");
+                        if (tree.ReadToNextSibling("GUID"))
+                            tree.GetAttribute("Name");
+                    }
+                    else if(reader.Name == "Inline")
+                    {
+                        if (tree.ReadToDescendant("Header"))
+                            tree.GetAttribute("Name");
+                    }
+
 
                     watch.Start();
                     if(dll == null)
@@ -556,18 +545,18 @@ namespace APIScannerDatabaseUpdater
                         dll = "UNKNOWN";
                     }
                     KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
-                    if (checkForDuplicates == true)
+                    if (checkForDuplicates)
                     {
-                        if (fnList.Contains(pair))
+                        if (_fnList.Contains(pair))
                         {
                             continue;
                         }
                     }
                     watch.Stop();
 
-                    attemptToAddDll(dll);
+                    AttemptToAddDll(dll);
 
-                    fnList.Add(pair);
+                    _fnList.Add(pair);
                 }
                 reader.Close();
             }
@@ -582,23 +571,18 @@ namespace APIScannerDatabaseUpdater
          * Verifies that the current command prompt contains DUMPBIN.EXE, which
          * means we are executing within the Visual Studio Developer console
          */
-        private static void CheckDeveloperPrompt()
+        public static void CheckDeveloperPrompt()
         {
             var haveDeveloperPrompt = false;
             var path = Environment.GetEnvironmentVariable("PATH");
-            var paths = path.Split(';');
-
-            // Parse the PATH for dumpbin
-            if (paths.Count() > 0)
+            if (path != null)
             {
-                foreach (var s in paths)
+                var paths = path.Split(';');
+
+                // Parse the PATH for dumpbin
+                if (paths.Any() && paths.Select(s => Path.Combine(s, "dumpbin.exe")).Any(File.Exists))
                 {
-                    var pth = Path.Combine(s, "dumpbin.exe");
-                    if (File.Exists(pth))
-                    {
-                        haveDeveloperPrompt = true;
-                        break;
-                    }
+                    haveDeveloperPrompt = true;
                 }
             }
 
@@ -613,11 +597,16 @@ namespace APIScannerDatabaseUpdater
         /*
          * Executes a dumpbin /exports on specified target binary
          */
-        private static string[] GetDumpbinOutput(string target)
+        public static string[] GetDumpbinOutput(string target,bool exports = true)
         {
             var dumpbin = new Process();
             dumpbin.StartInfo.FileName = "dumpbin.exe";
-            dumpbin.StartInfo.Arguments = "/EXPORTS \"" + target + '"';
+            if (exports)
+                dumpbin.StartInfo.Arguments = "/EXPORTS \"" + target + '"';
+            else
+            {
+                dumpbin.StartInfo.Arguments = "/IMPORTS \"" + target + '"';
+            }
             dumpbin.StartInfo.UseShellExecute = false;
             dumpbin.StartInfo.RedirectStandardOutput = true;
             dumpbin.Start();
@@ -633,17 +622,17 @@ namespace APIScannerDatabaseUpdater
          * Collects and stores all APIs that are permitted within the Universal Driver specification
          * in the database
          */
-        public static void GenerateCRTDatabase(string pathToDLLDirectory)
+        public static void GenerateCrtDatabase(string pathToDllDirectory)
         {
             CheckDeveloperPrompt();
             string[] crtDlls = { "vcruntime140.dll", "ucrtbase.dll"};
             foreach(string dll in crtDlls)
             {
-                string[] linesFromDump = GetDumpbinOutput(pathToDLLDirectory + "\\" + dll);
-                parseCRTDump(linesFromDump, dll);
+                string[] linesFromDump = GetDumpbinOutput(pathToDllDirectory + "\\" + dll);
+                ParseCrtDump(linesFromDump, dll);
             }
 
-            using (var connection = new SQLiteConnection("Data Source=" + dbPath))
+            using (var connection = new SQLiteConnection("Data Source=" + DbPath))
             {
                 connection.Open();
                 //WhiteList.xml first, this is shared by all, so we'll just use x86 for now
@@ -652,9 +641,11 @@ namespace APIScannerDatabaseUpdater
 
                     try
                     {
-                        var watch = new System.Diagnostics.Stopwatch();
+                        var watch = new Stopwatch();
                         watch.Start();
-                        updateTables(command, DllType.OS);
+                        UpdateTables(command, DllType.Os);
+                        command.CommandText = string.Format(UpdateDll, DllTypeToString(DllType.Os), "msvcrt.dll");
+
                         watch.Stop();
                         Console.WriteLine("Time for CRT Native Api List:: " + watch.ElapsedMilliseconds);
                         watch.Reset();
@@ -673,18 +664,18 @@ namespace APIScannerDatabaseUpdater
         /**
          * Collects all Exported CRT Apis available from the os level
          */
-        private static void parseCRTDump(string[] lines,string dll)
+        private static void ParseCrtDump(IReadOnlyList<string> lines, string dll)
         {
-            dllList.Add(dll);
+            _dllList.Add(dll);
             const int lineOffset = 17 + 2;//17 is where the ordinal "table" begins, 19 is where the first line STARTS...
             const int ordinalOffset = 11;
             const int funcOffset = 26;
-            for (int i = lineOffset; i < lines.Length && lines[i].Length > 1; i++)
+            for (var i = lineOffset; i < lines.Count && lines[i].Length > 1; i++)
             {
-                string line = lines[i];
+                var line = lines[i];
                 var ordinal = line.Substring(0, ordinalOffset);
                 var func = line.Substring(funcOffset);
-                fnList.Add(new KeyValuePair<string, string>(func + '@' + ordinal, dll));
+                _fnList.Add(new KeyValuePair<string, string>(func + '@' + ordinal, dll));
             }
         }
         #endregion
@@ -692,29 +683,29 @@ namespace APIScannerDatabaseUpdater
 
         /* Generate Substituation Database */
         #region Resolutions
-        public static void GenerateAPIResolutionsDatabase()
+        public static void GenerateApiResolutionsDatabase()
         {
-            WebClient client = new WebClient();
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://onecoresdk/Substitutions/default.htm");
-            HttpWebResponse res = (HttpWebResponse)req.GetResponse();
+            var req = (HttpWebRequest)WebRequest.Create("http://onecoresdk/Substitutions/default.htm");
+            var res = (HttpWebResponse)req.GetResponse();
             if (res.StatusCode == HttpStatusCode.OK)
             {
-                Stream responseStream = res.GetResponseStream();
+                var responseStream = res.GetResponseStream();
                 StreamReader sw = null;
 
                 if(res.CharacterSet == null)
                 {
-                    sw = new StreamReader(responseStream);
+                    if (responseStream != null) sw = new StreamReader(responseStream);
                 }
                 else
                 {
-                    sw = new StreamReader(responseStream, Encoding.GetEncoding(res.CharacterSet));
+                    if (responseStream != null)
+                        sw = new StreamReader(responseStream, Encoding.GetEncoding(res.CharacterSet));
                 }
                 string htmlOut = "";
-                while (!sw.EndOfStream)
+                while (sw != null && !sw.EndOfStream)
                 {
                     string currentLine = sw.ReadLine();
-                    if (!currentLine.Contains("<!") && currentLine.Contains('!'))
+                    if (currentLine != null && (!currentLine.Contains("<!") && currentLine.Contains('!')))
                     {
                         htmlOut += currentLine;
                     }
@@ -734,24 +725,24 @@ namespace APIScannerDatabaseUpdater
                     {
                         break;
                     }
-                    string newLine = line.Replace("<td />", "~");
+                    var newLine = line.Replace("<td />", "~");
                     newLine = newLine.Replace("</td>", "~");
-                    string[] lineSplit = newLine.Split('~');
-                    string[] apiSplit = lineSplit[0].Split('!');
-                    Resolution sub = new Resolution();
-                    sub.dll = apiSplit[0];
-                    sub.apiName = apiSplit[1];
-                    sub.alternateAPI = lineSplit[1];
-                    sub.notes = lineSplit[2];
-                    resolutionList.Add(sub);
+                    var lineSplit = newLine.Split('~');
+                    var apiSplit = lineSplit[0].Split('!');
+                    var sub = new Resolution();
+                    sub.Dll = apiSplit[0];
+                    sub.ApiName = apiSplit[1];
+                    sub.AlternateApi = lineSplit[1];
+                    sub.Notes = lineSplit[2];
+                    _resolutionList.Add(sub);
                 }
-                using (var connection = new SQLiteConnection("Data Source=" + dbPath))
+                using (var connection = new SQLiteConnection("Data Source=" + DbPath))
                 {
                     connection.Open();
                     //WhiteList.xml first, this is shared by all, so we'll just use x86 for now
                     using (var command = new SQLiteCommand(connection))
                     {
-                        updateResolutionTable(command);
+                        UpdateResolutionTable(command);
                     }
                 }
             }
@@ -763,10 +754,10 @@ namespace APIScannerDatabaseUpdater
 
         public class Resolution
         {
-            public string dll;
-            public string apiName;
-            public string alternateAPI;
-            public string notes;
+            public string Dll;
+            public string ApiName;
+            public string AlternateApi;
+            public string Notes;
         }
         #endregion
         /* End Sub database */
@@ -778,13 +769,13 @@ namespace APIScannerDatabaseUpdater
             string typeString = null;
             switch (type)
             {
-                case DllType.OS:
+                case DllType.Os:
                     typeString = "OS";
                     break;
-                case DllType.UAP:
+                case DllType.Uap:
                     typeString = "UAP";
                     break;
-                case DllType.UD:
+                case DllType.Ud:
                     typeString = "UD";
                     break;
 
