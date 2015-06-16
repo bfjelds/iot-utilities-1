@@ -35,7 +35,7 @@ void EnumAdapters();
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	wprintf(L"Enumerate Network Adapters\n");
+	wprintf(L"Enumerate Network Adapters\n\n");
 
 	DisplayComputerName();
 	EnumAdapters();
@@ -59,6 +59,7 @@ void DisplayComputerName()
 		wprintf(L"Failed to get Computer Name\n");
 		DebugPrint(L"Failed to get Computer Name\n");
 	}
+	wprintf(L"\n");
 }
 
 
@@ -87,7 +88,6 @@ void EnumAdapters()
 	}
 	// Make an initial call to GetAdaptersInfo to get
 	// the necessary size into the ulOutBufLen variable
-//#pragma warning(suppress: __WARNING_IPV6_USE_EX_VERSION)
 	if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
 		FREE(pAdapterInfo);
 		pAdapterInfo = (IP_ADAPTER_INFO *)MALLOC(ulOutBufLen);
@@ -97,20 +97,10 @@ void EnumAdapters()
 		}
 	}
 
-//#pragma warning(suppress: __WARNING_IPV6_USE_EX_VERSION)
 	if ((dwRetVal = GetAdaptersInfo(pAdapterInfo, &ulOutBufLen)) == NO_ERROR) {
 		pAdapter = pAdapterInfo;
 
 		while (pAdapter) {
-			bool bEthernet = false;
-
-			switch (pAdapter->Type) {
-			case MIB_IF_TYPE_ETHERNET:
-				bEthernet = true;
-				break;
-			case MIB_IF_TYPE_LOOPBACK:
-				break;
-			}
 			printf("Adapter Name: %s\n", pAdapter->AdapterName);
 			printf("Description : %s\n", pAdapter->Description);
 			printf("IP Address  : %s\n", pAdapter->IpAddressList.IpAddress.String);
@@ -139,7 +129,7 @@ void EnumAdapters()
 				printf("MIB_IF_TYPE_SLIP");
 				break;
 			case IF_TYPE_IEEE80211:
-				printf("Wireless Adapter!");
+				printf("IF_TYPE_IEEE80211 [wireless adapter]");
 				break;
 			default:
 				printf("MIB Type - %ld\n", pAdapter->Type);
@@ -147,24 +137,19 @@ void EnumAdapters()
 			}
 			printf("\n");
 
-			if (bEthernet && strncmp("0.0.0.0", pAdapter->IpAddressList.IpAddress.String, 7))
-			{
-				swprintf_s(buffer->ipv4, ipv4_len, L"%S", pAdapter->IpAddressList.IpAddress.String);
-				DebugPrint(L"IP Address: \t%s\n", buffer->ipv4);
-				swprintf_s(buffer->mac, mac_len, L"%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
-					(BYTE)pAdapter->Address[0],
-					(BYTE)pAdapter->Address[1],
-					(BYTE)pAdapter->Address[2],
-					(BYTE)pAdapter->Address[3],
-					(BYTE)pAdapter->Address[4],
-					(BYTE)pAdapter->Address[5],
-					(BYTE)pAdapter->Address[6],
-					(BYTE)pAdapter->Address[7]);
-				printf("Mac Address: %s\n", pAdapter->Address);
-				DebugPrint(L"Mac Address: \t%s\n", buffer->mac);
-				bRet = true;
-				break;
-			}
+			swprintf_s(buffer->mac, mac_len, L"%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
+				(BYTE)pAdapter->Address[0],
+				(BYTE)pAdapter->Address[1],
+				(BYTE)pAdapter->Address[2],
+				(BYTE)pAdapter->Address[3],
+				(BYTE)pAdapter->Address[4],
+				(BYTE)pAdapter->Address[5],
+				(BYTE)pAdapter->Address[6],
+				(BYTE)pAdapter->Address[7]);
+
+			wprintf(L"Mac Address: %s\n", buffer->mac);
+			DebugPrint(L"Mac Address: \t%s\n", buffer->mac);
+
 			printf("\n");
 			pAdapter = pAdapter->Next;
 		}
