@@ -1,0 +1,14 @@
+{
+  "name": "Node-Rest-API",
+  "version": "0.0.0",
+  "description": "Node-Rest-API",
+  "main": "server.js",
+  "author": {
+    "name": "mikehall",
+    "email": ""
+  },
+  "dependencies": {
+    "express": "3.x"  
+
+  }
+}
