@@ -31,7 +31,22 @@ namespace APIScannerDatabaseUpdater
 
         private const string InsertResolutions = "INSERT INTO RESOLUTION (A_API,A_DLL,A_ALTERNATEAPI,A_NOTES) VALUES ";
 
-        private static List<KeyValuePair<string, string>> _fnList = new List<KeyValuePair<string, string>>();
+        //JAMESEDIT MAKE CLEANER::
+        private class ApiEntry
+        {
+            public readonly string Apiname = null;
+            public readonly string Dll = null;
+            public readonly int Ordinal = 0;
+
+            public ApiEntry(string iApiname, string iDll, int iOrdinal = 0)
+            {
+                Apiname = iApiname;
+                Dll = iDll;
+                Ordinal = iOrdinal;
+            }
+        }
+
+        private static List<ApiEntry> _fnList = new List<ApiEntry>();//api,
         private static List<string> _dllList = new List<string>();
         private static List<string> _storedDlls;
         private static List<Resolution> _resolutionList = new List<Resolution>();
@@ -82,6 +97,15 @@ namespace APIScannerDatabaseUpdater
                                                 A_DLL INTEGER NOT NULL,
                                                 A_ALTERNATEAPI INTEGER,
                                                 A_NOTES INTEGER
+                                            );";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = @"CREATE TABLE IF NOT EXISTS ORDINALMAP
+                                            (
+                                                O_ID INTEGER PRIMARY KEY,
+                                                O_ORDINAL INTEGER NOT NULL,
+                                                O_API INTEGER NOT NULL,
+                                                O_DLL INTEGER NOT NULL
                                             );";
                     command.ExecuteNonQuery();
 
@@ -140,26 +164,12 @@ namespace APIScannerDatabaseUpdater
                 command.CommandText = InsertFunctionWithOrdinal;
                 for (int i = 0; i < MaxInsert && _fnList.Count > 0; i++)
                 {
-                    KeyValuePair<string, string> curr = _fnList.ElementAt(0);
+                    ApiEntry curr = _fnList.ElementAt(0);
 
-                    string func = curr.Key;
-                    string dll = curr.Value;
-                    string ordinal = "0";
-                    if (func.Contains('@'))//meaning there IS an ordinal
-                    {
-                        string[] parts = func.Split('@');
+                    string func = curr.Apiname;
+                    string dll = curr.Dll;
+                    int ordinal = curr.Ordinal;
 
-                        if(parts.Length == 2)
-                        {
-                            func = parts[0];
-                            ordinal = parts[1];
-                        }
-                        else
-                        {
-                            func = parts[1];
-                            ordinal = parts[2];
-                        }
-                    }
                     func = func.Replace("'", "''");
                     command.CommandText += string.Format(additionalElementWithOrdinal, func, dll, ordinal);
                     _fnList.Remove(curr);
@@ -331,18 +341,33 @@ namespace APIScannerDatabaseUpdater
                     {
                         dll = "UNKNOWN";
                     }
-                    KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
+                    //KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
                     if (checkForDuplicates)
                     {
-                        if (_fnList.Contains(pair))
+                        var apiSearch = from sPair in _fnList
+                            where sPair.Dll.Equals(dll) 
+                            select sPair.Apiname;
+
+                        var enumerable = apiSearch as string[] ?? apiSearch.ToArray();
+                        if (!enumerable.Any())
                         {
-                            continue;
+                            _dllList.Add(dll);
+                            _fnList.Add(new ApiEntry(function, dll));
                         }
+
+                        else if (!enumerable.Contains(function))
+                            {
+                            _fnList.Add(new ApiEntry(function, dll));
+                        }
+                        
+
+                    }
+                    else
+                    {
+                        AttemptToAddDll(dll);
+                        _fnList.Add(new ApiEntry(function, dll));
                     }
                     watch.Stop();
-
-                    AttemptToAddDll(dll);
-                    _fnList.Add(pair);
                 }
                 reader.Close();
             }
@@ -384,7 +409,6 @@ namespace APIScannerDatabaseUpdater
 
                         watch.Stop();
                         UpdateTables(command,DllType.Os);
-                        command.CommandText = "UPDATE DLL SET D_OS=1 WHERE D_NAME='msvcrt.dll';";
                         Console.WriteLine("Time for UAP Api List:: " + watch.ElapsedMilliseconds);
                         watch.Reset();
                         
@@ -429,11 +453,28 @@ namespace APIScannerDatabaseUpdater
                         {
                             dll = "UNKNOWN";
                         }
-                        KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
-
-                        AttemptToAddDll(dll);
-
-                        _fnList.Add(pair);
+                        ApiEntry apiEntry = new ApiEntry(function, dll);
+                        bool alreadyExists = false;
+                        var dllSearch = from sPair in _fnList
+                                        where sPair.Dll.Equals(dll)
+                                        select sPair.Apiname;
+                        var enumerable = dllSearch as string[] ?? dllSearch.ToArray();
+                        if (enumerable.Any() == false)
+                        {
+                            _dllList.Add(dll);
+                        }
+                        else
+                        {
+                            foreach (string api in enumerable)
+                            {
+                                if (api.Equals(function))
+                                {
+                                    alreadyExists = true;
+                                }
+                            }
+                        }
+                        if(!alreadyExists)
+                            _fnList.Add(apiEntry);
                     }
                 }
                 reader.Close();
@@ -544,7 +585,7 @@ namespace APIScannerDatabaseUpdater
                     {
                         dll = "UNKNOWN";
                     }
-                    KeyValuePair<string, string> pair = new KeyValuePair<string, string>(function, dll);
+                    ApiEntry pair = new ApiEntry(function, dll);
                     if (checkForDuplicates)
                     {
                         if (_fnList.Contains(pair))
@@ -625,7 +666,7 @@ namespace APIScannerDatabaseUpdater
         public static void GenerateCrtDatabase(string pathToDllDirectory)
         {
             CheckDeveloperPrompt();
-            string[] crtDlls = { "vcruntime140.dll", "ucrtbase.dll"};
+            string[] crtDlls = { "vcruntime140.dll", "ucrtbase.dll","winusb.dll","devobj.dll", "msvcrt.dll", "cfgmgr32.dll" };
             foreach(string dll in crtDlls)
             {
                 string[] linesFromDump = GetDumpbinOutput(pathToDllDirectory + "\\" + dll);
@@ -643,9 +684,10 @@ namespace APIScannerDatabaseUpdater
                     {
                         var watch = new Stopwatch();
                         watch.Start();
-                        UpdateTables(command, DllType.Os);
+                        UpdateTables(command, DllType.Os,false);
+                        UpdateTables(command, DllType.Uap);
                         command.CommandText = string.Format(UpdateDll, DllTypeToString(DllType.Os), "msvcrt.dll");
-
+                        command.ExecuteNonQuery();
                         watch.Stop();
                         Console.WriteLine("Time for CRT Native Api List:: " + watch.ElapsedMilliseconds);
                         watch.Reset();
@@ -667,15 +709,16 @@ namespace APIScannerDatabaseUpdater
         private static void ParseCrtDump(IReadOnlyList<string> lines, string dll)
         {
             _dllList.Add(dll);
-            const int lineOffset = 17 + 2;//17 is where the ordinal "table" begins, 19 is where the first line STARTS...
-            const int ordinalOffset = 11;
-            const int funcOffset = 26;
-            for (var i = lineOffset; i < lines.Count && lines[i].Length > 1; i++)
+            const int lineOffset = 19;//17 is where the ordinal "table" begins, 19 is where the first line STARTS...
+            for (var i = lineOffset; i < lines.Count && lines[i].Trim().Length > 0; i++)
             {
-                var line = lines[i];
-                var ordinal = line.Substring(0, ordinalOffset);
-                var func = line.Substring(funcOffset);
-                _fnList.Add(new KeyValuePair<string, string>(func + '@' + ordinal, dll));
+                var line = lines[i].Trim();
+                line = line.Replace("   ", " ");
+                line = line.Replace("  ", " ");
+                var parts = line.Split(' ');
+                var ordinal = Convert.ToInt32(parts[0]);
+                var func = parts[3];
+                _fnList.Add(new ApiEntry(func,dll,ordinal));
             }
         }
         #endregion
@@ -762,9 +805,48 @@ namespace APIScannerDatabaseUpdater
         #endregion
         /* End Sub database */
 
-        /* Helper functions */
-        #region Helpers
-        public static string DllTypeToString(DllType type)
+        /* Ordinal Map */
+
+        public static void GenerateOrdinalMap()
+        {
+            string insertOrdinalDllMap = "INSERT INTO ORDINALMAP (O_ORDINAL, O_API, O_DLL) VALUES ";
+            string additionalOrdinalDllMap = "({0},'{1}','{2}'),";
+            string[] dllList = {"oleaut32.dll", "Ws2_32.dll" };
+            string folder = @"C:\Windows\System32";
+            using (var connection = new SQLiteConnection("Data Source=" + DbPath))
+            {
+                connection.Open();
+                //WhiteList.xml first, this is shared by all, so we'll just use x86 for now
+                using (var command = new SQLiteCommand(connection))
+                {
+                    foreach (var dll in dllList)
+                    {
+                        var outputLines = GetDumpbinOutput(folder + "\\" + dll);
+                        string commandStr = insertOrdinalDllMap;
+                        for (int i = 20; i < outputLines.Length && outputLines[i].Trim().Length > 0; i++)
+                        {
+                            var line = outputLines[i].Trim();
+                            line = line.Replace("   ", " ");
+                            line = line.Replace("  ", " ");
+                            var parts = line.Split(' ');
+                            var ordinal = parts[0];
+                            var api = parts[3];
+                            commandStr += string.Format(additionalOrdinalDllMap, ordinal, api, dll);
+                        }
+                        command.CommandText = commandStr.Remove(commandStr.Length - 1) + ';';
+                        command.ExecuteNonQuery();
+                    }
+                    connection.Close();
+                }
+            }
+        }
+
+        /* End Ordinal Map */
+
+                /* Helper functions */
+                #region Helpers
+            public static
+            string DllTypeToString(DllType type)
         {
             string typeString = null;
             switch (type)
