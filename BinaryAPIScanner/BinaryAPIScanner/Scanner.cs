@@ -15,11 +15,27 @@ namespace BinaryAPIScanner
 
         private static List<KeyValuePair<string, int>> _winCeOrdinalMap;
         //holds the mapping of APIs to DLLs AND ordinals WITHIN those dlls
-        private static List<KeyValuePair<string, KeyValuePair<string, int>>> _availableFunctionMap;
+        private static List<ApiEntry> _availableFunctionMap;
         private static List<string> _apisUsed;//holds a list of all APIS from the Available function mappings that were used
         private static List<KeyValuePair<string,string>> _apIsFailed;//function to dll mapping for all apis that are not permitted but utilized
         private static List<string> _allowedDlls;//a list of all dlls that are permitted within this specification
         private static List<UapApiParser.Resolution> _resolutionList;
+        private static List<ApiEntry> _ordinalMap;//dll -> (apiname -> ordinal)
+
+
+        private class ApiEntry
+        {
+            public readonly string apiname = null;
+            public readonly string dll = null;
+            public readonly int ordinal = 0;
+
+            public ApiEntry(string i_apiname, string i_dll, int i_ordinal = 0)
+            {
+                apiname = i_apiname;
+                dll = i_dll;
+                ordinal = i_ordinal;
+            }
+        }
 
         public static void Scan(string filePath, UapApiParser.DllType type)
         {
@@ -90,7 +106,7 @@ namespace BinaryAPIScanner
                         foreach (var apiCheck in selectedApi)
                         {
                             string apiFound = null;
-                            if (_availableFunctionMap.Any(a => a.Key.Equals(apiCheck)))
+                            if (_availableFunctionMap.Any(a => a.apiname.Equals(apiCheck)))
                             {
                                 apiFound = (apiCheck);
                             }
@@ -108,28 +124,48 @@ namespace BinaryAPIScanner
                     {
                         var lib = currentLib;
                         var selectedApis = from api in _availableFunctionMap
-                            where api.Value.Key.ToLower().Equals(lib) && ordinal == api.Value.Value
-                            select api.Key;
-                        var enumerable = selectedApis as string[] ?? selectedApis.ToArray();
-                        if (enumerable.Count() == 1)
+                            where api.dll.ToLower().Equals(lib) && ordinal == api.ordinal
+                            select api.apiname;
+
+                        var apis = selectedApis as string[] ?? selectedApis.ToArray();
+                        if (apis.Count() > 0)
                         {
-                            foreach (var api in enumerable)
-                            {
-                                _apisUsed.Add(api);
-                            }
+                            _apisUsed.Add(apis.First());
                         }
                         else
                         {
-                            _apIsFailed.Add(new KeyValuePair<string, string>("Ordinal#: "+Convert.ToString(ordinal), currentLib));
+                            var possiblyAvailable = from api in _ordinalMap
+                                                    where api.dll.ToLower().Equals(lib.ToLower()) && ordinal == api.ordinal
+                                                    select api.apiname;
+                            var enumerable = possiblyAvailable as string[] ?? possiblyAvailable.ToArray();
+                            if (enumerable.Count() > 0)
+                            {
+                                string toMatch = enumerable.First();
+                                var match = from apientry in _availableFunctionMap
+                                    where apientry.apiname.ToLower().Equals(toMatch)
+                                    select apientry.apiname;
+                                if (match.Count() > 0)
+                                    _apisUsed.Add(toMatch);
+                                else
+                                {
+                                    _apIsFailed.Add(new KeyValuePair<string, string>(toMatch,
+                                            currentLib));
+                                }
+                            }
+                            else
+                            {
+                                _apIsFailed.Add(new KeyValuePair<string, string>("Ordinal#: " + Convert.ToString(ordinal), currentLib));
+                            }
                         }
                     }
                 }
                 else if(!currentLib.Equals("") && !line.Equals("Summary"))//meaning we have a direct api name mapping..
                 {
                     var apiName = line.Split(' ')[1];
+                    apiName = apiName.Replace("\r","");
                     var selectedApis = from api in _availableFunctionMap
-                        where api.Key.Equals(apiName)
-                        select api.Key;
+                        where api.apiname.Equals(apiName)
+                        select api.apiname;
 
                     if (selectedApis.Any())
                     {
@@ -154,6 +190,7 @@ namespace BinaryAPIScanner
             const string retrieveFunc = "SELECT F_NAME,F_DLL_NAME,F_ORDINAL FROM FUNCTION WHERE F_DLL_NAME='{0}'";
             const string additionalDllForRetrieveFunc = " OR F_DLL_NAME='{0}'";
             const string retrieveResolutions = "SELECT A_API,A_DLL,A_ALTERNATEAPI,A_NOTES FROM RESOLUTION;";
+            const string retrieveOrdinalMap = "SELECT O_API,O_DLL,O_ORDINAL FROM ORDINALMAP;";
 
 
             /* Pull Everything from COREDLL table in WinCE.db */
@@ -187,7 +224,7 @@ namespace BinaryAPIScanner
                     _allowedDlls = new List<string>();
                     command.CommandText = string.Format(retrieveDll, UapApiParser.DllTypeToString(type));
                     SQLiteDataReader reader = command.ExecuteReader();
-                    
+
                     while (reader.Read())
                     {
                         _allowedDlls.Add(reader.GetString(0));
@@ -195,14 +232,14 @@ namespace BinaryAPIScanner
                     reader.Close();
 
                     string getFuncCommand = string.Format(retrieveFunc, _allowedDlls.ElementAt(0));
-                    for(int i=0; i < _allowedDlls.Count; i++)
+                    for (int i = 0; i < _allowedDlls.Count; i++)
                     {
                         string dll = _allowedDlls.ElementAt(i);
                         getFuncCommand += string.Format(additionalDllForRetrieveFunc, dll);
                     }
                     command.CommandText = getFuncCommand + ';';
                     reader = command.ExecuteReader();
-                    _availableFunctionMap = new List<KeyValuePair<string, KeyValuePair<string,int>>>();
+                    _availableFunctionMap = new List<ApiEntry>();
                     while (reader.Read())
                     {
                         string apiName = reader.GetString(0).Replace("\r", "");
@@ -211,7 +248,7 @@ namespace BinaryAPIScanner
                         //Console.Out.WriteLine("dll: " + dll);
                         int ordinal = reader.GetInt32(2);
                         //Console.Out.WriteLine("ordinal: " + ordinal);
-                        _availableFunctionMap.Add(new KeyValuePair<string, KeyValuePair<string, int>>(apiName,new KeyValuePair<string, int>(dll,ordinal)));
+                        _availableFunctionMap.Add(new ApiEntry(apiName,dll, ordinal));
                     }
                     reader.Close();
 
@@ -228,6 +265,20 @@ namespace BinaryAPIScanner
                         resolution.Notes = reader.GetString(3);
                         _resolutionList.Add(resolution);
                     }
+                    reader.Close();
+
+                    /* Pull Everything from the OrdinalMap Database */
+                    _ordinalMap = new List<ApiEntry>();
+                    command.CommandText = retrieveOrdinalMap;
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        ApiEntry entry =
+                            new ApiEntry(reader.GetString(0), reader.GetString(1), reader.GetInt32(2));
+                        _ordinalMap.Add(entry);
+
+                    }
+                    reader.Close();
                 }
                 connection.Close();
             }

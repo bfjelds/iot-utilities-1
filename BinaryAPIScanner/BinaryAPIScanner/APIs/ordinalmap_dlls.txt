@@ -1,0 +1,2 @@
+oleaut32.dll
+Ws2_32.dll
