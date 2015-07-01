@@ -5,33 +5,77 @@
 #include <Windows.h>
 #include <strsafe.h>
 
+#include <roapi.h>
 using namespace std;
 #include <cctype>
 #include <string>
 #include <algorithm>
 
+#include <wrl\client.h>
+#include <wrl\wrappers\corewrappers.h>
+#include <windows.management.deployment.h>
+
+using namespace Platform;
+using namespace Windows::Management::Deployment;
+
 void ShowBanner();
 void ShowUsage();
-bool ParseCommandLine(int argc, _TCHAR* argv[]);
+bool ParseCommandLine(Platform::Array<Platform::String^>^ args);
 bool InstallCertificate(std::wstring CertName);
 bool DoesFileExist(std::wstring strFile);
 
 bool bInstall = false;			// assume uninstall.
 wstring AppxPackageName(L"");	// name of package to install
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(Platform::Array<Platform::String^>^ args)
 {
 	ShowBanner();
 
-	if (argc != 3)	// <app> <un|install> <Appx>
+	
+
+	if (args->Length != 3)	// <app> <un|install> <Appx>
 	{
 		ShowUsage();
 		return -1;
 	}
 
-	if (ParseCommandLine(argc, argv))
+	if (ParseCommandLine(args))
 	{
+		// bInstall will be set (true | false)
+		// now check on the APPX and .CER
+		AppxPackageName = args[2]->Begin();	// hopefully the .APPX file.
+		bool bHaveAppx = DoesFileExist(AppxPackageName);
 
+		bool bHaveCert = false;
+		std::wstring CertName = AppxPackageName;
+		std::string::size_type found = CertName.rfind(L".appx");
+		if (std::string::npos != found)
+		{
+			CertName = CertName.substr(0, found) + L".cer";
+			wprintf(L"Looking for certificate  %s\n", CertName.c_str());
+			bHaveCert = DoesFileExist(CertName);
+		}
+
+		if (!bHaveCert)
+		{
+			wprintf(L"Did not find certificate file %s\n", CertName.c_str());
+			return -1;
+		}
+
+		if (!InstallCertificate(CertName))
+		{
+			wprintf(L"Failed to install certificate\n");
+			return -1;
+		}
+
+		HRESULT hr = ::RoInitialize(RO_INIT_SINGLETHREADED);
+		if (FAILED(hr))
+		{
+			wprintf(L"Failed to initialize Runtime\n");
+			return -1;
+		}
+
+		String^ inputPackageUri = args[1];
 	}
 	else
 	{
@@ -57,13 +101,13 @@ void ShowUsage()
 	wprintf(L"%s uninstall MyApp.appx  // Uninstall MyApp.appx\n\n", wsAppName.c_str());
 }
 
-bool ParseCommandLine(int argc, _TCHAR* argv[])
+bool ParseCommandLine(Platform::Array<Platform::String^>^ args)
 {
 	// find out whether this is install or uninstall
 	// we will check whether the APPX and .CER exist later.
 	bool bRet = false;
 	// convert 'command' to lower case.
-	wstring wCommand(argv[1]);
+	wstring wCommand(args[1]->Begin());
 	transform(
 		wCommand.begin(), wCommand.end(),
 		wCommand.begin(),
