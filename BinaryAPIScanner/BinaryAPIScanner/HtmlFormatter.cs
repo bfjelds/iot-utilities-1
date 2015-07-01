@@ -16,7 +16,7 @@ namespace BinaryAPIScanner
             _outputFilename = _binaryName + "_analysis" + UapApiParser.DllTypeToString(type);
         }
 
-        public string GenerateOutput(List<KeyValuePair<string, string>> apisFailed, List<string> apisUsed, List<UapApiParser.Resolution> resolutions)
+        public string GenerateOutput(List<KeyValuePair<string, string>> apisFailed, List<string> apisUsed, List<Attribute> dotNetAttrFailed, List<Type> dotNetTypesFailed, List<UapApiParser.Resolution> resolutions)
         {
             string sOutFile = "output\\" + _outputFilename  + ".html";
             if (!Directory.Exists("output"))
@@ -43,11 +43,11 @@ namespace BinaryAPIScanner
             int totalApIsScanned = unsupportedApiCount + apisUsed.Count();
             int unsupportedDllCount = 0;
             // tablecontents go here.
-            if (apisFailed.Any())
+            if (apisFailed.Any() || dotNetTypesFailed.Any() || dotNetAttrFailed.Any())
             {
                 List<string> unsupportedDlls = new List<string>();
                 sw.Write("<table border=\"1\"><tr><th>API</th><th>Import DLL</th><th>API Resolution</th><th>Resolution Notes</th></tr>");
-                while (apisFailed.Count > 0)
+                while (apisFailed.Any())
                 {
                     sw.Write("<tr>");
                     string altApi = "<font color=\"red\">No Resolution Found</font>";
@@ -73,6 +73,20 @@ namespace BinaryAPIScanner
                         apisFailed.RemoveAt(0);
                     }
                     sw.Write("</tr>");  // end of table row
+                }
+                while (dotNetTypesFailed.Any())
+                {
+                    sw.Write("<tr>");
+                    sw.Write("<td><font color=\"red\">{0}</font></td><td><font color=\"red\">{1}</font></td><td>{2}</td><td>{3}</td>", dotNetTypesFailed.ElementAt(0).GetType().ToString(), dotNetTypesFailed.ElementAt(0).Assembly.ToString(), "", ".NET Type Unsupported");
+                    dotNetTypesFailed.RemoveAt(0);
+                    sw.Write("</tr>");
+                }
+                while (dotNetAttrFailed.Any())
+                {
+                    sw.Write("<tr>");
+                    sw.Write("<td><font color=\"red\">{0}</font></td><td><font color=\"red\">{1}</font></td><td>{2}</td><td>{3}</td>", dotNetAttrFailed.ElementAt(0).TypeId.ToString(), dotNetAttrFailed.ElementAt(0).GetType().ToString(), "", ".NET Attribute Unsupported");
+                    dotNetAttrFailed.RemoveAt(0);
+                    sw.Write("</tr>");
                 }
             }
             else

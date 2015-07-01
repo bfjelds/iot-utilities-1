@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using APIScannerDatabaseUpdater;
+using System.Reflection;
 
 namespace BinaryAPIScanner
 {
@@ -20,8 +21,14 @@ namespace BinaryAPIScanner
         private static List<KeyValuePair<string,string>> _apIsFailed;//function to dll mapping for all apis that are not permitted but utilized
         private static List<string> _allowedDlls;//a list of all dlls that are permitted within this specification
         private static List<UapApiParser.Resolution> _resolutionList;
-        private static List<ApiEntry> _ordinalMap;//dll -> (apiname -> ordinal)
+        private static List<ApiEntry> _ordinalMap;
 
+        private static List<Type> _dotNetTypesUsed;
+        private static List<Attribute> _dotNetAttrUsed;
+        private static List<Type> _dotNetTypesFailed;
+        private static List<Attribute> _dotNetAttrFailed;
+        private static List<Type> _allowedDotNetTypes;
+        private static List<Attribute> _allowedDotNetAttributes;  
 
         private class ApiEntry
         {
@@ -39,12 +46,15 @@ namespace BinaryAPIScanner
 
         public static void Scan(string filePath, UapApiParser.DllType type)
         {
-            UapApiParser.CheckDeveloperPrompt();
             PullFromDb(type);
+            Console.WriteLine("Scanning Dot Net...");
+            GetDotNetDependencies(filePath);
+            Console.WriteLine("End Scanning of Dot Net...");
+            UapApiParser.CheckDeveloperPrompt();
             GetBinaryDependencies(filePath);
             Console.Out.WriteLine("Number of Failed APIS: "+_apIsFailed.Count());
             HtmlFormatter outputHtml = new HtmlFormatter(filePath,type);
-            string htmlOutputPath = outputHtml.GenerateOutput(_apIsFailed, _apisUsed, _resolutionList);
+            string htmlOutputPath = outputHtml.GenerateOutput(_apIsFailed, _apisUsed, _dotNetAttrFailed, _dotNetTypesFailed, _resolutionList);
             Console.Out.WriteLine("Html Output Generated at filepath:\n" + htmlOutputPath);
         }
 
@@ -128,7 +138,7 @@ namespace BinaryAPIScanner
                             select api.apiname;
 
                         var apis = selectedApis as string[] ?? selectedApis.ToArray();
-                        if (apis.Count() > 0)
+                        if (apis.Any())
                         {
                             _apisUsed.Add(apis.First());
                         }
@@ -138,13 +148,13 @@ namespace BinaryAPIScanner
                                                     where api.dll.ToLower().Equals(lib.ToLower()) && ordinal == api.ordinal
                                                     select api.apiname;
                             var enumerable = possiblyAvailable as string[] ?? possiblyAvailable.ToArray();
-                            if (enumerable.Count() > 0)
+                            if (enumerable.Any())
                             {
                                 string toMatch = enumerable.First();
                                 var match = from apientry in _availableFunctionMap
                                     where apientry.apiname.ToLower().Equals(toMatch)
                                     select apientry.apiname;
-                                if (match.Count() > 0)
+                                if (match.Any())
                                     _apisUsed.Add(toMatch);
                                 else
                                 {
@@ -177,6 +187,61 @@ namespace BinaryAPIScanner
                     }
                 }
             }
+        }
+
+        private static void GetDotNetDependencies(string filePath)
+        {
+            _dotNetTypesUsed = new List<Type>();
+            _dotNetAttrUsed = new List<Attribute>();
+            _dotNetTypesFailed = new List<Type>();
+            _dotNetAttrFailed = new List<Attribute>();
+            try
+            {
+                Assembly assembly = Assembly.LoadFrom(filePath);
+
+                Type[] types = assembly.GetTypes();
+                Console.Out.WriteLine("Types::");
+
+                foreach (Type objType in types)
+                {
+                    Console.Write(objType.ToString());
+                    if (_allowedDotNetTypes.Contains(objType))
+                    {
+                        Console.WriteLine(":: DotNetAPI Supported! ");
+                        _dotNetTypesUsed.Add(objType);
+                    }
+                    else
+                    {
+                        Console.WriteLine(":: DotNetAPI Unsupported! ");
+                        _dotNetTypesFailed.Add(objType);
+                    }
+                }
+
+                Attribute[] arrayAttributes = Attribute.GetCustomAttributes(assembly);
+
+                Console.Out.WriteLine("Attributes::");
+                foreach (Attribute attrib in arrayAttributes)
+                {
+                    Console.Write(attrib.TypeId);
+                    if (_allowedDotNetAttributes.Contains(attrib))
+                    {
+                        Console.WriteLine(":: DotNetAPI Supported! ");
+                        _dotNetAttrUsed.Add(attrib);
+                    }
+                    else
+                    {
+                        Console.WriteLine(":: DotNetAPI Unsupported! ");
+                        _dotNetAttrFailed.Add(attrib);
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                Console.Out.Write("Error:: "+e.Message);
+                Console.Out.WriteLine("Unable to get dot net reflection. This is probably NOT a managed Assembly.");
+            }
+
+            Console.ReadLine();
         }
 
         /**
@@ -230,6 +295,10 @@ namespace BinaryAPIScanner
                         _allowedDlls.Add(reader.GetString(0));
                     }
                     reader.Close();
+
+                    //TODO: create and pull from the DotNetAllowedAPI database:
+                    _allowedDotNetTypes = new List<Type>();
+                    _allowedDotNetAttributes = new List<Attribute>();
 
                     string getFuncCommand = string.Format(retrieveFunc, _allowedDlls.ElementAt(0));
                     for (int i = 0; i < _allowedDlls.Count; i++)
