@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <strsafe.h>
 #include <Psapi.h>
+#include <stdio.h>
 
 #include <roapi.h>
 using namespace std;
@@ -25,14 +26,20 @@ using namespace Windows::Management::Deployment;
 void ShowBanner();
 void ShowUsage();
 bool ParseCommandLine(Platform::Array<Platform::String^>^ args);
-bool InstallCertificate(std::wstring CertName);
-bool DoesFileExist(std::wstring strFile);
+
+bool DoesFileExist(std::wstring FileToCheck);
+
+// Functions to impersonate 'SiHost' user account
 bool Impersonate();
-bool Revert();
 HANDLE OpenProcessByName(std::wstring ProcessName);
+bool Revert();
+
+// Install and uninstall APPX Packages + Cert
+bool InstallAppxPackage(std::wstring PackageName);
+bool InstallCertificate(std::wstring CertName);
+bool UninstallAppxPackage(std::wstring PackageName);
 
 bool bInstall = false;			// assume uninstall.
-wstring AppxPackageName(L"");	// name of package to install
 
 [MTAThread]
 int main(Platform::Array<Platform::String^>^ args)
@@ -47,109 +54,11 @@ int main(Platform::Array<Platform::String^>^ args)
 
 	if (ParseCommandLine(args))
 	{
-		// bInstall will be set (true | false)
-		// now check on the APPX and .CER
-		AppxPackageName = args[2]->Begin();	// hopefully the .APPX file.
-		bool bHaveAppx = DoesFileExist(AppxPackageName);
-
-		bool bHaveCert = false;
-		std::wstring CertName = AppxPackageName;
-		std::string::size_type found = CertName.rfind(L".appx");
-		if (std::string::npos != found)
-		{
-			CertName = CertName.substr(0, found) + L".cer";
-			wprintf(L"Looking for certificate  %s\n", CertName.c_str());
-			bHaveCert = DoesFileExist(CertName);
-		}
-
-		if (!bHaveCert)
-		{
-			wprintf(L"Did not find certificate file %s\n", CertName.c_str());
-			return -1;
-		}
-
-		if (!InstallCertificate(CertName))
-		{
-			wprintf(L"Failed to install certificate\n");
-			return -1;
-		}
-
-
-		HRESULT hr = ::RoInitialize(RO_INIT_MULTITHREADED);
-		if (FAILED(hr))
-		{
-			wprintf(L"Failed to initialize Runtime\n");
-			return -1;
-		}
-
-		HANDLE completedEvent = nullptr;
-		int returnValue = 0;
-		String^ inputPackageUri = args[2];
-		try
-		{
-			completedEvent = CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
-			if (completedEvent == nullptr)
-			{
-				wcout << L"CreateEvent Failed, error code=" << GetLastError() << endl;
-				returnValue = 1;
-			}
-			else
-			{
-				wcout << L"Create Event OK" << endl;
-
-				if (!Impersonate())
-				{
-					wprintf(L"Cannot install APPX - Impersonate SiHost Failed.\n");
-					return -1;
-				}
-
-				auto packageUri = ref new Uri(inputPackageUri);
-
-				auto packageManager = ref new PackageManager();
-				auto deploymentOperation = packageManager->AddPackageAsync(packageUri, nullptr, DeploymentOptions::None);
-
-				deploymentOperation->Completed =
-					ref new AsyncOperationWithProgressCompletedHandler<DeploymentResult^, DeploymentProgress>(
-						[&completedEvent](IAsyncOperationWithProgress<DeploymentResult^, DeploymentProgress>^ operation, Windows::Foundation::AsyncStatus)
-				{
-					SetEvent(completedEvent);
-				});
-
-				wcout << L"Installing package " << inputPackageUri->Data() << endl;
-
-				wcout << L"Waiting for installation to complete..." << endl;
-
-				WaitForSingleObject(completedEvent, INFINITE);
-
-				if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Error)
-				{
-					auto deploymentResult = deploymentOperation->GetResults();
-					wcout << L"Installation Error: " << deploymentOperation->ErrorCode.Value << endl;
-					wcout << L"Detailed Error Text: " << deploymentResult->ErrorText->Data() << endl;
-				}
-				else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Canceled)
-				{
-					wcout << L"Installation Canceled" << endl;
-				}
-				else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Completed)
-				{
-					wcout << L"Installation succeeded!" << endl;
-				}
-
-				// revert back to the logged on user.
-				Revert();
-			}
-		}
-		catch (Exception^ ex)
-		{
-			wcout << L"AddPackageSample failed, error message: " << ex->ToString()->Data() << endl;
-			returnValue = 1;
-		}
-
-		if (completedEvent != nullptr)
-			CloseHandle(completedEvent);
-
-
+		std::wstring AppxName(args[2]->Begin());
+		if (bInstall)
+			InstallAppxPackage(AppxName);
+		else
+			UninstallAppxPackage(AppxName);
 	}
 	else
 	{
@@ -200,6 +109,122 @@ bool ParseCommandLine(Platform::Array<Platform::String^>^ args)
 	}
 
 return bRet;
+}
+
+bool InstallAppxPackage(std::wstring PackageName)
+{
+	bool retVal = true;
+	bool bHaveCert = false;
+
+	wchar_t wcBuffer[MAX_PATH] = { 0 };
+	if (GetFullPathName(PackageName.c_str(), MAX_PATH, wcBuffer, NULL))
+	{
+		PackageName = wcBuffer;
+	}
+
+	std::wstring CertName(PackageName.c_str());
+	std::string::size_type found = CertName.rfind(L".appx");
+
+	if (std::string::npos != found)
+	{
+		CertName = CertName.substr(0, found) + L".cer";
+		wprintf(L"Looking for certificate  %s\n", CertName.c_str());
+		bHaveCert = DoesFileExist(CertName);
+	}
+
+	if (!bHaveCert)
+	{
+		wprintf(L"Did not find certificate file %s\n", CertName.c_str());
+		return false;
+	}
+
+	if (!InstallCertificate(CertName))
+	{
+		wprintf(L"Failed to install certificate\n");
+		return false;
+	}
+
+	// looks like we have both files... now try to install.
+	HRESULT hr = ::RoInitialize(RO_INIT_MULTITHREADED);
+	if (FAILED(hr))
+	{
+		wprintf(L"Failed to initialize Runtime\n");
+		return false;
+	}
+
+	HANDLE completedEvent = nullptr;
+	int returnValue = 0;
+	String^ inputPackageUri = ref new Platform::String(PackageName.c_str());
+	try
+	{
+		completedEvent = CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
+		if (completedEvent == nullptr)
+		{
+			wprintf(L"CreateEvent Failed, error code= %ld\n", GetLastError());
+			returnValue = 1;
+		}
+		else
+		{
+			if (!Impersonate())
+			{
+				wprintf(L"Cannot install APPX - Impersonate SiHost Failed.\n");
+				return false;
+			}
+
+			auto packageUri = ref new Uri(inputPackageUri);
+
+			auto packageManager = ref new PackageManager();
+			auto deploymentOperation = packageManager->AddPackageAsync(packageUri, nullptr, DeploymentOptions::None);
+
+			deploymentOperation->Completed =
+				ref new AsyncOperationWithProgressCompletedHandler<DeploymentResult^, DeploymentProgress>(
+					[&completedEvent](IAsyncOperationWithProgress<DeploymentResult^, DeploymentProgress>^ operation, Windows::Foundation::AsyncStatus)
+			{
+				SetEvent(completedEvent);
+			});
+			wprintf(L"Installing Package %s\n", inputPackageUri->Data());
+
+			wprintf(L"Waiting for install to complete...\n");
+
+			WaitForSingleObject(completedEvent, INFINITE);
+
+			if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Error)
+			{
+				auto deploymentResult = deploymentOperation->GetResults();
+				wprintf(L"Install Error: %ld\n", deploymentOperation->ErrorCode.Value);
+				wprintf(L"Detailed Error Information: %s\n", deploymentResult->ErrorText->Data());
+			}
+			else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Canceled)
+			{
+				wprintf(L"Installation Cancelled\n");
+			}
+			else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Completed)
+			{
+				wprintf(L"Install Succeeded!\n");
+			}
+
+			// revert back to the logged on user.
+			Revert();
+		}
+	}
+	catch (Exception^ ex)
+	{
+		wprintf(L"Installation Failed, Error Message : %s\n", ex->ToString()->Data());
+		retVal = false;
+	}
+
+	if (completedEvent != nullptr)
+		CloseHandle(completedEvent);
+
+	return retVal;
+}
+
+bool UninstallAppxPackage(std::wstring AppPackage)
+{
+	bool bRet = true;
+
+
+	return bRet;
 }
 
 // uses certmgr on the device to install the cert.
@@ -256,11 +281,11 @@ bool InstallCertificate(std::wstring CertName)
 	return bRet;
 }
 
-bool DoesFileExist(std::wstring strFile)
+bool DoesFileExist(std::wstring FileToCheck)
 {
 	bool bRet = false;
 	WIN32_FIND_DATA fd = { 0 };
-	HANDLE hFile = FindFirstFile(strFile.c_str(), &fd);
+	HANDLE hFile = FindFirstFile(FileToCheck.c_str(), &fd);
 	if (INVALID_HANDLE_VALUE != hFile)
 	{
 		bRet = true;
@@ -270,6 +295,7 @@ bool DoesFileExist(std::wstring strFile)
 	return bRet;
 }
 
+// impersonate the Default Account user to install the .APPX Package.
 bool Impersonate()
 {
 	std::wstring siProcess = L"sihost.exe";
@@ -300,6 +326,7 @@ bool Impersonate()
 	return true;
 }
 
+// Walk the process list looking for 'SiHost' so we can get the Process Handle
 HANDLE OpenProcessByName(std::wstring ProcessName)
 {
 	const size_t ProcessNameLength = wcslen(ProcessName.c_str());
@@ -333,6 +360,7 @@ HANDLE OpenProcessByName(std::wstring ProcessName)
 	return NULL;
 }
 
+// Revert from Default Account to Logged in user
 bool Revert()
 {
 	if (!RevertToSelf())
@@ -340,3 +368,4 @@ bool Revert()
 
 	return true;
 }
+
