@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using APIScannerDatabaseUpdater;
+using System.Reflection;
 
 namespace BinaryAPIScanner
 {
@@ -15,20 +16,45 @@ namespace BinaryAPIScanner
 
         private static List<KeyValuePair<string, int>> _winCeOrdinalMap;
         //holds the mapping of APIs to DLLs AND ordinals WITHIN those dlls
-        private static List<KeyValuePair<string, KeyValuePair<string, int>>> _availableFunctionMap;
+        private static List<ApiEntry> _availableFunctionMap;
         private static List<string> _apisUsed;//holds a list of all APIS from the Available function mappings that were used
         private static List<KeyValuePair<string,string>> _apIsFailed;//function to dll mapping for all apis that are not permitted but utilized
         private static List<string> _allowedDlls;//a list of all dlls that are permitted within this specification
         private static List<UapApiParser.Resolution> _resolutionList;
+        private static List<ApiEntry> _ordinalMap;
+
+        private static List<Type> _dotNetTypesUsed;
+        private static List<Attribute> _dotNetAttrUsed;
+        private static List<Type> _dotNetTypesFailed;
+        private static List<Attribute> _dotNetAttrFailed;
+        private static List<Type> _allowedDotNetTypes;
+        private static List<Attribute> _allowedDotNetAttributes;  
+
+        private class ApiEntry
+        {
+            public readonly string apiname = null;
+            public readonly string dll = null;
+            public readonly int ordinal = 0;
+
+            public ApiEntry(string i_apiname, string i_dll, int i_ordinal = 0)
+            {
+                apiname = i_apiname;
+                dll = i_dll;
+                ordinal = i_ordinal;
+            }
+        }
 
         public static void Scan(string filePath, UapApiParser.DllType type)
         {
-            UapApiParser.CheckDeveloperPrompt();
             PullFromDb(type);
+            Console.WriteLine("Scanning Dot Net...");
+            GetDotNetDependencies(filePath);
+            Console.WriteLine("End Scanning of Dot Net...");
+            UapApiParser.CheckDeveloperPrompt();
             GetBinaryDependencies(filePath);
             Console.Out.WriteLine("Number of Failed APIS: "+_apIsFailed.Count());
             HtmlFormatter outputHtml = new HtmlFormatter(filePath,type);
-            string htmlOutputPath = outputHtml.GenerateOutput(_apIsFailed, _apisUsed, _resolutionList);
+            string htmlOutputPath = outputHtml.GenerateOutput(_apIsFailed, _apisUsed, _dotNetAttrFailed, _dotNetTypesFailed, _resolutionList);
             Console.Out.WriteLine("Html Output Generated at filepath:\n" + htmlOutputPath);
         }
 
@@ -90,7 +116,7 @@ namespace BinaryAPIScanner
                         foreach (var apiCheck in selectedApi)
                         {
                             string apiFound = null;
-                            if (_availableFunctionMap.Any(a => a.Key.Equals(apiCheck)))
+                            if (_availableFunctionMap.Any(a => a.apiname.Equals(apiCheck)))
                             {
                                 apiFound = (apiCheck);
                             }
@@ -108,28 +134,48 @@ namespace BinaryAPIScanner
                     {
                         var lib = currentLib;
                         var selectedApis = from api in _availableFunctionMap
-                            where api.Value.Key.ToLower().Equals(lib) && ordinal == api.Value.Value
-                            select api.Key;
-                        var enumerable = selectedApis as string[] ?? selectedApis.ToArray();
-                        if (enumerable.Count() == 1)
+                            where api.dll.ToLower().Equals(lib) && ordinal == api.ordinal
+                            select api.apiname;
+
+                        var apis = selectedApis as string[] ?? selectedApis.ToArray();
+                        if (apis.Any())
                         {
-                            foreach (var api in enumerable)
-                            {
-                                _apisUsed.Add(api);
-                            }
+                            _apisUsed.Add(apis.First());
                         }
                         else
                         {
-                            _apIsFailed.Add(new KeyValuePair<string, string>("Ordinal#: "+Convert.ToString(ordinal), currentLib));
+                            var possiblyAvailable = from api in _ordinalMap
+                                                    where api.dll.ToLower().Equals(lib.ToLower()) && ordinal == api.ordinal
+                                                    select api.apiname;
+                            var enumerable = possiblyAvailable as string[] ?? possiblyAvailable.ToArray();
+                            if (enumerable.Any())
+                            {
+                                string toMatch = enumerable.First();
+                                var match = from apientry in _availableFunctionMap
+                                    where apientry.apiname.ToLower().Equals(toMatch)
+                                    select apientry.apiname;
+                                if (match.Any())
+                                    _apisUsed.Add(toMatch);
+                                else
+                                {
+                                    _apIsFailed.Add(new KeyValuePair<string, string>(toMatch,
+                                            currentLib));
+                                }
+                            }
+                            else
+                            {
+                                _apIsFailed.Add(new KeyValuePair<string, string>("Ordinal#: " + Convert.ToString(ordinal), currentLib));
+                            }
                         }
                     }
                 }
                 else if(!currentLib.Equals("") && !line.Equals("Summary"))//meaning we have a direct api name mapping..
                 {
                     var apiName = line.Split(' ')[1];
+                    apiName = apiName.Replace("\r","");
                     var selectedApis = from api in _availableFunctionMap
-                        where api.Key.Equals(apiName)
-                        select api.Key;
+                        where api.apiname.Equals(apiName)
+                        select api.apiname;
 
                     if (selectedApis.Any())
                     {
@@ -143,6 +189,61 @@ namespace BinaryAPIScanner
             }
         }
 
+        private static void GetDotNetDependencies(string filePath)
+        {
+            _dotNetTypesUsed = new List<Type>();
+            _dotNetAttrUsed = new List<Attribute>();
+            _dotNetTypesFailed = new List<Type>();
+            _dotNetAttrFailed = new List<Attribute>();
+            try
+            {
+                Assembly assembly = Assembly.LoadFrom(filePath);
+
+                Type[] types = assembly.GetTypes();
+                Console.Out.WriteLine("Types::");
+
+                foreach (Type objType in types)
+                {
+                    Console.Write(objType.ToString());
+                    if (_allowedDotNetTypes.Contains(objType))
+                    {
+                        Console.WriteLine(":: DotNetAPI Supported! ");
+                        _dotNetTypesUsed.Add(objType);
+                    }
+                    else
+                    {
+                        Console.WriteLine(":: DotNetAPI Unsupported! ");
+                        _dotNetTypesFailed.Add(objType);
+                    }
+                }
+
+                Attribute[] arrayAttributes = Attribute.GetCustomAttributes(assembly);
+
+                Console.Out.WriteLine("Attributes::");
+                foreach (Attribute attrib in arrayAttributes)
+                {
+                    Console.Write(attrib.TypeId);
+                    if (_allowedDotNetAttributes.Contains(attrib))
+                    {
+                        Console.WriteLine(":: DotNetAPI Supported! ");
+                        _dotNetAttrUsed.Add(attrib);
+                    }
+                    else
+                    {
+                        Console.WriteLine(":: DotNetAPI Unsupported! ");
+                        _dotNetAttrFailed.Add(attrib);
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                Console.Out.Write("Error:: "+e.Message);
+                Console.Out.WriteLine("Unable to get dot net reflection. This is probably NOT a managed Assembly.");
+            }
+
+            Console.ReadLine();
+        }
+
         /**
          * Pulls all permitted apis from the database based on the specified type and pulls ALL of the WinCE dependencies
          * to remap from COREDLL.DLL if the binary was created in WinCE
@@ -154,6 +255,7 @@ namespace BinaryAPIScanner
             const string retrieveFunc = "SELECT F_NAME,F_DLL_NAME,F_ORDINAL FROM FUNCTION WHERE F_DLL_NAME='{0}'";
             const string additionalDllForRetrieveFunc = " OR F_DLL_NAME='{0}'";
             const string retrieveResolutions = "SELECT A_API,A_DLL,A_ALTERNATEAPI,A_NOTES FROM RESOLUTION;";
+            const string retrieveOrdinalMap = "SELECT O_API,O_DLL,O_ORDINAL FROM ORDINALMAP;";
 
 
             /* Pull Everything from COREDLL table in WinCE.db */
@@ -187,22 +289,26 @@ namespace BinaryAPIScanner
                     _allowedDlls = new List<string>();
                     command.CommandText = string.Format(retrieveDll, UapApiParser.DllTypeToString(type));
                     SQLiteDataReader reader = command.ExecuteReader();
-                    
+
                     while (reader.Read())
                     {
                         _allowedDlls.Add(reader.GetString(0));
                     }
                     reader.Close();
 
+                    //TODO: create and pull from the DotNetAllowedAPI database:
+                    _allowedDotNetTypes = new List<Type>();
+                    _allowedDotNetAttributes = new List<Attribute>();
+
                     string getFuncCommand = string.Format(retrieveFunc, _allowedDlls.ElementAt(0));
-                    for(int i=0; i < _allowedDlls.Count; i++)
+                    for (int i = 0; i < _allowedDlls.Count; i++)
                     {
                         string dll = _allowedDlls.ElementAt(i);
                         getFuncCommand += string.Format(additionalDllForRetrieveFunc, dll);
                     }
                     command.CommandText = getFuncCommand + ';';
                     reader = command.ExecuteReader();
-                    _availableFunctionMap = new List<KeyValuePair<string, KeyValuePair<string,int>>>();
+                    _availableFunctionMap = new List<ApiEntry>();
                     while (reader.Read())
                     {
                         string apiName = reader.GetString(0).Replace("\r", "");
@@ -211,7 +317,7 @@ namespace BinaryAPIScanner
                         //Console.Out.WriteLine("dll: " + dll);
                         int ordinal = reader.GetInt32(2);
                         //Console.Out.WriteLine("ordinal: " + ordinal);
-                        _availableFunctionMap.Add(new KeyValuePair<string, KeyValuePair<string, int>>(apiName,new KeyValuePair<string, int>(dll,ordinal)));
+                        _availableFunctionMap.Add(new ApiEntry(apiName,dll, ordinal));
                     }
                     reader.Close();
 
@@ -228,6 +334,20 @@ namespace BinaryAPIScanner
                         resolution.Notes = reader.GetString(3);
                         _resolutionList.Add(resolution);
                     }
+                    reader.Close();
+
+                    /* Pull Everything from the OrdinalMap Database */
+                    _ordinalMap = new List<ApiEntry>();
+                    command.CommandText = retrieveOrdinalMap;
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        ApiEntry entry =
+                            new ApiEntry(reader.GetString(0), reader.GetString(1), reader.GetInt32(2));
+                        _ordinalMap.Add(entry);
+
+                    }
+                    reader.Close();
                 }
                 connection.Close();
             }
