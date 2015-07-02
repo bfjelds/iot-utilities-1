@@ -6,6 +6,8 @@
 #include <strsafe.h>
 #include <Psapi.h>
 #include <stdio.h>
+#include <appmodel.h>
+#include <collection.h>
 
 #include <roapi.h>
 using namespace std;
@@ -20,6 +22,7 @@ using namespace std;
 #include <windows.management.deployment.h>
 
 using namespace Windows::Foundation;
+using namespace Windows::Foundation::Collections;
 using namespace Platform;
 using namespace Windows::Management::Deployment;
 
@@ -38,6 +41,7 @@ bool Revert();
 bool InstallAppxPackage(std::wstring PackageName);
 bool InstallCertificate(std::wstring CertName);
 bool UninstallAppxPackage(std::wstring PackageName);
+void DisplayPackageInfo(Windows::ApplicationModel::Package^ package);
 
 bool bInstall = false;			// assume uninstall.
 
@@ -167,7 +171,7 @@ bool InstallAppxPackage(std::wstring PackageName)
 		{
 			if (!Impersonate())
 			{
-				wprintf(L"Cannot install APPX - Impersonate SiHost Failed.\n");
+				wprintf(L"Cannot install APPX - Impersonate Default Account Failed.\n");
 				return false;
 			}
 
@@ -219,13 +223,110 @@ bool InstallAppxPackage(std::wstring PackageName)
 	return retVal;
 }
 
-bool UninstallAppxPackage(std::wstring AppPackage)
+bool UninstallAppxPackage(std::wstring PackageName)
 {
-	bool bRet = true;
+	bool retVal = true;
 
+	HRESULT hr = ::RoInitialize(RO_INIT_MULTITHREADED);
+	if (FAILED(hr))
+	{
+		wprintf(L"Failed to initialize Runtime\n");
+		return false;
+	}
+	auto packageManager = ref new PackageManager();
 
-	return bRet;
+	Windows::Foundation::Collections::IIterable<Windows::ApplicationModel::Package^> ^packages =
+		packageManager->FindPackages();
+
+	int packageCount = 0;
+	std::for_each(Windows::Foundation::Collections::begin(packages), Windows::Foundation::Collections::end(packages),
+		[&](Windows::ApplicationModel::Package^ package)
+	{
+		DisplayPackageInfo(package);
+
+		packageCount += 1;
+	});
+
+	wprintf(L"%d App Packages found\n", packageCount);
+
+	HANDLE completedEvent = nullptr;
+	int returnValue = 0;
+	String^ inputPackageUri = ref new Platform::String(PackageName.c_str());
+	try
+	{
+		completedEvent = CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
+		if (completedEvent == nullptr)
+		{
+			wprintf(L"CreateEvent Failed, error code= %ld\n", GetLastError());
+			returnValue = 1;
+		}
+		else
+		{
+			if (!Impersonate())
+			{
+				wprintf(L"Impersonate Default Account Failed.\n");
+				return false;
+			}
+
+			auto packageManager = ref new PackageManager();
+			auto deploymentOperation = packageManager->RemovePackageAsync(inputPackageUri);
+
+			deploymentOperation->Completed =
+				ref new AsyncOperationWithProgressCompletedHandler<DeploymentResult^, DeploymentProgress>(
+					[&completedEvent](IAsyncOperationWithProgress<DeploymentResult^, DeploymentProgress>^ operation, Windows::Foundation::AsyncStatus)
+			{
+				SetEvent(completedEvent);
+			});
+			wprintf(L"Uninstalling Package %s\n", inputPackageUri->Data());
+
+			wprintf(L"Waiting for uninstall to complete...\n");
+
+			WaitForSingleObject(completedEvent, INFINITE);
+
+			if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Error)
+			{
+				auto deploymentResult = deploymentOperation->GetResults();
+				wprintf(L"Uninstall Error: %ld\n", deploymentOperation->ErrorCode.Value);
+				wprintf(L"Detailed Error Information: %s\n", deploymentResult->ErrorText->Data());
+			}
+			else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Canceled)
+			{
+				wprintf(L"Uninstall Cancelled\n");
+			}
+			else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Completed)
+			{
+				wprintf(L"Uninstall Succeeded!\n");
+			}
+
+			// revert back to the logged on user.
+			Revert();
+		}
+	}
+	catch (Exception^ ex)
+	{
+		wprintf(L"Unistall Failed, Error Message : %s\n", ex->ToString()->Data());
+		retVal = false;
+	}
+
+	if (completedEvent != nullptr)
+		CloseHandle(completedEvent);
+
+	return retVal;
 }
+
+void DisplayPackageInfo(Windows::ApplicationModel::Package^ package)
+{
+	wcout << L"Name: " << package->Id->Name->Data() << endl;
+	wcout << L"FullName: " << package->Id->FullName->Data() << endl;
+	wcout << L"Version: " << package->Id->Version.Major << "." <<
+		package->Id->Version.Minor << "." << package->Id->Version.Build <<
+		"." << package->Id->Version.Revision << endl;
+	wcout << L"Publisher: " << package->Id->Publisher->Data() << endl;
+	wcout << L"PublisherId: " << package->Id->PublisherId->Data() << endl;
+	wcout << L"Installed Location: " << package->InstalledLocation->Path->Data() << endl;
+	wcout << L"IsFramework: " << (package->IsFramework ? L"True" : L"False") << endl;
+}
+
 
 // uses certmgr on the device to install the cert.
 bool InstallCertificate(std::wstring CertName)
@@ -251,31 +352,20 @@ bool InstallCertificate(std::wstring CertName)
 			NULL, NULL, &startupInfo, &processInformation);
 		if (result)
 		{
-			wprintf(L"CreateProcess ok\n");
 			DWORD exitCode = 0;
 			// have a wait on the process for max of 30 seconds.
 			DWORD dwWait = WaitForSingleObject(processInformation.hProcess, 30000);
 			if (WAIT_OBJECT_0 == dwWait)  // process completed.
 			{
-				wprintf(L"WaitForSingleObject OK\n");
 				result = GetExitCodeProcess(processInformation.hProcess, &exitCode);
 				// Close the handles.
 				CloseHandle(processInformation.hProcess);
 				CloseHandle(processInformation.hThread);
 
-				wprintf(L"Certmgr Exit Code - %ld\n", exitCode);
 				// Certmgr has two return values (-1 for failure or 0 for success).
 				if (0 == exitCode)
 					bRet = true;
 			}
-			else
-			{
-				wprintf(L"WaitForSingleObject OK\n");
-			}
-		}
-		else
-		{
-			wprintf(L"Failed to CreateProcess 'CertMgr.exe'\n");
 		}
 	}
 	return bRet;
@@ -339,7 +429,6 @@ HANDLE OpenProcessByName(std::wstring ProcessName)
 		&bytesReturned))
 	{
 		const unsigned int actualProcessIds = bytesReturned / sizeof(unsigned int);
-		wprintf(L"Enumerating %ld processes\n", actualProcessIds);
 		for (unsigned int i = 0; i < actualProcessIds; i++)
 		{
 			HANDLE hProcess=OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
@@ -348,7 +437,6 @@ HANDLE OpenProcessByName(std::wstring ProcessName)
 			if (NULL != hProcess)
 			{
 				const size_t imageFileNameLength = GetProcessImageFileNameW(hProcess, imageFileName, sizeof(imageFileName));
-				wprintf(L"Process %d - Name %s\n", i, &imageFileName[imageFileNameLength - ProcessNameLength]);
 				if (imageFileNameLength >= ProcessNameLength && (_wcsicmp(ProcessName.c_str(), &imageFileName[imageFileNameLength-ProcessNameLength])) == 0)
 				{
 					return hProcess;
