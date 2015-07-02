@@ -10,11 +10,13 @@ using namespace std;
 #include <cctype>
 #include <string>
 #include <algorithm>
+#include <iostream>
 
 #include <wrl\client.h>
 #include <wrl\wrappers\corewrappers.h>
 #include <windows.management.deployment.h>
 
+using namespace Windows::Foundation;
 using namespace Platform;
 using namespace Windows::Management::Deployment;
 
@@ -27,11 +29,10 @@ bool DoesFileExist(std::wstring strFile);
 bool bInstall = false;			// assume uninstall.
 wstring AppxPackageName(L"");	// name of package to install
 
+[MTAThread]
 int main(Platform::Array<Platform::String^>^ args)
 {
 	ShowBanner();
-
-	
 
 	if (args->Length != 3)	// <app> <un|install> <Appx>
 	{
@@ -68,14 +69,72 @@ int main(Platform::Array<Platform::String^>^ args)
 			return -1;
 		}
 
-		HRESULT hr = ::RoInitialize(RO_INIT_SINGLETHREADED);
+
+		HRESULT hr = ::RoInitialize(RO_INIT_MULTITHREADED);
 		if (FAILED(hr))
 		{
 			wprintf(L"Failed to initialize Runtime\n");
 			return -1;
 		}
 
-		String^ inputPackageUri = args[1];
+		HANDLE completedEvent = nullptr;
+		int returnValue = 0;
+		String^ inputPackageUri = args[2];
+		try
+		{
+			completedEvent = CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
+			if (completedEvent == nullptr)
+			{
+				wcout << L"CreateEvent Failed, error code=" << GetLastError() << endl;
+				returnValue = 1;
+			}
+			else
+			{
+				wcout << L"Create Event OK" << endl;
+				auto packageUri = ref new Uri(inputPackageUri);
+
+				auto packageManager = ref new PackageManager();
+				auto deploymentOperation = packageManager->AddPackageAsync(packageUri, nullptr, DeploymentOptions::None);
+
+				deploymentOperation->Completed =
+					ref new AsyncOperationWithProgressCompletedHandler<DeploymentResult^, DeploymentProgress>(
+						[&completedEvent](IAsyncOperationWithProgress<DeploymentResult^, DeploymentProgress>^ operation, Windows::Foundation::AsyncStatus)
+				{
+					SetEvent(completedEvent);
+				});
+
+				wcout << L"Installing package " << inputPackageUri->Data() << endl;
+
+				wcout << L"Waiting for installation to complete..." << endl;
+
+				WaitForSingleObject(completedEvent, INFINITE);
+
+				if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Error)
+				{
+					auto deploymentResult = deploymentOperation->GetResults();
+					wcout << L"Installation Error: " << deploymentOperation->ErrorCode.Value << endl;
+					wcout << L"Detailed Error Text: " << deploymentResult->ErrorText->Data() << endl;
+				}
+				else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Canceled)
+				{
+					wcout << L"Installation Canceled" << endl;
+				}
+				else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Completed)
+				{
+					wcout << L"Installation succeeded!" << endl;
+				}
+			}
+		}
+		catch (Exception^ ex)
+		{
+			wcout << L"AddPackageSample failed, error message: " << ex->ToString()->Data() << endl;
+			returnValue = 1;
+		}
+
+		if (completedEvent != nullptr)
+			CloseHandle(completedEvent);
+
+
 	}
 	else
 	{
