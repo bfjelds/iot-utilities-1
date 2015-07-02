@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include <Windows.h>
 #include <strsafe.h>
+#include <Psapi.h>
 
 #include <roapi.h>
 using namespace std;
@@ -11,6 +12,7 @@ using namespace std;
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 #include <wrl\client.h>
 #include <wrl\wrappers\corewrappers.h>
@@ -25,6 +27,9 @@ void ShowUsage();
 bool ParseCommandLine(Platform::Array<Platform::String^>^ args);
 bool InstallCertificate(std::wstring CertName);
 bool DoesFileExist(std::wstring strFile);
+bool Impersonate();
+bool Revert();
+HANDLE OpenProcessByName(std::wstring ProcessName);
 
 bool bInstall = false;			// assume uninstall.
 wstring AppxPackageName(L"");	// name of package to install
@@ -91,6 +96,13 @@ int main(Platform::Array<Platform::String^>^ args)
 			else
 			{
 				wcout << L"Create Event OK" << endl;
+
+				if (!Impersonate())
+				{
+					wprintf(L"Cannot install APPX - Impersonate SiHost Failed.\n");
+					return -1;
+				}
+
 				auto packageUri = ref new Uri(inputPackageUri);
 
 				auto packageManager = ref new PackageManager();
@@ -123,6 +135,9 @@ int main(Platform::Array<Platform::String^>^ args)
 				{
 					wcout << L"Installation succeeded!" << endl;
 				}
+
+				// revert back to the logged on user.
+				Revert();
 			}
 		}
 		catch (Exception^ ex)
@@ -253,4 +268,75 @@ bool DoesFileExist(std::wstring strFile)
 	}
 
 	return bRet;
+}
+
+bool Impersonate()
+{
+	std::wstring siProcess = L"sihost.exe";
+
+	HANDLE hProcess = OpenProcessByName(siProcess);
+	if (NULL == hProcess)
+	{
+		return false;
+	}
+
+	HANDLE InteractiveProcessToken = NULL;
+	if (!OpenProcessToken(hProcess, TOKEN_ALL_ACCESS, &InteractiveProcessToken))
+	{
+		return false;
+	}
+
+	HANDLE ImpersonationToken = NULL;
+	if (!DuplicateToken(InteractiveProcessToken, SECURITY_IMPERSONATION_LEVEL::SecurityImpersonation, &ImpersonationToken))
+	{
+		return false;
+	}
+
+	if (!ImpersonateLoggedOnUser(ImpersonationToken))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+HANDLE OpenProcessByName(std::wstring ProcessName)
+{
+	const size_t ProcessNameLength = wcslen(ProcessName.c_str());
+	vector<DWORD> spProcessIds(1024);
+	DWORD bytesReturned = 0;
+	WCHAR imageFileName[1024];
+
+	if (EnumProcesses(&spProcessIds.front(),
+		static_cast<unsigned int>(spProcessIds.size() * sizeof(DWORD)),
+		&bytesReturned))
+	{
+		const unsigned int actualProcessIds = bytesReturned / sizeof(unsigned int);
+		wprintf(L"Enumerating %ld processes\n", actualProcessIds);
+		for (unsigned int i = 0; i < actualProcessIds; i++)
+		{
+			HANDLE hProcess=OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+				FALSE,
+				spProcessIds[i]);
+			if (NULL != hProcess)
+			{
+				const size_t imageFileNameLength = GetProcessImageFileNameW(hProcess, imageFileName, sizeof(imageFileName));
+				wprintf(L"Process %d - Name %s\n", i, &imageFileName[imageFileNameLength - ProcessNameLength]);
+				if (imageFileNameLength >= ProcessNameLength && (_wcsicmp(ProcessName.c_str(), &imageFileName[imageFileNameLength-ProcessNameLength])) == 0)
+				{
+					return hProcess;
+				}
+			}
+		}
+	}
+
+	return NULL;
+}
+
+bool Revert()
+{
+	if (!RevertToSelf())
+		return false;
+
+	return true;
 }
