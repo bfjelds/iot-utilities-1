@@ -61,9 +61,10 @@ int main(Platform::Array<Platform::String^>^ args)
 
 	if (ParseCommandLine(args))
 	{
-		std::wstring AppxName(args[2]->Begin());
 		if (bInstall)
-			InstallAppxPackage(AppxName);
+		{
+			InstallAppxPackage(args[2]->Begin());
+		}
 		else
 			UninstallAppxPackage();
 	}
