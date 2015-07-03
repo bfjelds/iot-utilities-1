@@ -376,11 +376,8 @@ int ConvertStringToInt(std::string sInput)
 
 void DisplayPackageInfo(Windows::ApplicationModel::Package^ package, int iPackageNum)
 {
+	// may want to display additional data here. App Name should be good enough for now.
 	wprintf(L"%-3d: %s\n",iPackageNum+1, package->Id->Name->Data());
-//	wcout << L"Application: " << iPackageNum + 1 << endl;
-//	wcout << iPackageNum + 1 << L": ";
-//	wcout << L"Name       : " << package->Id->Name->Data() << endl;
-//	wcout << L"Publisher  : " << package->Id->Publisher->Data() << endl;
 }
 
 
