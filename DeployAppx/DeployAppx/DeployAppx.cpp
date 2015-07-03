@@ -53,7 +53,7 @@ int main(Platform::Array<Platform::String^>^ args)
 	ShowBanner();
 
 	// TODO: fix install/uninstall so that uninstall works with just 'uninstall' parameter
-	if (args->Length != 3)	// <app> <un|install> <Appx>
+	if (args->Length < 2 || args->Length > 3)
 	{
 		ShowUsage();
 		return -1;
@@ -65,7 +65,7 @@ int main(Platform::Array<Platform::String^>^ args)
 		if (bInstall)
 			InstallAppxPackage(AppxName);
 		else
-			UninstallAppxPackage( );
+			UninstallAppxPackage();
 	}
 	else
 	{
@@ -103,13 +103,13 @@ bool ParseCommandLine(Platform::Array<Platform::String^>^ args)
 		wCommand.begin(),
 		tolower);
 
-	if (0 == wCommand.compare(L"install"))
+	if (0 == wCommand.compare(L"install") && args->Length == 3)
 	{
 		bRet = true;
 		bInstall = true;
 	}
 
-	if (0 == wCommand.compare(L"uninstall"))
+	if (0 == wCommand.compare(L"uninstall") && args->Length == 2)
 	{
 		bRet = true;
 		bInstall = false;
