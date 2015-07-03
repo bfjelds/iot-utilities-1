@@ -31,6 +31,7 @@ void ShowUsage();
 bool ParseCommandLine(Platform::Array<Platform::String^>^ args);
 
 bool DoesFileExist(std::wstring FileToCheck);
+int ConvertStringToInt(std::string sInput);
 
 // Functions to impersonate 'SiHost' user account
 bool Impersonate();
@@ -40,8 +41,9 @@ bool Revert();
 // Install and uninstall APPX Packages + Cert
 bool InstallAppxPackage(std::wstring PackageName);
 bool InstallCertificate(std::wstring CertName);
-bool UninstallAppxPackage(std::wstring PackageName);
+bool UninstallAppxPackage( );
 void DisplayPackageInfo(Windows::ApplicationModel::Package^ package, int iPackageNum);
+bool RemovePackage(Platform::String^ PackageFullName);
 
 bool bInstall = false;			// assume uninstall.
 
@@ -50,6 +52,7 @@ int main(Platform::Array<Platform::String^>^ args)
 {
 	ShowBanner();
 
+	// TODO: fix install/uninstall so that uninstall works with just 'uninstall' parameter
 	if (args->Length != 3)	// <app> <un|install> <Appx>
 	{
 		ShowUsage();
@@ -62,7 +65,7 @@ int main(Platform::Array<Platform::String^>^ args)
 		if (bInstall)
 			InstallAppxPackage(AppxName);
 		else
-			UninstallAppxPackage(AppxName);
+			UninstallAppxPackage( );
 	}
 	else
 	{
@@ -85,7 +88,7 @@ void ShowUsage()
 	wprintf(L"DeployAppx installs/removes APPX packages\n");
 	wprintf(L"Usage:\n");
 	wprintf(L"%s install MyApp.appx    // Install MyApp.appx (and certificate)\n\n", wsAppName.c_str());
-	wprintf(L"%s uninstall MyApp.appx  // Uninstall MyApp.appx\n\n", wsAppName.c_str());
+	wprintf(L"%s uninstall             // Uninstall an application (choose from a list)\n\n", wsAppName.c_str());
 }
 
 bool ParseCommandLine(Platform::Array<Platform::String^>^ args)
@@ -223,7 +226,7 @@ bool InstallAppxPackage(std::wstring PackageName)
 	return retVal;
 }
 
-bool UninstallAppxPackage(std::wstring PackageName)
+bool UninstallAppxPackage( )
 {
 	bool retVal = true;
 
@@ -243,8 +246,7 @@ bool UninstallAppxPackage(std::wstring PackageName)
 		[&](Windows::ApplicationModel::Package^ package)
 	{
 		DisplayPackageInfo(package,packageCount);
-
-		packageCount += 1;
+		packageCount ++;
 	});
 
 	if (0 == packageCount)
@@ -254,70 +256,99 @@ bool UninstallAppxPackage(std::wstring PackageName)
 	}
 
 	string prompt;
-	
+	std::wstring ws;
+
 	bool bAsk = true;
 	int iUninstallNum = 0;
 	while (bAsk)
 	{
 		wprintf(L"Which applicaiton do you want to uninstall?");
 		getline(cin, prompt);
-		std::wstring wcPrompt(prompt.c_str());
-		iUninstallNum=_wtoi(wcPrompt.c_str());
+		iUninstallNum = ConvertStringToInt(prompt);
+
+		if (iUninstallNum > 0 && iUninstallNum <= packageCount)
+			bAsk = false;
+		else
+		{
+			wprintf(L"Please enter a number between 1 and %d\n", packageCount);
+		}
 	}
+
+// now iterate over the packages to get to the selected item (iInstallNum-1)
+	packageCount = 0;
+	std::for_each(Windows::Foundation::Collections::begin(packages), Windows::Foundation::Collections::end(packages),
+		[&](Windows::ApplicationModel::Package^ package)
+	{
+		if (packageCount == iUninstallNum - 1)
+		{
+			wprintf(L"Uninstalling: %s\n", package->Id->FullName->Data());
+			RemovePackage(package->Id->FullName);
+		}
+		packageCount++;
+	});
+
+	return retVal;
+}
+
+bool RemovePackage(Platform::String^ PackageFullName)
+{
+	bool retVal = false;
 
 	HANDLE completedEvent = nullptr;
 	int returnValue = 0;
-	String^ inputPackageUri = ref new Platform::String(PackageName.c_str());
+	String^ inputPackageUri = PackageFullName;
 	try
 	{
 		completedEvent = CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
 		if (completedEvent == nullptr)
 		{
 			wprintf(L"CreateEvent Failed, error code= %ld\n", GetLastError());
-			returnValue = 1;
+			return false;
 		}
 		else
 		{
-			if (!Impersonate())
-			{
-				wprintf(L"Impersonate Default Account Failed.\n");
-				return false;
-			}
+		if (!Impersonate())
+		{
+			wprintf(L"Impersonate Default Account Failed.\n");
+			return false;
+		}
 
-			auto packageManager = ref new PackageManager();
-			auto deploymentOperation = packageManager->RemovePackageAsync(inputPackageUri);
+		auto packageManager = ref new PackageManager();
+		auto deploymentOperation = packageManager->RemovePackageAsync(inputPackageUri);
 
-			deploymentOperation->Completed =
-				ref new AsyncOperationWithProgressCompletedHandler<DeploymentResult^, DeploymentProgress>(
-					[&completedEvent](IAsyncOperationWithProgress<DeploymentResult^, DeploymentProgress>^ operation, Windows::Foundation::AsyncStatus)
-			{
-				SetEvent(completedEvent);
-			});
-			wprintf(L"Uninstalling Package %s\n", inputPackageUri->Data());
+		deploymentOperation->Completed =
+		ref new AsyncOperationWithProgressCompletedHandler<DeploymentResult^, DeploymentProgress>(
+		[&completedEvent](IAsyncOperationWithProgress<DeploymentResult^, DeploymentProgress>^ operation, Windows::Foundation::AsyncStatus)
+		{
+			SetEvent(completedEvent);
+		});
+	
+		wprintf(L"Uninstalling Package %s\n", inputPackageUri->Data());
+		wprintf(L"Waiting for uninstall to complete...\n");
 
-			wprintf(L"Waiting for uninstall to complete...\n");
+		WaitForSingleObject(completedEvent, INFINITE);
 
-			WaitForSingleObject(completedEvent, INFINITE);
+		if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Error)
+		{
+			auto deploymentResult = deploymentOperation->GetResults();
+			wprintf(L"Uninstall Error: %ld\n", deploymentOperation->ErrorCode.Value);
+			wprintf(L"Detailed Error Information: %s\n", deploymentResult->ErrorText->Data());
+		}
+		else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Canceled)
+		{
+			wprintf(L"Uninstall Cancelled\n");
+		}
+		else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Completed)
+		{
+			wprintf(L"Uninstall Succeeded!\n");
+			retVal = true;
+		}
 
-			if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Error)
-			{
-				auto deploymentResult = deploymentOperation->GetResults();
-				wprintf(L"Uninstall Error: %ld\n", deploymentOperation->ErrorCode.Value);
-				wprintf(L"Detailed Error Information: %s\n", deploymentResult->ErrorText->Data());
-			}
-			else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Canceled)
-			{
-				wprintf(L"Uninstall Cancelled\n");
-			}
-			else if (deploymentOperation->Status == Windows::Foundation::AsyncStatus::Completed)
-			{
-				wprintf(L"Uninstall Succeeded!\n");
-			}
-
-			// revert back to the logged on user.
-			Revert();
+		// revert back to the logged on user.
+		Revert();
 		}
 	}
+
 	catch (Exception^ ex)
 	{
 		wprintf(L"Unistall Failed, Error Message : %s\n", ex->ToString()->Data());
@@ -330,11 +361,26 @@ bool UninstallAppxPackage(std::wstring PackageName)
 	return retVal;
 }
 
+int ConvertStringToInt(std::string sInput)
+{
+	int iDefaultValue = 0;
+	char* parse_end = NULL;
+	long val = strtol(sInput.c_str(), &parse_end, 10);
+	if (parse_end != sInput.c_str() + sInput.size()) 
+	{
+		return iDefaultValue;
+	}
+
+	return (int)val;
+}
+
 void DisplayPackageInfo(Windows::ApplicationModel::Package^ package, int iPackageNum)
 {
-	wcout << L"Application: " << iPackageNum + 1 << endl;
-	wcout << L"Name       : " << package->Id->Name->Data() << endl;
-	wcout << L"Publisher  : " << package->Id->Publisher->Data() << endl;
+	wprintf(L"%-3d: %s\n",iPackageNum+1, package->Id->Name->Data());
+//	wcout << L"Application: " << iPackageNum + 1 << endl;
+//	wcout << iPackageNum + 1 << L": ";
+//	wcout << L"Name       : " << package->Id->Name->Data() << endl;
+//	wcout << L"Publisher  : " << package->Id->Publisher->Data() << endl;
 }
 
 
