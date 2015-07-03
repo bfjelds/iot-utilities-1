@@ -41,7 +41,7 @@ bool Revert();
 bool InstallAppxPackage(std::wstring PackageName);
 bool InstallCertificate(std::wstring CertName);
 bool UninstallAppxPackage(std::wstring PackageName);
-void DisplayPackageInfo(Windows::ApplicationModel::Package^ package);
+void DisplayPackageInfo(Windows::ApplicationModel::Package^ package, int iPackageNum);
 
 bool bInstall = false;			// assume uninstall.
 
@@ -242,12 +242,28 @@ bool UninstallAppxPackage(std::wstring PackageName)
 	std::for_each(Windows::Foundation::Collections::begin(packages), Windows::Foundation::Collections::end(packages),
 		[&](Windows::ApplicationModel::Package^ package)
 	{
-		DisplayPackageInfo(package);
+		DisplayPackageInfo(package,packageCount);
 
 		packageCount += 1;
 	});
 
-	wprintf(L"%d App Packages found\n", packageCount);
+	if (0 == packageCount)
+	{
+		wprintf(L"You don't have any installed applications, nothing to uninstall\n");
+		return false;
+	}
+
+	string prompt;
+	
+	bool bAsk = true;
+	int iUninstallNum = 0;
+	while (bAsk)
+	{
+		wprintf(L"Which applicaiton do you want to uninstall?");
+		getline(cin, prompt);
+		std::wstring wcPrompt(prompt.c_str());
+		iUninstallNum=_wtoi(wcPrompt.c_str());
+	}
 
 	HANDLE completedEvent = nullptr;
 	int returnValue = 0;
@@ -314,17 +330,11 @@ bool UninstallAppxPackage(std::wstring PackageName)
 	return retVal;
 }
 
-void DisplayPackageInfo(Windows::ApplicationModel::Package^ package)
+void DisplayPackageInfo(Windows::ApplicationModel::Package^ package, int iPackageNum)
 {
-	wcout << L"Name: " << package->Id->Name->Data() << endl;
-	wcout << L"FullName: " << package->Id->FullName->Data() << endl;
-	wcout << L"Version: " << package->Id->Version.Major << "." <<
-		package->Id->Version.Minor << "." << package->Id->Version.Build <<
-		"." << package->Id->Version.Revision << endl;
-	wcout << L"Publisher: " << package->Id->Publisher->Data() << endl;
-	wcout << L"PublisherId: " << package->Id->PublisherId->Data() << endl;
-	wcout << L"Installed Location: " << package->InstalledLocation->Path->Data() << endl;
-	wcout << L"IsFramework: " << (package->IsFramework ? L"True" : L"False") << endl;
+	wcout << L"Application: " << iPackageNum + 1 << endl;
+	wcout << L"Name       : " << package->Id->Name->Data() << endl;
+	wcout << L"Publisher  : " << package->Id->Publisher->Data() << endl;
 }
 
 
