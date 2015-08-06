@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace IoTCoreImageHelper
 {
@@ -24,6 +25,10 @@ namespace IoTCoreImageHelper
         public MainWindow()
         {
             InitializeComponent();
+
+            TelemetryHelper.eventLogger.Write(TelemetryHelper.SessionEvent, TelemetryHelper.TelemetryInfoOption, new
+            {
+            });
         }
 
         private void RefreshDriveList()
@@ -117,18 +122,40 @@ namespace IoTCoreImageHelper
 
             var ffuImage = txtFFUFilename.Text;
             var driveInfo = (DriveInfo)((ListBoxItem)lstDrives.SelectedItem).Tag;
+
+            long startingTime = Stopwatch.GetTimestamp();
+
             try
             {
                 var res = Dism.FlashFFUImageToDrive(ffuImage, driveInfo);
+
+                long endingTime = Stopwatch.GetTimestamp();
 
                 tbStatus.Text = "";
                 if (res == 0)
                 {
                     ShowCompletedMessage();
+
+                    TelemetryHelper.eventLogger.Write(TelemetryHelper.FlashEvent, TelemetryHelper.TelemetryInfoOption, new
+                    {
+                        duration = (endingTime - startingTime) * (1.0 / Stopwatch.Frequency),
+                        drive_model = driveInfo.Model,
+                        drive_size = driveInfo.Size,
+                        ffu = TelemetryHelper.getMD5(ffuImage),
+                    });
                 }
                 else
                 {
                     ShowErrorMessage();
+
+                    TelemetryHelper.eventLogger.Write(TelemetryHelper.FlashErrorEvent, TelemetryHelper.TelemetryErrorOption, new
+                    {
+                        duration = (endingTime - startingTime) * (1.0 / Stopwatch.Frequency),
+                        drive_model = driveInfo.Model,
+                        drive_size = driveInfo.Size,
+                        ffu = TelemetryHelper.getMD5(ffuImage),
+                        ExceptionMessage = res,
+                    });
                 }
             }
             catch (Exception ex)
@@ -136,6 +163,31 @@ namespace IoTCoreImageHelper
                 tbStatus.Text = "";
                 var msg = string.Format("There were some errors while loading Windows IoT Core onto your SD card ('{0}')", ex.Message);
                 ShowErrorMessage(msg);
+
+                long endingTime = Stopwatch.GetTimestamp();
+
+                if (driveInfo == null)
+                {
+                    TelemetryHelper.eventLogger.Write(TelemetryHelper.FlashErrorEvent, TelemetryHelper.TelemetryErrorOption, new
+                    {
+                        duration = (endingTime - startingTime) * (1.0 / Stopwatch.Frequency),
+                        drive_model = "N/A",
+                        drive_size = 0ul,
+                        ffu = TelemetryHelper.getMD5(ffuImage),
+                        ExceptionMessage = ex.Message,
+                    });
+                }
+                else
+                {
+                    TelemetryHelper.eventLogger.Write(TelemetryHelper.FlashErrorEvent, TelemetryHelper.TelemetryErrorOption, new
+                    {
+                        duration = (endingTime - startingTime) * (1.0 / Stopwatch.Frequency),
+                        drive_model = driveInfo.Model,
+                        drive_size = driveInfo.Size,
+                        ffu = TelemetryHelper.getMD5(ffuImage),
+                        ExceptionMessage = ex.Message,
+                    });
+                }
             }
         }
 
