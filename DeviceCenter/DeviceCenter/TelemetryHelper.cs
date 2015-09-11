@@ -30,6 +30,6 @@ namespace DeviceCenter
         // KernelProcess.ProcessStarted
         // KernelProcess.ProcessStopped
 
-        public static readonly string DeviceDiscoveryEvent = "DeviceDiscoveryEvent";
+        public static readonly string DeviceDiscoveryEvent = "DeviceDiscovery";
     }
 }
