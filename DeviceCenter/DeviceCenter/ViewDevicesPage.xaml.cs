@@ -57,6 +57,7 @@ namespace DeviceCenter
                     oldestBuildVersion = oldestBuildDevice.OSVersion,
                     newestBuildVersion = newestBuildDevice.OSVersion,
                     newestDeviceId = newestBuildDevice.UniqueId,
+                    oldestDeviceId = oldestBuildDevice.UniqueId,
                     numDevices = deviceDiscoverySvc.DevicesDiscovered().Count
                 });
 
