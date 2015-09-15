@@ -60,9 +60,9 @@ namespace DeviceCenter
                     oldestDeviceId = oldestBuildDevice.UniqueId,
                     numDevices = deviceDiscoverySvc.DevicesDiscovered().Count
                 });
-
-                telemetryTimer.Stop();
             }
+
+            telemetryTimer.Stop();
         }
 
         public void MDNSDeviceDiscovered(object sender, DiscoveredEventArgs args)
