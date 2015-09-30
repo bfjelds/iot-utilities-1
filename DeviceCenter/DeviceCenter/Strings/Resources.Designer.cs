@@ -59,14 +59,5 @@ namespace DeviceCenter.Strings {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Windows 10 IoT Core.
-        /// </summary>
-        internal static string OSTitle_Text {
-            get {
-                return ResourceManager.GetString("OSTitle.Text", resourceCulture);
-            }
-        }
     }
 }
