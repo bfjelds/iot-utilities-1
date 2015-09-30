@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DeviceCenter"
+        xmlns:props="clr-namespace:DeviceCenter.Strings"
         mc:Ignorable="d"
         Title="Device Center" Height="720" Width="1280">
     <DockPanel>
@@ -52,10 +53,10 @@
                             <RowDefinition Height="48" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock x:Uid="OSTitle" Grid.Row="1" FontSize="30" FontFamily="Segoe UI Semilight" Foreground="{StaticResource ApplicationPageControlForgroundTextBrushLight}" VerticalAlignment="Bottom" Text="Windows 10 IoT Core"/>
-                        <TextBlock x:Uid="DeviceCenterName" Grid.Row="2" FontSize="70" FontFamily="Segoe UI Light" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" VerticalAlignment="Top" Text="Device Center"/>
-                        <Button x:Uid="ViewDevicesButton" Grid.Row="4" FontSize="24" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="View Devices on the network" Click="ViewDevicesButton_Click"/>
-                        <Button x:Uid="SetupDeviceButton" Grid.Row="6" FontSize="24" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Setup a device" Click="SetupDeviceButton_Click"/>
+                        <TextBlock Grid.Row="1" FontSize="30" FontFamily="Segoe UI Semilight" Foreground="{StaticResource ApplicationPageControlForgroundTextBrushLight}" VerticalAlignment="Bottom" Text="Windows 10 IoT Core"/>
+                        <TextBlock Grid.Row="2" FontSize="70" FontFamily="Segoe UI Light" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" VerticalAlignment="Top" Text="{x:Static props:Strings.AppNameDisplay}" />
+                        <Button Grid.Row="4" FontSize="24" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="View Devices on the network" Click="ViewDevicesButton_Click"/>
+                        <Button Grid.Row="6" FontSize="24" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Setup a device" Click="SetupDeviceButton_Click"/>
                     </Grid>
                 </Grid>
             </Grid>
