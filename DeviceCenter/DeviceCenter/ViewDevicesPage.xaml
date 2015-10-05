@@ -5,37 +5,23 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DeviceCenter"
       mc:Ignorable="d" 
-      Title="ViewDevicesPage">
+      Title="Devices on your network" Height="614.958" d:DesignWidth="1642.588">
 
-    <Grid Background="{StaticResource ApplicationPageBackgroundBrush}">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition Height="108" />
-                <RowDefinition Height="367" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <Grid x:Name="CloudRow" HorizontalAlignment="Right" Grid.Row="1">
-                <Canvas>
-                    <Image x:Name="CloudImage" Canvas.Right="60" Source="Assets/cloud.png" />
-                </Canvas>
-            </Grid>
-
-            <Grid x:Name="PageBackgroundRow" Grid.Row="3">
-                <Image x:Name="PageBackgroundImage" Stretch="Fill" Source="Assets/background_and_trees.png" />
-            </Grid>
-        </Grid>
-        <Grid>
-            <DataGrid Margin="50 50 50 50" Name="discoveredDevices" Background="Transparent" RowBackground="{StaticResource RowBackgroundColorBrush}" AlternatingRowBackground="{StaticResource RowBackgroundAlternateColorBrush}"  AutoGenerateColumns="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Width="200" Binding="{Binding Path=DeviceName}" Header="Device Name" />
-                    <DataGridTextColumn Width="300" Binding="{Binding Path=IPaddress}" Header="IP address" />
-                    <DataGridTextColumn Width="300" Binding="{Binding Path=DeviceModel}" Header="Device Model" />
-                    <DataGridTextColumn Width="200" Binding="{Binding Path=Architecture}" Header="Architecture" />
-                    <DataGridTextColumn Width="300" Binding="{Binding Path=OSVersion}" Header="OS Version" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
+    <Grid>
+        <Grid.Background>
+            <SolidColorBrush Color="White"/>
+        </Grid.Background>
+        <DataGrid Margin="50,77,50,45" x:Name="discoveredDevices" Background="White" RowBackground="{StaticResource RowBackgroundColorBrush}" AlternatingRowBackground="{StaticResource RowBackgroundAlternateColorBrush}"  AutoGenerateColumns="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="200" Binding="{Binding DeviceName}" Header="Name" />
+                <DataGridTextColumn Width="300" Binding="{Binding Connection}" Header="Connection" />
+                <DataGridTextColumn Width="300" Binding="{Binding DeviceType}" Header="Type" />
+                <DataGridTextColumn Width="300" Binding="{Binding IPaddress}" Header="IP address" />
+                <DataGridTextColumn Width="300" Binding="{Binding Manage}" Header="Manage" />
+                <DataGridTextColumn Width="300" Binding="{Binding DeviceModel}" Header="Device Model" />
+                <DataGridTextColumn Width="200" Binding="{Binding Architecture}" Header="Architecture" />
+                <DataGridTextColumn Width="300" Binding="{Binding OSVersion}" Header="OS Version" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Page>

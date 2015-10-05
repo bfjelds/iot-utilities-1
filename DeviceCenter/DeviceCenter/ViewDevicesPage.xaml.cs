@@ -30,7 +30,7 @@ namespace DeviceCenter
         public ViewDevicesPage()
         {
             InitializeComponent();
-
+            /*
             newestBuildDevice = null;
             oldestBuildDevice = null;
 
@@ -40,7 +40,7 @@ namespace DeviceCenter
 
             deviceDiscoverySvc = new DeviceDiscoveryService();
             deviceDiscoverySvc.Discovered += MDNSDeviceDiscovered;
-            deviceDiscoverySvc.Start();
+            deviceDiscoverySvc.Start();*/
         }
 
         private void TelemetryTimer_Tick(object sender, EventArgs e)
