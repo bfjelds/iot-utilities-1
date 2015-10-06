@@ -80,5 +80,24 @@ namespace DeviceCenter
         {
             _NavigationFrame.GoBack();
         }
+
+        private void buttonMyDevices_Click(object sender, RoutedEventArgs e)
+        {
+            _NavigationFrame.Navigate(new ViewDevicesPage());
+        }
+
+        private void buttonAddDevice_Click(object sender, RoutedEventArgs e)
+        {
+            _NavigationFrame.Navigate(new SetupDevicePage());
+        }
+
+        private void buttonSamples_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void buttonTestOnly_Click(object sender, RoutedEventArgs e)
+        {
+            _NavigationFrame.Navigate(new PageTestOnly());
+        }
     }
 }

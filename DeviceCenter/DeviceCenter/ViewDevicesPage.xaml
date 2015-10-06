@@ -11,7 +11,7 @@
         <Grid.Background>
             <SolidColorBrush Color="White"/>
         </Grid.Background>
-        <DataGrid Margin="50,77,50,45" x:Name="discoveredDevices" Background="White" RowBackground="{StaticResource RowBackgroundColorBrush}" AlternatingRowBackground="{StaticResource RowBackgroundAlternateColorBrush}"  AutoGenerateColumns="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <DataGrid x:Name="discoveredDevices" Background="White" RowBackground="{StaticResource RowBackgroundColorBrush}" AlternatingRowBackground="{StaticResource RowBackgroundAlternateColorBrush}"  AutoGenerateColumns="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="200" Binding="{Binding DeviceName}" Header="Name" />
                 <DataGridTextColumn Width="300" Binding="{Binding Connection}" Header="Connection" />

@@ -63,12 +63,20 @@
         </Style>
     </Window.Resources>
     <DockPanel>
-        <StackPanel>
-            <StackPanel x:Name="PanelTitleBar" Orientation="Horizontal" Background="#FFE4E4E4" VerticalAlignment="Top">
+        <Grid>
+            <StackPanel x:Name="PanelTitleBar" Orientation="Horizontal" Background="#FFE4E4E4" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                 <Button x:Name="ButtonBack" FontSize="20" FontFamily="Segoe UI Symbol" Padding="10 5 10 5" VerticalAlignment="Top" HorizontalAlignment="Left" Content="&#xE112;" Foreground="Black" Background="#FF3277B8" BorderBrush="{x:Null}" Click="ButtonBack_Click" Style="{DynamicResource ButtonStyleNavigation}" />
                 <TextBlock x:Name="LabelTitle" TextWrapping="Wrap" Text="Title" VerticalAlignment="Center" FontFamily="Segoe UI Light" FontSize="21.333" Padding="8,0,0,0"/>
             </StackPanel>
-            <Frame x:Name="_NavigationFrame" NavigationUIVisibility="Hidden" Background="White" />
-        </StackPanel>
+            <DockPanel Margin="0 50 0 0">
+                <StackPanel Orientation="Vertical" Width="250">
+                    <local:buttonSideMenu Text="My devices" Icon="&#xE959;" Click="buttonMyDevices_Click"/>
+                    <local:buttonSideMenu Text="Set up a new device" Icon="&#xE781;" Click="buttonAddDevice_Click"/>
+                    <local:buttonSideMenu Text="Try some samples" Icon="&#xE7BE;" Click="buttonSamples_Click"/>
+                    <local:buttonSideMenu Text="Test page" Icon="&#xEADA;" Click="buttonTestOnly_Click"/>
+                </StackPanel>
+                <Frame Margin="10 0" x:Name="_NavigationFrame" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" />
+            </DockPanel>
+        </Grid>
     </DockPanel>
 </Window>

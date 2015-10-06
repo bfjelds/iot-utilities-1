@@ -10,16 +10,13 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="115*"/>
-            <ColumnDefinition Width="534*"/>
-            <ColumnDefinition Width="353*"/>
+            <ColumnDefinition Width="673*"/>
+            <ColumnDefinition Width="333*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="99" />
-            <RowDefinition Height="416" />
-            <RowDefinition />
+            <RowDefinition Height="628.666666666667" />
         </Grid.RowDefinitions>
-        <FlowDocumentPageViewer x:Name="documentWelcome" ScrollViewer.VerticalScrollBarVisibility="Disabled" Margin="10" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Background="{x:Null}" MaxZoom="198">
+        <FlowDocumentPageViewer x:Name="documentWelcome" ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="{x:Null}" MaxZoom="198">
             <FlowDocumentPageViewer.Template>
                 <ControlTemplate TargetType="{x:Type FlowDocumentPageViewer}">
                     <Border Margin="{TemplateBinding Padding}"
@@ -58,6 +55,6 @@
                 </BlockUIContainer>
             </FlowDocument>
         </FlowDocumentPageViewer>
-        <Image x:Name="imageFrontLogo" Grid.Column="2" Grid.Row="1" Source="Assets/front logo.png" MinWidth="120" MaxWidth="200" Margin="0"/>
+        <Image x:Name="imageFrontLogo" Grid.Column="1" Source="Assets/front logo.png" MinWidth="120" MaxWidth="200" Margin="0.667,14,-0.333,112.667"/>
     </Grid>
 </Page>
