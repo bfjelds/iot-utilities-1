@@ -23,7 +23,7 @@ namespace DeviceCenter
     /// </summary>
     public partial class ViewDevicesPage : Page
     {
-        DispatcherTimer telemetryTimer;
+        //DispatcherTimer telemetryTimer;
         mDNSDiscoveredDevice newestBuildDevice, oldestBuildDevice;
         DeviceDiscoveryService deviceDiscoverySvc;
 
@@ -37,12 +37,14 @@ namespace DeviceCenter
             telemetryTimer = new DispatcherTimer();
             telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             telemetryTimer.Tick += TelemetryTimer_Tick;
+            */
 
             deviceDiscoverySvc = new DeviceDiscoveryService();
             deviceDiscoverySvc.Discovered += MDNSDeviceDiscovered;
-            deviceDiscoverySvc.Start();*/
+            deviceDiscoverySvc.Start();
         }
 
+        /*
         private void TelemetryTimer_Tick(object sender, EventArgs e)
         {
             // Only send a telemetry event if we've found build information
@@ -64,6 +66,7 @@ namespace DeviceCenter
 
             telemetryTimer.Stop();
         }
+        */
 
         public void MDNSDeviceDiscovered(object sender, DiscoveredEventArgs args)
         {
@@ -117,7 +120,7 @@ namespace DeviceCenter
                 }
 
                 // Refresh delay until telemetry is sent
-                telemetryTimer.Start();
+                //telemetryTimer.Start();
             }
         }
 
