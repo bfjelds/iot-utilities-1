@@ -8,13 +8,6 @@
              d:DesignHeight="43.048" d:DesignWidth="202.025">
     <UserControl.Resources>
         <Storyboard x:Key="StoryboardMouseEnter">
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.FontFamily)" Storyboard.TargetName="textBlockIcon">
-                <DiscreteObjectKeyFrame KeyTime="0">
-                    <DiscreteObjectKeyFrame.Value>
-                        <FontFamily>IOT MDL2 Assets</FontFamily>
-                    </DiscreteObjectKeyFrame.Value>
-                </DiscreteObjectKeyFrame>
-            </ObjectAnimationUsingKeyFrames>
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
                 <EasingColorKeyFrame KeyTime="0" Value="Gainsboro"/>
             </ColorAnimationUsingKeyFrames>
@@ -25,15 +18,6 @@
             </ColorAnimationUsingKeyFrames>
         </Storyboard>
     </UserControl.Resources>
-    <UserControl.Triggers>
-        <EventTrigger RoutedEvent="UIElement.MouseEnter">
-            <BeginStoryboard x:Name="StoryboardMouseEnter_BeginStoryboard" Storyboard="{StaticResource StoryboardMouseEnter}"/>
-        </EventTrigger>
-        <EventTrigger RoutedEvent="UIElement.MouseLeave">
-            <BeginStoryboard x:Name="StoryboardMouseLeave_BeginStoryboard" Storyboard="{StaticResource StoryboardMouseLeave}"/>
-        </EventTrigger>
-        <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
-    </UserControl.Triggers>
     <Grid>
         <Rectangle x:Name="rectangle" Fill="White" StrokeThickness="0" Stroke="{x:Null}"/>
 

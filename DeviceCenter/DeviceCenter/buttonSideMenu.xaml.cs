@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -33,6 +34,22 @@ namespace DeviceCenter
         [Category("Behavior")]
         public event RoutedEventHandler Click;
 
+        public bool Selected
+        {
+            get { return _selected; }
+            set
+            {
+                if (_selected != value)
+                {
+                    _selected = value;
+                    if (_selected)
+                        Highlight();
+                    else
+                        ReturnNormal();
+                }
+            }
+        }
+
         [CategoryAttribute("Common")]
         public string Icon
         {
@@ -47,7 +64,35 @@ namespace DeviceCenter
             set { textBlockText.Text = value; }
         }
 
+        private bool _selected = false;
         private bool _mouseDown = false;
+
+        private void Highlight()
+        {
+            Storyboard animation = (Storyboard)FindResource("StoryboardMouseEnter");
+            animation.Begin();
+        }
+
+        private void ReturnNormal()
+        {
+            Storyboard animation = (Storyboard)FindResource("StoryboardMouseLeave");
+            animation.Begin();
+        }
+
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+            if (!Selected)
+                Highlight();
+        }
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            base.OnMouseLeave(e);
+            if (!Selected)
+                ReturnNormal();
+        }
+
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
@@ -59,7 +104,24 @@ namespace DeviceCenter
             base.OnMouseLeftButtonUp(e);
             if (_mouseDown)
                 if (Click != null)
+                {
+                    Selected = true;
+
+                    Panel myParent = this.Parent as Panel;
+                    if (myParent != null)
+                    {
+                        foreach (var cur in myParent.Children)
+                        {
+                            buttonSideMenu currentButton = cur as buttonSideMenu;
+                            if (currentButton != null && currentButton != this)
+                            {
+                                currentButton.Selected = false;
+                            }
+                        }
+                    }
+
                     Click.Invoke(this, new RoutedEventArgs());
+                }
             _mouseDown = false;
         }
     }
