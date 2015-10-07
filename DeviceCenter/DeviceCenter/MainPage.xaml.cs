@@ -24,6 +24,9 @@ namespace DeviceCenter
     {
         public MainWindow()
         {
+            // Uncomment to test localization
+            // System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("it-IT");
+
             InitializeComponent();
 
             welcomePage = new PageWelcome(_NavigationFrame);
@@ -79,6 +82,25 @@ namespace DeviceCenter
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
             _NavigationFrame.GoBack();
+        }
+
+        private void buttonMyDevices_Click(object sender, RoutedEventArgs e)
+        {
+            _NavigationFrame.Navigate(new ViewDevicesPage());
+        }
+
+        private void buttonAddDevice_Click(object sender, RoutedEventArgs e)
+        {
+            _NavigationFrame.Navigate(new SetupDevicePage());
+        }
+
+        private void buttonSamples_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void buttonTestOnly_Click(object sender, RoutedEventArgs e)
+        {
+            _NavigationFrame.Navigate(new PageTestOnly());
         }
     }
 }

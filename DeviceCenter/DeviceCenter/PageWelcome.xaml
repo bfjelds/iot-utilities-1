@@ -4,22 +4,20 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DeviceCenter"
+      xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
       d:DesignHeight="628.5" d:DesignWidth="1006.5"
-      Title="Welcome">
+      Title="{x:Static props:Strings.AppNameDisplay}">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="115*"/>
-            <ColumnDefinition Width="534*"/>
-            <ColumnDefinition Width="353*"/>
+            <ColumnDefinition Width="673*"/>
+            <ColumnDefinition Width="333*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="99" />
-            <RowDefinition Height="416" />
-            <RowDefinition />
+            <RowDefinition Height="628.666666666667" />
         </Grid.RowDefinitions>
-        <FlowDocumentPageViewer x:Name="documentWelcome" ScrollViewer.VerticalScrollBarVisibility="Disabled" Margin="10" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Background="{x:Null}" MaxZoom="198">
+        <FlowDocumentPageViewer x:Name="documentWelcome" ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="{x:Null}" MaxZoom="198">
             <FlowDocumentPageViewer.Template>
                 <ControlTemplate TargetType="{x:Type FlowDocumentPageViewer}">
                     <Border Margin="{TemplateBinding Padding}"
@@ -39,25 +37,22 @@
             </FlowDocumentPageViewer.Template>
             <FlowDocument PagePadding="0" >
                 <Paragraph FontFamily="Segoe UI Light" FontSize="32" >
-                    <Run Text="Discover the internet of your things"/>
+                    <Run Text="{x:Static props:Strings.IntroTitle}"/>
                 </Paragraph>
                 <Paragraph FontFamily="Segoe UI Light" FontSize="14">
-                    <Run Text="Rapidly prototype and build your Windows IoT solutions on a variety of devices running Windows 10 IoT Core. Windows 10 gives you powerful tools that let you develop fast and deploy to your device."/>
+                    <Run Text="{x:Static props:Strings.IntroSubTitle}"/>
                 </Paragraph>
                 <Paragraph FontFamily="Segoe UI Light" FontSize="14">
-                    <Run Text="Already have a Windows IoT device on the network? "/>
-                    <Run Text=" "/>
-                    <Run Text=" "/>
-                    <Run Text=" "/>
+                    <Run Text="{x:Static props:Strings.IntroMessage}"/>
                     <Hyperlink FontFamily="Segoe UI Light" FontSize="14" Click="ViewDevices_Click">
-                        <Run Text="Find My Device"/>
+                        <Run Text="{x:Static props:Strings.FindMyDeviceButton}"/>
                     </Hyperlink>
                 </Paragraph>
                 <BlockUIContainer>
-                    <Button FontSize="20" FontFamily="Segoe UI Light" Padding="30 5 30 5" HorizontalAlignment="Left" Content="Set up a new device" Click="SetupDeviceButton_Click" Foreground="White" Background="#FF3277B8"/>
+                    <Button FontSize="20" FontFamily="Segoe UI Light" Padding="30 5 30 5" HorizontalAlignment="Left" Content="{x:Static props:Strings.NewDeviceTitle}" Click="SetupDeviceButton_Click" Foreground="White" Background="#FF3277B8"/>
                 </BlockUIContainer>
             </FlowDocument>
         </FlowDocumentPageViewer>
-        <Image x:Name="imageFrontLogo" Grid.Column="2" Grid.Row="1" Source="Assets/front logo.png" MinWidth="120" MaxWidth="200" Margin="0"/>
+        <Image x:Name="imageFrontLogo" Grid.Column="1" Source="Assets/front logo.png" MinWidth="120" MaxWidth="200" Margin="0.667,14,-0.333,112.667"/>
     </Grid>
 </Page>
