@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Microsoft.Tools.Connectivity;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace DeviceCenter
 {
@@ -26,6 +27,7 @@ namespace DeviceCenter
         //DispatcherTimer telemetryTimer;
         mDNSDiscoveredDevice newestBuildDevice, oldestBuildDevice;
         DeviceDiscoveryService deviceDiscoverySvc;
+        ObservableCollection<mDNSDiscoveredDevice> devices = new ObservableCollection<mDNSDiscoveredDevice>();
 
         public ViewDevicesPage()
         {
@@ -42,6 +44,8 @@ namespace DeviceCenter
             deviceDiscoverySvc = new DeviceDiscoveryService();
             deviceDiscoverySvc.Discovered += MDNSDeviceDiscovered;
             deviceDiscoverySvc.Start();
+
+            ListViewDevices.ItemsSource = devices;
         }
 
         /*
@@ -85,10 +89,14 @@ namespace DeviceCenter
                     Architecture = args.Info.Architecture,
                     OSVersion = args.Info.OSVersion,
                     IPaddress = args.Info.Address,
-                    UniqueId = args.Info.UniqueId
+                    UniqueId = args.Info.UniqueId,
+                    Manage = new Uri(string.Format("http://administrator@{0}/", args.Info.Address))
                 };
-                
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => discoveredDevices.Items.Add(newDevice)));
+
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                {
+                    devices.Add(newDevice);
+                }));
 
                 // Figure out what device has the latest build and the oldest build
                 if (!string.IsNullOrWhiteSpace(newDevice.OSVersion))
@@ -154,6 +162,27 @@ namespace DeviceCenter
             return 0;
         }
 
+        private void DeviceManage_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Hyperlink link = (Hyperlink)e.OriginalSource;
+                Process.Start(link.NavigateUri.AbsoluteUri);
+            }
+            catch(System.ComponentModel.Win32Exception)
+            {
+                // TODO: handle errors
+            }
+        }
+        private void SetupDevice_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void ButtonManage_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         class mDNSDiscoveredDevice
         {
             public string DeviceName { get; set; }
@@ -162,6 +191,9 @@ namespace DeviceCenter
             public string OSVersion { get; set; }
             public string Architecture { get; set; }
             public Guid UniqueId { get; set; }
+            public Uri Manage { get; set; }
+            public string ManageText { get { return "Manage"; } }
+            public string ConnectionText { get { return "Set up device"; } }
         }
     }
 }
