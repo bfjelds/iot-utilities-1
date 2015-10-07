@@ -29,7 +29,7 @@
     <UpdateUrl>\\scratch2\scratch\stjong\DeviceCenter\</UpdateUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>10</ApplicationRevision>
+    <ApplicationRevision>17</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -64,13 +64,19 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>AE522E41B2A1775446AE513843538AD96B636FB9</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>B3456E0AA18BC52186949867EF8A80BCDAC11260</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>DeviceCenter_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>DeviceCenterDevelopmentKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Diagnostics.Tracing.EventSource, Version=1.1.25.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -118,6 +124,7 @@
     <Compile Include="PageWelcome.xaml.cs">
       <DependentUpon>PageWelcome.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RestApi.cs" />
     <Compile Include="SetupDevicePage.xaml.cs">
       <DependentUpon>SetupDevicePage.xaml</DependentUpon>
     </Compile>
@@ -200,6 +207,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Resource Include="Assets\IOTMDL2.1.49.ttf" />
+    <None Include="DeviceCenterDevelopmentKey.snk" />
     <None Include="DeviceCenter_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest">
