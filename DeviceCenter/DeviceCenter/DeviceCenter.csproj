@@ -29,7 +29,7 @@
     <UpdateUrl>\\scratch2\scratch\stjong\DeviceCenter\</UpdateUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>17</ApplicationRevision>
+    <ApplicationRevision>20</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -206,7 +206,9 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Resource Include="Assets\IOTMDL2.1.49.ttf" />
+    <Content Include="Assets\IOTMDL2.1.49.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="DeviceCenterDevelopmentKey.snk" />
     <None Include="DeviceCenter_TemporaryKey.pfx" />
     <None Include="packages.config" />
