@@ -124,6 +124,7 @@
     <Compile Include="PageWelcome.xaml.cs">
       <DependentUpon>PageWelcome.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RestApi.cs" />
     <Compile Include="SetupDevicePage.xaml.cs">
       <DependentUpon>SetupDevicePage.xaml</DependentUpon>
     </Compile>
