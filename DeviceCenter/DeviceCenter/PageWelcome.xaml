@@ -11,13 +11,17 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="673*"/>
-            <ColumnDefinition Width="333*"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="628.666666666667" />
         </Grid.RowDefinitions>
-        <FlowDocumentPageViewer x:Name="documentWelcome" ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="{x:Null}" MaxZoom="198">
+        <DockPanel>
+            <Viewbox Stretch="Fill" OpacityMask="Red" VerticalAlignment="Top" d:LayoutOverrides="VerticalAlignment">
+                <TextBlock FontFamily="Segoe UI Light" Text="asdfasdfasdfasdf" FontSize="32" Height="629" Width="1007" Background="#FFCB4141"/>
+            </Viewbox>
+        </DockPanel>
+        <FlowDocumentPageViewer Visibility="Collapsed" x:Name="documentWelcome" ScrollViewer.VerticalScrollBarVisibility="Disabled" Background="{x:Null}" MaxZoom="198" Margin="0,0,-0.333,-0.333" d:IsHidden="True">
             <FlowDocumentPageViewer.Template>
                 <ControlTemplate TargetType="{x:Type FlowDocumentPageViewer}">
                     <Border Margin="{TemplateBinding Padding}"
@@ -35,7 +39,7 @@
                     </Border>
                 </ControlTemplate>
             </FlowDocumentPageViewer.Template>
-            <FlowDocument PagePadding="0" >
+            <FlowDocument>
                 <Paragraph FontFamily="Segoe UI Light" FontSize="32" >
                     <Run Text="{x:Static props:Strings.IntroTitle}"/>
                 </Paragraph>
@@ -53,6 +57,5 @@
                 </BlockUIContainer>
             </FlowDocument>
         </FlowDocumentPageViewer>
-        <Image x:Name="imageFrontLogo" Grid.Column="1" Source="Assets/front logo.png" MinWidth="120" MaxWidth="200" Margin="0.667,14,-0.333,112.667"/>
     </Grid>
 </Page>

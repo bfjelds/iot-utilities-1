@@ -235,8 +235,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\background_and_trees.png" />
-    <Resource Include="Assets\blinky.png" />
     <Resource Include="Assets\cloud.png" />
     <Resource Include="Assets\percentage_Circle.png" />
     <Resource Include="Assets\pixel.png" />
@@ -257,9 +255,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\front logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SirepClient.dll">
