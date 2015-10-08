@@ -302,4 +302,10 @@
     <value>Success! {0} is online.</value>
     <comment>{0} is the device name</comment>
   </data>
+  <data name="TitleEraseContent" xml:space="preserve">
+    <value>Erase Content?</value>
+  </data>
+  <data name="ViewAcceptableSDCards" xml:space="preserve">
+    <value>View the list of recommended SD cards</value>
+  </data>
 </root>
