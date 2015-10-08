@@ -68,6 +68,7 @@ namespace DeviceCenter
                 return false;
             }
 
+            Password = newPassword;
             return true;
         }
 
