@@ -6,8 +6,7 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      Title="{x:Static props:Strings.FoundDeviceMessage}" Height="614.958" d:DesignWidth="1642.588">
-
+      Title="{x:Static props:Strings.FindMyDeviceButton}" Height="614.958" d:DesignWidth="1642.588">
     <Grid>
         <ListView x:Name="ListViewDevices" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <ListView.View>
@@ -18,7 +17,10 @@
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Margin="6" Padding="6" Content="Manage this device" Click="ButtonManage_Click" />
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Margin="6" Padding="6" Content="Manage this device" Click="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
+                                    <Button Margin="6" Padding="6" Content="Connect this device" Click="ButtonConnect_Click" Visibility="{Binding ConnectVisible}" />
+                                </StackPanel>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

@@ -16,6 +16,10 @@ using System.Windows.Threading;
 using Microsoft.Tools.Connectivity;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using Onboarding;
+using System.Runtime.InteropServices;
+using System.Collections.Concurrent;
+using System.ComponentModel;
 
 namespace DeviceCenter
 {
@@ -25,9 +29,29 @@ namespace DeviceCenter
     public partial class ViewDevicesPage : Page
     {
         //DispatcherTimer telemetryTimer;
-        mDNSDiscoveredDevice newestBuildDevice, oldestBuildDevice;
-        DeviceDiscoveryService deviceDiscoverySvc;
-        ObservableCollection<mDNSDiscoveredDevice> devices = new ObservableCollection<mDNSDiscoveredDevice>();
+        private DiscoveredDevice newestBuildDevice, oldestBuildDevice;
+        private DeviceDiscoveryService deviceDiscoverySvc;
+        private ObservableCollection<DiscoveredDevice> devices = new ObservableCollection<DiscoveredDevice>();
+
+        private class AdhocNetwork
+        {
+            public AdhocNetwork(IWifi wifi)
+            {
+                this.Wifi = wifi;
+            }
+
+            public override string ToString()
+            {
+                return this.Wifi.GetSSID();
+            }
+
+            public IWifi Wifi { get; private set; }
+        }
+
+        private ConcurrentDictionary<string, AdhocNetwork> adhocNetworks = new ConcurrentDictionary<string, AdhocNetwork>();
+
+        private IOnboardingManager wifiManager;
+        private DispatcherTimer wifiRefreshTimer;
 
         public ViewDevicesPage()
         {
@@ -46,6 +70,89 @@ namespace DeviceCenter
             deviceDiscoverySvc.Start();
 
             ListViewDevices.ItemsSource = devices;
+
+            wifiManager = new OnboardingManager();
+            wifiManager.Init();
+
+            wifiRefreshTimer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(10)
+            };
+            wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
+            RefreshWifiAsync();
+
+            Application.Current.MainWindow.Closing += new CancelEventHandler(MainWindow_Closing);
+
+        }
+
+        void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            Application.Current.MainWindow.Closing -= MainWindow_Closing;
+
+            wifiManager.Shutdown();
+        }
+
+        private async void RefreshWifiAsync()
+        {
+            wifiRefreshTimer.Stop();
+            try
+            {
+                await Task.Run((Action)(() =>
+                {
+                    WifiList list = null;
+                    try
+                    {
+                        list = wifiManager.GetOnboardingNetworks();
+
+                        if (list == null)
+                            return;
+
+                        uint size = list.Size();
+
+                        for (uint i = 0; i < size; i++)
+                        {
+                            IWifi item = list.GetItem(i);
+
+                            AdhocNetwork ssid = adhocNetworks.GetOrAdd(item.GetSSID(), (key)  =>
+                            {
+                                var newDevice = new DiscoveredDevice(DiscoveredDevice.NetworkType.adhoc)
+                                {
+                                    DeviceName = item.GetSSID()
+                                };
+
+                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                                {
+                                    devices.Add(newDevice);
+                                }));
+
+                                return new AdhocNetwork(item);
+                            });
+                        }
+                    }
+                    catch (COMException /*ex*/)
+                    {
+                        // TODO handle errors
+                        //Dispatcher.Invoke(() => { statusTextBlock.Text = "Failed to find onboardees. HRESULT: " + ex.HResult; });
+                    }
+                    finally
+                    {
+                        if (list != null)
+                        {
+                            Marshal.ReleaseComObject(list);
+                            list = null;
+                        }
+                    }
+                }));
+            }
+            finally
+            {
+                wifiRefreshTimer.Start();
+            }
+        }
+
+        private void WifiRefreshTimer_Tick(object sender, EventArgs e)
+        {
+            RefreshWifiAsync();
         }
 
         /*
@@ -82,7 +189,7 @@ namespace DeviceCenter
 
             if (args.Info.Connection == DiscoveredDeviceInfo.ConnectionType.MDNS)
             {
-                var newDevice = new mDNSDiscoveredDevice
+                var newDevice = new DiscoveredDevice(DiscoveredDevice.NetworkType.ethernet)
                 {
                     DeviceName = args.Info.Name,
                     DeviceModel = args.Info.Location,
@@ -174,7 +281,7 @@ namespace DeviceCenter
                 // TODO: handle errors
             }
         }
-        private void SetupDevice_Click(object sender, RoutedEventArgs e)
+        private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
         }
 
@@ -183,8 +290,26 @@ namespace DeviceCenter
 
         }
 
-        class mDNSDiscoveredDevice
+        public class DiscoveredDevice
         {
+            public enum NetworkType { ethernet, adhoc };
+            public DiscoveredDevice(NetworkType network)
+            {
+                this.Network = network;
+                switch (network)
+                {
+                    case NetworkType.ethernet:
+                        this.ManageVisible = Visibility.Visible;
+                        this.ConnectVisible = Visibility.Collapsed;
+                        break;
+                    case NetworkType.adhoc:
+                        this.ManageVisible = Visibility.Collapsed;
+                        this.ConnectVisible = Visibility.Visible;
+                        break;
+                }
+            }
+
+            public NetworkType Network { get; private set; }
             public string DeviceName { get; set; }
             public string DeviceModel { get; set; }
             public string IPaddress { get; set; }
@@ -192,8 +317,9 @@ namespace DeviceCenter
             public string Architecture { get; set; }
             public Guid UniqueId { get; set; }
             public Uri Manage { get; set; }
-            public string ManageText { get { return "Manage"; } }
-            public string ConnectionText { get { return "Set up device"; } }
+            public Visibility ManageVisible { get; private set; }
+            public Visibility ConnectVisible { get; private set; }
+            
         }
     }
 }
