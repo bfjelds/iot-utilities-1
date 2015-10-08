@@ -133,6 +133,11 @@
     <Compile Include="PageWelcome.xaml.cs">
       <DependentUpon>PageWelcome.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Strings\Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
     <Compile Include="WebBRest.cs" />
     <Compile Include="SetupDevicePage.xaml.cs">
       <DependentUpon>SetupDevicePage.xaml</DependentUpon>
@@ -141,11 +146,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\Strings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="TelemetryHelper.cs" />
     <Compile Include="ViewDevicesPage.xaml.cs">
@@ -213,6 +213,7 @@
     <EmbeddedResource Include="Strings\Strings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Content Include="Assets\IOTMDL2.1.49.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -235,8 +236,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\background_and_trees.png" />
-    <Resource Include="Assets\blinky.png" />
     <Resource Include="Assets\cloud.png" />
     <Resource Include="Assets\percentage_Circle.png" />
     <Resource Include="Assets\pixel.png" />
@@ -257,9 +256,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\front logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SirepClient.dll">

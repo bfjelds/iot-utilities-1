@@ -599,5 +599,14 @@ namespace DeviceCenter.Strings {
                 return ResourceManager.GetString("SuccessTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View the list of recommended SD cards.
+        /// </summary>
+        public static string ViewAcceptableSDCards {
+            get {
+                return ResourceManager.GetString("ViewAcceptableSDCards", resourceCulture);
+            }
+        }
     }
 }

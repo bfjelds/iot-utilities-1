@@ -4,65 +4,78 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DeviceCenter"
+      xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      Title="Set up a new device" Loaded="Window_Loaded">
+      Title="Set up a new device" Loaded="Window_Loaded" Height="486.734" Width="831.338">
+    <Page.Resources>
+        <Storyboard x:Key="OnLoadedInitialize">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WarningMessageOverlay">
+                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Hidden}"/>
+            </ObjectAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="PanelFlashing">
+                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
+    <Page.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard x:Name="OnLoadedInitialize_BeginStoryboard" Storyboard="{StaticResource OnLoadedInitialize}"/>
+        </EventTrigger>
+    </Page.Triggers>
 
-    <Grid Background="{StaticResource ApplicationPageBackgroundBrush}">
-        <Grid x:Name="Mainlayout">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition Height="108" />
-                <RowDefinition Height="367" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <Grid x:Name="CloudRow" HorizontalAlignment="Right" Grid.Row="1">
-                <Canvas>
-                    <Image x:Name="CloudImage" Canvas.Right="60" Source="Assets/cloud.png" />
-                </Canvas>
-            </Grid>
-
-            <Grid x:Name="PageBackgroundRow" Grid.Row="3">
-                <Image x:Name="PageBackgroundImage" Stretch="Fill" Source="Assets/background_and_trees.png" />
-            </Grid>
-
-            <StackPanel Grid.Row="2" Margin="120 0 0 0">
-                <TextBlock x:Uid="ChooseDevice" FontSize="30" FontFamily="Segoe UI Semilight" Foreground="{StaticResource ApplicationPageControlForgroundTextBrushLight}" VerticalAlignment="Bottom" Text="1. Choose your device"/>
-                <ComboBox Margin ="20" HorizontalAlignment="Left" Width="200">
-                    <ComboBoxItem>Minnow Board Max</ComboBoxItem>
-                    <ComboBoxItem IsSelected="True">Raspberry Pi 2</ComboBoxItem>
+    <Grid>
+        <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.IntroSetUpNewDevice}" HorizontalAlignment="Left"/>
+                <TextBlock x:Uid="Subtitle" FontSize="21.333" FontFamily="Segoe UI Semilight" VerticalAlignment="Bottom" Text="{x:Static props:Strings.NewDeviceSubTitle}" HorizontalAlignment="Left" Margin="0,20,0,0" TextWrapping="Wrap"/>
+                <TextBlock x:Uid="SelectDevice" VerticalAlignment="Bottom" Text="{x:Static props:Strings.NewDeviceSelectDeviceTypeLabel}" Margin="0,10,0,6" HorizontalAlignment="Left"/>
+                <ComboBox x:Name="ComboBoxDeviceType" HorizontalAlignment="Left" Width="200" Margin="0,4,0,0">
+                    <ComboBoxItem Content="Minnow Board Max"/>
+                    <ComboBoxItem IsSelected="True" Content="Raspberry Pi 2"/>
                 </ComboBox>
-                <TextBlock x:Uid="SelectSDCard" FontSize="30" FontFamily="Segoe UI Semilight" Foreground="{StaticResource ApplicationPageControlForgroundTextBrushLight}" VerticalAlignment="Bottom" Text="2. Select the SD card your want to flash"/>
-                <TextBlock x:Uid="SelectSDCardInfo" Margin="30 0 0 0" FontSize="20" FontFamily="Segoe UI Semilight" Foreground="{StaticResource ApplicationPageControlForgroundTextBrushLight}" VerticalAlignment="Bottom" Text="The SD card must be at least 3 GB in size"/>
-                <ComboBox x:Name="RemoveableDevicesComboBox" Margin ="20" HorizontalAlignment="Left" Width="200">
-                </ComboBox>
-                <TextBlock x:Name="StatusMessageBox" x:Uid="SelectSDCardInfo" Margin="30 0 0 0" FontSize="20" FontFamily="Segoe UI Semilight" Foreground="{StaticResource ApplicationPageControlForgroundTextBrushLight}" VerticalAlignment="Bottom"/>
-                <Button x:Uid="FlashButton" Grid.Row="4" FontSize="24" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Flash SD Card" Click="FlashSDCard_Click"/>
+                <TextBlock x:Uid="InsertSDCard" VerticalAlignment="Top" Text="{x:Static props:Strings.NewDeviceInsertSDCardMessage}" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="0,10,0,0"/>
+                <TextBlock x:Uid="AcceptableSDCards" VerticalAlignment="Top" Text="{x:Static props:Strings.ViewAcceptableSDCards}" Margin="0,10,0,0" HorizontalAlignment="Left" TextDecorations="Underline" Cursor="Hand">
+                    <TextBlock.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                    </TextBlock.Foreground>
+                </TextBlock>
+                <TextBlock x:Uid="SelectSDCardInfo" FontSize="16" Text="{x:Static props:Strings.NewDeviceDriveLabel}" HorizontalAlignment="Left" Margin="0,10,0,0"/>
+                <ComboBox x:Name="RemoveableDevicesComboBox" Width="200" HorizontalAlignment="Left" Margin="0,4,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Left">
+                    <CheckBox x:Name="checkBoxEula" Content="{x:Static props:Strings.NewDeviceAcceptLabel}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBlock x:Uid="SelectSDCardInfo" Text="{x:Static props:Strings.NewDeviceTermsAndCondition}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,0,0,0" Cursor="Hand" TextDecorations="Underline">
+                        <TextBlock.Foreground>
+                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </StackPanel>
+                <TextBlock x:Name="StatusMessageBox" x:Uid="SelectSDCardInfo" Margin="20,0,0,10" VerticalAlignment="Bottom"/>
+                <Button x:Uid="FlashButton" Grid.Row="4" Padding="30 5 30 5" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Flash SD Card" Click="FlashSDCard_Click">
+                    <Button.BorderBrush>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
+                    </Button.BorderBrush>
+                    <Button.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}" Opacity="0.8"/>
+                    </Button.Foreground>
+                </Button>
+                <StackPanel x:Name="PanelFlashing" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,10,0,0">
+                    <TextBlock Text="{x:Static props:Strings.NewDeviceFlashing}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <ProgressBar Height="5" Width="200" VerticalAlignment="Top" Margin="0,6,0,0"/>
+                    <Button Content="{x:Static props:Strings.CancelButton}" Padding="30 5 30 5"  HorizontalAlignment="Left" Margin="0,10,0,0" />
+                </StackPanel>
             </StackPanel>
-            <Grid>
-
-            </Grid>
-        </Grid>
-        <Grid x:Name="WarningMessageOverlay">
+        </ScrollViewer>
+        <Grid x:Name="WarningMessageOverlay" Background="#3F000000">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="200" />
-                <RowDefinition Height="*" />
+                <RowDefinition />
             </Grid.RowDefinitions>
-            <StackPanel x:Name="ErrorMessage" Grid.Row="1" Background="WhiteSmoke" Visibility="Hidden">
-                <TextBlock Grid.Column="1" Grid.Row="0" x:Name="tbWarningMessageHeader" Margin="10,10,0,18" FontSize="40" FontFamily="Segoe UI SemiLight" Text="Erase Content?"/>
-                <TextBlock Grid.Column="1" Grid.Row="1" x:Name="tbWarningMessageText"  Margin="10,0,0,30" FontSize="20" FontFamily="Segoe UI Light" TextWrapping="Wrap" Text="Make sure you back up any files on your card before flashing. Flashing will erase anything previously stored on the card."/>
-                <Grid x:Name="grdContinueCancel" Grid.Column="1" Grid.Row="2" Height="35">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="120" />
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="120" />
-                        <ColumnDefinition Width="25" />
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="1" x:Name="btnContinue" x:Uid="ViewDevicesButton" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Continue" Click="btnContinue_Click"/>
-                    <Button Grid.Column="3" x:Name="btnCancel" x:Uid="SetupDeviceButton" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Cancel"  Click="btnCancel_Click" />
-                </Grid>
+            <StackPanel x:Name="ErrorMessage" Width="500" Background="WhiteSmoke" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Grid.Column="1" Grid.Row="0" x:Name="tbWarningMessageHeader" Margin="30,30,30,0" FontSize="40" FontFamily="Segoe UI SemiLight" Text="{x:Static props:Strings.NewDeviceAlertTitle}" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="1" Grid.Row="1" x:Name="tbWarningMessageText"  Margin="30,30,30,0" FontSize="20" FontFamily="Segoe UI Light" TextWrapping="Wrap" Text="{x:Static props:Strings.NewDeviceAlertMessage}" HorizontalAlignment="Center"/>
+                <StackPanel x:Name="grdContinueCancel" Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="30">
+                    <Button x:Name="btnContinue" x:Uid="ViewDevicesButton" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" Content="{x:Static props:Strings.ContinueButton}" Click="btnContinue_Click"/>
+                    <Button x:Name="btnCancel" x:Uid="SetupDeviceButton" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" Content="{x:Static props:Strings.CancelButton}"  Click="btnCancel_Click" Margin="10,0,0,0" />
+                </StackPanel>
             </StackPanel>
         </Grid>
     </Grid>
