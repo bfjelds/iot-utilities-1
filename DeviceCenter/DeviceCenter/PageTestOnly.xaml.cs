@@ -29,9 +29,10 @@ namespace DeviceCenter
         private async void buttonTest_Click(object sender, RoutedEventArgs e)
         {
             // do something here
-            IPAddress ip = IPAddress.Parse("10.125.152.67");
+            IPAddress ip = IPAddress.Parse("10.125.140.186");
             WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
-            await webbRequest.SetDeviceNameAsync("Wohaha");
+            bool x = await webbRequest.SetDeviceNameAsync("Wohaha");
+            //bool y = await webbRequest.SetPasswordAsync("p@ssw0rd", "password1");
         }
     }
 }
