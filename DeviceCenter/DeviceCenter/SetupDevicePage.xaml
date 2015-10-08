@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      Title="Set up a new device" Loaded="Window_Loaded">
+      Title="Set up a new device" Loaded="Window_Loaded" Height="486.734" Width="831.338">
     <Page.Resources>
         <Storyboard x:Key="OnLoadedInitialize">
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WarningMessageOverlay">
@@ -65,13 +65,13 @@
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
-        <Grid x:Name="WarningMessageOverlay" Background="#3F000000" d:IsHidden="True">
+        <Grid x:Name="WarningMessageOverlay" Background="#3F000000">
             <Grid.RowDefinitions>
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <StackPanel x:Name="ErrorMessage" Background="WhiteSmoke" VerticalAlignment="Center">
-                <TextBlock Grid.Column="1" Grid.Row="0" x:Name="tbWarningMessageHeader" Margin="30,30,30,0" FontSize="40" FontFamily="Segoe UI SemiLight" Text="{x:Static props:Strings.TitleEraseContent}"/>
-                <TextBlock Grid.Column="1" Grid.Row="1" x:Name="tbWarningMessageText"  Margin="30,30,30,0" FontSize="20" FontFamily="Segoe UI Light" TextWrapping="Wrap" Text="{x:Static props:Strings.NewDeviceAlertMessage}"/>
+            <StackPanel x:Name="ErrorMessage" Width="500" Background="WhiteSmoke" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Grid.Column="1" Grid.Row="0" x:Name="tbWarningMessageHeader" Margin="30,30,30,0" FontSize="40" FontFamily="Segoe UI SemiLight" Text="{x:Static props:Strings.NewDeviceAlertTitle}" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="1" Grid.Row="1" x:Name="tbWarningMessageText"  Margin="30,30,30,0" FontSize="20" FontFamily="Segoe UI Light" TextWrapping="Wrap" Text="{x:Static props:Strings.NewDeviceAlertMessage}" HorizontalAlignment="Center"/>
                 <StackPanel x:Name="grdContinueCancel" Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="30">
                     <Button x:Name="btnContinue" x:Uid="ViewDevicesButton" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" Content="{x:Static props:Strings.ContinueButton}" Click="btnContinue_Click"/>
                     <Button x:Name="btnCancel" x:Uid="SetupDeviceButton" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" Content="{x:Static props:Strings.CancelButton}"  Click="btnCancel_Click" Margin="10,0,0,0" />

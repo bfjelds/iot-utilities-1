@@ -601,15 +601,6 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Erase Content?.
-        /// </summary>
-        public static string TitleEraseContent {
-            get {
-                return ResourceManager.GetString("TitleEraseContent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to View the list of recommended SD cards.
         /// </summary>
         public static string ViewAcceptableSDCards {
