@@ -33,7 +33,10 @@ namespace DeviceCenter
 
         public async Task<bool> SetDeviceNameAsync(string newDeviceName)
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "name?" + newDeviceName;
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "name?newdevicename=";
+            byte[] newDeviceNameBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(newDeviceName.Trim());
+            url += Encode64(newDeviceNameBytes);
+
             try
             {
                 await PostRequest(url);
@@ -46,10 +49,28 @@ namespace DeviceCenter
             return true;
         }
 
-        //public async void SetPasswordAsync(string oldPassword, string newPassword)
-        //{
-        //    string url = HttpUrlPrfx + IpAddr.ToString() + ";" + Port + DeviceApiUrl "?"
-        //}
+        public async Task<bool> SetPasswordAsync(string oldPassword, string newPassword)
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "password?";
+            url += "oldpassword=";
+            byte[] oldPasswordBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(oldPassword.Trim());
+            byte[] newPasswordBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(newPassword.Trim());
+            url += Encode64(oldPasswordBytes);
+            url = url + "&newpassword=" + Encode64(newPasswordBytes);
+
+            try
+            {
+                await PostRequest(url);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+
+            Password = newPassword;
+            return true;
+        }
 
         //public async void InstallAppx()
         //{
@@ -67,7 +88,9 @@ namespace DeviceCenter
             {
                 HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
                 req.Method = "POST";
+                req.ContentType = "application/x-www-form-urlencoded";
                 req.Credentials = new NetworkCredential(Username, Password);
+                req.ContentLength = 0;
 
                 HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
                 result = response.StatusCode;
@@ -83,6 +106,38 @@ namespace DeviceCenter
                 Debug.WriteLine(ex.Message);
             }
             return result;
+        }
+
+        public static string Encode64(byte[] toEncodeAsBytes)
+        {
+            string name64 = System.Convert.ToBase64String(toEncodeAsBytes);
+            name64 = name64.Replace(" ", "20%");
+            name64 = name64.Replace("$", "24%");
+            name64 = name64.Replace("&", "26%");
+            name64 = name64.Replace("`", "60%");
+            name64 = name64.Replace(":", "%3A");
+            name64 = name64.Replace("<", "%3C");
+            name64 = name64.Replace(">", "%3E");
+            name64 = name64.Replace("[", "%5B");
+            name64 = name64.Replace("]", "%5D");
+            name64 = name64.Replace("{", "%7B");
+            name64 = name64.Replace("}", "%7D");
+            name64 = name64.Replace("\"", "22%");
+            name64 = name64.Replace("+", "%2B");
+            name64 = name64.Replace("#", "23%");
+            name64 = name64.Replace("%", "25%");
+            name64 = name64.Replace("@", "40%");
+            name64 = name64.Replace("/", "%2F");
+            name64 = name64.Replace(";", "%3B");
+            name64 = name64.Replace("=", "%3D");
+            name64 = name64.Replace("?", "%3F");
+            name64 = name64.Replace("\\", "%5C");
+            name64 = name64.Replace("^", "%5E");
+            name64 = name64.Replace("|", "%7C");
+            name64 = name64.Replace("~", "%7E");
+            name64 = name64.Replace("'", "27%");
+            name64 = name64.Replace(",", "%2C");
+            return name64;
         }
 
     }
