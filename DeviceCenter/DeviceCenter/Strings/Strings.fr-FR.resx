@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppNameDisplay" xml:space="preserve">
+    <value>Device Center</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="ConnectAlertMessage" xml:space="preserve">
+    <value>Nous devons connecter votre appareil pour procéder à son installation. Vous allez être temporairement déconnecté d’Internet. Nous vous reconnecterons dès que l’installation sera terminée.</value>
+  </data>
+  <data name="ConnectAlertTitle" xml:space="preserve">
+    <value>Avant de poursuivre</value>
+  </data>
+  <data name="ConnectHelpMessage1" xml:space="preserve">
+    <value>Se connecter via le réseau Wi-Fi</value>
+  </data>
+  <data name="ConnectHelpMessage2" xml:space="preserve">
+    <value>Se connecter à l’aide d’un câble Ethernet</value>
+  </data>
+  <data name="ConnectHelpMessage3" xml:space="preserve">
+    <value>Se connecter plus tard</value>
+  </data>
+  <data name="ConnectHelpSubTitle" xml:space="preserve">
+    <value>Besoin d’une aide supplémentaire ?</value>
+  </data>
+  <data name="ConnectMessage1" xml:space="preserve">
+    <value>Commencez par insérer votre carte SD prête pour installation dans l’appareil.</value>
+  </data>
+  <data name="ConnectMessage2" xml:space="preserve">
+    <value>Connectez votre tableau au réseau à l’aide du réseau Wi-Fi ou Ethernet.</value>
+  </data>
+  <data name="ConnectTitle" xml:space="preserve">
+    <value>Votre carte SD est prête.</value>
+  </data>
+  <data name="ConnetSubTitle" xml:space="preserve">
+    <value>C’est parti pour la connexion</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Continuer</value>
+  </data>
+  <data name="DeviceListCantFindDevice" xml:space="preserve">
+    <value>Vous ne trouvez pas votre appareil ?</value>
+  </data>
+  <data name="DeviceListEnterNetworkInfo" xml:space="preserve">
+    <value>Entrer les informations réseau</value>
+  </data>
+  <data name="DeviceListManage" xml:space="preserve">
+    <value>Gérer dans Windows Device Portal</value>
+  </data>
+  <data name="DeviceListScanAgain" xml:space="preserve">
+    <value>Analyser à nouveau</value>
+  </data>
+  <data name="DeviceListTroubleshoot" xml:space="preserve">
+    <value>Résoudre les problèmes de connexion des appareils</value>
+  </data>
+  <data name="DeviceNamePwdDeviceNameLabel" xml:space="preserve">
+    <value>Nom de l’appareil</value>
+  </data>
+  <data name="DeviceNamePwdMessage" xml:space="preserve">
+    <value>La configuration du nom et du mot de passe de l’appareil permet de protéger votre appareil</value>
+  </data>
+  <data name="DeviceNamePwdPassword1" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="DeviceNamePwdPassword2" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
+    <value>Les mots de passe ne correspondent pas</value>
+  </data>
+  <data name="DeviceNamePwdPasswordMatch" xml:space="preserve">
+    <value>Les mots de passe correspondent</value>
+  </data>
+  <data name="DeviceNamePwdSubtitle" xml:space="preserve">
+    <value>Configurer le nom et le mot de passe de l’appareil</value>
+  </data>
+  <data name="DeviceNamePwdUserNameLabel" xml:space="preserve">
+    <value>Nom d’utilisateur</value>
+  </data>
+  <data name="FindDeviceMessage" xml:space="preserve">
+    <value>Recherche d’appareils Windows 10 IoT Core sur votre réseau</value>
+  </data>
+  <data name="FindMyDeviceButton" xml:space="preserve">
+    <value>Trouver mon appareil</value>
+  </data>
+  <data name="FinishButton" xml:space="preserve">
+    <value>Terminer</value>
+  </data>
+  <data name="FoundDeviceEnterNetworkInfo" xml:space="preserve">
+    <value>Entrez les informations du réseau</value>
+  </data>
+  <data name="FoundDeviceMessage" xml:space="preserve">
+    <value>Nous avons trouvé 1 appareil sans fil sur le réseau</value>
+  </data>
+  <data name="FoundDevicesMessage" xml:space="preserve">
+    <value>Nous avons trouvé {0} appareils sans fil sur le réseau</value>
+    <comment>code will fill in the {0}</comment>
+  </data>
+  <data name="IntroMessage" xml:space="preserve">
+    <value>Vous disposez déjà d’un appareil Windows IoT Core sur votre réseau ?</value>
+  </data>
+  <data name="IntroSetUpNewDevice" xml:space="preserve">
+    <value>Configurer un nouvel appareil</value>
+  </data>
+  <data name="IntroSubTitle" xml:space="preserve">
+    <value>Esquissez et concevez rapidement vos solutions Windows IoT sur un large choix d’appareils équipés de Windows IoT Core. Windows 10 vous offre des outils puissants vous permettant de développer rapidement votre solution et de la déployer sur votre appareil.</value>
+  </data>
+  <data name="IntroTitle" xml:space="preserve">
+    <value>Découvrez l’Internet de vos objets</value>
+  </data>
+  <data name="NetworkCredentialsNetworkNameLabel" xml:space="preserve">
+    <value>Nom du réseau sans fil</value>
+  </data>
+  <data name="NetworkCredentialsPasswordLabel" xml:space="preserve">
+    <value>Mot de passe du réseau sans fil</value>
+  </data>
+  <data name="NetworkCredentialsSubTitle" xml:space="preserve">
+    <value>Coordonnées du réseau</value>
+  </data>
+  <data name="NewDeviceAcceptLabel" xml:space="preserve">
+    <value>J’accepte les</value>
+    <comment>note to loc: "I accept the" + "terms and conditions" are part of the same sentence</comment>
+  </data>
+  <data name="NewDeviceAlertMessage" xml:space="preserve">
+    <value>Veillez à sauvegarder l’ensemble des fichiers de votre carte avant de poursuivre. La permutation effacera tous les éléments préalablement stockés sur la carte.</value>
+  </data>
+  <data name="NewDeviceAlertTitle" xml:space="preserve">
+    <value>Avant de poursuivre</value>
+  </data>
+  <data name="NewDeviceDownloadAndInstall" xml:space="preserve">
+    <value>Télécharger et installer</value>
+  </data>
+  <data name="NewDeviceDownloading" xml:space="preserve">
+    <value>Téléchargement de Windows 10 IoT Core</value>
+  </data>
+  <data name="NewDeviceDriveLabel" xml:space="preserve">
+    <value>Disque</value>
+  </data>
+  <data name="NewDeviceFlashing" xml:space="preserve">
+    <value>Permutation de votre carte SD</value>
+  </data>
+  <data name="NewDeviceInsertSDCardMessage" xml:space="preserve">
+    <value>Insérez une carte SD dans votre ordinateur. Notez que ce processus effacera tous les contenus enregistrés sur votre carte.</value>
+  </data>
+  <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
+    <value>Sélectionner le type de votre appareil</value>
+    <comment>the combo values should come from the online xml file</comment>
+  </data>
+  <data name="NewDeviceSubTitle" xml:space="preserve">
+    <value>Commençons par télécharger Windows 10 IoT Core sur votre appareil.</value>
+  </data>
+  <data name="NewDeviceTermsAndCondition" xml:space="preserve">
+    <value>conditions générales</value>
+    <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
+  </data>
+  <data name="NewDeviceTitle" xml:space="preserve">
+    <value>Configurer un nouvel appareil</value>
+  </data>
+  <data name="OkButton" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="SuccessAction1" xml:space="preserve">
+    <value>Ouvrir Windows Device Portal dans le navigateur</value>
+  </data>
+  <data name="SuccessAction2" xml:space="preserve">
+    <value>Obtenir les outils</value>
+  </data>
+  <data name="SuccessAction3" xml:space="preserve">
+    <value>Explorer les projets et les tutoriels</value>
+  </data>
+  <data name="SuccessMessage1" xml:space="preserve">
+    <value>Configurer votre appareil sur Windows Device Portal</value>
+  </data>
+  <data name="SuccessMessage2" xml:space="preserve">
+    <value>Configurer votre PC</value>
+  </data>
+  <data name="SuccessMessage3" xml:space="preserve">
+    <value>Rédiger votre première application Windows</value>
+  </data>
+  <data name="SuccessSubTitle" xml:space="preserve">
+    <value>Vous êtes prêt pour la phase de développement.</value>
+  </data>
+  <data name="SuccessTitle" xml:space="preserve">
+    <value>Opération réussie ! {0} a bien été chargé.</value>
+    <comment>{0} is the device name</comment>
+  </data>
+</root>
