@@ -33,6 +33,7 @@ namespace DeviceCenter
         private DeviceDiscoveryService deviceDiscoverySvc;
         private ObservableCollection<DiscoveredDevice> devices = new ObservableCollection<DiscoveredDevice>();
 
+        /*
         private class AdhocNetwork
         {
             public AdhocNetwork(IWifi wifi)
@@ -47,11 +48,14 @@ namespace DeviceCenter
 
             public IWifi Wifi { get; private set; }
         }
+        */
 
+        /*
         private ConcurrentDictionary<string, AdhocNetwork> adhocNetworks = new ConcurrentDictionary<string, AdhocNetwork>();
 
         private IOnboardingManager wifiManager;
         private DispatcherTimer wifiRefreshTimer;
+        */
 
         public ViewDevicesPage()
         {
@@ -71,6 +75,7 @@ namespace DeviceCenter
 
             ListViewDevices.ItemsSource = devices;
 
+            /*
             wifiManager = new OnboardingManager();
             wifiManager.Init();
 
@@ -80,18 +85,18 @@ namespace DeviceCenter
             };
             wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
             RefreshWifiAsync();
-
-            Application.Current.MainWindow.Closing += new CancelEventHandler(MainWindow_Closing);
-
+            */
         }
 
+        /* Don't use this, instead use device list's load/unload
         void MainWindow_Closing(object sender, CancelEventArgs e)
         {
             Application.Current.MainWindow.Closing -= MainWindow_Closing;
 
             wifiManager.Shutdown();
-        }
+        }*/
 
+        /* TODO bring back when AllJoyn is ready 
         private async void RefreshWifiAsync()
         {
             wifiRefreshTimer.Stop();
@@ -129,7 +134,7 @@ namespace DeviceCenter
                             });
                         }
                     }
-                    catch (COMException /*ex*/)
+                    catch (COMException /*ex*-/)
                     {
                         // TODO handle errors
                         //Dispatcher.Invoke(() => { statusTextBlock.Text = "Failed to find onboardees. HRESULT: " + ex.HResult; });
@@ -154,6 +159,7 @@ namespace DeviceCenter
         {
             RefreshWifiAsync();
         }
+        */
 
         /*
         private void TelemetryTimer_Tick(object sender, EventArgs e)
