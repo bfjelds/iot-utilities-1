@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      Title="Set up a new device" Loaded="Window_Loaded" Height="486.734" Width="831.338">
+      Title="Set up a new device" Loaded="Window_Loaded">
     <Page.Resources>
         <Storyboard x:Key="OnLoadedInitialize">
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WarningMessageOverlay">
@@ -74,8 +74,8 @@
         </EventTrigger>
     </Page.Triggers>
 
-    <Grid>
-        <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto">
+    <Grid VerticalAlignment="Top">
+        <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
             <StackPanel>
                 <TextBlock x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.IntroSetUpNewDevice}" HorizontalAlignment="Left"/>
                 <TextBlock x:Uid="Subtitle" FontSize="21.333" FontFamily="Segoe UI Semilight" VerticalAlignment="Bottom" Text="{x:Static props:Strings.NewDeviceSubTitle}" HorizontalAlignment="Left" Margin="0,20,0,0" TextWrapping="Wrap"/>

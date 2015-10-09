@@ -30,7 +30,6 @@ namespace DeviceCenter
             InitializeComponent();
 
             welcomePage = new PageWelcome(_NavigationFrame);
-            PanelTitleBar.Visibility = Visibility.Collapsed;
 
             _NavigationFrame.Navigate(welcomePage);
             _NavigationFrame.Navigated += _NavigationFrame_Navigated;
@@ -72,21 +71,13 @@ namespace DeviceCenter
 
         private void _NavigationFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            ButtonBack.Visibility = _NavigationFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
-            PanelTitleBar.Visibility = e.Content != welcomePage ? Visibility.Visible : Visibility.Collapsed;
-            LabelTitle.Text = ((Page)e.Content).Title;
         }
 
         private Page welcomePage;
 
-        private void ButtonBack_Click(object sender, RoutedEventArgs e)
-        {
-            _NavigationFrame.GoBack();
-        }
-
         private void buttonMyDevices_Click(object sender, RoutedEventArgs e)
         {
-            _NavigationFrame.Navigate(new ViewDevicesPage());
+            _NavigationFrame.Navigate(new ViewDevicesPage(_NavigationFrame));
         }
 
         private void buttonAddDevice_Click(object sender, RoutedEventArgs e)

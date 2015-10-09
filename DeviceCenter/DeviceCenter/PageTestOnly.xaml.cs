@@ -31,8 +31,9 @@ namespace DeviceCenter
             // do something here
             IPAddress ip = IPAddress.Parse("10.125.140.186");
             WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
-            bool x = await webbRequest.SetDeviceNameAsync("Wohaha");
+            bool x = await webbRequest.SetDeviceNameAsync("tengtestWohaha");
             //bool y = await webbRequest.SetPasswordAsync("p@ssw0rd", "password1");
+            //bool z = await webbRequest.Restart();
         }
     }
 }
