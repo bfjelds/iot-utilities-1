@@ -70,6 +70,7 @@
                     <local:buttonSideMenu Text="{x:Static props:Strings.IntroSetUpNewDevice}" Icon="&#xE781;" Click="buttonAddDevice_Click"/>
                     <local:buttonSideMenu Text="Try some samples" Icon="&#xE7BE;" Click="buttonSamples_Click"/>
                     <local:buttonSideMenu Text="Test page" Icon="&#xEADA;" Click="buttonTestOnly_Click"/>
+                    <local:buttonSideMenu Text="Test wifi" Icon="&#xEADA;" Click="buttonSideMenu_Click"/>
                 </StackPanel>
                 <Frame Margin="10 0" x:Name="_NavigationFrame" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" />
             </DockPanel>

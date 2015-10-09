@@ -226,6 +226,10 @@
   <data name="IntroTitle" xml:space="preserve">
     <value>Discover the internet of your things</value>
   </data>
+  <data name="LabelSaveWifiPassword" xml:space="preserve">
+    <value>Do this for all future devices</value>
+    <comment>Option to save your wifi password</comment>
+  </data>
   <data name="NetworkCredentialsNetworkNameLabel" xml:space="preserve">
     <value>Wireless network name</value>
   </data>
@@ -277,6 +281,9 @@
   <data name="OkButton" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="SubTitleWifi" xml:space="preserve">
+    <value>Here are the networks your device can see</value>
+  </data>
   <data name="SuccessAction1" xml:space="preserve">
     <value>Open Windows Device Portal in browser</value>
   </data>
@@ -301,6 +308,9 @@
   <data name="SuccessTitle" xml:space="preserve">
     <value>Success! {0} is online.</value>
     <comment>{0} is the device name</comment>
+  </data>
+  <data name="TitleWifi" xml:space="preserve">
+    <value>Wi-Fi</value>
   </data>
   <data name="ViewAcceptableSDCards" xml:space="preserve">
     <value>View the list of recommended SD cards</value>

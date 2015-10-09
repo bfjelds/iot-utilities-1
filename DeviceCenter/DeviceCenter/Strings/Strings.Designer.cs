@@ -385,6 +385,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do this for all future devices.
+        /// </summary>
+        public static string LabelSaveWifiPassword {
+            get {
+                return ResourceManager.GetString("LabelSaveWifiPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wireless network name.
         /// </summary>
         public static string NetworkCredentialsNetworkNameLabel {
@@ -529,6 +538,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Here are the networks your device can see.
+        /// </summary>
+        public static string SubTitleWifi {
+            get {
+                return ResourceManager.GetString("SubTitleWifi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Windows Device Portal in browser.
         /// </summary>
         public static string SuccessAction1 {
@@ -597,6 +615,15 @@ namespace DeviceCenter.Strings {
         public static string SuccessTitle {
             get {
                 return ResourceManager.GetString("SuccessTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wi-Fi.
+        /// </summary>
+        public static string TitleWifi {
+            get {
+                return ResourceManager.GetString("TitleWifi", resourceCulture);
             }
         }
         

@@ -137,6 +137,9 @@
     <Compile Include="PageWelcome.xaml.cs">
       <DependentUpon>PageWelcome.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PageWifi.xaml.cs">
+      <DependentUpon>PageWifi.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Strings\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -180,6 +183,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageWelcome.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PageWifi.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
