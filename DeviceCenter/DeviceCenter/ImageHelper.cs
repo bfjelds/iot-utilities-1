@@ -107,22 +107,28 @@ namespace DeviceCenter
     {
         public static int FlashFFUImageToDrive(string ffuImage, DriveInfo driveInfo)
         {
+            /*
             // TODO (alecont): Add logic to pick up dism from system32 if available...
             var current_dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             var dism = System.IO.Path.Combine(current_dir, @"dism\dism.exe");
+            */
+
+            var dismExe = Environment.SystemDirectory + "\\" + "dism.exe";
 
             Process process = new Process();
             process.StartInfo.UseShellExecute = true;
             process.StartInfo.Verb = "runas";
-            process.StartInfo.FileName = dism;
+            process.StartInfo.FileName = dismExe;
             process.StartInfo.Arguments =
-                String.Format("/Apply-Image /ImageFile:\"{0}\" /ApplyDrive:{1} /SkipPlatformCheck",
-                    ffuImage,
-                    driveInfo.PhysicalDriveId
-                    );
+                String.Format("/Apply-Image /ApplyDrive:{0} /SkipPlatformCheck /ImageFile:{1}",                
+                    driveInfo.PhysicalDriveId,
+                    ffuImage);
             System.Diagnostics.Debug.WriteLine("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
+
+            // TBD make this async and cancellable.
             process.Start();
             process.WaitForExit();
+
             return process.ExitCode;
         }
 
