@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -32,7 +33,8 @@ namespace DeviceCenter
 
         private void FlashSDCard_Click(object sender, RoutedEventArgs e)
         {
-            ErrorMessage.Visibility = Visibility.Visible; 
+            Storyboard animation = (Storyboard)FindResource("StoryboardShowMessage");
+            animation.Begin();
         }
 
         private void RefreshDriveList()
@@ -66,13 +68,15 @@ namespace DeviceCenter
 
         private void btnContinue_Click(object sender, RoutedEventArgs e)
         {
+            Storyboard animation = (Storyboard)FindResource("StoryboardHideMessage");
+            animation.Begin();
             // Do the actual flashing here 
-           
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            ErrorMessage.Visibility = Visibility.Hidden;
+            Storyboard animation = (Storyboard)FindResource("StoryboardHideMessage");
+            animation.Begin();
         }
     }
 }
