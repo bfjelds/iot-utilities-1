@@ -83,28 +83,39 @@ namespace DeviceCenter
             {
                 // TBD some message that there's no drive.
             }
-         
-            // TBD image selection here.                 
+             
+            // TBD hardcoded images for now.        
             string mbmFFUFile = "\\\\winbuilds\\release\\TH2_Release\\10565.0.151006-2014\\x86fre\\Images\\IoTUAP\\MBM_1024x768\\Test\\en-us\\Flash.ffu";
             string rpi2FFUFile = "\\\\winbuilds\\release\\TH2_Release\\10565.0.151006-2014\\woafre\\Images\\IoTUAP\\RPi2_1024x768\\Production\\en-us\\Flash.ffu";
-
-            bool bArm = true;
-
-            string ffuName;
+            
             // Pick up the Device Type.
-            if (bArm == true)
+            string deviceType = ComboBoxDeviceType.Text;
+            string ffuName; 
+
+            // determine the ffu to be used for SD flash
+            if (deviceType.Contains(DeviceCenter.Strings.Strings.MBM))
+            {
+                ffuName = mbmFFUFile;
+            }
+            else 
+            if (deviceType.Contains(DeviceCenter.Strings.Strings.RPI2))
             {
                 ffuName = rpi2FFUFile;
             }
             else
             {
-                ffuName = mbmFFUFile;
+                ffuName = null;
             }
 
+            if (string.IsNullOrEmpty(ffuName))
+            {
+                // TBD no file found, err message.
+            }
+            
             // Flash it.
-            Dism.FlashFFUImageToDrive(ffuName, driveInfo);
-      
+            Dism.FlashFFUImageToDrive(ffuName, driveInfo);        
         }
+
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {

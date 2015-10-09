@@ -226,6 +226,9 @@
   <data name="IntroTitle" xml:space="preserve">
     <value>Discover the internet of your things</value>
   </data>
+  <data name="MBM" xml:space="preserve">
+    <value>Minnow Board Max</value>
+  </data>
   <data name="NetworkCredentialsNetworkNameLabel" xml:space="preserve">
     <value>Wireless network name</value>
   </data>
@@ -276,6 +279,9 @@
   </data>
   <data name="OkButton" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="RPI2" xml:space="preserve">
+    <value>Raspberry Pi 2</value>
   </data>
   <data name="SuccessAction1" xml:space="preserve">
     <value>Open Windows Device Portal in browser</value>
