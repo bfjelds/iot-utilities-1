@@ -225,6 +225,13 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.de-DE.resx" />
+    <EmbeddedResource Include="Strings\Strings.es-ES.resx" />
+    <EmbeddedResource Include="Strings\Strings.fr-FR.resx" />
+    <EmbeddedResource Include="Strings\Strings.it-IT.resx" />
+    <EmbeddedResource Include="Strings\Strings.ja-JP.resx" />
+    <EmbeddedResource Include="Strings\Strings.ko-KR.resx" />
+    <EmbeddedResource Include="Strings\Strings.pt-BR.resx" />
     <EmbeddedResource Include="Strings\Strings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -233,6 +240,9 @@
     <Content Include="Assets\IOTMDL2.1.49.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Strings\Strings.ru-RU.resx" />
+    <EmbeddedResource Include="Strings\Strings.zh-CN.resx" />
+    <EmbeddedResource Include="Strings\Strings.zh-TW.resx" />
     <None Include="DeviceCenterDevelopmentKey.snk" />
     <None Include="DeviceCenter_TemporaryKey.pfx" />
     <None Include="packages.config" />

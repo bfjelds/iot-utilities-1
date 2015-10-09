@@ -264,9 +264,15 @@ HRESULT OnboardingManager::GetOnboardingNetworks(IWifiList **list)
         {
             PWSTR uSsid = ConvertCStrToWStr((PSTR)ssid);
 
+            // This BSTR will be deallocated by Wifi destructor
             BSTR bstrSsid = SysAllocString(uSsid);
 
             SAFE_FREE(uSsid);
+
+            if (!bstrSsid)
+            {
+                CHKHR(E_OUTOFMEMORY);
+            }
 
             pList->AddItemEx(bstrSsid, availableList->Network[i].bSecurityEnabled, availableList->Network[i].dot11DefaultAuthAlgorithm, availableList->Network[i].dot11DefaultCipherAlgorithm);
             
@@ -311,7 +317,7 @@ HRESULT OnboardingManager::ConnectToOnboardingNetwork(IWifi *wifi, BSTR password
     BOOL securityEnabled;
     BOOL isLocalWifi;
 
-    BSTR bstrSsid;
+    BSTR bstrSsid = NULL;
 
     if (!wifi)
     {
@@ -367,6 +373,11 @@ HRESULT OnboardingManager::ConnectToOnboardingNetwork(IWifi *wifi, BSTR password
 Cleanup:
     SAFE_FREE(securitySection);
     SAFE_FREE(profileStr);
+
+    if (bstrSsid)
+    {
+        SysFreeString(bstrSsid);
+    }
 
     return hr;
 }

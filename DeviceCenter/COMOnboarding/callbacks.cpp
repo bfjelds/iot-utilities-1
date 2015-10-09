@@ -40,6 +40,9 @@ QCC_BOOL AJ_CALL on_request_credentials(const void* context, const char* authMec
     UNREFERENCED_PARAMETER(credMask);
 
     // TBD: Hardcoding this for now
+    // 10/08: IoTCoreDefaultApp Onboarding producer is not using
+    // security, should remove on_request_credentials and on_authentication_complete
+    // if we decide we won't use it
     alljoyn_credentials_setpassword(credentials, "testing123");
 
     return QCC_TRUE;
@@ -85,8 +88,6 @@ void AJ_CALL on_announce(
     if (alljoyn_aboutobjectdescription_hasinterface(objectDescription, ONBOARDING_INTERFACE_NAME) && alljoyn_aboutobjectdescription_haspath(objectDescription, ONBOARDING_OBJECT_PATH))
     {
         QStatus status = ER_OK;
-        HRESULT hr = S_OK;
-        INT16 state;
         PCSTR path = NULL;
         PWSTR wName = NULL;
         PWSTR wPath = NULL;
@@ -137,19 +138,8 @@ void AJ_CALL on_announce(
             CHECK_STATUS(ER_FAIL);
         }
 
-        hr = consumer->JoinSession();
-
-        if (SUCCEEDED(hr))
-        {
-            hr = consumer->GetState(&state);
-        }
-
-        //Only report consumers that were not onboarded yet
-        if (SUCCEEDED(hr) && state == AJ_ONBOARDING_STATE_NOT_CONFIGURED)
-        {
-            manager->AddConsumer(wName, consumer.Get());
-            manager->Announce(consumer.Get());
-        }
+        manager->AddConsumer(wName, consumer.Get());
+        manager->Announce(consumer.Get());
 
     Cleanup:
         SAFE_FREE(wName);

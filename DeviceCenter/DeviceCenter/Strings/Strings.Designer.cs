@@ -392,6 +392,15 @@ namespace DeviceCenter.Strings {
                 return ResourceManager.GetString("LabelSaveWifiPassword", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Minnow Board Max.
+        /// </summary>
+        public static string MBM {
+            get {
+                return ResourceManager.GetString("MBM", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Wireless network name.
@@ -543,6 +552,15 @@ namespace DeviceCenter.Strings {
         public static string SubTitleWifi {
             get {
                 return ResourceManager.GetString("SubTitleWifi", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Raspberry Pi 2.
+        /// </summary>
+        public static string RPI2 {
+            get {
+                return ResourceManager.GetString("RPI2", resourceCulture);
             }
         }
         
