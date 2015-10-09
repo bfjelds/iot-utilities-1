@@ -250,7 +250,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password.
+        ///   Looks up a localized string similar to Repeat Password.
         /// </summary>
         public static string DeviceNamePwdPassword2 {
             get {
@@ -385,6 +385,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        public static string LabelInsecureWifi {
+            get {
+                return ResourceManager.GetString("LabelInsecureWifi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do this for all future devices.
         /// </summary>
         public static string LabelSaveWifiPassword {
@@ -392,7 +401,16 @@ namespace DeviceCenter.Strings {
                 return ResourceManager.GetString("LabelSaveWifiPassword", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Secured.
+        /// </summary>
+        public static string LabelSecureWifi {
+            get {
+                return ResourceManager.GetString("LabelSecureWifi", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Minnow Board Max.
         /// </summary>
@@ -547,20 +565,20 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Here are the networks your device can see.
-        /// </summary>
-        public static string SubTitleWifi {
-            get {
-                return ResourceManager.GetString("SubTitleWifi", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Raspberry Pi 2.
         /// </summary>
         public static string RPI2 {
             get {
                 return ResourceManager.GetString("RPI2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Here are the networks your device can see.
+        /// </summary>
+        public static string SubTitleWifi {
+            get {
+                return ResourceManager.GetString("SubTitleWifi", resourceCulture);
             }
         }
         

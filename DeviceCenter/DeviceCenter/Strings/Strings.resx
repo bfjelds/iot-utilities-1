@@ -181,7 +181,7 @@
     <value>Password</value>
   </data>
   <data name="DeviceNamePwdPassword2" xml:space="preserve">
-    <value>Password</value>
+    <value>Repeat Password</value>
   </data>
   <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
     <value>Passwords do not match</value>
@@ -320,5 +320,13 @@
   </data>
   <data name="ViewAcceptableSDCards" xml:space="preserve">
     <value>View the list of recommended SD cards</value>
+  </data>
+  <data name="LabelInsecureWifi" xml:space="preserve">
+    <value>Open</value>
+    <comment>Same as wifi list in Windows for open access points</comment>
+  </data>
+  <data name="LabelSecureWifi" xml:space="preserve">
+    <value>Secured</value>
+    <comment>Same as wifi list in Windows for secured access points</comment>
   </data>
 </root>

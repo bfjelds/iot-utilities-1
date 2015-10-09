@@ -60,10 +60,10 @@ namespace DeviceCenter
                 MessageBox.Show("Do you want to restart the device?");
                 bool z = await webbRequest.Restart();
             }
-            if (!String.IsNullOrWhiteSpace(textBoxCurrentPassword.Text)
-                && !String.IsNullOrWhiteSpace(textBoxPassword1.Text))
+            if (!String.IsNullOrWhiteSpace(textBoxCurrentPassword.Password)
+                && !String.IsNullOrWhiteSpace(textBoxPassword1.Password))
             {
-                bool y = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Text, textBoxPassword1.Text);
+                bool y = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
             }
         }
     }
