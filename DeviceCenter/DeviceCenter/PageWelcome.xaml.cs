@@ -35,7 +35,7 @@ namespace DeviceCenter
 
         private void ViewDevices_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.Navigate(new ViewDevicesPage());
+            _navigationFrame.Navigate(new ViewDevicesPage(_navigationFrame));
         }
     }
 }

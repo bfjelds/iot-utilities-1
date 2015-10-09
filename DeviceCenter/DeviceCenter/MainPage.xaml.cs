@@ -86,7 +86,7 @@ namespace DeviceCenter
 
         private void buttonMyDevices_Click(object sender, RoutedEventArgs e)
         {
-            _NavigationFrame.Navigate(new ViewDevicesPage());
+            _NavigationFrame.Navigate(new ViewDevicesPage(_NavigationFrame));
         }
 
         private void buttonAddDevice_Click(object sender, RoutedEventArgs e)

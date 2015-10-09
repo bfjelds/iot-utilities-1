@@ -126,7 +126,11 @@
     <Compile Include="buttonSideMenu.xaml.cs">
       <DependentUpon>buttonSideMenu.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DiscoveredDevice.cs" />
     <Compile Include="ImageHelper.cs" />
+    <Compile Include="PageDeviceConfiguration.xaml.cs">
+      <DependentUpon>PageDeviceConfiguration.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PageTestOnly.xaml.cs">
       <DependentUpon>PageTestOnly.xaml</DependentUpon>
     </Compile>
@@ -167,6 +171,10 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PageDeviceConfiguration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PageTestOnly.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
