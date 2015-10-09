@@ -24,6 +24,7 @@ namespace DeviceCenter
         private static string DeviceApiUrl { get; } = "/api/iot/device/";
         private static string AppxApiUrl { get; } = "/api/appx/packagemanager/";
         private static string HttpUrlPrfx { get; } = "http://";
+
         public WebBRest(IPAddress ip, string username, string password)
         {
             IpAddr = ip;
@@ -34,8 +35,7 @@ namespace DeviceCenter
         public async Task<bool> SetDeviceNameAsync(string newDeviceName)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "name?newdevicename=";
-            byte[] newDeviceNameBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(newDeviceName.Trim());
-            url += Encode64(newDeviceNameBytes);
+            url += Encode64(newDeviceName);
 
             try
             {
@@ -52,11 +52,8 @@ namespace DeviceCenter
         public async Task<bool> SetPasswordAsync(string oldPassword, string newPassword)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "password?";
-            url += "oldpassword=";
-            byte[] oldPasswordBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(oldPassword.Trim());
-            byte[] newPasswordBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(newPassword.Trim());
-            url += Encode64(oldPasswordBytes);
-            url = url + "&newpassword=" + Encode64(newPasswordBytes);
+            url = url + "oldpassword=" + Encode64(oldPassword);
+            url = url + "&newpassword=" + Encode64(newPassword);
 
             try
             {
@@ -68,13 +65,18 @@ namespace DeviceCenter
                 return false;
             }
 
+            if (Username == Admin)
+            {
+                AdminPwd = newPassword;
+            }
             Password = newPassword;
+
             return true;
         }
 
-        //public async void InstallAppx()
+        //public async Task<bool> InstallAppx(File appxFile, File certFile)
         //{
-
+            
         //}
 
         private async Task<HttpStatusCode> PostRequest(string url)
@@ -108,36 +110,40 @@ namespace DeviceCenter
             return result;
         }
 
-        public static string Encode64(byte[] toEncodeAsBytes)
+        public static string Encode64(string toEncodeString)
         {
-            string name64 = System.Convert.ToBase64String(toEncodeAsBytes);
-            name64 = name64.Replace(" ", "20%");
-            name64 = name64.Replace("$", "24%");
-            name64 = name64.Replace("&", "26%");
-            name64 = name64.Replace("`", "60%");
-            name64 = name64.Replace(":", "%3A");
-            name64 = name64.Replace("<", "%3C");
-            name64 = name64.Replace(">", "%3E");
-            name64 = name64.Replace("[", "%5B");
-            name64 = name64.Replace("]", "%5D");
-            name64 = name64.Replace("{", "%7B");
-            name64 = name64.Replace("}", "%7D");
-            name64 = name64.Replace("\"", "22%");
-            name64 = name64.Replace("+", "%2B");
-            name64 = name64.Replace("#", "23%");
-            name64 = name64.Replace("%", "25%");
-            name64 = name64.Replace("@", "40%");
-            name64 = name64.Replace("/", "%2F");
-            name64 = name64.Replace(";", "%3B");
-            name64 = name64.Replace("=", "%3D");
-            name64 = name64.Replace("?", "%3F");
-            name64 = name64.Replace("\\", "%5C");
-            name64 = name64.Replace("^", "%5E");
-            name64 = name64.Replace("|", "%7C");
-            name64 = name64.Replace("~", "%7E");
-            name64 = name64.Replace("'", "27%");
-            name64 = name64.Replace(",", "%2C");
-            return name64;
+            byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncodeString.Trim());
+            string string64 = System.Convert.ToBase64String(toEncodeAsBytes);
+
+            // Ref: http://www.werockyourweb.com/url-escape-characters/
+            string64 = string64.Replace(" ", "20%");
+            string64 = string64.Replace("$", "24%");
+            string64 = string64.Replace("&", "26%");
+            string64 = string64.Replace("`", "60%");
+            string64 = string64.Replace(":", "%3A");
+            string64 = string64.Replace("<", "%3C");
+            string64 = string64.Replace(">", "%3E");
+            string64 = string64.Replace("[", "%5B");
+            string64 = string64.Replace("]", "%5D");
+            string64 = string64.Replace("{", "%7B");
+            string64 = string64.Replace("}", "%7D");
+            string64 = string64.Replace("\"", "22%");
+            string64 = string64.Replace("+", "%2B");
+            string64 = string64.Replace("#", "23%");
+            string64 = string64.Replace("%", "25%");
+            string64 = string64.Replace("@", "40%");
+            string64 = string64.Replace("/", "%2F");
+            string64 = string64.Replace(";", "%3B");
+            string64 = string64.Replace("=", "%3D");
+            string64 = string64.Replace("?", "%3F");
+            string64 = string64.Replace("\\", "%5C");
+            string64 = string64.Replace("^", "%5E");
+            string64 = string64.Replace("|", "%7C");
+            string64 = string64.Replace("~", "%7E");
+            string64 = string64.Replace("'", "27%");
+            string64 = string64.Replace(",", "%2C");
+
+            return string64;
         }
 
     }
