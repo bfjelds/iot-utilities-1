@@ -22,6 +22,7 @@ namespace DeviceCenter
         public static string Admin { get; } = "Administrator";
         public static string AdminPwd { get; set; } = "p@ssw0rd";
         private static string DeviceApiUrl { get; } = "/api/iot/device/";
+        private static string ControlApiUrl { get; } = "/api/control/";
         private static string AppxApiUrl { get; } = "/api/appx/packagemanager/";
         private static string HttpUrlPrfx { get; } = "http://";
 
@@ -70,6 +71,23 @@ namespace DeviceCenter
                 AdminPwd = newPassword;
             }
             Password = newPassword;
+
+            return true;
+        }
+
+        public async Task<bool> Restart()
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + ControlApiUrl + "restart";
+
+            try
+            {
+                await PostRequest(url);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
 
             return true;
         }
