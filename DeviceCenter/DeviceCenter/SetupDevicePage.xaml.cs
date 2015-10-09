@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -32,7 +33,8 @@ namespace DeviceCenter
 
         private void FlashSDCard_Click(object sender, RoutedEventArgs e)
         {
-            ErrorMessage.Visibility = Visibility.Visible; 
+            Storyboard animation = (Storyboard)FindResource("StoryboardShowMessage");
+            animation.Begin();
         }
 
         private void RefreshDriveList()
@@ -71,6 +73,10 @@ namespace DeviceCenter
         /// <param name="e">not used</param>
         private void btnContinue_Click(object sender, RoutedEventArgs e)
         {
+            Storyboard animation = (Storyboard)FindResource("StoryboardHideMessage");
+
+            animation.Begin();
+
             DriveInfo driveInfo = (RemoveableDevicesComboBox.SelectedItem as ListBoxItem).Tag as DriveInfo;
 
             if (driveInfo == null)
@@ -97,12 +103,13 @@ namespace DeviceCenter
 
             // Flash it.
             Dism.FlashFFUImageToDrive(ffuName, driveInfo);
-           
+      
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            ErrorMessage.Visibility = Visibility.Hidden;
+            Storyboard animation = (Storyboard)FindResource("StoryboardHideMessage");
+            animation.Begin();
         }
     }
 }
