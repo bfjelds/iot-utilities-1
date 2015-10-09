@@ -66,9 +66,15 @@ HRESULT STDMETHODCALLTYPE OnboardingConsumer::GetDisplayName(BSTR *name)
 
     PWSTR wName = ConvertCStrToWStr(m_DisplayName.c_str());
 
+    // Going to managed code the marshaler will copy the content of this BSTR to a
+    // managed string and free the memory allocated by SysAllocString
     BSTR bstrName = SysAllocString(wName);
 
-    // if bstrName is NULL should we throw an expection in managed code? (return an HR other then S_OK)
+    if (!bstrName)
+    {
+        return E_OUTOFMEMORY;
+    }
+
     *name = bstrName;
 
     SAFE_FREE(wName);
@@ -183,7 +189,14 @@ HRESULT STDMETHODCALLTYPE OnboardingConsumer::GetLastError(INT16 *value1, BSTR *
             CHECK_STATUS(ER_OUT_OF_MEMORY);
         }
 
+        // Going to managed code the marshaler will copy the content of this BSTR to a
+        // managed string and free the memory allocated by SysAllocString
         *value2 = SysAllocString(wErrorMessage);
+
+        if (!*value2)
+        {
+            return E_OUTOFMEMORY;
+        }
 
         SAFE_FREE(wErrorMessage);
     }
@@ -210,7 +223,7 @@ HRESULT STDMETHODCALLTYPE OnboardingConsumer::GetScanInfo(IWifiList **ppList)
     {
         reply = alljoyn_message_create(m_Bus);
 
-        CHECK_STATUS(alljoyn_proxybusobject_methodcall(m_ProxyBusObject, "org.alljoyn.Onboarding", "GetScanInfo", NULL, 0, reply, METHOD_CALL_TIMEOUT, 0));
+        CHECK_STATUS(alljoyn_proxybusobject_methodcall(m_ProxyBusObject, ONBOARDING_INTERFACE_NAME, "GetScanInfo", NULL, 0, reply, METHOD_CALL_TIMEOUT, 0));
 
         UINT16 age;
         alljoyn_msgarg arg0 = alljoyn_message_getarg(reply, 0);
@@ -248,20 +261,28 @@ HRESULT STDMETHODCALLTYPE OnboardingConsumer::GetScanInfo(IWifiList **ppList)
 
                 if (SsidMap.find(string(aSsid)) == SsidMap.end())
                 {
+                    // This BSTR is deallocated by by Wifi destructor
                     bstrSsid = SysAllocString(wSsid);
+
+                    SAFE_FREE(wSsid);
+
+                    if (!bstrSsid)
+                    {
+                        CHKHR(E_OUTOFMEMORY);
+                    }
 
                     pList->AddItem(bstrSsid, security);
 
                     // Avoid duplicated Ssids in the list
                     SsidMap.insert(string(aSsid));
                 }
-                SAFE_FREE(wSsid);
             }
         }
     }
     else
     {
         // TBD: If the session is not joined should we throw an exception (return a HResult other then S_OK) or just set the pointer to NULL?
+        // 10/08: If we don't throw an exception here we need to check for null in the UI side
         *ppList = NULL;
     }
 Cleanup:
@@ -317,7 +338,7 @@ HRESULT STDMETHODCALLTYPE OnboardingConsumer::ConfigWifi(BSTR ssid, BSTR passwor
         reply = alljoyn_message_create(m_Bus);
 
         CHECK_STATUS(alljoyn_msgarg_array_set(inputs, &numArgs, "ssn", aSsid, aPassword, authType));
-        CHECK_STATUS(alljoyn_proxybusobject_methodcall(m_ProxyBusObject, "org.alljoyn.Onboarding", "ConfigureWifi", inputs, numArgs, reply, METHOD_CALL_TIMEOUT, 0));
+        CHECK_STATUS(alljoyn_proxybusobject_methodcall(m_ProxyBusObject, ONBOARDING_INTERFACE_NAME, "ConfigureWifi", inputs, numArgs, reply, METHOD_CALL_TIMEOUT, 0));
 
         alljoyn_msgarg arg0 = alljoyn_message_getarg(reply, 0);
 
@@ -354,7 +375,7 @@ HRESULT STDMETHODCALLTYPE OnboardingConsumer::Connect()
         // TBD: Maybe I should not forward an error from this method to the UI
         // Because the remote device is changing Wifi networks the session might be destroyed
         // before this method call can return
-        CHECK_STATUS(alljoyn_proxybusobject_methodcall(m_ProxyBusObject, "org.alljoyn.Onboarding", "Connect", inputs, 0, reply, METHOD_CALL_TIMEOUT, 0));
+        CHECK_STATUS(alljoyn_proxybusobject_methodcall(m_ProxyBusObject, ONBOARDING_INTERFACE_NAME, "Connect", inputs, 0, reply, METHOD_CALL_TIMEOUT, 0));
     }
     // Else throw exception?
 
@@ -367,5 +388,24 @@ Cleanup:
 
 HRESULT STDMETHODCALLTYPE OnboardingConsumer::Offboard()
 {
-    return E_NOTIMPL;
+    QStatus status = ER_OK;
+    alljoyn_msgarg inputs = NULL;
+    alljoyn_message reply = NULL;
+    if (m_SessionJoined)
+    {
+        reply = alljoyn_message_create(m_Bus);
+        inputs = alljoyn_msgarg_create();
+
+        // TBD: Maybe I should not forward an error from this method to the UI
+        // Because the remote device is changing Wifi networks the session might be destroyed
+        // before this method call can return
+        CHECK_STATUS(alljoyn_proxybusobject_methodcall(m_ProxyBusObject, ONBOARDING_INTERFACE_NAME, "Offboard", inputs, 0, reply, METHOD_CALL_TIMEOUT, 0));
+    }
+    // Else throw exception?
+
+Cleanup:
+    alljoyn_msgarg_destroy(inputs);
+    alljoyn_message_destroy(reply);
+
+    ReturnHRESULTFromQStatus(status);
 }

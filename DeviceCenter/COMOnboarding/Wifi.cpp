@@ -9,7 +9,11 @@ HRESULT Wifi::GetSSID(BSTR *ssid)
         return E_POINTER;
     }
 
-    *ssid = m_Ssid;
+    // Going to managed code the marshaler will copy the content of this BSTR to a
+    // managed string and free the memory allocated by SysAllocString
+    // Note that is not right pass the member m_Ssid directly since it would be
+    // deallocated by the managed side
+    *ssid = SysAllocString(m_Ssid);
 
     return S_OK;
 }
