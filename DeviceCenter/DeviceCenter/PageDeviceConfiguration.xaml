@@ -6,9 +6,8 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      d:DesignHeight="359.767" d:DesignWidth="439.715"
-      Title="Configure a device" Height="487" Width="831" Loaded="Page_Loaded">
-    <Grid>
+      Title="Configure a device" Loaded="Page_Loaded">
+    <Grid  VerticalAlignment="Top" HorizontalAlignment="Left">
         <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock x:Name="LabelDeviceName" x:Uid="Title" FontSize="30" Text="--" HorizontalAlignment="Left"/>
