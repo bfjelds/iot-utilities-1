@@ -385,6 +385,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minnow Board Max.
+        /// </summary>
+        public static string MBM {
+            get {
+                return ResourceManager.GetString("MBM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wireless network name.
         /// </summary>
         public static string NetworkCredentialsNetworkNameLabel {
@@ -525,6 +534,15 @@ namespace DeviceCenter.Strings {
         public static string OkButton {
             get {
                 return ResourceManager.GetString("OkButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raspberry Pi 2.
+        /// </summary>
+        public static string RPI2 {
+            get {
+                return ResourceManager.GetString("RPI2", resourceCulture);
             }
         }
         

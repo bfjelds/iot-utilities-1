@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      Title="Set up a new device" Loaded="Window_Loaded" Height="486.734" Width="831.338">
+      Title="Set up a new device" Loaded="Window_Loaded">
     <Page.Resources>
         <Storyboard x:Key="OnLoadedInitialize">
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WarningMessageOverlay">
@@ -74,16 +74,16 @@
         </EventTrigger>
     </Page.Triggers>
 
-    <Grid>
-        <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto">
+    <Grid VerticalAlignment="Top">
+        <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
             <StackPanel>
                 <TextBlock x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.IntroSetUpNewDevice}" HorizontalAlignment="Left"/>
                 <TextBlock x:Uid="Subtitle" FontSize="21.333" FontFamily="Segoe UI Semilight" VerticalAlignment="Bottom" Text="{x:Static props:Strings.NewDeviceSubTitle}" HorizontalAlignment="Left" Margin="0,20,0,0" TextWrapping="Wrap"/>
                 <TextBlock x:Uid="SelectDevice" VerticalAlignment="Bottom" Text="{x:Static props:Strings.NewDeviceSelectDeviceTypeLabel}" Margin="0,10,0,6" HorizontalAlignment="Left"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,4,0,0">
                     <ComboBox x:Name="ComboBoxDeviceType" Width="200">
-                        <ComboBoxItem Content="Minnow Board Max"/>
-                        <ComboBoxItem IsSelected="True" Content="Raspberry Pi 2"/>
+                        <ComboBoxItem Content="{x:Static props:Strings.MBM}"/>
+                        <ComboBoxItem IsSelected="True" Content="{x:Static props:Strings.RPI2}"/>
                     </ComboBox>
                     <ComboBox x:Name="ComboBoxIotBuild" HorizontalAlignment="Left" Width="100" Margin="10,0,0,0">
                         <ComboBoxItem IsSelected="True" Content="10565"/>
