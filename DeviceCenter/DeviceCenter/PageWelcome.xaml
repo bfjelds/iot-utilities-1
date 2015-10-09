@@ -13,7 +13,7 @@
         <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto">
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
                 <TextBlock Text="{x:Static props:Strings.IntroTitle}" FontSize="42.667" TextWrapping="Wrap" VerticalAlignment="Top" Margin="0,20"/>
-                <TextBlock FontFamily="IOT MDL2 Assets" Text="  " FontSize="32" Margin="0,20,0,0"/>
+                <TextBlock FontFamily="./Assets/#IOT MDL2 Assets" Text="  " FontSize="32" Margin="0,20,0,0"/>
                 <TextBlock Text="{x:Static props:Strings.IntroSubTitle}" FontSize="16" TextWrapping="Wrap" Margin="0,20,0,0"/>
                 <TextBlock Text="{x:Static props:Strings.IntroMessage}" FontSize="16" TextWrapping="Wrap" Margin="0,20,0,0"/>
                 <Button FontSize="20" Padding="30 5 30 5" HorizontalAlignment="Left" Content="{x:Static props:Strings.NewDeviceTitle}" Click="SetupDeviceButton_Click" Foreground="White" Background="#FF3277B8" Margin="0,20,0,0"></Button>
