@@ -25,7 +25,7 @@ namespace DeviceCenter
         public MainWindow()
         {
             // Uncomment to test localization
-            // System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("it-IT");
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("it-IT");
 
             InitializeComponent();
 

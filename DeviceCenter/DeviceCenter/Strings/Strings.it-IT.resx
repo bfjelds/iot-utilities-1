@@ -226,6 +226,21 @@
   <data name="IntroTitle" xml:space="preserve">
     <value>Internet of Things in base alle tue esigenze</value>
   </data>
+  <data name="LabelInsecureWifi" xml:space="preserve">
+    <value>Open</value>
+    <comment>Same as wifi list in Windows for open access points</comment>
+  </data>
+  <data name="LabelSaveWifiPassword" xml:space="preserve">
+    <value>Do this for all future devices</value>
+    <comment>Option to save your wifi password</comment>
+  </data>
+  <data name="LabelSecureWifi" xml:space="preserve">
+    <value>Secured</value>
+    <comment>Same as wifi list in Windows for secured access points</comment>
+  </data>
+  <data name="MBM" xml:space="preserve">
+    <value>Minnow Board Max</value>
+  </data>
   <data name="NetworkCredentialsNetworkNameLabel" xml:space="preserve">
     <value>Nome rete wireless</value>
   </data>
@@ -277,6 +292,15 @@
   <data name="OkButton" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="SubTitleWifi" xml:space="preserve">
+    <value>Here are the networks your device can see</value>
+  </data>
+  <data name="RPI2" xml:space="preserve">
+    <value>Raspberry Pi 2</value>
+  </data>
+  <data name="SubTitleWifi" xml:space="preserve">
+    <value>Here are the networks your device can see</value>
+  </data>
   <data name="SuccessAction1" xml:space="preserve">
     <value>Apri Windows Device Portal nel browser</value>
   </data>
@@ -301,5 +325,11 @@
   <data name="SuccessTitle" xml:space="preserve">
     <value>Operazione completata! {0} è online.</value>
     <comment>{0} is the device name</comment>
+  </data>
+  <data name="TitleWifi" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="ViewAcceptableSDCards" xml:space="preserve">
+    <value>View the list of recommended SD cards</value>
   </data>
 </root>

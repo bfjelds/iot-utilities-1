@@ -89,16 +89,15 @@ namespace DeviceCenter
             string rpi2FFUFile = "\\\\winbuilds\\release\\TH2_Release\\10565.0.151006-2014\\woafre\\Images\\IoTUAP\\RPi2_1024x768\\Production\\en-us\\Flash.ffu";
             
             // Pick up the Device Type.
-            string deviceType = ComboBoxDeviceType.Text;
+            string deviceType = ComboBoxDeviceType.Tag.ToString();
             string ffuName; 
 
             // determine the ffu to be used for SD flash
-            if (deviceType.Contains(DeviceCenter.Strings.Strings.MBM))
+            if (deviceType == "MBM")
             {
                 ffuName = mbmFFUFile;
             }
-            else 
-            if (deviceType.Contains(DeviceCenter.Strings.Strings.RPI2))
+            else if (deviceType == "RPi2")
             {
                 ffuName = rpi2FFUFile;
             }

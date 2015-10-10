@@ -21,8 +21,11 @@
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Visibility="{Binding NeedPassword}">
                         <TextBlock Text="{x:Static props:Strings.NetworkCredentialsPasswordLabel}" Margin="4"/>
-                        <PasswordBox x:Name="textboxWifiPassword" Height="23" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                        <Button Margin="200 6 6 6" Padding="12 6 12 6" Content="Connect" Click="ButtonConnectSecure_Click" HorizontalAlignment="Right" />
+                        <PasswordBox x:Name="textboxWifiPassword" Height="23" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" PasswordChanged="textboxWifiPassword_PasswordChanged"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding PageWifi.Execute}" CommandParameter="{Binding ElementName=textboxWifiPassword}" Margin="6" Padding="20 6 20 6" Content="{x:Static props:Strings.WifiNextButton}" HorizontalAlignment="Left" IsEnabled="{Binding EnableSecureConnect}" />
+                            <Button Margin="6" Padding="20 6 20 6" Content="{x:Static props:Strings.WifiBackButton}" Click="ButtonCancelSecure_Click" HorizontalAlignment="Left" />
+                        </StackPanel>
                     </StackPanel>
                     <Button Margin="200 6 6 6" Padding="12 6 12 6" Content="Connect" Click="ButtonConnect_Click" Visibility="{Binding ShowConnect}" HorizontalAlignment="Right" />
                 </StackPanel>
@@ -33,8 +36,8 @@
         <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock x:Name="LabelDeviceName" x:Uid="Title" FontSize="30" Text="--" HorizontalAlignment="Left"/>
-                <TextBlock x:Uid="Subtitle" FontSize="21.333" VerticalAlignment="Top" Text="{x:Static props:Strings.TitleWifi}" HorizontalAlignment="Left" Margin="0,20,0,0" TextWrapping="Wrap"/>
-                <TextBlock x:Uid="SubTitleWifi" VerticalAlignment="Top" Text="{x:Static props:Strings.SubTitleWifi}" Margin="0,10,0,6" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                <TextBlock x:Uid="Subtitle" FontSize="21.333" VerticalAlignment="Top" Text="{x:Static props:Strings.ConnectWiFiTitle}" HorizontalAlignment="Left" Margin="0,20,0,0" TextWrapping="Wrap"/>
+                <TextBlock x:Uid="SubTitleWifi" VerticalAlignment="Top" Text="{x:Static props:Strings.WifiSubTitle}" Margin="0,10,0,6" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                 <ListView x:Name="ListViewWifi" BorderThickness="0" SelectionMode="Single" ItemTemplate="{StaticResource NetworkRouter}"  Loaded="ListViewDevices_Loaded" Unloaded="ListViewDevices_Unloaded" HorizontalAlignment="Left" VerticalAlignment="Top">
                 </ListView>
                 <CheckBox x:Uid="CheckboxSavePassword" VerticalAlignment="Top" Content="{x:Static props:Strings.LabelSaveWifiPassword}" Margin="0,10,0,6" HorizontalAlignment="Left" />

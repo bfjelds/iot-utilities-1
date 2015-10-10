@@ -36,6 +36,7 @@ namespace DeviceCenter
 
         public string Name { get; private set; }
         public string Secure { get; private set; }
+        public string Password { get; set; }
         public string WifiIcon
         {
             get
@@ -82,22 +83,47 @@ namespace DeviceCenter
         {
             if (this.needPassword)
             {
-                NeedPassword = Visibility.Visible;
-                ShowConnect = Visibility.Collapsed;
+                this.NeedPassword = Visibility.Visible;
+                this.ShowConnect = Visibility.Collapsed;
+                this.EnableSecureConnect = false;
 
+                OnPropertyChanged("EnableSecureConnect");
                 OnPropertyChanged("NeedPassword");
                 OnPropertyChanged("ShowConnect");
             }
             else
             {
-                // start connecting
+                // start connecting anonymous
             }
+        }
+
+        public void AllowSecure(bool enabled)
+        {
+            this.EnableSecureConnect = enabled;
+            OnPropertyChanged("EnableSecureConnect");
+        }
+
+        public bool EnableSecureConnect { get; private set; }
+
+        public void CancelSecure()
+        {
+            NeedPassword = Visibility.Collapsed;
+            ShowConnect = Visibility.Visible;
+
+            OnPropertyChanged("NeedPassword");
+            OnPropertyChanged("ShowConnect");
+        }
+
+        void Execute(object parameter)
+        {
+            var passwordBox = parameter as PasswordBox;
+            var password = passwordBox.Password;
+            //Now go ahead and check the user name and password
         }
 
         public void StartConnectSecure()
         {
-            //textbo
-            //start connecting
+            //start connecting using this.Password
         }
 
         public bool Active { get; private set; }
@@ -170,6 +196,16 @@ namespace DeviceCenter
             }
         }
 
+        private void ButtonCancelSecure_Click(object sender, RoutedEventArgs e)
+        {
+            if (ListViewWifi.SelectedItem != null)
+            {
+                WifiEntry entry = ListViewWifi.SelectedItem as WifiEntry;
+                if (entry != null)
+                    entry.CancelSecure();
+            }
+        }
+
         private void ListViewWifi_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             foreach (var cur in e.RemovedItems)
@@ -186,6 +222,27 @@ namespace DeviceCenter
         private void ListViewItem_Unselected(object sender, RoutedEventArgs e)
         {
             (e.Source as WifiEntry).Expand();
+        }
+
+       private void textboxWifiPassword_PasswordChanged(object sender, RoutedEventArgs e)
+       {
+            if (ListViewWifi.SelectedItem != null)
+            {
+                WifiEntry entry = ListViewWifi.SelectedItem as WifiEntry;
+                if (entry != null)
+                {
+                    PasswordBox edit = sender as PasswordBox;
+                    if (edit != null)
+                        entry.AllowSecure(edit.Password.Length > 0);
+                }
+            }
+        }
+
+        public void Execute(object parameter)
+        {
+            var passwordBox = parameter as PasswordBox;
+            var password = passwordBox.Password;
+            //Now go ahead and check the user name and password
         }
     }
 }
