@@ -13,17 +13,27 @@
             <ListView x:Name="ListViewDevices" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding DeviceName}" />
-                        <GridViewColumn Header="Type" Width="200" DisplayMemberBinding="{Binding DeviceModel}"/>
-                        <GridViewColumn Header="Connection" DisplayMemberBinding="{Binding IPaddress}"/>
-                        <GridViewColumn>
+                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceDetailDeviceNameLabel}" DisplayMemberBinding="{Binding DeviceName}" />
+                        <GridViewColumn Header="{x:Static props:Strings.DeviceListColConnection}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button Margin="6" Padding="6" Content="{x:Static props:Strings.DeviceListColConnection}" Click="ButtonConnect_Click" Visibility="{Binding ConnectVisible}" />
-                                        <Button Margin="6" Padding="6" Content="{x:Static props:Strings.DeviceListColSettings}" Click="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
-                                        <Button Margin="6" Padding="6" Content="{x:Static props:Strings.DeviceDetailsDevicePortal}" Click="ButtonPortal_Click" Visibility="{Binding ManageVisible}" />
-                                    </StackPanel>
+                                    <TextBlock Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonManage_Click" Visibility="{Binding ConnectVisible}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColType}" DisplayMemberBinding="{Binding DeviceModel}"/>
+                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IPAddress}"/>
+                        <GridViewColumn Header="{x:Static props:Strings.DeviceListColSettings}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{x:Static props:Strings.DeviceListColOpenInDevicePortal}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="" Foreground="Blue" Cursor="Hand"  FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonPortal_Click" Visibility="{Binding ManageVisible}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

@@ -181,7 +181,10 @@ namespace DeviceCenter
                 {
                     PasswordBox editor = FindPasswordEdit(e.Source);
                     if (editor != null)
+                    {
                         editor.Password = string.Empty;
+                        editor.Focus();
+                    }
                 }
 
             }

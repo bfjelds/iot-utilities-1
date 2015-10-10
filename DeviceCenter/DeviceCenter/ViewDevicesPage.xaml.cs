@@ -89,6 +89,18 @@ namespace DeviceCenter
             wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
             RefreshWifiAsync();
             */
+
+            // test only
+            var newDevice = new DiscoveredDevice(DiscoveredDevice.NetworkType.ethernet)
+            {
+                DeviceName = "aaaa",
+                DeviceModel = "bbb",
+                Architecture = "ccc",
+                OSVersion = "dddd",
+                IPaddress = "eeee",
+                Manage = new Uri(string.Format("http://administrator@{0}/", "gggg"))
+            };
+            devices.Add(newDevice);
         }
 
         /* Don't use this, instead use device list's load/unload
@@ -294,11 +306,11 @@ namespace DeviceCenter
         {
         }
 
-        private void ButtonPortal_Click(object sender, RoutedEventArgs e)
+        private void ButtonPortal_Click(object sender, MouseButtonEventArgs e)
         {
         }
 
-        private void ButtonManage_Click(object sender, RoutedEventArgs e)
+        private void ButtonManage_Click(object sender, MouseButtonEventArgs e)
         {
             DiscoveredDevice device = this.ListViewDevices.SelectedItem as DiscoveredDevice;
             if (device != null)
