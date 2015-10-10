@@ -23,7 +23,7 @@
                         <TextBlock Text="{x:Static props:Strings.NetworkCredentialsPasswordLabel}" Margin="4"/>
                         <PasswordBox x:Name="textboxWifiPassword" Height="23" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" PasswordChanged="textboxWifiPassword_PasswordChanged"/>
                         <StackPanel Orientation="Horizontal">
-                            <Button Command="{Binding PageWifi.Execute}" CommandParameter="{Binding ElementName=textboxWifiPassword}" Margin="6" Padding="20 6 20 6" Content="{x:Static props:Strings.WifiNextButton}" HorizontalAlignment="Left" IsEnabled="{Binding EnableSecureConnect}" />
+                            <Button Margin="6" Padding="20 6 20 6" Content="{x:Static props:Strings.WifiNextButton}" HorizontalAlignment="Left" IsEnabled="{Binding EnableSecureConnect}" Click="ButtonConnectSecure_Click" />
                             <Button Margin="6" Padding="20 6 20 6" Content="{x:Static props:Strings.WifiBackButton}" Click="ButtonCancelSecure_Click" HorizontalAlignment="Left" />
                         </StackPanel>
                     </StackPanel>

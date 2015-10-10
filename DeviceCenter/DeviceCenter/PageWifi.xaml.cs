@@ -114,14 +114,7 @@ namespace DeviceCenter
             OnPropertyChanged("ShowConnect");
         }
 
-        void Execute(object parameter)
-        {
-            var passwordBox = parameter as PasswordBox;
-            var password = passwordBox.Password;
-            //Now go ahead and check the user name and password
-        }
-
-        public void StartConnectSecure()
+        public void StartConnectSecure(string password)
         {
             //start connecting using this.Password
         }
@@ -183,7 +176,32 @@ namespace DeviceCenter
                 WifiEntry entry = ListViewWifi.SelectedItem as WifiEntry;
                 if (entry != null)
                     entry.StartConnect();
+
+                if (entry.NeedPassword == Visibility.Visible)
+                {
+                    PasswordBox editor = FindPasswordEdit(e.Source);
+                    if (editor != null)
+                        editor.Password = string.Empty;
+                }
+
             }
+        }
+
+        // MVVM aka Binding doesn't work on Password controls, must go outside to use
+        private PasswordBox FindPasswordEdit(object control)
+        {
+            FrameworkElement button = control as FrameworkElement;
+            if (button != null)
+            {
+                Panel parentPanel = button.Parent as Panel;
+                var findControl = parentPanel.FindName("textboxWifiPassword");
+                if (findControl != null)
+                {
+                    return findControl as PasswordBox;
+                }
+            }
+
+            return null;
         }
 
         private void ButtonConnectSecure_Click(object sender, RoutedEventArgs e)
@@ -192,7 +210,11 @@ namespace DeviceCenter
             {
                 WifiEntry entry = ListViewWifi.SelectedItem as WifiEntry;
                 if (entry != null)
-                    entry.StartConnectSecure();
+                {
+                    PasswordBox editor = FindPasswordEdit(e.Source);
+                    if (editor != null)
+                        entry.StartConnectSecure(editor.Password);
+                }
             }
         }
 
@@ -236,13 +258,6 @@ namespace DeviceCenter
                         entry.AllowSecure(edit.Password.Length > 0);
                 }
             }
-        }
-
-        public void Execute(object parameter)
-        {
-            var passwordBox = parameter as PasswordBox;
-            var password = passwordBox.Password;
-            //Now go ahead and check the user name and password
         }
     }
 }
