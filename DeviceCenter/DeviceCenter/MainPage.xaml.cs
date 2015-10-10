@@ -25,7 +25,7 @@ namespace DeviceCenter
         public MainWindow()
         {
             // Uncomment to test localization
-            // System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("it-IT");
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("it-IT");
 
             InitializeComponent();
 
@@ -92,6 +92,11 @@ namespace DeviceCenter
         private void buttonTestOnly_Click(object sender, RoutedEventArgs e)
         {
             _NavigationFrame.Navigate(new PageTestOnly());
+        }
+
+        private void buttonSideMenu_Click(object sender, RoutedEventArgs e)
+        {
+            _NavigationFrame.Navigate(new PageWifi());
         }
     }
 }

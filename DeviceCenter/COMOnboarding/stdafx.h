@@ -42,8 +42,17 @@
 #include <memory>
 
 #define SAFE_FREE(x) { if(x != NULL) { free(x); x = NULL; }}
-#define CHECK_STATUS(x) { status = x; if(status != ER_OK) { goto Cleanup; } }
+
+#define DEVICE_CENTER_DEBUG
+#ifdef DEVICE_CENTER_DEBUG
+#define TRACEERR(x) {char msg[56]; sprintf(msg, "Error in function [%s], hr=0x%x\n", __FUNCTION__, x); OutputDebugStringA(msg);}
+#define CHECK_STATUS(x) { status = x; if(status != ER_OK) {TRACEERR(status); goto Cleanup; } }
+#define CHKHR(x) { hr = x; if(FAILED(hr)) { TRACEERR(hr); goto Cleanup; } }
+#else
+#define CHECK_STATUS(x) { status = x; if(status != ER_OK) {goto Cleanup; } }
 #define CHKHR(x) { hr = x; if(FAILED(hr)) { goto Cleanup; } }
+#endif
+
 #define CHECK_ERROR(x) { dError = x; if(dError != ERROR_SUCCESS) { hr = HRESULT_FROM_WIN32(x); CHKHR(hr); } }
 #define ReturnHRESULTFromQStatus(x) { if(x == ER_OK) { return S_OK; } else {return E_FAIL; } }
 

@@ -294,6 +294,10 @@ namespace DeviceCenter
         {
         }
 
+        private void ButtonPortal_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
         private void ButtonManage_Click(object sender, RoutedEventArgs e)
         {
             DiscoveredDevice device = this.ListViewDevices.SelectedItem as DiscoveredDevice;

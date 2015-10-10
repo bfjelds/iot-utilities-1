@@ -20,8 +20,9 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Margin="6" Padding="6" Content="Manage this device" Click="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
-                                        <Button Margin="6" Padding="6" Content="Connect this device" Click="ButtonConnect_Click" Visibility="{Binding ConnectVisible}" />
+                                        <Button Margin="6" Padding="6" Content="{x:Static props:Strings.DeviceListColConnection}" Click="ButtonConnect_Click" Visibility="{Binding ConnectVisible}" />
+                                        <Button Margin="6" Padding="6" Content="{x:Static props:Strings.DeviceListColSettings}" Click="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
+                                        <Button Margin="6" Padding="6" Content="{x:Static props:Strings.DeviceDetailsDevicePortal}" Click="ButtonPortal_Click" Visibility="{Binding ManageVisible}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>

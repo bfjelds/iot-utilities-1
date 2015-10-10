@@ -61,10 +61,7 @@ namespace IoTOnboardingConsumerWPF
             m_Manager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler(
                 (OnboardingConsumer consumer) =>
                 {
-                    Dispatcher.Invoke(() =>
-                    {
-                        m_OnboardingConsumerList.Add(new ManagedConsumer(consumer));
-                    });
+                    Dispatcher.Invoke(() => { m_OnboardingConsumerList.Add(new ManagedConsumer(consumer)); });
                 }));
 
             m_Manager.SetWifiConnectionResultHandler(new WifiConnectionResultHandler(
@@ -84,6 +81,14 @@ namespace IoTOnboardingConsumerWPF
                 try
                 {
                     list = consumer.GetScanInfo();
+
+                    if(list == null)
+                    {
+                        Dispatcher.Invoke(() => { statusTextBlock.Text = "Failed to get remote WiFi list. The session was lost."; });
+
+                        return;
+                    }
+
                     uint size = list.Size();
 
                     Dispatcher.Invoke(() =>
