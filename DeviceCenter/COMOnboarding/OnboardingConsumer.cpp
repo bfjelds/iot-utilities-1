@@ -219,6 +219,11 @@ HRESULT STDMETHODCALLTYPE OnboardingConsumer::GetScanInfo(IWifiList **ppList)
     ComPtr<IWifiList> pList = NULL;
     set<string> SsidMap;
 
+    if (!m_SessionJoined)
+    {
+        CHKHR(this->JoinSession());
+    }
+
     if (m_SessionJoined)
     {
         reply = alljoyn_message_create(m_Bus);

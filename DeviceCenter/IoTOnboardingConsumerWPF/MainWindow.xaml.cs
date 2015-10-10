@@ -80,8 +80,6 @@ namespace IoTOnboardingConsumerWPF
                 IWifiList list = null;
                 try
                 {
-                    consumer.JoinSession();
-
                     list = consumer.GetScanInfo();
 
                     if(list == null)
