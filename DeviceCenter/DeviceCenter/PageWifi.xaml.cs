@@ -25,6 +25,7 @@ namespace DeviceCenter
             this.Active = false;
             this.ShowConnect = Visibility.Collapsed;
             this.NeedPassword = Visibility.Collapsed;
+            this.SavePassword = false;
 
             this.needPassword = secure;
             this.Name = name;
@@ -37,6 +38,7 @@ namespace DeviceCenter
         public string Name { get; private set; }
         public string Secure { get; private set; }
         public string Password { get; set; }
+        public bool SavePassword { get; set; }
         public string WifiIcon
         {
             get

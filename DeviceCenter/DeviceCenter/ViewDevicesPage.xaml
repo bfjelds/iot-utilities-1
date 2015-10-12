@@ -10,7 +10,7 @@
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel Orientation="Vertical">
             <TextBlock x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left" Margin="0,10,0,19"/>
-            <ListView x:Name="ListViewDevices" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MaxHeight="500">
+            <ListView x:Name="ListViewDevices" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceDetailDeviceNameLabel}" DisplayMemberBinding="{Binding DeviceName}" />

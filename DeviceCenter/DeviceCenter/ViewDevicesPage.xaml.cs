@@ -89,18 +89,6 @@ namespace DeviceCenter
             wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
             RefreshWifiAsync();
             */
-
-            // test only
-            var newDevice = new DiscoveredDevice(DiscoveredDevice.NetworkType.ethernet)
-            {
-                DeviceName = "aaaa",
-                DeviceModel = "bbb",
-                Architecture = "ccc",
-                OSVersion = "dddd",
-                IPaddress = "eeee",
-                Manage = new Uri(string.Format("http://administrator@{0}/", "gggg"))
-            };
-            devices.Add(newDevice);
         }
 
         /* Don't use this, instead use device list's load/unload
