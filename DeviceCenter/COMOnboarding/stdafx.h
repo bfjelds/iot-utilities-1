@@ -45,7 +45,7 @@
 
 #define DEVICE_CENTER_DEBUG
 #ifdef DEVICE_CENTER_DEBUG
-#define TRACEERR(x) {char msg[56]; sprintf(msg, "Error in function [%s], hr=0x%x\n", __FUNCTION__, x); OutputDebugStringA(msg);}
+#define TRACEERR(x) {char msg[56]; sprintf_s(msg, _countof(msg), "Error in function [%s], hr=0x%x\n", __FUNCTION__, x); OutputDebugStringA(msg);}
 #define CHECK_STATUS(x) { status = x; if(status != ER_OK) {TRACEERR(status); goto Cleanup; } }
 #define CHKHR(x) { hr = x; if(FAILED(hr)) { TRACEERR(hr); goto Cleanup; } }
 #else
