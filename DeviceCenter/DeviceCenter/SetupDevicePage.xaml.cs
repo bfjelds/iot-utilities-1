@@ -63,6 +63,15 @@ namespace DeviceCenter
                     RemoveableDevicesComboBox.SelectedIndex = 0;
                     RemoveableDevicesComboBox.IsEnabled = true;
                 }
+
+                if (checkBoxEula.IsChecked == true)
+                {
+                    FlashButton.IsEnabled = true;
+                }
+                else
+                {
+                    FlashButton.IsEnabled = false;
+                }
             }
         }
 
@@ -121,5 +130,18 @@ namespace DeviceCenter
             Storyboard animation = (Storyboard)FindResource("StoryboardHideMessage");
             animation.Begin();
         }
+
+        private void checkBoxEula_Click(object sender, RoutedEventArgs e)
+        {
+            if (checkBoxEula.IsChecked == true && (RemoveableDevicesComboBox.SelectedIndex >=0))
+            {
+                FlashButton.IsEnabled = true;
+            }
+            else
+            {
+                FlashButton.IsEnabled = false;
+            }
+        }
+
     }
 }
