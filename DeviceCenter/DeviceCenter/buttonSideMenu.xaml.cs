@@ -93,36 +93,50 @@ namespace DeviceCenter
                 ReturnNormal();
         }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            if (e.Key == Key.Space || e.Key == Key.Enter)
+                DoClick();
+        }
+
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
             _mouseDown = true;
         }
 
+        private void DoClick()
+        {
+            Selected = true;
+
+            Panel myParent = this.Parent as Panel;
+            if (myParent != null)
+            {
+                foreach (var cur in myParent.Children)
+                {
+                    buttonSideMenu currentButton = cur as buttonSideMenu;
+                    if (currentButton != null && currentButton != this)
+                    {
+                        currentButton.Selected = false;
+                    }
+                }
+            }
+
+            if (Click != null)
+            {
+                Click.Invoke(this, new RoutedEventArgs());
+            }
+        }
+
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonUp(e);
             if (_mouseDown)
-                if (Click != null)
-                {
-                    Selected = true;
-
-                    Panel myParent = this.Parent as Panel;
-                    if (myParent != null)
-                    {
-                        foreach (var cur in myParent.Children)
-                        {
-                            buttonSideMenu currentButton = cur as buttonSideMenu;
-                            if (currentButton != null && currentButton != this)
-                            {
-                                currentButton.Selected = false;
-                            }
-                        }
-                    }
-
-                    Click.Invoke(this, new RoutedEventArgs());
-                }
-            _mouseDown = false;
+            {
+                DoClick();
+                _mouseDown = false;
+            }
         }
     }
 }
