@@ -9,62 +9,8 @@
       Title="Set up a new device" Loaded="Window_Loaded">
     <Page.Resources>
         <Storyboard x:Key="OnLoadedInitialize">
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WarningMessageOverlay">
-                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Hidden}"/>
-            </ObjectAnimationUsingKeyFrames>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="PanelFlashing">
                 <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
-            </ObjectAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Key="StoryboardShowMessage">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="WarningMessageOverlay">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1">
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <CircleEase EasingMode="EaseIn"/>
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-            </DoubleAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WarningMessageOverlay">
-                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
-            </ObjectAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ErrorMessage">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1">
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <CircleEase EasingMode="EaseIn"/>
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-            </DoubleAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ErrorMessage">
-                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Visible}"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="{x:Static Visibility.Visible}"/>
-            </ObjectAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Key="StoryboardHideMessage">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ErrorMessage">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0">
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <CircleEase EasingMode="EaseOut"/>
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-            </DoubleAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ErrorMessage">
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Hidden}"/>
-            </ObjectAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="WarningMessageOverlay">
-                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0">
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <CircleEase EasingMode="EaseOut"/>
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-            </DoubleAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="WarningMessageOverlay">
-                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Hidden}"/>
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
     </Page.Resources>
@@ -121,18 +67,5 @@
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
-        <Grid x:Name="WarningMessageOverlay" Background="#3F000000" d:IsHidden="True">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <StackPanel x:Name="ErrorMessage" Width="500" Background="WhiteSmoke" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Grid.Column="1" Grid.Row="0" x:Name="tbWarningMessageHeader" Margin="30,30,30,0" FontSize="40" FontFamily="Segoe UI SemiLight" Text="{x:Static props:Strings.NewDeviceAlertTitle}" HorizontalAlignment="Left"/>
-                <TextBlock Grid.Column="1" Grid.Row="1" x:Name="tbWarningMessageText"  Margin="30,30,30,0" FontSize="20" FontFamily="Segoe UI Light" TextWrapping="Wrap" Text="{x:Static props:Strings.NewDeviceAlertMessage}" HorizontalAlignment="Center"/>
-                <StackPanel x:Name="grdContinueCancel" Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="30">
-                    <Button x:Name="btnContinue" x:Uid="ViewDevicesButton" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" Content="{x:Static props:Strings.ContinueButton}" Click="btnContinue_Click"/>
-                    <Button x:Name="btnCancel" x:Uid="SetupDeviceButton" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" Content="{x:Static props:Strings.CancelButton}"  Click="btnCancel_Click" Margin="10,0,0,0" />
-                </StackPanel>
-            </StackPanel>
-        </Grid>
     </Grid>
 </Page>

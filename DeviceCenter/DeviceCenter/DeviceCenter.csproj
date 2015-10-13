@@ -130,6 +130,7 @@
     <Compile Include="DiscoveredDevice.cs" />
     <Compile Include="ImageHelper.cs" />
     <Compile Include="LastKnownGood.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="PageDeviceConfiguration.xaml.cs">
       <DependentUpon>PageDeviceConfiguration.xaml</DependentUpon>
     </Compile>
@@ -159,6 +160,9 @@
     <Compile Include="TelemetryHelper.cs" />
     <Compile Include="ViewDevicesPage.xaml.cs">
       <DependentUpon>ViewDevicesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WindowWarning.xaml.cs">
+      <DependentUpon>WindowWarning.xaml</DependentUpon>
     </Compile>
     <Page Include="buttonSideMenu.xaml">
       <SubType>Designer</SubType>
@@ -201,6 +205,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ViewDevicesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WindowWarning.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
