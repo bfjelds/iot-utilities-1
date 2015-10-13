@@ -151,3 +151,20 @@ HRESULT inline HResultFromQStatus(QStatus status)
         return E_FAIL;
     }
 }
+
+bool CHECK_AJ_ERRMSG(QStatus status, const alljoyn_message reply, const LPSTR funcName)
+{
+    if (status == ER_BUS_REPLY_IS_ERROR_MESSAGE) {
+        char errmsg[200] = { 0 };
+        size_t size = sizeof(errmsg);
+        alljoyn_message_geterrorname(reply, errmsg, &size);
+        OutputDebugStringA("AJ error message in [");
+        OutputDebugStringA(funcName);
+        OutputDebugStringA("] - ");
+        OutputDebugStringA(errmsg);
+        OutputDebugStringA("\n");
+        return false;
+    }
+
+    return true;
+}
