@@ -1,0 +1,143 @@
+﻿// Copyright (c) Microsoft. All rights reserved.
+
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+using System.Diagnostics;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System;
+
+namespace DeviceCenter
+{
+    /// <summary>
+    /// Build info of a lkg.
+    /// </summary>
+    [DataContract]
+    public class BuildInfo
+    {
+        public BuildInfo(int buildNumber, string buildPath) { Build = buildNumber; Path = buildPath; }
+
+        /// <summary>
+        /// Build number
+        /// </summary>
+        [DataMember]
+        public int Build { get; set; }
+
+        /// <summary>
+        /// Build path
+        /// </summary>
+        [DataMember]
+        public string Path { get; set; }
+    }
+    
+    /// <summary>
+    /// Each platform may have multiple LKGs.
+    /// </summary>
+    [DataContract]
+    public class LKGPlatform
+    {
+        /// <summary>
+        /// E.g. "MBM", "RPi2", etc.
+        /// </summary>
+        [DataMember]
+        public string Platform { get; set; }
+
+        /// <summary>
+        /// List of LKG builds or none.
+        /// </summary>
+        [DataMember]
+        public List<BuildInfo> LkgBuilds;
+    }
+
+    /// <summary>
+    /// LKG (last known good) info.
+    /// </summary>
+    [DataContract]
+    public class LKGAllPlatforms
+    {
+        [DataMember]
+        public List<LKGPlatform> AllPlatforms;
+    }    
+    
+    /// <summary>
+    /// Parse the LKG info file.
+    /// </summary>
+    public class LastKnownGood
+    {
+        /// <summary>
+        /// LKG info file.  tbd point to the final file.
+        /// </summary>
+        static string LKGFileName = "\\\\stjong1\\public\\iot_lkg.txt";
+
+        /// <summary>
+        /// Deserialized contents.
+        /// </summary>
+        LKGAllPlatforms lkgAllPlatforms = null;
+        
+        /// <summary>
+        /// Deserialize info in json.        
+        /// </summary>
+        public void ReadFile()
+        {            
+            string fileContent; 
+            
+            if (!File.Exists(LKGFileName))
+            {
+                Debug.WriteLine("LkgInsider: LKG file not found");
+                return;
+            }
+
+            //  LKG file looks like the following:
+            //
+            //  {
+            //      "AllPlatforms":
+            //      [
+            //          { 
+            //              "Platform":"MBM",
+            //              "LkgBuilds":
+            //              [
+            //                  {"Build":1,"Path":"path1"},
+            //                  {"Build":2,"Path":"path2"},
+            //                  {"Build":3,"Path":"path3"}
+            //              ]            
+            //          },            
+            //          {
+            //              "Platform":"RPi2",
+            //              "LkgBuilds":
+            //              [
+            //                  {"Build":4,"Path":"path4"},
+            //                  {"Build":5,"Path":"path5"},
+            //                  {"Build":6,"Path":"path6"}
+            //              ]            
+            //          },
+            //          {
+            //              "Platform":"QCOM",
+            //              "LkgBuilds":
+            //              [
+            //                  {"Build":7,"Path":"path7"},
+            //                  {"Build":8,"Path":"path8"},
+            //                  {"Build":9,"Path":"path9"}
+            //              ]            
+            //          }
+            //      ]
+            //  }
+
+            try
+            {
+                using (StreamReader sr = File.OpenText(LKGFileName))
+                {
+                    fileContent = sr.ReadToEnd();
+                }
+
+                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(LKGAllPlatforms));
+
+                lkgAllPlatforms = (LKGAllPlatforms)jsonSerializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(fileContent)));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+    }
+}
