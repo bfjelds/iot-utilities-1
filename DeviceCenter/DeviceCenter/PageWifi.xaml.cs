@@ -25,6 +25,7 @@ namespace DeviceCenter
             this.Active = false;
             this.ShowConnect = Visibility.Collapsed;
             this.NeedPassword = Visibility.Collapsed;
+            this.ShowExpanded = Visibility.Collapsed;
             this.SavePassword = false;
 
             this.needPassword = secure;
@@ -64,10 +65,12 @@ namespace DeviceCenter
             this.Active = true;
             ShowConnect = Visibility.Visible;
             NeedPassword = Visibility.Collapsed;
+            ShowExpanded = Visibility.Visible;
 
             OnPropertyChanged("ShowConnect");
             OnPropertyChanged("Active");
             OnPropertyChanged("NeedPassword");
+            OnPropertyChanged("ShowExpanded");
         }
 
         public void Collapse()
@@ -75,10 +78,12 @@ namespace DeviceCenter
             this.Active = false;
             ShowConnect = Visibility.Collapsed;
             NeedPassword = Visibility.Collapsed;
+            ShowExpanded = Visibility.Collapsed;
 
             OnPropertyChanged("ShowConnect");
             OnPropertyChanged("Active");
             OnPropertyChanged("NeedPassword");
+            OnPropertyChanged("ShowExpanded");
         }
 
         public void StartConnect()
@@ -125,6 +130,7 @@ namespace DeviceCenter
         public Visibility ShowConnect { get; private set; }
         public Visibility ShowConnecting { get; private set; }
         public Visibility NeedPassword { get; private set; }
+        public Visibility ShowExpanded { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string info)
