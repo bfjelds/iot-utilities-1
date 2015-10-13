@@ -177,7 +177,7 @@ namespace DeviceCenter
                     ComboBoxIotBuild.Items.Add(cur);
 
                 if (ComboBoxIotBuild.Items.Count > 0)
-                    ComboBoxIotBuild.SelectedIndex = ComboBoxIotBuild.Items.Count - 1;
+                    ComboBoxIotBuild.SelectedIndex = 0;
             }
 
             buttonFlash.IsEnabled = UpdateStartState();
