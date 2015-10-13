@@ -228,7 +228,11 @@ HRESULT STDMETHODCALLTYPE OnboardingConsumer::GetScanInfo(IWifiList **ppList)
     {
         reply = alljoyn_message_create(m_Bus);
 
-        CHECK_STATUS(alljoyn_proxybusobject_methodcall(m_ProxyBusObject, ONBOARDING_INTERFACE_NAME, "GetScanInfo", NULL, 0, reply, METHOD_CALL_TIMEOUT, 0));
+        status = alljoyn_proxybusobject_methodcall(m_ProxyBusObject, ONBOARDING_INTERFACE_NAME, "GetScanInfo", NULL, 0, reply, METHOD_CALL_TIMEOUT, 0);
+        if (!CHECK_AJ_ERRMSG(status, reply, "GetScanInfo"))
+        {
+            goto Cleanup;
+        }
 
         UINT16 age;
         alljoyn_msgarg arg0 = alljoyn_message_getarg(reply, 0);
