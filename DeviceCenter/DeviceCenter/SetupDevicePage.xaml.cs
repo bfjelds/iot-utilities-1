@@ -21,9 +21,17 @@ namespace DeviceCenter
     /// </summary>
     public partial class SetupDevicePage : Page
     {
+        /// <summary>
+        /// Parser for the LKG file.   
+        /// TBD this is needed only for internal build.
+        /// </summary>
+        LastKnownGood lkg = new LastKnownGood();
+
+
         public SetupDevicePage()
         {
             InitializeComponent();
+            lkg.ReadFile();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
