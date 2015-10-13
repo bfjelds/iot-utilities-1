@@ -24,6 +24,11 @@ namespace DeviceCenter
         [DataMember]
         public int Build { get; set; }
 
+        public override string ToString()
+        {
+            return Build.ToString();
+        }
+
         /// <summary>
         /// Build path
         /// </summary>
@@ -37,11 +42,28 @@ namespace DeviceCenter
     [DataContract]
     public class LKGPlatform
     {
+        public const string MbmName = "Minnowboard MAX";
+        public const string RaspberryPi2Name = "Raspberry Pi 2";
+
         /// <summary>
         /// E.g. "MBM", "RPi2", etc.
         /// </summary>
         [DataMember]
         public string Platform { get; set; }
+
+        public override string ToString()
+        {
+            switch (this.Platform)
+            {
+                case "MBM":
+                    return MbmName;
+                case "RPi2":
+                    return RaspberryPi2Name;
+            }
+
+            System.Diagnostics.Debug.Fail("Unsupported platforms should not show in this list");
+            return null;
+        }
 
         /// <summary>
         /// List of LKG builds or none.
@@ -73,7 +95,7 @@ namespace DeviceCenter
         /// <summary>
         /// Deserialized contents.
         /// </summary>
-        LKGAllPlatforms lkgAllPlatforms = null;
+        public LKGAllPlatforms lkgAllPlatforms { get; private set; }
         
         /// <summary>
         /// Deserialize info in json.        

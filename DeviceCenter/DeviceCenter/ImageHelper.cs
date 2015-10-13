@@ -20,6 +20,11 @@ namespace DeviceCenter
             Model = model;
         }
 
+        public override string ToString()
+        {
+            return String.Format("{0} {1} [{2}]", this.DriveName, this.SizeString, this.Model);
+        }
+
         public string DriveName { get; private set; }
         public string PhysicalDriveId { get; private set; }
 
@@ -105,7 +110,7 @@ namespace DeviceCenter
 
     public class Dism
     {
-        public static int FlashFFUImageToDrive(string ffuImage, DriveInfo driveInfo)
+        public static Process FlashFFUImageToDrive(string ffuImage, DriveInfo driveInfo)
         {
             /*
             // TODO (alecont): Add logic to pick up dism from system32 if available...
@@ -127,11 +132,9 @@ namespace DeviceCenter
 
             // TBD make this async and cancellable.
             process.Start();
-            process.WaitForExit();
 
-            return process.ExitCode;
+            return process;
         }
-
     }
 
 }
