@@ -90,7 +90,7 @@ namespace DeviceCenter
         /// <summary>
         /// LKG info file.  tbd point to the final file.
         /// </summary>
-        static string LKGFileName = "\\\\stjong1\\public\\iot_lkg.txt";
+        static string LKGFileName = "\\\\webnas\\AthensDrop\\LKG\\iot_lkg.txt";
 
         /// <summary>
         /// Deserialized contents.
