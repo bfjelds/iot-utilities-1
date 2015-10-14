@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using DeviceCenter.Handlers;
+using DeviceCenter.Wrappers;
+using Microsoft.Tools.Connectivity;
+using Onboarding;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using Microsoft.Tools.Connectivity;
-using System.Diagnostics;
-using System.Collections.ObjectModel;
-using Onboarding;
-using System.Runtime.InteropServices;
-using System.Collections.Concurrent;
-using System.ComponentModel;
 
 namespace DeviceCenter
 {
@@ -32,10 +25,14 @@ namespace DeviceCenter
         private DiscoveredDevice newestBuildDevice, oldestBuildDevice;
         private DeviceDiscoveryService deviceDiscoverySvc;
         private ObservableCollection<DiscoveredDevice> devices = new ObservableCollection<DiscoveredDevice>();
+        private ObservableCollection<ManagedConsumer> onboardingConsumerList = new ObservableCollection<ManagedConsumer>();
+        private ConcurrentDictionary<string, AdhocNetwork> adhocNetworks = new ConcurrentDictionary<string, AdhocNetwork>();
+
+        private IOnboardingManager wifiManager;
+        private DispatcherTimer wifiRefreshTimer;
 
         private Frame _navigationFrame;
 
-        /*
         private class AdhocNetwork
         {
             public AdhocNetwork(IWifi wifi)
@@ -50,14 +47,6 @@ namespace DeviceCenter
 
             public IWifi Wifi { get; private set; }
         }
-        */
-
-        /*
-        private ConcurrentDictionary<string, AdhocNetwork> adhocNetworks = new ConcurrentDictionary<string, AdhocNetwork>();
-
-        private IOnboardingManager wifiManager;
-        private DispatcherTimer wifiRefreshTimer;
-        */
 
         public ViewDevicesPage(Frame navigationFrame)
         {
@@ -78,9 +67,16 @@ namespace DeviceCenter
 
             ListViewDevices.ItemsSource = devices;
 
-            /*
             wifiManager = new OnboardingManager();
             wifiManager.Init();
+
+            wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler(async (OnboardingConsumer consumer) =>
+            {
+                await Dispatcher.InvokeAsync(() => 
+                {
+                    onboardingConsumerList.Add(new ManagedConsumer(consumer));
+                });
+            }));
 
             wifiRefreshTimer = new DispatcherTimer()
             {
@@ -88,21 +84,17 @@ namespace DeviceCenter
             };
             wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
             RefreshWifiAsync();
-            */
         }
 
-        /* Don't use this, instead use device list's load/unload
-        void MainWindow_Closing(object sender, CancelEventArgs e)
+        private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            Application.Current.MainWindow.Closing -= MainWindow_Closing;
-
             wifiManager.Shutdown();
-        }*/
+        }
 
-        /* TODO bring back when AllJoyn is ready 
         private async void RefreshWifiAsync()
         {
             wifiRefreshTimer.Stop();
+
             try
             {
                 await Task.Run((Action)(() =>
@@ -123,7 +115,7 @@ namespace DeviceCenter
 
                             AdhocNetwork ssid = adhocNetworks.GetOrAdd(item.GetSSID(), (key)  =>
                             {
-                                var newDevice = new DiscoveredDevice(DiscoveredDevice.NetworkType.adhoc)
+                                var newDevice = new DiscoveredDevice(new ManagedWifi(item))
                                 {
                                     DeviceName = item.GetSSID()
                                 };
@@ -137,7 +129,7 @@ namespace DeviceCenter
                             });
                         }
                     }
-                    catch (COMException /*ex*-/)
+                    catch (COMException /*ex*/)
                     {
                         // TODO handle errors
                         //Dispatcher.Invoke(() => { statusTextBlock.Text = "Failed to find onboardees. HRESULT: " + ex.HResult; });
@@ -162,7 +154,6 @@ namespace DeviceCenter
         {
             RefreshWifiAsync();
         }
-        */
 
         /*
         private void TelemetryTimer_Tick(object sender, EventArgs e)
@@ -198,7 +189,7 @@ namespace DeviceCenter
 
             if (args.Info.Connection == DiscoveredDeviceInfo.ConnectionType.MDNS)
             {
-                var newDevice = new DiscoveredDevice(DiscoveredDevice.NetworkType.ethernet)
+                var newDevice = new DiscoveredDevice()
                 {
                     DeviceName = args.Info.Name,
                     DeviceModel = args.Info.Location,
@@ -292,10 +283,46 @@ namespace DeviceCenter
         }
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
+            DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
+            if (device != null)
+            {
+                WindowWarning dlg = new WindowWarning()
+                {
+                    Header = Strings.Strings.ConnectAlertTitle,
+                    Message = Strings.Strings.ConnectAlertMessage
+                };
+
+                bool? confirmation = dlg.ShowDialog();
+                if (confirmation.HasValue && confirmation.Value)
+                {
+                    ConnectToOnboardeeAsync(device.WifiInstance.NativeWifi, "password");
+                }
+            }
+        }
+
+        private async void ConnectToOnboardeeAsync(IWifi wifi, string password)
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    wifiManager.ConnectToOnboardingNetwork((Onboarding.wifi)wifi, password);
+                }
+                catch (COMException /*ex*/)
+                {
+                    // todo handle errors
+                    //Dispatcher.Invoke(() => { statusTextBlock.Text = "Failed to connect to onboarding network. HRESULT: " + ex.HResult; });
+                }
+            });
         }
 
         private void ButtonPortal_Click(object sender, MouseButtonEventArgs e)
         {
+            DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
+            if (device != null && device.Manage != null)
+            {
+                Process.Start(device.Manage.AbsolutePath);
+            }
         }
 
         private void ButtonManage_Click(object sender, MouseButtonEventArgs e)

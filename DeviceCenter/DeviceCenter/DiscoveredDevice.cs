@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeviceCenter.Wrappers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,21 +11,25 @@ namespace DeviceCenter
     public class DiscoveredDevice
     {
         public enum NetworkType { ethernet, adhoc };
-        public DiscoveredDevice(NetworkType network)
+        public DiscoveredDevice()
         {
-            this.Network = network;
-            switch (network)
-            {
-                case NetworkType.ethernet:
-                    this.ManageVisible = Visibility.Visible;
-                    this.ConnectVisible = Visibility.Collapsed;
-                    break;
-                case NetworkType.adhoc:
-                    this.ManageVisible = Visibility.Collapsed;
-                    this.ConnectVisible = Visibility.Visible;
-                    break;
-            }
+            this.Network = NetworkType.ethernet;
+
+            this.ManageVisible = Visibility.Visible;
+            this.ConnectVisible = Visibility.Collapsed;
         }
+
+        public DiscoveredDevice(ManagedWifi wifi)
+        {
+            this.Network = NetworkType.adhoc;
+
+            this.ManageVisible = Visibility.Collapsed;
+            this.ConnectVisible = Visibility.Visible;
+
+            this.WifiInstance = wifi;
+        }
+
+        public ManagedWifi WifiInstance { get; private set; }
 
         public NetworkType Network { get; private set; }
         public string DeviceName { get; set; }
