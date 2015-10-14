@@ -1,20 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace DeviceCenter
 {
@@ -44,20 +33,28 @@ namespace DeviceCenter
         {
             List<LKGPlatform> entries = new List<LKGPlatform>();
 
+            ComboBoxDeviceType.IsEnabled = false;
+            ComboBoxIotBuild.IsEnabled = false;
+
             await Task.Run((Action)(() =>
             {
                 lkg.ReadFile();
 
-                foreach (var currentPlatform in lkg.lkgAllPlatforms.AllPlatforms)
+                if (lkg.lkgAllPlatforms != null &&
+                    lkg.lkgAllPlatforms.AllPlatforms != null &&
+                    lkg.lkgAllPlatforms.AllPlatforms.Count > 0)
                 {
-                    switch (currentPlatform.Platform)
+                    foreach (var currentPlatform in lkg.lkgAllPlatforms.AllPlatforms)
                     {
-                        case "MBM":
-                            entries.Add(currentPlatform);
-                            break;
-                        case "RPi2":
-                            entries.Add(currentPlatform);
-                            break;
+                        switch (currentPlatform.Platform)
+                        {
+                            case "MBM":
+                                entries.Add(currentPlatform);
+                                break;
+                            case "RPi2":
+                                entries.Add(currentPlatform);
+                                break;
+                        }
                     }
                 }
             }));
@@ -65,14 +62,25 @@ namespace DeviceCenter
             foreach (var currentEntry in entries)
                 ComboBoxDeviceType.Items.Add(currentEntry);
 
-            if (ComboBoxDeviceType.Items.Count > 0)
-                ComboBoxDeviceType.SelectedIndex = 0;
+            if (ComboBoxDeviceType.Items.Count == 0)
+            {
+                ComboBoxDeviceType.Items.Add(Strings.Strings.DeviceListNoDevices);
+            }
+            else
+            {
+                ComboBoxDeviceType.IsEnabled = true;
+                ComboBoxIotBuild.IsEnabled = true;
+            }
+
+            ComboBoxDeviceType.SelectedIndex = 0;
 
             buttonFlash.IsEnabled = UpdateStartState();
         }
 
         private async void RefreshDriveList()
         {
+            RemoveableDevicesComboBox.IsEnabled = false;
+
             List<DriveInfo> drives = null;
             await Task.Run((Action)(() =>
             {
@@ -85,23 +93,19 @@ namespace DeviceCenter
 
                 if (drives.Count == 0)
                 {
-                    StatusMessageBox.Text = "No SD cards found. Please insert one and press the refresh button.";
-                    var item = new ListBoxItem();
-                    item.Content = "No SD cards found";
-                    RemoveableDevicesComboBox.Items.Add(item);
-                    RemoveableDevicesComboBox.SelectedIndex = -1;
+                    RemoveableDevicesComboBox.Items.Add(Strings.Strings.NewDeviceInsertSDCardMessage);
                     RemoveableDevicesComboBox.IsEnabled = false;
                 }
                 else
                 {
                     foreach (var drive in drives)
                     {
-                        StatusMessageBox.Text = "";
                         RemoveableDevicesComboBox.Items.Add(drive);
-                        RemoveableDevicesComboBox.SelectedIndex = 0;
                         RemoveableDevicesComboBox.IsEnabled = true;
                     }
                 }
+
+                RemoveableDevicesComboBox.SelectedIndex = 0;
             }
 
             buttonFlash.IsEnabled = UpdateStartState();
@@ -185,6 +189,9 @@ namespace DeviceCenter
 
         private bool UpdateStartState()
         {
+            if (!RemoveableDevicesComboBox.IsEnabled || !ComboBoxDeviceType.IsEnabled)
+                return false;
+
             if (dismProcess != null)
                 return false;
 

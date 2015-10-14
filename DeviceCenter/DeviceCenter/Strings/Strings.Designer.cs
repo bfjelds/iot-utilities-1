@@ -754,15 +754,6 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} MB Downloading - {1}%.
-        /// </summary>
-        public static string NewDeviceDownloadingProgress {
-            get {
-                return ResourceManager.GetString("NewDeviceDownloadingProgress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The DragonBoard 410c comes with its own set of installation tools. After you install Windows and connect this board to the internet, you will find it in &quot;My Devices&quot;..
         /// </summary>
         public static string NewDeviceDragonBoardMessage1 {
@@ -1047,6 +1038,15 @@ namespace DeviceCenter.Strings {
         public static string SamplesTutorialOnline {
             get {
                 return ResourceManager.GetString("SamplesTutorialOnline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} MB Downloading - {1}%.
+        /// </summary>
+        public static string sd {
+            get {
+                return ResourceManager.GetString("sd", resourceCulture);
             }
         }
         

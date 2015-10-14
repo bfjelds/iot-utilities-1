@@ -302,7 +302,7 @@
   <data name="NewDeviceDownloading" xml:space="preserve">
     <value>Windows 10 IoT Core</value>
   </data>
-  <data name="NewDeviceDownloadingProgress" xml:space="preserve">
+  <data name="sd" xml:space="preserve">
     <value>{0} MB Downloading - {1}%</value>
     <comment>{0} is the number of MB downloaded. {1} is the percent of the download</comment>
   </data>

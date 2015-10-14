@@ -39,7 +39,7 @@
                     </TextBlock.Foreground>
                 </TextBlock>
                 <TextBlock x:Uid="SelectSDCardInfo" FontSize="16" Text="{x:Static props:Strings.NewDeviceDriveLabel}" HorizontalAlignment="Left" Margin="0,10,0,0"/>
-                <ComboBox x:Name="RemoveableDevicesComboBox" Width="200" HorizontalAlignment="Left" Margin="0,4,0,0" SelectionChanged="RemoveableDevicesComboBox_SelectionChanged"/>
+                <ComboBox x:Name="RemoveableDevicesComboBox" Width="300" HorizontalAlignment="Left" Margin="0,4,0,0" SelectionChanged="RemoveableDevicesComboBox_SelectionChanged"/>
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Left">
                     <CheckBox x:Name="checkBoxEula" Content="{x:Static props:Strings.NewDeviceAcceptLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Checked="checkBoxEula_Checked" Unchecked="checkBoxEula_Checked" />
                     <TextBlock x:Uid="SelectSDCardInfo" Text="{x:Static props:Strings.NewDeviceTermsAndCondition}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" Cursor="Hand" TextDecorations="Underline">
