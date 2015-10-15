@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity type="win32" name="COMOnboarding.sxs" version="1.0.0.0" />
+  <file name="comonboarding.dll" hashalg="SHA1">
+    <comClass clsid="{4DD87A68-19C8-4BBD-BAFF-B9E66D60D392}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}"></comClass>
+    <comClass clsid="{AAB6F9A4-725F-4AD1-8EBD-5C27AC731D89}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}"></comClass>
+    <comClass clsid="{E9801623-589E-4231-87B2-0AC7ED4F0F07}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}"></comClass>
+    <comClass clsid="{DE8F542F-D0AA-4F28-9F90-6035C38F3AB9}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}"></comClass>
+    <typelib tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}" version="0.0" helpdir="" flags="HASDISKIMAGE"></typelib>
+  </file>
+  <file name="COMOnboardingProxy.dll" hashalg="SHA1">
+    <comInterfaceProxyStub name="IOnboardingManager" iid="{75F2B34F-3B87-4A70-93C9-51522D2D549C}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}" proxyStubClsid32="{75F2B34F-3B87-4A70-93C9-51522D2D549C}"></comInterfaceProxyStub>
+    <comInterfaceProxyStub name="IUnknown" iid="{00000000-0000-0000-C000-000000000046}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}" proxyStubClsid32="{00000000-0000-0000-C000-000000000046}"></comInterfaceProxyStub>
+    <comInterfaceProxyStub name="IOnboardeeAdded" iid="{78859B17-CD1D-4D0D-85F9-60AC0C74896E}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}" proxyStubClsid32="{78859B17-CD1D-4D0D-85F9-60AC0C74896E}"></comInterfaceProxyStub>
+    <comInterfaceProxyStub name="IOnboardingConsumer" iid="{AAA174D8-A38E-4585-BF23-D0ACDDA3DCB6}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}" proxyStubClsid32="{AAA174D8-A38E-4585-BF23-D0ACDDA3DCB6}"></comInterfaceProxyStub>
+    <comInterfaceProxyStub name="IWifiList" iid="{83C09CF3-08F5-4E94-9AEA-BB9E9ACA44E0}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}" proxyStubClsid32="{83C09CF3-08F5-4E94-9AEA-BB9E9ACA44E0}"></comInterfaceProxyStub>
+    <comInterfaceProxyStub name="IWifi" iid="{17AB5DDA-AC44-4C5E-B9B4-A02D84CAB909}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}" proxyStubClsid32="{17AB5DDA-AC44-4C5E-B9B4-A02D84CAB909}"></comInterfaceProxyStub>
+    <comInterfaceProxyStub name="IWifiConnectionResult" iid="{2BED2356-10A5-4901-A243-4CAEC8391918}" tlbid="{DADBD0C9-6D82-429C-B82B-F101C4C65166}" proxyStubClsid32="{2BED2356-10A5-4901-A243-4CAEC8391918}"></comInterfaceProxyStub>
+  </file>
+</assembly>
