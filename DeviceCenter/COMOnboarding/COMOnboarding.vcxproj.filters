@@ -76,4 +76,7 @@
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="COMOnboarding.sxs.manifest" />
+  </ItemGroup>
 </Project>

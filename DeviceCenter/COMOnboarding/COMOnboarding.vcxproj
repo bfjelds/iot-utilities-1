@@ -96,8 +96,12 @@
       <ModuleDefinitionFile>Onboarding.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>tlbimp "$(SolutionDir)COMOnboarding\Debug\COMOnboarding.tlb" /namespace:Onboarding /out:"$(SolutionDir)Debug\OnboardingTypeLib.dll"</Command>
+      <Command>tlbimp "$(SolutionDir)COMOnboarding\Debug\COMOnboarding.tlb" /namespace:Onboarding /out:"$(SolutionDir)Debug\OnboardingTypeLib.dll"
+copy $(SolutionDir)COMOnboarding\COMOnboarding.sxs.manifest $(SolutionDir)IoTOnboardingConsumerWPF\bin\x86\Debug
+copy $(SolutionDir)Debug\COMOnboarding.dll $(SolutionDir)IoTOnboardingConsumerWPF\bin\x86\Debug</Command>
     </PostBuildEvent>
+    <Manifest />
+    <Manifest />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -193,6 +197,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Onboarding.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="COMOnboarding.sxs.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
