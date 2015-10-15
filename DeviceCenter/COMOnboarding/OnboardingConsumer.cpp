@@ -226,6 +226,14 @@ HRESULT STDMETHODCALLTYPE OnboardingConsumer::GetScanInfo(IWifiList **ppList)
 
     if (m_SessionJoined)
     {
+        /*
+        auto aboutProxy = alljoyn_aboutproxy_create(m_Bus, m_UniqueName.data(), m_SessionId);
+        alljoyn_msgarg aboutMsgArg = alljoyn_msgarg_create();
+        alljoyn_aboutproxy_getaboutdata(aboutProxy, NULL, aboutMsgArg);
+        auto aboutData = alljoyn_aboutdata_create(NULL);
+        alljoyn_aboutdata_createfrommsgarg(aboutData, aboutMsgArg, NULL);
+        */
+
         reply = alljoyn_message_create(m_Bus);
 
         status = alljoyn_proxybusobject_methodcall(m_ProxyBusObject, ONBOARDING_INTERFACE_NAME, "GetScanInfo", NULL, 0, reply, METHOD_CALL_TIMEOUT, 0);
