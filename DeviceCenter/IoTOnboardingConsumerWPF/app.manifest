@@ -58,7 +58,7 @@
   -->
 
   <!-- Enable themes for Windows common controls and dialogs (Windows XP and later) -->
-  <dependency>
+  <!--<dependency>
     <dependentAssembly>
       <assemblyIdentity
           type="win32"
@@ -69,10 +69,5 @@
           language="*"
         />
     </dependentAssembly>
-  </dependency>
-  <dependency>
-    <dependentAssembly>
-      <assemblyIdentity type="win32" name="COMOnboarding.sxs" version="1.0.0.0" />
-    </dependentAssembly>
-  </dependency>
+  </dependency>-->
 </assembly>
