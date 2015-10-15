@@ -21,6 +21,8 @@ namespace DeviceCenter
         public SetupDevicePage()
         {
             InitializeComponent();
+
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

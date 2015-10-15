@@ -152,6 +152,8 @@ namespace DeviceCenter
         {
             InitializeComponent();
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
+
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private ObservableCollection<WifiEntry> wifiList = new ObservableCollection<WifiEntry>();

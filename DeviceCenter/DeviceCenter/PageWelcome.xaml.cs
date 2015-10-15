@@ -26,6 +26,8 @@ namespace DeviceCenter
         {
             InitializeComponent();
             _navigationFrame = navigationFrame;
+
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void SetupDeviceButton_Click(object sender, RoutedEventArgs e)
