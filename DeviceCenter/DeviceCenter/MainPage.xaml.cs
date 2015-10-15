@@ -43,6 +43,7 @@
 
         private void buttonSamples_Click(object sender, RoutedEventArgs e)
         {
+            _NavigationFrame.Navigate(new SamplesPage());
         }
 
         private void buttonTestOnly_Click(object sender, RoutedEventArgs e)

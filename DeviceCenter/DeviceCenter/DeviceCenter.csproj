@@ -145,6 +145,9 @@
     <Compile Include="PageWifi.xaml.cs">
       <DependentUpon>PageWifi.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SamplesPage.xaml.cs">
+      <DependentUpon>SamplesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Strings\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -200,6 +203,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SamplesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SetupDevicePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -245,6 +252,9 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Content Include="Assets\IOTMDL2.1.49.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\SegMDL2.1.43.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="DeviceCenterDevelopmentKey.snk" />
