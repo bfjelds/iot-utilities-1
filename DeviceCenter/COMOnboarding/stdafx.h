@@ -57,6 +57,10 @@
 
 #define TRACE(x) OutputDebugString(x)
 
+// Error code
+#define E_WLAN_INTERFACE_NOT_AVALIABLE 0x80077001
+#define E_WLAN_INTERFACE_NOT_CONNECTED 0x80077002
+
 using namespace std;
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;

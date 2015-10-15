@@ -8,6 +8,7 @@ using Onboarding;
 using System.Collections.ObjectModel;
 using IoTOnboardingConsumerWPF.Handlers;
 using IoTOnboardingConsumerWPF.Wrappers;
+using System.Diagnostics;
 
 namespace IoTOnboardingConsumerWPF
 {
@@ -49,7 +50,14 @@ namespace IoTOnboardingConsumerWPF
             this.listViewOnboardingConsumers.ItemsSource = m_OnboardingConsumerList;
             this.listViewOnboardingNetworks.ItemsSource = m_OnboardingNetworks;
 
-            InitAsync();
+            try
+            {
+                InitAsync();
+            }
+            catch(Exception ex)
+            {
+                Dispatcher.Invoke(() => { statusTextBlock.Text = "General Error - " + ex.Message; });
+            }
         }
 
         #region ASync methods
@@ -70,9 +78,25 @@ namespace IoTOnboardingConsumerWPF
                     
                 }));
 
-            m_Manager.Init();
-
+            try
+            {
+                m_Manager.Init();
+            }
+            catch(Exception ex)
+            {
+                string errMsg = string.Empty;
+                if(ex.HResult == unchecked((int)0x80077001))
+                {
+                    errMsg = "No wireless adapter avaliable";
+                }
+                else
+                {
+                    errMsg = string.Format("Error at init - {0}", ex.HResult);
+                }
+                Dispatcher.Invoke(() => { statusTextBlock.Text = errMsg; });
+            }
         }
+
         private void GetScanInfoAsyn(IOnboardingConsumer consumer)
         {
             Task.Run(() =>
