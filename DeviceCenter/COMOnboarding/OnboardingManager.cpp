@@ -65,13 +65,15 @@ HRESULT OnboardingManager::_InitWifi()
 
     if (pWlanInterfaceInfoList->dwNumberOfItems < 1)
     {
-        CHKHR(E_FAIL);
+        CHKHR(E_WLAN_INTERFACE_NOT_AVALIABLE);
     }
-
-    CHECK_ERROR(WlanScan(m_hWlan, &pWlanInterfaceInfoList->InterfaceInfo[0].InterfaceGuid, NULL, NULL, NULL));
 
     // Just pick the first adapter for now
     m_InterfaceGuid = pWlanInterfaceInfoList->InterfaceInfo[0].InterfaceGuid;
+    if (pWlanInterfaceInfoList->InterfaceInfo[0].isState != wlan_interface_state_connected)
+    {
+        CHKHR(E_WLAN_INTERFACE_NOT_CONNECTED)
+    }
 
     // Register notification callback
     WlanRegisterNotification(m_hWlan, WLAN_NOTIFICATION_SOURCE_ALL, TRUE, wlan_notification_callback, this, NULL, NULL);
@@ -242,14 +244,14 @@ HRESULT OnboardingManager::GetOnboardingNetworks(IWifiList **list)
         return E_POINTER;
     }
 
-    // Throw exception?
     if (m_InterfaceGuid == GUID_NULL)
     {
         *list = nullptr;
-
-        return S_OK;
+        CHKHR(E_WLAN_INTERFACE_NOT_AVALIABLE);
     }
 
+    CHECK_ERROR(WlanScan(m_hWlan, &m_InterfaceGuid, NULL, NULL, NULL));
+    // Sleep 4 seconds
     CHECK_ERROR(WlanGetAvailableNetworkList(m_hWlan, &m_InterfaceGuid, 0, NULL, &availableList));
 
     pList = Make<WifiList>();
@@ -364,9 +366,6 @@ HRESULT OnboardingManager::ConnectToOnboardingNetwork(IWifi *wifi, BSTR password
     parameters.pDesiredBssidList = NULL;
     parameters.dot11BssType = dot11_BSS_type_any;
     parameters.dwFlags = 0;
-
-    //LPWSTR profile[20000];
-    //CHECK_ERROR(WlanGetProfile(hWlan, &interf, L"AJ_Test", NULL, profile, 0, NULL));
 
     CHECK_ERROR(WlanConnect(m_hWlan, &m_InterfaceGuid, &parameters, NULL));
 
