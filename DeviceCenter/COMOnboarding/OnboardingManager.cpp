@@ -70,10 +70,6 @@ HRESULT OnboardingManager::_InitWifi()
 
     // Just pick the first adapter for now
     m_InterfaceGuid = pWlanInterfaceInfoList->InterfaceInfo[0].InterfaceGuid;
-    if (pWlanInterfaceInfoList->InterfaceInfo[0].isState != wlan_interface_state_connected)
-    {
-        CHKHR(E_WLAN_INTERFACE_NOT_CONNECTED)
-    }
 
     // Register notification callback
     WlanRegisterNotification(m_hWlan, WLAN_NOTIFICATION_SOURCE_ALL, TRUE, wlan_notification_callback, this, NULL, NULL);
