@@ -70,12 +70,14 @@ namespace DeviceCenter
             wifiManager = new OnboardingManager();
             wifiManager.Init();
 
-            wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler(async (OnboardingConsumer consumer) =>
+            wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler((OnboardingConsumer consumer) =>
             {
-                await Dispatcher.InvokeAsync(() => 
+                ManagedConsumer managedConsumer = new ManagedConsumer(consumer);
+
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                 {
-                    onboardingConsumerList.Add(new ManagedConsumer(consumer));
-                });
+                    navigationFrame.Navigate(new PageWifi(managedConsumer));
+                }));
             }));
 
             wifiRefreshTimer = new DispatcherTimer()
@@ -306,6 +308,7 @@ namespace DeviceCenter
             {
                 try
                 {
+                    onboardingConsumerList.Clear();
                     wifiManager.ConnectToOnboardingNetwork((Onboarding.wifi)wifi, password);
                 }
                 catch (COMException /*ex*/)

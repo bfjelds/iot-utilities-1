@@ -53,7 +53,7 @@
 
         private void buttonSideMenu_Click(object sender, RoutedEventArgs e)
         {
-            _NavigationFrame.Navigate(new PageWifi());
+            //_NavigationFrame.Navigate(new PageWifi());
         }
     }
 }
