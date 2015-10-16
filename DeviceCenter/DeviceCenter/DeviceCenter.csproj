@@ -133,6 +133,9 @@
     <Compile Include="ImageHelper.cs" />
     <Compile Include="LastKnownGood.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="PageAppDetails.xaml.cs">
+      <DependentUpon>PageAppDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PageDeviceConfiguration.xaml.cs">
       <DependentUpon>PageDeviceConfiguration.xaml</DependentUpon>
     </Compile>
@@ -187,6 +190,10 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PageAppDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PageDeviceConfiguration.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -252,10 +259,12 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Resource Include="Assets\Blinky.png" />
+    <Resource Include="Assets\BlinkyScreenshot.png" />
     <Content Include="Assets\IOTMDL2.1.49.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Assets\Radio.png" />
+    <Resource Include="Assets\RadioScreenshot.png" />
     <Content Include="Assets\SegMDL2.1.43.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -276,9 +285,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\percentage_Circle.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
