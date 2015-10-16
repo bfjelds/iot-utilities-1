@@ -251,9 +251,11 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="Assets\Blinky.png" />
     <Content Include="Assets\IOTMDL2.1.49.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Assets\Radio.png" />
     <Content Include="Assets\SegMDL2.1.43.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -276,14 +278,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\cloud.png" />
     <Resource Include="Assets\percentage_Circle.png" />
-    <Resource Include="Assets\pixel.png" />
-    <Resource Include="Assets\ribbon.png" />
-    <Resource Include="Assets\rockets.png" />
-    <Resource Include="Assets\SD_Card.png" />
-    <Resource Include="Assets\SD_Card_complete.png" />
-    <Resource Include="Assets\SD_card_outline.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
