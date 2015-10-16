@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -60,37 +61,51 @@ namespace DeviceCenter
             telemetryTimer = new DispatcherTimer();
             telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             telemetryTimer.Tick += TelemetryTimer_Tick;
-            
+
             deviceDiscoverySvc = new DeviceDiscoveryService();
             deviceDiscoverySvc.Discovered += MDNSDeviceDiscovered;
             deviceDiscoverySvc.Start();
 
             ListViewDevices.ItemsSource = devices;
 
-            //wifiManager = new OnboardingManager();
-            //wifiManager.Init();
+            wifiManager = new OnboardingManager();
+            try
+            {
+                wifiManager.Init();
 
-            //wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler(async (OnboardingConsumer consumer) =>
-            //{
-            //    await Dispatcher.InvokeAsync(() =>
-            //    {
-            //        onboardingConsumerList.Add(new ManagedConsumer(consumer));
-            //    });
-            //}));
+                wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler(async (OnboardingConsumer consumer) =>
+                {
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        onboardingConsumerList.Add(new ManagedConsumer(consumer));
+                    });
+                }));
 
-            //wifiRefreshTimer = new DispatcherTimer()
-            //{
-            //    Interval = TimeSpan.FromSeconds(10)
-            //};
-            //wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
-            //RefreshWifiAsync();
+                wifiRefreshTimer = new DispatcherTimer()
+                {
+                    Interval = TimeSpan.FromSeconds(10)
+                };
+                wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
+                RefreshWifiAsync();
+
+            }catch(Exception e)
+            {
+                App.TelemetryClient.TrackException(e);
+            }
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            //wifiManager.Shutdown();
+            if (wifiManager != null)
+            {
+                try
+                {
+                    wifiManager.Shutdown();
+                }
+                catch (Exception) { }
+            }
         }
 
         private async void RefreshWifiAsync()
@@ -198,7 +213,7 @@ namespace DeviceCenter
                     DeviceModel = args.Info.Location,
                     Architecture = args.Info.Architecture,
                     OSVersion = args.Info.OSVersion,
-                    IPaddress = args.Info.Address,
+                    IPAddress = args.Info.Address,
                     UniqueId = args.Info.UniqueId,
                     Manage = new Uri(string.Format("http://administrator@{0}/", args.Info.Address))
                 };

@@ -34,7 +34,7 @@ namespace DeviceCenter
         public NetworkType Network { get; private set; }
         public string DeviceName { get; set; }
         public string DeviceModel { get; set; }
-        public string IPaddress { get; set; }
+        public string IPAddress { get; set; }
         public string OSVersion { get; set; }
         public string Architecture { get; set; }
         public Guid UniqueId { get; set; }
