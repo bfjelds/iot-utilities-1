@@ -32,6 +32,7 @@ namespace DeviceCenter
         private DispatcherTimer wifiRefreshTimer;
 
         private Frame _navigationFrame;
+        private PageWifi wifiPage = null;
 
         ~ViewDevicesPage()
         {
@@ -77,12 +78,16 @@ namespace DeviceCenter
 
             wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler((OnboardingConsumer consumer) =>
             {
-                ManagedConsumer managedConsumer = new ManagedConsumer(consumer);
-
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                if (wifiPage != null)
                 {
-                    navigationFrame.Navigate(new PageWifi(managedConsumer));
-                }));
+                    ManagedConsumer managedConsumer = new ManagedConsumer(consumer);
+
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                    {
+                        wifiPage.SetConsumer(managedConsumer);
+                        wifiPage = null;
+                    }));
+                }
             }));
 
             wifiRefreshTimer = new DispatcherTimer()
@@ -304,7 +309,12 @@ namespace DeviceCenter
                 bool? confirmation = dlg.ShowDialog();
                 if (confirmation.HasValue && confirmation.Value)
                 {
+                    wifiPage = new PageWifi(_navigationFrame, wifiManager);
+
                     ConnectToOnboardeeAsync(device.WifiInstance.NativeWifi, "password");
+
+                    _navigationFrame.Navigate(wifiPage);
+
                     return;
                 }
             }
@@ -334,7 +344,7 @@ namespace DeviceCenter
             DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
             if (device != null && device.Manage != null)
             {
-                Process.Start(device.Manage.AbsolutePath);
+                Process.Start(device.Manage.AbsoluteUri);
             }
         }
 

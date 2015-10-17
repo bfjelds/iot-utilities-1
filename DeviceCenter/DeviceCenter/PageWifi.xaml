@@ -35,9 +35,10 @@
     </Page.Resources>
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <TextBlock x:Name="LabelDeviceName" x:Uid="Title" FontSize="30" DockPanel.Dock="Top" Text="--" />
+            <TextBlock x:Name="LabelDeviceName" x:Uid="Title" FontSize="30" DockPanel.Dock="Top" Text="{x:Static props:Strings.ConnetSubTitle}" />
             <TextBlock x:Uid="Subtitle" FontSize="21.333" DockPanel.Dock="Top" Text="{x:Static props:Strings.ConnectWiFiTitle}" Margin="0,20,0,0" TextWrapping="Wrap"/>
             <TextBlock x:Uid="SubTitleWifi" DockPanel.Dock="Top" Text="{x:Static props:Strings.WifiSubTitle}" Margin="0,10,0,6" TextWrapping="Wrap"/>
+            <ProgressBar x:Name="progressWaiting" DockPanel.Dock="Top" IsIndeterminate="True" />
             <ListView x:Name="ListViewWifi" DockPanel.Dock="Bottom" Margin="0" BorderThickness="0" SelectionMode="Single" ItemTemplate="{StaticResource NetworkRouter}"  Loaded="ListViewDevices_Loaded" Unloaded="ListViewDevices_Unloaded">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>

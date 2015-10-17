@@ -23,11 +23,11 @@ namespace DeviceCenter
     public class WifiEntry : INotifyPropertyChanged
     {
         private const string WifiIcons = "";
-        //public WifiEntry(string name, bool secure)
-        public WifiEntry(ManagedConsumer consumer, IWifi comWifi)
+        public WifiEntry(Frame navigationFrame, ManagedConsumer consumer, IWifi comWifi)
         {
             this.comWifi = comWifi;
             this.consumer = consumer;
+            this.navigationFrame = navigationFrame;
 
             this.Active = false;
             this.ShowConnect = Visibility.Collapsed;
@@ -41,6 +41,7 @@ namespace DeviceCenter
             this.SignalStrength = 4; // add when supported
         }
 
+        private Frame navigationFrame;
         private ManagedConsumer consumer;
         private bool needPassword;
         private IWifi comWifi;
@@ -95,9 +96,6 @@ namespace DeviceCenter
             OnPropertyChanged("ShowExpanded");
         }
 
-        public event EventHandler OnConnect;
-        public event EventHandler OnCancel;
-
         public void StartConnect()
         {
             if (this.needPassword)
@@ -129,12 +127,10 @@ namespace DeviceCenter
                     this.consumer.NativeConsumer.ConfigWifi(ssid, password, security);
                     this.consumer.NativeConsumer.Connect();
 
-                    if (OnConnect != null)
-                        OnConnect(this, new EventArgs());
+                    this.navigationFrame.GoBack();
                 }
                 catch (COMException)
                 {
-
                 }
             });
         }
@@ -179,13 +175,28 @@ namespace DeviceCenter
     public partial class PageWifi : Page
     {
         private ManagedConsumer consumer;
-        public PageWifi(ManagedConsumer consumer)
+        private Frame navigationFrame;
+
+        public PageWifi(Frame navigationFrame, IOnboardingManager wifiManager)
         {
             InitializeComponent();
+
+            this.navigationFrame = navigationFrame;
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
             ListViewWifi.ItemsSource = wifiList;
+            progressWaiting.Visibility = Visibility.Visible;
+        }
 
+        public void SetConsumer(ManagedConsumer consumer)
+        {
             this.consumer = consumer;
+
+            LabelDeviceName.Text = consumer.NativeConsumer.GetDisplayName();
+
+            foreach (var comWifi in consumer.WifiList)
+                wifiList.Add(new WifiEntry(navigationFrame, consumer, comWifi));
+
+            progressWaiting.Visibility = Visibility.Collapsed;
         }
 
         private ObservableCollection<WifiEntry> wifiList = new ObservableCollection<WifiEntry>();
@@ -196,10 +207,6 @@ namespace DeviceCenter
 
         private void ListViewDevices_Loaded(object sender, RoutedEventArgs e)
         {
-            LabelDeviceName.Text = consumer.NativeConsumer.GetDisplayName();
-
-            foreach (var comWifi in consumer.WifiList)
-                wifiList.Add(new WifiEntry(consumer, comWifi));
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
