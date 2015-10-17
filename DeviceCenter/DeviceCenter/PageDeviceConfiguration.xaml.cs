@@ -50,7 +50,7 @@ namespace DeviceCenter
             //textBoxPassword1
 
             // do stuff here
-            IPAddress ip = IPAddress.Parse(this.Device.IPaddress);
+            IPAddress ip = IPAddress.Parse(this.Device.IPAddress);
             WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
             if (!String.IsNullOrWhiteSpace(textBoxDeviceName.Text))
             {

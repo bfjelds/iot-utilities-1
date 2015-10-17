@@ -1,5 +1,6 @@
 ﻿using Onboarding;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace DeviceCenter.Wrappers
 {
@@ -15,12 +16,23 @@ namespace DeviceCenter.Wrappers
 
             m_Name = new string(bstr.ToCharArray());
 
-            var comWifiList = m_NativeConsumer.GetScanInfo();
-            if (comWifiList != null)
+            try
             {
-                for (uint i = 0, n = comWifiList.Size(); i < n; i++)
+                var comWifiList = m_NativeConsumer.GetScanInfo();
+                if (comWifiList != null)
                 {
-                    m_WifiList.Add(comWifiList.GetItem(i));
+                    for (uint i = 0, n = comWifiList.Size(); i < n; i++)
+                    {
+                        m_WifiList.Add(comWifiList.GetItem(i));
+                    }
+                }
+            }
+            catch (COMException error)
+            {
+                var x = error.HResult;
+                if (x != 0)
+                {
+
                 }
             }
         }

@@ -33,6 +33,11 @@ namespace DeviceCenter
 
         private Frame _navigationFrame;
 
+        ~ViewDevicesPage()
+        {
+            wifiManager.Shutdown();
+        }
+
         private class AdhocNetwork
         {
             public AdhocNetwork(IWifi wifi)
@@ -90,7 +95,7 @@ namespace DeviceCenter
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            wifiManager.Shutdown();
+            wifiRefreshTimer.Stop();
         }
 
         private async void RefreshWifiAsync()
@@ -197,7 +202,7 @@ namespace DeviceCenter
                     DeviceModel = args.Info.Location,
                     Architecture = args.Info.Architecture,
                     OSVersion = args.Info.OSVersion,
-                    IPaddress = args.Info.Address,
+                    IPAddress = args.Info.Address,
                     UniqueId = args.Info.UniqueId,
                     Manage = new Uri(string.Format("http://administrator@{0}/", args.Info.Address))
                 };
@@ -285,6 +290,8 @@ namespace DeviceCenter
         }
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
+            wifiRefreshTimer.Stop();
+
             DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
             if (device != null)
             {
@@ -298,8 +305,11 @@ namespace DeviceCenter
                 if (confirmation.HasValue && confirmation.Value)
                 {
                     ConnectToOnboardeeAsync(device.WifiInstance.NativeWifi, "password");
+                    return;
                 }
             }
+
+            wifiRefreshTimer.Start();
         }
 
         private async void ConnectToOnboardeeAsync(IWifi wifi, string password)
