@@ -120,7 +120,7 @@ namespace DeviceCenter
             {
                 try
                 {
-                    // start connecting anonymous
+                // start connecting anonymous
                     string ssid = this.comWifi.GetSSID();
                     short security = this.comWifi.GetSecurity();
 
@@ -128,10 +128,10 @@ namespace DeviceCenter
                     this.consumer.NativeConsumer.Connect();
 
                     this.navigationFrame.GoBack();
-                }
+            }
                 catch (COMException)
                 {
-                }
+        }
             });
         }
 
@@ -185,6 +185,8 @@ namespace DeviceCenter
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
             ListViewWifi.ItemsSource = wifiList;
             progressWaiting.Visibility = Visibility.Visible;
+
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         public void SetConsumer(ManagedConsumer consumer)
@@ -230,7 +232,7 @@ namespace DeviceCenter
                         editor.Focus();
                     }
                 }
-           }
+            }
         }
 
         // MVVM aka Binding doesn't work on Password controls, must go outside to use

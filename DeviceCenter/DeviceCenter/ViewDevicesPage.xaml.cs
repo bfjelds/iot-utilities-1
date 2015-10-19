@@ -4,9 +4,11 @@ using Microsoft.Tools.Connectivity;
 using Onboarding;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +23,7 @@ namespace DeviceCenter
     /// </summary>
     public partial class ViewDevicesPage : Page
     {
-        //DispatcherTimer telemetryTimer;
+        private DispatcherTimer telemetryTimer;
         private DiscoveredDevice newestBuildDevice, oldestBuildDevice;
         private DeviceDiscoveryService deviceDiscoverySvc;
         private ObservableCollection<DiscoveredDevice> devices = new ObservableCollection<DiscoveredDevice>();
@@ -58,14 +60,13 @@ namespace DeviceCenter
         {
             InitializeComponent();
             _navigationFrame = navigationFrame;
-            /*
+
             newestBuildDevice = null;
             oldestBuildDevice = null;
 
             telemetryTimer = new DispatcherTimer();
             telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             telemetryTimer.Tick += TelemetryTimer_Tick;
-            */
 
             deviceDiscoverySvc = new DeviceDiscoveryService();
             deviceDiscoverySvc.Discovered += MDNSDeviceDiscovered;
@@ -74,21 +75,29 @@ namespace DeviceCenter
             ListViewDevices.ItemsSource = devices;
 
             wifiManager = new OnboardingManager();
-            wifiManager.Init();
 
-            wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler((OnboardingConsumer consumer) =>
+            try
             {
-                if (wifiPage != null)
-                {
-                    ManagedConsumer managedConsumer = new ManagedConsumer(consumer);
+                wifiManager.Init();
 
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler((OnboardingConsumer consumer) =>
+                {
+                    if (wifiPage != null)
                     {
-                        wifiPage.SetConsumer(managedConsumer);
-                        wifiPage = null;
-                    }));
-                }
-            }));
+                        ManagedConsumer managedConsumer = new ManagedConsumer(consumer);
+
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                        {
+                            wifiPage.SetConsumer(managedConsumer);
+                            wifiPage = null;
+                        }));
+                    }
+                }));
+
+            }catch(Exception ex)
+            {
+                App.TelemetryClient.TrackException(ex);
+            }
 
             wifiRefreshTimer = new DispatcherTimer()
             {
@@ -96,6 +105,8 @@ namespace DeviceCenter
             };
             wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
             RefreshWifiAsync();
+
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
@@ -125,7 +136,7 @@ namespace DeviceCenter
                         {
                             IWifi item = list.GetItem(i);
 
-                            AdhocNetwork ssid = adhocNetworks.GetOrAdd(item.GetSSID(), (key)  =>
+                            AdhocNetwork ssid = adhocNetworks.GetOrAdd(item.GetSSID(), (key) =>
                             {
                                 var newDevice = new DiscoveredDevice(new ManagedWifi(item))
                                 {
@@ -167,29 +178,30 @@ namespace DeviceCenter
             RefreshWifiAsync();
         }
 
-        /*
         private void TelemetryTimer_Tick(object sender, EventArgs e)
         {
             // Only send a telemetry event if we've found build information
             if (oldestBuildDevice != null && newestBuildDevice != null)
             {
+                int deviceCount = deviceDiscoverySvc.DevicesDiscovered().Count;
+
                 Debug.WriteLine("Sending telemetry event... ");
                 Debug.WriteLine("Max OS Version: " + newestBuildDevice.OSVersion);
                 Debug.WriteLine("Min OS Version: " + oldestBuildDevice.OSVersion);
+                Debug.WriteLine("Number of devices: " + deviceCount);
 
-                TelemetryHelper.eventLogger.Write(TelemetryHelper.DeviceDiscoveryEvent, TelemetryHelper.TelemetryInfoOption, new
+                App.TelemetryClient.TrackEvent("DeviceDiscovery", new Dictionary<string, string>()
                 {
-                    oldestBuildVersion = oldestBuildDevice.OSVersion,
-                    newestBuildVersion = newestBuildDevice.OSVersion,
-                    newestDeviceId = newestBuildDevice.UniqueId,
-                    oldestDeviceId = oldestBuildDevice.UniqueId,
-                    numDevices = deviceDiscoverySvc.DevicesDiscovered().Count
+                    { "oldestDeviceId", oldestBuildDevice.UniqueId.ToString() },
+                    { "oldestBuildVersion", oldestBuildDevice.OSVersion },
+                    { "newestDeviceId", newestBuildDevice.UniqueId.ToString() },
+                    { "newestBuildVersion", newestBuildDevice.OSVersion },
+                    { "numDevices", deviceCount.ToString() }
                 });
             }
 
             telemetryTimer.Stop();
         }
-        */
 
         public void MDNSDeviceDiscovered(object sender, DiscoveredEventArgs args)
         {
@@ -217,7 +229,7 @@ namespace DeviceCenter
                     devices.Add(newDevice);
                 }));
 
-                // Figure out what device has the latest build and the oldest build
+                // Figure out which device has the latest build and the oldest build
                 if (!string.IsNullOrWhiteSpace(newDevice.OSVersion))
                 {
                     // Set initial value if null
@@ -247,13 +259,13 @@ namespace DeviceCenter
                 }
 
                 // Refresh delay until telemetry is sent
-                //telemetryTimer.Start();
+                telemetryTimer.Start();
             }
         }
 
         private int compareOsVersions(string osVersion1, string osVersion2)
         {
-            if(osVersion1 == osVersion2)
+            if (osVersion1 == osVersion2)
             {
                 return 0;
             }
@@ -268,11 +280,11 @@ namespace DeviceCenter
                 int partNum1 = Convert.ToInt32(osParts1[i]);
                 int partNum2 = Convert.ToInt32(osParts2[i]);
 
-                if(partNum1 < partNum2)
+                if (partNum1 < partNum2)
                 {
                     return -1;
                 }
-                else if(partNum1 > partNum2)
+                else if (partNum1 > partNum2)
                 {
                     return 1;
                 }
@@ -288,11 +300,12 @@ namespace DeviceCenter
                 Hyperlink link = (Hyperlink)e.OriginalSource;
                 Process.Start(link.NavigateUri.AbsoluteUri);
             }
-            catch(System.ComponentModel.Win32Exception)
+            catch (System.ComponentModel.Win32Exception)
             {
                 // TODO: handle errors
             }
         }
+
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
             wifiRefreshTimer.Stop();
@@ -344,6 +357,14 @@ namespace DeviceCenter
             DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
             if (device != null && device.Manage != null)
             {
+                App.TelemetryClient.TrackEvent("ButtonPortal_Click", new Dictionary<string, string>()
+                {
+                    { "DeviceId", device.UniqueId.ToString() },
+                    { "DeviceArchitecture", device.Architecture },
+                    { "DeviceOSVersion", device.OSVersion },
+                    { "DeviceModel", device.DeviceModel }
+                });
+
                 Process.Start(device.Manage.AbsoluteUri);
             }
         }
@@ -352,7 +373,17 @@ namespace DeviceCenter
         {
             DiscoveredDevice device = this.ListViewDevices.SelectedItem as DiscoveredDevice;
             if (device != null)
+            {
+                App.TelemetryClient.TrackEvent("ButtonManage_Click", new Dictionary<string, string>()
+                {
+                    { "DeviceId", device.UniqueId.ToString() },
+                    { "DeviceArchitecture", device.Architecture },
+                    { "DeviceOSVersion", device.OSVersion },
+                    { "DeviceModel", device.DeviceModel }
+                });
+
                 _navigationFrame.Navigate(new PageDeviceConfiguration(_navigationFrame, device));
+            }
         }
     }
 }

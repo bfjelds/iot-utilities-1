@@ -30,6 +30,8 @@ namespace DeviceCenter
 
             this._navigationFrame = navigationFrame;
             this.Device = device;
+
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

@@ -17,6 +17,13 @@ namespace DeviceCenter
 
             InitializeComponent();
 
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
+
+            this.AppList.Add(new AppInformation(
+                "Assets/Blinky.png",
+                Strings.Strings.SamplesBlinkyTitle,
+                Strings.Strings.SamplesBlinkyMessage1 + "\n" + Strings.Strings.SamplesBlinkyMessage2));
+
             foreach (AppInformation cur in AppInformation.Initialize())
             {
                 ButtonAppInfo newButton = new ButtonAppInfo(cur);
