@@ -75,21 +75,29 @@ namespace DeviceCenter
             ListViewDevices.ItemsSource = devices;
 
             wifiManager = new OnboardingManager();
-            wifiManager.Init();
 
-            wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler((OnboardingConsumer consumer) =>
+            try
             {
-                if (wifiPage != null)
-                {
-                    ManagedConsumer managedConsumer = new ManagedConsumer(consumer);
+                wifiManager.Init();
 
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler((OnboardingConsumer consumer) =>
+                {
+                    if (wifiPage != null)
                     {
-                        wifiPage.SetConsumer(managedConsumer);
-                        wifiPage = null;
-                    }));
-                }
-            }));
+                        ManagedConsumer managedConsumer = new ManagedConsumer(consumer);
+
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                        {
+                            wifiPage.SetConsumer(managedConsumer);
+                            wifiPage = null;
+                        }));
+                    }
+                }));
+
+            }catch(Exception ex)
+            {
+                App.TelemetryClient.TrackException(ex);
+            }
 
             wifiRefreshTimer = new DispatcherTimer()
             {
