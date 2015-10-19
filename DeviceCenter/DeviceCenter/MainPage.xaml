@@ -63,6 +63,15 @@
         </Style>
     </Window.Resources>
     <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Vertical">
+                <Button x:Name="ButtonBack" FontSize="20" FontFamily="Segoe UI Symbol" Padding="10 5 10 5" VerticalAlignment="Top" HorizontalAlignment="Left" Content="&#xE112;" Foreground="Black" BorderBrush="{x:Null}" Click="ButtonBack_Click" Style="{DynamicResource ButtonStyleNavigation}" >
+                    <Button.Background>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.MenuHighlightColorKey}}"/>
+                    </Button.Background>
+                </Button>
+            </StackPanel>
+        </StackPanel>
         <Grid>
             <DockPanel Margin="0">
                 <StackPanel Orientation="Vertical">

@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DeviceCenter
 {
@@ -20,9 +8,31 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageAppDetails : Page
     {
-        public PageAppDetails()
+        public AppInformation AppItem { get; private set; }
+        public PageAppDetails(AppInformation item)
         {
             InitializeComponent();
+
+            this.AppItem = item;
+            this.DataContext = this.AppItem;
+
+            PanelDeploying.Visibility = Visibility.Collapsed;
+            PanelDeployed.Visibility = Visibility.Collapsed;
+            PanelDeploy.Visibility = Visibility.Visible;
+        }
+
+        private void ButtonDeploy_Click(object sender, RoutedEventArgs e)
+        {
+            PanelDeploying.Visibility = Visibility.Collapsed;
+            PanelDeploying.Visibility = Visibility.Visible;
+            PanelDeployed.Visibility = Visibility.Collapsed;
+        }
+
+        private void ButtonStopDeploy_Click(object sender, RoutedEventArgs e)
+        {
+            PanelDeploying.Visibility = Visibility.Collapsed;
+            PanelDeployed.Visibility = Visibility.Collapsed;
+            PanelDeploy.Visibility = Visibility.Visible;
         }
     }
 }

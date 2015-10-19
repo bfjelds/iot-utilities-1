@@ -8,35 +8,21 @@
       mc:Ignorable="d" 
       d:DesignHeight="383.333" d:DesignWidth="394.667"
       Title="{x:Static props:Strings.LeftBarSamples}">
-    <Page.Resources>
-        <DataTemplate x:Key="AppPoster">
-            <ListViewItem Height="200" Width="300" Margin="0" IsHitTestVisible="False">
-                <DockPanel>
-                    <Image DockPanel.Dock="Top" Height="160" Grid.RowSpan="3" Source="{Binding PosterFile}"/>
-                    <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontSize="14" />
-                    <TextBlock DockPanel.Dock="Top" Text="{Binding Description}" />
-                </DockPanel>
-            </ListViewItem>
-        </DataTemplate>
-    </Page.Resources>
     <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <TextBlock DockPanel.Dock="Top" Text="{x:Static props:Strings.SamplesDeployAndRunButton}" FontSize="30" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <TextBlock DockPanel.Dock="Top" Text="{x:Static props:Strings.SamplesSubTitle}" TextWrapping="Wrap" Margin="0,10,0,0"/>
-        <ListView x:Name="listViewApps" DockPanel.Dock="Top" BorderThickness="0" Background="Transparent" Margin="0,10,-0.333,0" ItemTemplate="{StaticResource AppPoster}">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-        </ListView>
+        <ScrollViewer DockPanel.Dock="Top" MinHeight="160" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+            <StackPanel x:Name="listAppButtons" Orientation="Horizontal">
+            </StackPanel>
+        </ScrollViewer>
         <TextBlock DockPanel.Dock="Top" Text="{x:Static props:Strings.SamplesLearnMore}" TextWrapping="Wrap" Margin="0,10,0,0" />
         <TextBlock x:Name="buttonStartCoding" DockPanel.Dock="Top"  FontSize="14" TextWrapping="Wrap" Margin="0,10,0,0">
-            <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/win10/samples/Blinky.htm" RequestNavigate="Hyperlink_RequestNavigate">
+            <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/win10/samples/Blinky.htm">
                 <TextBlock Text="{x:Static props:Strings.SamplesStartCoding}"/>
             </Hyperlink>
         </TextBlock>
         <TextBlock x:Name="buttonTutorials" DockPanel.Dock="Top" TextWrapping="Wrap" Margin="0,10,0,0">
-            <Hyperlink  NavigateUri="http://ms-iot.github.io/content/en-US/win10/StartCoding.htm" RequestNavigate="Hyperlink_RequestNavigate">
+            <Hyperlink  NavigateUri="http://ms-iot.github.io/content/en-US/win10/StartCoding.htm">
                 <TextBlock Text="{x:Static props:Strings.SamplesOtherProjects}" />
             </Hyperlink>
         </TextBlock>

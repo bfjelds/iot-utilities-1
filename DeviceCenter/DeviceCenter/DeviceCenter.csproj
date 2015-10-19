@@ -124,6 +124,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AppInformation.cs" />
+    <Compile Include="ButtonAppInfo.xaml.cs">
+      <DependentUpon>ButtonAppInfo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="buttonSideMenu.xaml.cs">
       <DependentUpon>buttonSideMenu.xaml</DependentUpon>
     </Compile>
@@ -174,6 +178,10 @@
     </Compile>
     <Compile Include="Wrappers\ManagedConsumer.cs" />
     <Compile Include="Wrappers\ManagedWifi.cs" />
+    <Page Include="ButtonAppInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="buttonSideMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -253,11 +261,23 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.de-DE.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.es-ES.resx" />
+    <EmbeddedResource Include="Strings\Strings.fr-FR.resx" />
+    <EmbeddedResource Include="Strings\Strings.it-IT.resx" />
+    <EmbeddedResource Include="Strings\Strings.ja-JP.resx" />
+    <EmbeddedResource Include="Strings\Strings.ko-KR.resx" />
+    <EmbeddedResource Include="Strings\Strings.pt-BR.resx" />
     <EmbeddedResource Include="Strings\Strings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.ru-RU.resx" />
+    <EmbeddedResource Include="Strings\Strings.zh-CN.resx" />
+    <EmbeddedResource Include="Strings\Strings.zh-TW.resx" />
     <Resource Include="Assets\Blinky.png" />
     <Resource Include="Assets\BlinkyScreenshot.png" />
     <Content Include="Assets\IOTMDL2.1.49.ttf">
@@ -269,7 +289,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="DeviceCenterDevelopmentKey.snk" />
-    <None Include="DeviceCenterStrongName.pfx" />
     <None Include="DeviceCenter_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest">
