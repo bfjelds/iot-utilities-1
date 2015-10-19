@@ -96,6 +96,14 @@
       <HintPath>$(SolutionDir)\Debug\OnboardingTypeLib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>-->
+    <Reference Include="OnboardingTypeLib">
+      <HintPath>..\Debug\OnboardingTypeLib.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Diagnostics.Tracing.EventSource, Version=1.1.25.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.25\lib\net40\Microsoft.Diagnostics.Tracing.EventSource.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Tools.Connectivity, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -137,6 +145,9 @@
     <Compile Include="ImageHelper.cs" />
     <Compile Include="LastKnownGood.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="PageAppDetails.xaml.cs">
+      <DependentUpon>PageAppDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PageDeviceConfiguration.xaml.cs">
       <DependentUpon>PageDeviceConfiguration.xaml</DependentUpon>
     </Compile>
@@ -190,6 +201,10 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PageAppDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PageDeviceConfiguration.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -254,9 +269,13 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="Assets\Blinky.png" />
+    <Resource Include="Assets\BlinkyScreenshot.png" />
     <Content Include="Assets\IOTMDL2.1.49.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Assets\Radio.png" />
+    <Resource Include="Assets\RadioScreenshot.png" />
     <Content Include="Assets\SegMDL2.1.43.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -282,16 +301,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\cloud.png" />
-    <Resource Include="Assets\percentage_Circle.png" />
-    <Resource Include="Assets\pixel.png" />
-    <Resource Include="Assets\ribbon.png" />
-    <Resource Include="Assets\rockets.png" />
-    <Resource Include="Assets\SD_Card.png" />
-    <Resource Include="Assets\SD_Card_complete.png" />
-    <Resource Include="Assets\SD_card_outline.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
@@ -308,7 +317,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <NativeReference Include="COMOnboarding.sxs, Version=1.0.0.0, Type=win32">
+      <Name>COMOnboarding.sxs.manifest</Name>
+      <HintPath>..\Debug\COMOnboarding.sxs.manifest</HintPath>
+    </NativeReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

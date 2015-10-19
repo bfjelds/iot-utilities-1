@@ -1,8 +1,11 @@
-﻿using System;
+﻿using DeviceCenter.Wrappers;
+using Onboarding;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,21 +23,28 @@ namespace DeviceCenter
     public class WifiEntry : INotifyPropertyChanged
     {
         private const string WifiIcons = "";
-        public WifiEntry(string name, bool secure)
+        public WifiEntry(Frame navigationFrame, ManagedConsumer consumer, IWifi comWifi)
         {
+            this.comWifi = comWifi;
+            this.consumer = consumer;
+            this.navigationFrame = navigationFrame;
+
             this.Active = false;
             this.ShowConnect = Visibility.Collapsed;
             this.NeedPassword = Visibility.Collapsed;
             this.ShowExpanded = Visibility.Collapsed;
             this.SavePassword = false;
 
-            this.needPassword = secure;
-            this.Name = name;
-            this.Secure = (secure) ? Strings.Strings.LabelSecureWifi : Strings.Strings.LabelInsecureWifi;
-            this.SignalStrength = 4; // can we do this?
+            this.needPassword = comWifi.GetSecurity() != 0;
+            this.Name = comWifi.GetSSID();
+            this.Secure = (this.needPassword) ? Strings.Strings.LabelSecureWifi : Strings.Strings.LabelInsecureWifi;
+            this.SignalStrength = 4; // add when supported
         }
 
+        private Frame navigationFrame;
+        private ManagedConsumer consumer;
         private bool needPassword;
+        private IWifi comWifi;
 
         public string Name { get; private set; }
         public string Secure { get; private set; }
@@ -100,8 +110,29 @@ namespace DeviceCenter
             }
             else
             {
-                // start connecting anonymous
+                DoConnectAsync(string.Empty);
             }
+        }
+
+        public async void DoConnectAsync(string password)
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                // start connecting anonymous
+                    string ssid = this.comWifi.GetSSID();
+                    short security = this.comWifi.GetSecurity();
+
+                    this.consumer.NativeConsumer.ConfigWifi(ssid, password, security);
+                    this.consumer.NativeConsumer.Connect();
+
+                    this.navigationFrame.GoBack();
+            }
+                catch (COMException)
+                {
+        }
+            });
         }
 
         public void AllowSecure(bool enabled)
@@ -119,11 +150,6 @@ namespace DeviceCenter
 
             OnPropertyChanged("NeedPassword");
             OnPropertyChanged("ShowConnect");
-        }
-
-        public void StartConnectSecure(string password)
-        {
-            //start connecting using this.Password
         }
 
         public bool Active { get; private set; }
@@ -148,35 +174,45 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageWifi : Page
     {
-        public PageWifi()
+        private ManagedConsumer consumer;
+        private Frame navigationFrame;
+
+        public PageWifi(Frame navigationFrame, IOnboardingManager wifiManager)
         {
             InitializeComponent();
+
+            this.navigationFrame = navigationFrame;
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
+            ListViewWifi.ItemsSource = wifiList;
+            progressWaiting.Visibility = Visibility.Visible;
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
+        }
+
+        public void SetConsumer(ManagedConsumer consumer)
+        {
+            this.consumer = consumer;
+
+            LabelDeviceName.Text = consumer.NativeConsumer.GetDisplayName();
+
+            foreach (var comWifi in consumer.WifiList)
+                wifiList.Add(new WifiEntry(navigationFrame, consumer, comWifi));
+
+            progressWaiting.Visibility = Visibility.Collapsed;
         }
 
         private ObservableCollection<WifiEntry> wifiList = new ObservableCollection<WifiEntry>();
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            ListViewWifi.ItemsSource = wifiList;
-
-            wifiList.Add(new WifiEntry("MSFTTest", false));
-            wifiList.Add(new WifiEntry("MSFTFTE", true));
-            wifiList.Add(new WifiEntry("HackedWifi", false));
-            wifiList.Add(new WifiEntry("OpenWifi", false));
-            wifiList.Add(new WifiEntry("Linksys", true));
         }
 
         private void ListViewDevices_Loaded(object sender, RoutedEventArgs e)
         {
-
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-
         }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
@@ -196,7 +232,6 @@ namespace DeviceCenter
                         editor.Focus();
                     }
                 }
-
             }
         }
 
@@ -226,7 +261,7 @@ namespace DeviceCenter
                 {
                     PasswordBox editor = FindPasswordEdit(e.Source);
                     if (editor != null)
-                        entry.StartConnectSecure(editor.Password);
+                        entry.DoConnectAsync(editor.Password);
                 }
             }
         }

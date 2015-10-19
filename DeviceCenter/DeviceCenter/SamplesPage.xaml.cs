@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace DeviceCenter
 {
@@ -29,16 +31,22 @@ namespace DeviceCenter
             App.TelemetryClient.TrackPageView(this.GetType().Name);
 
             this.AppList.Add(new AppInformation(
-                "Assets/cloud.png",
+                "Assets/Blinky.png",
                 Strings.Strings.SamplesBlinkyTitle,
                 Strings.Strings.SamplesBlinkyMessage1 + "\n" + Strings.Strings.SamplesBlinkyMessage2));
 
             this.AppList.Add(new AppInformation(
-                "Assets/cloud.png",
+                "Assets/Radio.png",
                 Strings.Strings.SamplesRadioTitle,
                 Strings.Strings.SamplesRadioMessage1));
 
             this.listViewApps.ItemsSource = this.AppList;
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
 
         private ObservableCollection<AppInformation> AppList = new ObservableCollection<AppInformation>();

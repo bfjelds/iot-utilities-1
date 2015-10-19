@@ -34,6 +34,12 @@ namespace DeviceCenter
         private DispatcherTimer wifiRefreshTimer;
 
         private Frame _navigationFrame;
+        private PageWifi wifiPage = null;
+
+        ~ViewDevicesPage()
+        {
+            wifiManager.Shutdown();
+        }
 
         private class AdhocNetwork
         {
@@ -69,43 +75,35 @@ namespace DeviceCenter
             ListViewDevices.ItemsSource = devices;
 
             wifiManager = new OnboardingManager();
-            try
-            {
-                wifiManager.Init();
+            wifiManager.Init();
 
-                wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler(async (OnboardingConsumer consumer) =>
+            wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler((OnboardingConsumer consumer) =>
+            {
+                if (wifiPage != null)
                 {
-                    await Dispatcher.InvokeAsync(() =>
+                    ManagedConsumer managedConsumer = new ManagedConsumer(consumer);
+
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                     {
-                        onboardingConsumerList.Add(new ManagedConsumer(consumer));
-                    });
-                }));
+                        wifiPage.SetConsumer(managedConsumer);
+                        wifiPage = null;
+                    }));
+                }
+            }));
 
-                wifiRefreshTimer = new DispatcherTimer()
-                {
-                    Interval = TimeSpan.FromSeconds(10)
-                };
-                wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
-                RefreshWifiAsync();
-
-            }catch(Exception e)
+            wifiRefreshTimer = new DispatcherTimer()
             {
-                App.TelemetryClient.TrackException(e);
-            }
+                Interval = TimeSpan.FromSeconds(10)
+            };
+            wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
+            RefreshWifiAsync();
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            if (wifiManager != null)
-            {
-                try
-                {
-                    wifiManager.Shutdown();
-                }
-                catch (Exception) { }
-            }
+            wifiRefreshTimer.Stop();
         }
 
         private async void RefreshWifiAsync()
@@ -171,7 +169,7 @@ namespace DeviceCenter
         {
             RefreshWifiAsync();
         }
-        
+
         private void TelemetryTimer_Tick(object sender, EventArgs e)
         {
             // Only send a telemetry event if we've found build information
@@ -196,7 +194,7 @@ namespace DeviceCenter
 
             telemetryTimer.Stop();
         }
-        
+
         public void MDNSDeviceDiscovered(object sender, DiscoveredEventArgs args)
         {
             // EventArgs args should never be null, added a check just to be sure. 
@@ -302,6 +300,8 @@ namespace DeviceCenter
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
+            wifiRefreshTimer.Stop();
+
             DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
             if (device != null)
             {
@@ -314,9 +314,17 @@ namespace DeviceCenter
                 bool? confirmation = dlg.ShowDialog();
                 if (confirmation.HasValue && confirmation.Value)
                 {
+                    wifiPage = new PageWifi(_navigationFrame, wifiManager);
+
                     ConnectToOnboardeeAsync(device.WifiInstance.NativeWifi, "password");
+
+                    _navigationFrame.Navigate(wifiPage);
+
+                    return;
                 }
             }
+
+            wifiRefreshTimer.Start();
         }
 
         private async void ConnectToOnboardeeAsync(IWifi wifi, string password)
@@ -325,6 +333,7 @@ namespace DeviceCenter
             {
                 try
                 {
+                    onboardingConsumerList.Clear();
                     wifiManager.ConnectToOnboardingNetwork((Onboarding.wifi)wifi, password);
                 }
                 catch (COMException /*ex*/)
@@ -348,7 +357,7 @@ namespace DeviceCenter
                     { "DeviceModel", device.DeviceModel }
                 });
 
-                Process.Start(device.Manage.AbsolutePath);
+                Process.Start(device.Manage.AbsoluteUri);
             }
         }
 
@@ -366,7 +375,6 @@ namespace DeviceCenter
                 });
 
                 _navigationFrame.Navigate(new PageDeviceConfiguration(_navigationFrame, device));
-            }
         }
     }
 }

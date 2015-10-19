@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppNameDisplay" xml:space="preserve">
-    <value>Device Center</value>
+    <value>Central de Dispositivos</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Cancelar</value>
@@ -129,26 +129,32 @@
   <data name="ConnectAlertTitle" xml:space="preserve">
     <value>Antes de continuar</value>
   </data>
-  <data name="ConnectHelpMessage1" xml:space="preserve">
-    <value>Conectar via Wi-Fi</value>
+  <data name="ConnectEthernetMessage" xml:space="preserve">
+    <value>Conecte o cabo Ethernet à rede. Certifique-se de que o computador esteja na mesma rede. Quando você estiver pronto, clique em "Localizar meu dispositivo".</value>
   </data>
-  <data name="ConnectHelpMessage2" xml:space="preserve">
-    <value>Conectar com cabo Ethernet</value>
-  </data>
-  <data name="ConnectHelpMessage3" xml:space="preserve">
-    <value>Conectar mais tarde</value>
-  </data>
-  <data name="ConnectHelpSubTitle" xml:space="preserve">
-    <value>Precisa de mais ajuda?</value>
+  <data name="ConnectEthernetTitle" xml:space="preserve">
+    <value>Ethernet</value>
   </data>
   <data name="ConnectMessage1" xml:space="preserve">
-    <value>Primeiro, insira o cartão SD no dispositivo.</value>
+    <value>Insira o cartão SD no dispositivo,</value>
   </data>
   <data name="ConnectMessage2" xml:space="preserve">
-    <value>Conecte a placa à rede por meio da rede Wi-Fi ou de um cabo Ethernet.</value>
+    <value>e conecte a placa à rede por meio da rede Wi-Fi ou de um cabo Ethernet.</value>
+  </data>
+  <data name="ConnectSetupAnotherDevice" xml:space="preserve">
+    <value>Configurar outro dispositivo</value>
   </data>
   <data name="ConnectTitle" xml:space="preserve">
     <value>O cartão SD está pronto.</value>
+  </data>
+  <data name="ConnectWiFiMessage1" xml:space="preserve">
+    <value>Conecte o adaptador Wi-Fi e inicie o dispositivo. Clique em "Localizar meu dispositivo" para que ele seja detectado automaticamente.</value>
+  </data>
+  <data name="ConnectWiFiMessage2" xml:space="preserve">
+    <value>Exibir a lista de adaptadores Wi-Fi compatíveis</value>
+  </data>
+  <data name="ConnectWiFiTitle" xml:space="preserve">
+    <value>Wi-Fi</value>
   </data>
   <data name="ConnetSubTitle" xml:space="preserve">
     <value>Agora, vamos nos conectar</value>
@@ -159,11 +165,32 @@
   <data name="DeviceListCantFindDevice" xml:space="preserve">
     <value>Não encontra seu dispositivo?</value>
   </data>
+  <data name="DeviceListColConnection" xml:space="preserve">
+    <value>Conexão</value>
+  </data>
+  <data name="DeviceListColIPAddress" xml:space="preserve">
+    <value>Endereço IP</value>
+  </data>
+  <data name="DeviceListColName" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="DeviceListColOpenInDevicePortal" xml:space="preserve">
+    <value>Abrir no Device Portal</value>
+  </data>
+  <data name="DeviceListColSettings" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
+  <data name="DeviceListColType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
   <data name="DeviceListEnterNetworkInfo" xml:space="preserve">
     <value>Insira as informações da rede</value>
   </data>
   <data name="DeviceListManage" xml:space="preserve">
     <value>Gerenciar no Windows Device Portal</value>
+  </data>
+  <data name="DeviceListOS" xml:space="preserve">
+    <value>SO</value>
   </data>
   <data name="DeviceListScanAgain" xml:space="preserve">
     <value>Examinar novamente</value>
@@ -181,7 +208,7 @@
     <value>Senha</value>
   </data>
   <data name="DeviceNamePwdPassword2" xml:space="preserve">
-    <value>Senha</value>
+    <value>Repetir senha</value>
   </data>
   <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
     <value>As senhas não são iguais</value>
@@ -223,8 +250,26 @@
   <data name="IntroSubTitle" xml:space="preserve">
     <value>Crie protótipos e soluções para o Windows IoT em vários dispositivos que estejam executando o Windows 10 IoT Core. O Windows 10 fornece ferramentas avançadas que permitem o desenvolvimento e a implantação rápida de soluções para seu dispositivo.</value>
   </data>
+  <data name="IntroSubTitle2" xml:space="preserve">
+    <value>Para configurar um dispositivo, basta baixar e instalar o Windows IoT Core no dispositivo</value>
+  </data>
   <data name="IntroTitle" xml:space="preserve">
     <value>Descubra a Internet das coisas</value>
+  </data>
+  <data name="LabelInsecureWifi" xml:space="preserve">
+    <value>Abertos</value>
+    <comment>Same as wifi list in Windows for open access points</comment>
+  </data>
+  <data name="LabelSaveWifiPassword" xml:space="preserve">
+    <value>Faça isso para todos os dispositivos futuros</value>
+    <comment>Option to save your wifi password</comment>
+  </data>
+  <data name="LabelSecureWifi" xml:space="preserve">
+    <value>Seguros</value>
+    <comment>Same as wifi list in Windows for secured access points</comment>
+  </data>
+  <data name="MBM" xml:space="preserve">
+    <value>Minnow Board Max</value>
   </data>
   <data name="NetworkCredentialsNetworkNameLabel" xml:space="preserve">
     <value>Nome da rede sem fio</value>
@@ -240,16 +285,26 @@
     <comment>note to loc: "I accept the" + "terms and conditions" are part of the same sentence</comment>
   </data>
   <data name="NewDeviceAlertMessage" xml:space="preserve">
-    <value>Faça backup dos arquivos que estejam no cartão antes de prosseguir. A ferramenta de atualização irá apagar todos os itens armazenados no cartão.</value>
+    <value>Faça backup dos arquivos que estejam no cartão antes de prosseguir.</value>
+  </data>
+  <data name="NewDeviceAlertMessage2" xml:space="preserve">
+    <value>A ferramenta de atualização apagará todos os itens anteriormente armazenados no cartão.</value>
   </data>
   <data name="NewDeviceAlertTitle" xml:space="preserve">
     <value>Antes de continuar</value>
+  </data>
+  <data name="NewDeviceCancelDownloading" xml:space="preserve">
+    <value>Cancelar</value>
   </data>
   <data name="NewDeviceDownloadAndInstall" xml:space="preserve">
     <value>Baixar e instalar</value>
   </data>
   <data name="NewDeviceDownloading" xml:space="preserve">
-    <value>Baixando o Windows 10 IoT Core</value>
+    <value>Windows 10 IoT Core</value>
+  </data>
+  <data name="NewDeviceDownloadingProgress" xml:space="preserve">
+    <value>Baixando {0} MB - {1}%</value>
+    <comment>{0} is the number of MB downloaded. {1} is the percent of the download</comment>
   </data>
   <data name="NewDeviceDriveLabel" xml:space="preserve">
     <value>Unidade</value>
@@ -257,8 +312,20 @@
   <data name="NewDeviceFlashing" xml:space="preserve">
     <value>Atualizando conteúdo do cartão SD</value>
   </data>
+  <data name="NewDeviceFlashingProgress1" xml:space="preserve">
+    <value>A conclusão deste processo levará alguns minutos.</value>
+  </data>
+  <data name="NewDeviceFlashingProgress2" xml:space="preserve">
+    <value>Não remova o cartão SD.</value>
+  </data>
   <data name="NewDeviceInsertSDCardMessage" xml:space="preserve">
-    <value>Insira um cartão SD no computador. Observe que esse processo irá apagar todo o conteúdo do cartão.</value>
+    <value>Insira um cartão SD no computador.</value>
+  </data>
+  <data name="NewDeviceInsertSDCardMessage2" xml:space="preserve">
+    <value>Observe que este processo apagará todo o conteúdo do cartão.</value>
+  </data>
+  <data name="NewDeviceRecommendedSDCards" xml:space="preserve">
+    <value>Exibir a lista de cartões SD recomendados</value>
   </data>
   <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
     <value>Selecione o tipo de dispositivo</value>
@@ -268,7 +335,7 @@
     <value>Primeiro, vamos baixar o Windows 10 IoT Core no dispositivo.</value>
   </data>
   <data name="NewDeviceTermsAndCondition" xml:space="preserve">
-    <value>termos e condições</value>
+    <value>termos de licença de software</value>
     <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
   </data>
   <data name="NewDeviceTitle" xml:space="preserve">
@@ -276,6 +343,9 @@
   </data>
   <data name="OkButton" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="WifiSubTitle" xml:space="preserve">
+    <value>Estas são as redes que seu dispositivo pode ver</value>
   </data>
   <data name="SuccessAction1" xml:space="preserve">
     <value>Abrir o Windows Device Portal no navegador</value>
@@ -301,5 +371,131 @@
   <data name="SuccessTitle" xml:space="preserve">
     <value>Êxito! {0} está online.</value>
     <comment>{0} is the device name</comment>
+  </data>
+  <data name="WifiTitle" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="ViewAcceptableSDCards" xml:space="preserve">
+    <value>Exibir a lista de cartões SD recomendados</value>
+  </data>
+  <data name="ConnectLater" xml:space="preserve">
+    <value>Localizá-lo mais tarde, apenas leve-me aos meus dispositivos</value>
+  </data>
+  <data name="DeviceDetailDeviceNameLabel" xml:space="preserve">
+    <value>Nome do dispositivo</value>
+  </data>
+  <data name="DeviceDetailsApplyButton" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="DeviceDetailsChangePwd" xml:space="preserve">
+    <value>Alterar senha do dispositivo</value>
+  </data>
+  <data name="DeviceDetailsDevicePortal" xml:space="preserve">
+    <value>Device Portal</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
+    <value>O Windows System Portal permite configurar detalhadamente seu dispositivo </value>
+  </data>
+  <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
+    <value>Abrir o Device Portal no navegador</value>
+  </data>
+  <data name="DeviceDetailSettings" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
+  <data name="DeviceDetailsUserNameAdmin" xml:space="preserve">
+    <value>Administrador</value>
+  </data>
+  <data name="DeviceDetailsUserNameLabel" xml:space="preserve">
+    <value>Nome de usuário</value>
+  </data>
+  <data name="DeviceListLearnMore" xml:space="preserve">
+    <value>Saiba mais</value>
+  </data>
+  <data name="DeviceListNoDevices" xml:space="preserve">
+    <value>Nenhum dispositivo encontrado na rede</value>
+  </data>
+  <data name="DeviceNamePwdBackButton" xml:space="preserve">
+    <value>Voltar</value>
+  </data>
+  <data name="DeviceNamePwdDoneButton" xml:space="preserve">
+    <value>Concluído</value>
+  </data>
+  <data name="LeftBarMyDevices" xml:space="preserve">
+    <value>Meus dispositivos</value>
+  </data>
+  <data name="LeftBarSamples" xml:space="preserve">
+    <value>Experimentar alguns exemplos</value>
+  </data>
+  <data name="LeftBarSetUpNewDevice" xml:space="preserve">
+    <value>Configurar um novo dispositivo</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
+    <value>A DragonBoard 410c vem com seu próprio conjunto de ferramentas de instalação. Após instalar o Windows e conectar esta placa à Internet, você a encontrará em "Meus Dispositivos".</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
+    <value>Instalando o Windows IoT Core na DragonBoard 410c</value>
+  </data>
+  <data name="SamplesAppRunning" xml:space="preserve">
+    <value>Este aplicativo está em execução em seu dispositivo.</value>
+  </data>
+  <data name="SamplesBlinkyMessage1" xml:space="preserve">
+    <value>O "Olá Mundo" de hardware.</value>
+  </data>
+  <data name="SamplesBlinkyMessage2" xml:space="preserve">
+    <value>Ativar e desativar o LED onboard do dispositivo.</value>
+  </data>
+  <data name="SamplesBlinkyTitle" xml:space="preserve">
+    <value>Hello blinky</value>
+  </data>
+  <data name="SamplesDeployAndRunButton" xml:space="preserve">
+    <value>Implantar e executar</value>
+  </data>
+  <data name="SamplesDeploying" xml:space="preserve">
+    <value>Implantando...</value>
+  </data>
+  <data name="SamplesDeviceLabel" xml:space="preserve">
+    <value>Dispositivo</value>
+  </data>
+  <data name="SamplesDownload" xml:space="preserve">
+    <value>Baixar código do GitHub</value>
+  </data>
+  <data name="SamplesLearnMore" xml:space="preserve">
+    <value>Mais informações sobre o que você pode fazer</value>
+  </data>
+  <data name="SamplesOtherProjects" xml:space="preserve">
+    <value>Ver outros projetos e tutoriais</value>
+  </data>
+  <data name="SamplesRadioMessage1" xml:space="preserve">
+    <value>Transforme seu dispositivo Windows IoT Core em um rádio da Internet que pode ser controlado de qualquer lugar em sua casa.</value>
+  </data>
+  <data name="SamplesRadioTitle" xml:space="preserve">
+    <value>Internet radio</value>
+  </data>
+  <data name="SamplesRun" xml:space="preserve">
+    <value>Executar este aplicativo em seu dispositivo</value>
+  </data>
+  <data name="SamplesStartCoding" xml:space="preserve">
+    <value>Começar a codificar</value>
+  </data>
+  <data name="SamplesStopButton" xml:space="preserve">
+    <value>Parar</value>
+  </data>
+  <data name="SamplesSubTitle" xml:space="preserve">
+    <value>Implantar e executar aplicativos de exemplo em seu dispositivo</value>
+  </data>
+  <data name="SamplesTitle" xml:space="preserve">
+    <value>Experimentar alguns exemplos</value>
+  </data>
+  <data name="SamplesTutorialOnline" xml:space="preserve">
+    <value>Ver o tutorial online</value>
+  </data>
+  <data name="WifiBackButton" xml:space="preserve">
+    <value>Voltar</value>
+  </data>
+  <data name="WifiNextButton" xml:space="preserve">
+    <value>Avançar</value>
+  </data>
+  <data name="WifiRepeatForFutureDevices" xml:space="preserve">
+    <value>Faça isso para todos os dispositivos futuros</value>
   </data>
 </root>
