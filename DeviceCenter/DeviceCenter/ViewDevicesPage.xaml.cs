@@ -128,7 +128,7 @@ namespace DeviceCenter
                         {
                             IWifi item = list.GetItem(i);
 
-                            AdhocNetwork ssid = adhocNetworks.GetOrAdd(item.GetSSID(), (key)  =>
+                            AdhocNetwork ssid = adhocNetworks.GetOrAdd(item.GetSSID(), (key) =>
                             {
                                 var newDevice = new DiscoveredDevice(new ManagedWifi(item))
                                 {
@@ -257,7 +257,7 @@ namespace DeviceCenter
 
         private int compareOsVersions(string osVersion1, string osVersion2)
         {
-            if(osVersion1 == osVersion2)
+            if (osVersion1 == osVersion2)
             {
                 return 0;
             }
@@ -272,11 +272,11 @@ namespace DeviceCenter
                 int partNum1 = Convert.ToInt32(osParts1[i]);
                 int partNum2 = Convert.ToInt32(osParts2[i]);
 
-                if(partNum1 < partNum2)
+                if (partNum1 < partNum2)
                 {
                     return -1;
                 }
-                else if(partNum1 > partNum2)
+                else if (partNum1 > partNum2)
                 {
                     return 1;
                 }
@@ -292,7 +292,7 @@ namespace DeviceCenter
                 Hyperlink link = (Hyperlink)e.OriginalSource;
                 Process.Start(link.NavigateUri.AbsoluteUri);
             }
-            catch(System.ComponentModel.Win32Exception)
+            catch (System.ComponentModel.Win32Exception)
             {
                 // TODO: handle errors
             }
@@ -375,6 +375,7 @@ namespace DeviceCenter
                 });
 
                 _navigationFrame.Navigate(new PageDeviceConfiguration(_navigationFrame, device));
+            }
         }
     }
 }
