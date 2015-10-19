@@ -28,6 +28,8 @@ namespace DeviceCenter
         {
             InitializeComponent();
 
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
+
             this.AppList.Add(new AppInformation(
                 "Assets/Blinky.png",
                 Strings.Strings.SamplesBlinkyTitle,

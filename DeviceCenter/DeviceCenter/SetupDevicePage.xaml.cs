@@ -18,9 +18,13 @@ namespace DeviceCenter
         /// </summary>
         LastKnownGood lkg = new LastKnownGood();
 
+        private double flashStartTime = 0;
+
         public SetupDevicePage()
         {
             InitializeComponent();
+
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -124,7 +128,7 @@ namespace DeviceCenter
             {
                 if (!UpdateStartState())
                     return;
-
+                
                 DriveInfo driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
                 Debug.Assert(driveInfo != null);
 
@@ -142,8 +146,19 @@ namespace DeviceCenter
                     Debug.Assert(build != null);
 
                     Process dismProcess = Dism.FlashFFUImageToDrive(build.Path, driveInfo);
+                    dismProcess.EnableRaisingEvents = true;
 
                     dismProcess.Exited += DismProcess_Exited;
+
+                    var deviceType = ComboBoxDeviceType.SelectedItem as LKGPlatform;
+
+                    App.TelemetryClient.TrackEvent("FlashSDCard", new Dictionary<string, string>()
+                    {
+                        { "DeviceType", (deviceType != null) ? deviceType.ToString() : "" },
+                        { "Build",  (build != null) ? build.Build.ToString() : ""}
+                    });
+
+                    flashStartTime = App.GlobalStopwatch.ElapsedMilliseconds;
                 }
             }
         }
@@ -154,8 +169,14 @@ namespace DeviceCenter
         {
             lock(dismLock)
             {
-                dismProcess.Dispose();
-                dismProcess = null;
+                // Measure how long it took to flash the image
+                App.TelemetryClient.TrackMetric("FlashSDCardTimeMs", App.GlobalStopwatch.ElapsedMilliseconds - flashStartTime);
+
+                if (dismProcess != null)
+                {
+                    dismProcess.Dispose();
+                    dismProcess = null;
+                }
             }
         }
 
@@ -166,6 +187,8 @@ namespace DeviceCenter
                 if (dismProcess != null)
                 {
                     NativeMethods.GenerateConsoleCtrlEvent(NativeMethods.CTRL_BREAK_EVENT, (uint)dismProcess.Id);
+
+                    App.TelemetryClient.TrackEvent("FlashSDCardCancel");
                 }
             }
         }
