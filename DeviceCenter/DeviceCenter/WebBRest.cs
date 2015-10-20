@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-
+using System.Runtime.Serialization.Json;
 
 namespace DeviceCenter
 {
@@ -40,7 +40,7 @@ namespace DeviceCenter
 
             try
             {
-                await PostRequest(url);
+                await PostRequestAsync(url);
             }
             catch (Exception ex)
             {
@@ -58,7 +58,7 @@ namespace DeviceCenter
 
             try
             {
-                await PostRequest(url);
+                await PostRequestAsync(url);
             }
             catch (Exception ex)
             {
@@ -75,13 +75,13 @@ namespace DeviceCenter
             return true;
         }
 
-        public async Task<bool> Restart()
+        public async Task<bool> RestartAsync()
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + ControlApiUrl + "restart";
 
             try
             {
-                await PostRequest(url);
+                await PostRequestAsync(url);
             }
             catch (Exception ex)
             {
@@ -92,12 +92,82 @@ namespace DeviceCenter
             return true;
         }
 
-        //public async Task<bool> InstallAppx(File appxFile, File certFile)
+        //public async Task<bool> InstallAppxAsync(string appxFilePath,
+        //                                    string certFilePath)
+        //string dependFilePath = null)
         //{
-            
+        //    string appxFileContent, certFileContent;
+        //    appxFileContent = File.ReadAllText(appxFilePath);
+        //    certFileContent = File.ReadAllText(certFilePath);
+        //    if (!String.IsNullOrEmpty(dependFilePath))
+        //    {
+        //        dependFileContent = File.ReadAllText(dependFilePath);
+        //    }
+
+        //    AppxPackage appx = new AppxPackage(appxFileContent, certFileContent);
+        //    MemoryStream stream1 = new MemoryStream();
+        //    DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(AppxPackage));
+        //    ser.WriteObject(stream1, appx);
+
+        //    string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
+        //    url += Path.GetFileName(appxFilePath);
+
+        //    try
+        //    {
+        //        await PostRequestAsync(url, ser.ToString());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message);
+        //        return false;
+        //    }
+
+        //    return true;
         //}
 
-        private async Task<HttpStatusCode> PostRequest(string url)
+        public async Task<bool> InstallAppxAsync()
+        {
+            //HttpClientHandler handler = new HttpClientHandler();
+            //handler.Credentials = new NetworkCredential(Username, Password);
+            //var client = new HttpClient();
+
+            using (var handler = new HttpClientHandler { Credentials = new NetworkCredential(Username, Password) })
+            using (var client = new HttpClient(handler))
+            {
+                string appxPath = @"C:\Users\tenglu\Documents\KinectDepthUWP\x86\";
+                string certPath = @"C:\Users\tenglu\Documents\KinectDepthUWP\x86\";
+                appxPath += @"BasicDepthUAP.appx";
+                certPath += @"testroot-sha2.cer";
+
+                string formDataBoundary = String.Format("----------------------{0:N}", Guid.NewGuid());
+                var content = new MultipartFormDataContent(formDataBoundary);
+                content.Add(new StreamContent(File.Open(appxPath, FileMode.Open)), "appxFile", "BasicDepthUAP.appx");
+                //content.Add(new StreamContent(File.Open(certPath, FileMode.Open)), "certFile", "testroot-sha2.cer");
+
+                string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
+                url += Path.GetFileName(appxPath);
+
+                try
+                {
+                    var result = await client.PostAsync(url, content);
+                    if (result.StatusCode == HttpStatusCode.Accepted)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    return false;
+                }
+            }
+        }
+
+        private async Task<HttpStatusCode> PostRequestAsync(string url)
         {
             Stream objStream = null;
             StreamReader objReader = null;
@@ -111,6 +181,43 @@ namespace DeviceCenter
                 req.ContentType = "application/x-www-form-urlencoded";
                 req.Credentials = new NetworkCredential(Username, Password);
                 req.ContentLength = 0;
+
+                HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
+                result = response.StatusCode;
+                if (result == HttpStatusCode.OK)
+                {
+                    objStream = response.GetResponseStream();
+                    objReader = new StreamReader(objStream);
+                    string respData = objReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return result;
+        }
+
+        private async Task<HttpStatusCode> PostRequestAsync(string url, string jsonPayload)
+        {
+            Stream objStream = null;
+            StreamReader objReader = null;
+            Debug.WriteLine(url);
+            HttpStatusCode result = HttpStatusCode.BadRequest;
+
+            try
+            {
+                HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
+                req.Method = "POST";
+                req.ContentType = "application/json; charset=utf-8";
+                req.Credentials = new NetworkCredential(Username, Password);
+
+                using (var streamWriter = new StreamWriter(req.GetRequestStream()))
+                {
+                    streamWriter.Write(jsonPayload);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                }
 
                 HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
                 result = response.StatusCode;

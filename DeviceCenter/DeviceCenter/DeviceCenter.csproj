@@ -124,6 +124,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AppxPackage.cs" />
     <Compile Include="buttonSideMenu.xaml.cs">
       <DependentUpon>buttonSideMenu.xaml</DependentUpon>
     </Compile>
