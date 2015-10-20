@@ -377,7 +377,7 @@ namespace DeviceCenter
                     { "DeviceModel", device.DeviceModel }
                 });
 
-                Process.Start(device.Manage.AbsoluteUri);
+                Process.Start(new ProcessStartInfo(device.Manage.AbsoluteUri));
             }
         }
 

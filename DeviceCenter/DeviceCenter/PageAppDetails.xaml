@@ -34,7 +34,7 @@
         <StackPanel Margin="0 20 0 0">
             <TextBlock Text="{x:Static props:Strings.SamplesRun}" FontSize="20" TextWrapping="Wrap"  Margin="4" VerticalAlignment="Top"/>
             <TextBlock Text="{x:Static props:Strings.SamplesDeviceLabel}" TextWrapping="Wrap"  Margin="4"/>
-            <ComboBox Width="200" HorizontalAlignment="Left" Margin="20 4">
+            <ComboBox x:Name="comboBoxDevices" Width="200" HorizontalAlignment="Left" Margin="20 4">
             </ComboBox>
             <StackPanel x:Name="PanelDeploy">
                 <Button x:Name="ButtonDeploy" Padding="30 0" HorizontalAlignment="Left" Margin="20 4" Content="{x:Static props:Strings.SamplesDeployAndRunButton}" Click="ButtonDeploy_Click" />

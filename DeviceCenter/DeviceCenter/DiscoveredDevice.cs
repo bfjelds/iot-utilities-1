@@ -29,6 +29,11 @@ namespace DeviceCenter
             this.WifiInstance = wifi;
         }
 
+        public override string ToString()
+        {
+            return this.DeviceName;
+        }
+
         public ManagedWifi WifiInstance { get; private set; }
 
         public NetworkType Network { get; private set; }
