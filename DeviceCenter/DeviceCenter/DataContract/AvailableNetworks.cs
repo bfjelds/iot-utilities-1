@@ -41,5 +41,19 @@ namespace DeviceCenter.DataContract
         public bool SecurityEnabled { get; set; }
         [DataMember(Name = "SignalQuality")]
         public int SignalQuality { get; set; }
+        [DataMember(Name = "AuthenticationAlgorithm")]
+        public string AuthenticationAlgorithm { get; set; }
+        [DataMember(Name = "CipherAlgorithm")]
+        public string CipherAlgorithm { get; set; }
+        [DataMember(Name = "Connectable")]
+        public bool IsConnectable { get; set; }
+        [DataMember(Name = "InfrastructureType")]
+        public string InfrastructureType { get; set; }
+        [DataMember(Name = "ProfileAvailable")]
+        public bool IsProfileAvailable { get; set; }
+        [DataMember(Name = "ProfileName")]
+        public string ProfileName { get; set; }
+        [DataMember(Name = "PhysicalTypes")]
+        public string[] PhysicalTypes { get; set; }
     }
 }

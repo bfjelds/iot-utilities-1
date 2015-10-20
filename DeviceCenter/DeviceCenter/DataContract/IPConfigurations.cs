@@ -8,19 +8,19 @@ using System.Threading.Tasks;
 namespace DeviceCenter.DataContract
 {
     [DataContract]
-    public class WirelessAdapters
+    public class IPConfigurations
     {
-        [DataMember(Name = "Interfaces")]
-        public Interface[] Items { get; set; }
+        [DataMember(Name = "Adapters")]
+        public IPConfiguration[] Items { get; set; }
 
         public override string ToString()
         {
             StringBuilder sbMessage = new StringBuilder();
-            sbMessage.Append("====== Wireless Adapters ======");
+            sbMessage.Append("====== WirelessAdapters ======");
             sbMessage.AppendLine();
             foreach (var i in Items)
             {
-                sbMessage.AppendFormat("[{0}] - [{1}]", i.Description, i.GUID);
+                sbMessage.AppendFormat("[{0}] - [{1}]", i.Name, i.Description);
                 sbMessage.AppendLine();
             }
             sbMessage.Append("===============================");
@@ -31,15 +31,26 @@ namespace DeviceCenter.DataContract
     }
 
     [DataContract]
-    public class Interface
+    public class IPConfiguration
     {
         [DataMember(Name = "Description")]
         public string Description { get; set; }
-        [DataMember(Name = "GUID")]
-        public string GUID { get; set; }
+        [DataMember(Name = "HardwareAddress")]
+        public string HardwareAddress { get; set; }
         [DataMember(Name = "Index")]
         public int Index { get; set; }
-        [DataMember(Name = "ProfilesList")]
-        public string[] ProfilesList { get; set; }
+        [DataMember(Name = "Name")]
+        public string Name { get; set; }
+        [DataMember(Name = "Type")]
+        public string Type { get; set; }
+        [DataMember(Name = "IpAddresses")]
+        public IpAddress[] IPAddresses { get; set; }
+    }
+
+    [DataContract]
+    public class IpAddress
+    {
+        [DataMember(Name = "IpAddress")]
+        public string IP { get; set; }
     }
 }

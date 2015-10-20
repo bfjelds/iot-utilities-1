@@ -38,7 +38,7 @@ namespace DeviceCenter
         public async Task<bool> SetDeviceNameAsync(string newDeviceName)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "name?newdevicename=";
-            url += Encode64(newDeviceName);
+            url += RestHelper.Encode64(newDeviceName);
 
             try
             {
@@ -55,8 +55,8 @@ namespace DeviceCenter
         public async Task<bool> SetPasswordAsync(string oldPassword, string newPassword)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "password?";
-            url = url + "oldpassword=" + Encode64(oldPassword);
-            url = url + "&newpassword=" + Encode64(newPassword);
+            url = url + "oldpassword=" + RestHelper.Encode64(oldPassword);
+            url = url + "&newpassword=" + RestHelper.Encode64(newPassword);
 
             try
             {
@@ -130,55 +130,32 @@ namespace DeviceCenter
             return result;
         }
 
-        public static string Encode64(string toEncodeString)
-        {
-            byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncodeString.Trim());
-            string string64 = System.Convert.ToBase64String(toEncodeAsBytes);
-
-            // Ref: http://www.werockyourweb.com/url-escape-characters/
-            string64 = string64.Replace(" ", "20%");
-            string64 = string64.Replace("$", "24%");
-            string64 = string64.Replace("&", "26%");
-            string64 = string64.Replace("`", "60%");
-            string64 = string64.Replace(":", "%3A");
-            string64 = string64.Replace("<", "%3C");
-            string64 = string64.Replace(">", "%3E");
-            string64 = string64.Replace("[", "%5B");
-            string64 = string64.Replace("]", "%5D");
-            string64 = string64.Replace("{", "%7B");
-            string64 = string64.Replace("}", "%7D");
-            string64 = string64.Replace("\"", "22%");
-            string64 = string64.Replace("+", "%2B");
-            string64 = string64.Replace("#", "23%");
-            string64 = string64.Replace("%", "25%");
-            string64 = string64.Replace("@", "40%");
-            string64 = string64.Replace("/", "%2F");
-            string64 = string64.Replace(";", "%3B");
-            string64 = string64.Replace("=", "%3D");
-            string64 = string64.Replace("?", "%3F");
-            string64 = string64.Replace("\\", "%5C");
-            string64 = string64.Replace("^", "%5E");
-            string64 = string64.Replace("|", "%7C");
-            string64 = string64.Replace("~", "%7E");
-            string64 = string64.Replace("'", "27%");
-            string64 = string64.Replace(",", "%2C");
-
-            return string64;
-        }
-
         #region webB rest for wifi onboarding
 
         public async Task<WirelessAdapters> GetWirelessAdaptersAsync()
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + NetworkingApiUrl + "ipconfig";
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/interfaces";
 
-            var response = await RestHelper.MakeRequest(url, Username, Password);
+            var response = await RestHelper.MakeRequest(url, true, Username, Password);
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                return RestHelper.ProcessResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+                return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
             }
 
             return new WirelessAdapters();
+        }
+
+        public async Task<IPConfigurations> GetIPConfigurationsAsync()
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + NetworkingApiUrl + "ipconfig";
+
+            var response = await RestHelper.MakeRequest(url, true, Username, Password);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return RestHelper.ProcessJsonResponse(response, typeof(IPConfigurations)) as IPConfigurations;
+            }
+
+            return new IPConfigurations();
         }
 
         public async Task<AvailableNetworks> GetAvaliableNetworkAsync(string adapterName)
@@ -188,10 +165,10 @@ namespace DeviceCenter
 
             try
             {
-                var response = await RestHelper.MakeRequest(url, Username, Password);
+                var response = await RestHelper.MakeRequest(url, true, Username, Password);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return RestHelper.ProcessResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
+                    return RestHelper.ProcessJsonResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
                 }
             }
             catch(Exception wex)
@@ -207,11 +184,11 @@ namespace DeviceCenter
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/network?";
             url = url + "interface=" + adapterName.Trim("{}".ToCharArray());
-            url = url + "&ssid=" + Encode64(ssid);
+            url = url + "&ssid=" + RestHelper.Encode64(ssid);
             url = url + "&op=" + "connect";
             url = url + "&createprofile=" + "yes";
 
-            await RestHelper.MakeRequest(url, Username, Password);
+            await RestHelper.MakeRequest(url, false, Username, Password);
 
             return string.Empty;
         }

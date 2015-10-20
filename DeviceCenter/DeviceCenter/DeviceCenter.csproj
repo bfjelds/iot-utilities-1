@@ -140,6 +140,7 @@
       <DependentUpon>buttonSideMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataContract\AvailableNetworks.cs" />
+    <Compile Include="DataContract\IPConfigurations.cs" />
     <Compile Include="DataContract\WirelessAdapters.cs" />
     <Compile Include="DiscoveredDevice.cs" />
     <Compile Include="Handlers\OnboardeeAddedHandler.cs" />
