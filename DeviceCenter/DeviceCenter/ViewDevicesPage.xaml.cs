@@ -377,7 +377,9 @@ namespace DeviceCenter
                     { "DeviceModel", device.DeviceModel }
                 });
 
-                Process.Start(new ProcessStartInfo(device.Manage.AbsoluteUri));
+                string deviceUrl = "http://" + device.IPAddress + ":8080"; //Append the port number as well for the URL to work
+
+                Process.Start("IExplore.exe", deviceUrl);
             }
         }
 
