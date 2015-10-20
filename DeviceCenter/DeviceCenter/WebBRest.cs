@@ -7,8 +7,9 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-
+using System.Runtime.Serialization.Json;
+using DeviceCenter.DataContract;
+using DeviceCenter.Helper;
 
 namespace DeviceCenter
 {
@@ -23,6 +24,7 @@ namespace DeviceCenter
         public static string AdminPwd { get; set; } = "p@ssw0rd";
         private static string DeviceApiUrl { get; } = "/api/iot/device/";
         private static string ControlApiUrl { get; } = "/api/control/";
+        private static string NetworkingApiUrl { get; } = "/api/networking/";
         private static string AppxApiUrl { get; } = "/api/appx/packagemanager/";
         private static string HttpUrlPrfx { get; } = "http://";
 
@@ -36,7 +38,7 @@ namespace DeviceCenter
         public async Task<bool> SetDeviceNameAsync(string newDeviceName)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "name?newdevicename=";
-            url += Encode64(newDeviceName);
+            url += RestHelper.Encode64(newDeviceName);
 
             try
             {
@@ -53,8 +55,8 @@ namespace DeviceCenter
         public async Task<bool> SetPasswordAsync(string oldPassword, string newPassword)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "password?";
-            url = url + "oldpassword=" + Encode64(oldPassword);
-            url = url + "&newpassword=" + Encode64(newPassword);
+            url = url + "oldpassword=" + RestHelper.Encode64(oldPassword);
+            url = url + "&newpassword=" + RestHelper.Encode64(newPassword);
 
             try
             {
@@ -94,7 +96,7 @@ namespace DeviceCenter
 
         //public async Task<bool> InstallAppx(File appxFile, File certFile)
         //{
-            
+
         //}
 
         private async Task<HttpStatusCode> PostRequest(string url)
@@ -128,41 +130,69 @@ namespace DeviceCenter
             return result;
         }
 
-        public static string Encode64(string toEncodeString)
+        #region webB rest for wifi onboarding
+
+        public async Task<WirelessAdapters> GetWirelessAdaptersAsync()
         {
-            byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncodeString.Trim());
-            string string64 = System.Convert.ToBase64String(toEncodeAsBytes);
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/interfaces";
 
-            // Ref: http://www.werockyourweb.com/url-escape-characters/
-            string64 = string64.Replace(" ", "20%");
-            string64 = string64.Replace("$", "24%");
-            string64 = string64.Replace("&", "26%");
-            string64 = string64.Replace("`", "60%");
-            string64 = string64.Replace(":", "%3A");
-            string64 = string64.Replace("<", "%3C");
-            string64 = string64.Replace(">", "%3E");
-            string64 = string64.Replace("[", "%5B");
-            string64 = string64.Replace("]", "%5D");
-            string64 = string64.Replace("{", "%7B");
-            string64 = string64.Replace("}", "%7D");
-            string64 = string64.Replace("\"", "22%");
-            string64 = string64.Replace("+", "%2B");
-            string64 = string64.Replace("#", "23%");
-            string64 = string64.Replace("%", "25%");
-            string64 = string64.Replace("@", "40%");
-            string64 = string64.Replace("/", "%2F");
-            string64 = string64.Replace(";", "%3B");
-            string64 = string64.Replace("=", "%3D");
-            string64 = string64.Replace("?", "%3F");
-            string64 = string64.Replace("\\", "%5C");
-            string64 = string64.Replace("^", "%5E");
-            string64 = string64.Replace("|", "%7C");
-            string64 = string64.Replace("~", "%7E");
-            string64 = string64.Replace("'", "27%");
-            string64 = string64.Replace(",", "%2C");
+            var response = await RestHelper.MakeRequest(url, true, Username, Password);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+            }
 
-            return string64;
+            return new WirelessAdapters();
         }
 
+        public async Task<IPConfigurations> GetIPConfigurationsAsync()
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + NetworkingApiUrl + "ipconfig";
+
+            var response = await RestHelper.MakeRequest(url, true, Username, Password);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return RestHelper.ProcessJsonResponse(response, typeof(IPConfigurations)) as IPConfigurations;
+            }
+
+            return new IPConfigurations();
+        }
+
+        public async Task<AvailableNetworks> GetAvaliableNetworkAsync(string adapterName)
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/networks?";
+            url += "interface=" + adapterName.Trim("{}".ToCharArray());
+
+            try
+            {
+                var response = await RestHelper.MakeRequest(url, true, Username, Password);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return RestHelper.ProcessJsonResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
+                }
+            }
+            catch(Exception wex)
+            {
+                // expected error
+                Debug.WriteLine(wex);
+            }
+
+            return new AvailableNetworks();
+        }
+
+        public async Task<string> ConnectToNetworkAsync(string adapterName, string ssid, string password)
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/network?";
+            url = url + "interface=" + adapterName.Trim("{}".ToCharArray());
+            url = url + "&ssid=" + RestHelper.Encode64(ssid);
+            url = url + "&op=" + "connect";
+            url = url + "&createprofile=" + "yes";
+
+            await RestHelper.MakeRequest(url, false, Username, Password);
+
+            return string.Empty;
+        }
+
+        #endregion
     }
 }

@@ -30,7 +30,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>30</ApplicationRevision>
+    <ApplicationRevision>31</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -139,9 +139,13 @@
     <Compile Include="buttonSideMenu.xaml.cs">
       <DependentUpon>buttonSideMenu.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataContract\AvailableNetworks.cs" />
+    <Compile Include="DataContract\IPConfigurations.cs" />
+    <Compile Include="DataContract\WirelessAdapters.cs" />
     <Compile Include="DiscoveredDevice.cs" />
     <Compile Include="Handlers\OnboardeeAddedHandler.cs" />
     <Compile Include="Handlers\WifiConnectionResultHandler.cs" />
+    <Compile Include="Helper\RestHelper.cs" />
     <Compile Include="ImageHelper.cs" />
     <Compile Include="LastKnownGood.cs" />
     <Compile Include="NativeMethods.cs" />
