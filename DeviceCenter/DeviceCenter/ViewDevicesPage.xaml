@@ -7,13 +7,30 @@
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
       Title="{x:Static props:Strings.FindMyDeviceButton}" d:DesignHeight="500" d:DesignWidth="814.32">
+    <Page.Resources>
+        <DataTemplate x:Key="CleanHeaderTemplate">
+            <Grid>
+                <TextBlock FontWeight="Bold">
+                    <TextBlock.Text>
+                        <Binding/>
+                    </TextBlock.Text>
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel >
             <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left"/>
-            <ListView DockPanel.Dock="Top" x:Name="ListViewDevices" Unloaded="ListViewDevices_Unloaded" Margin="0 10 0 10">
+            <ListView DockPanel.Dock="Top" x:Name="ListViewDevices" Unloaded="ListViewDevices_Unloaded" Margin="0 10 0 10" BorderBrush="{x:Null}" BorderThickness="0">
                 <ListView.View>
-                    <GridView>
-                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceDetailDeviceNameLabel}" DisplayMemberBinding="{Binding DeviceName}" />
+                    <GridView ColumnHeaderTemplate="{StaticResource CleanHeaderTemplate}">
+                        <GridViewColumn Header="{x:Static props:Strings.DeviceDetailDeviceNameLabel}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Padding="2 8 2 8" Text="{Binding DeviceName}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColConnection}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -21,8 +38,8 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColType}" DisplayMemberBinding="{Binding DeviceModel}"/>
-                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IPAddress}"/>
+                        <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceListColType}" DisplayMemberBinding="{Binding DeviceModel}"/>
+                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IPAddress}" />
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColSettings}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
