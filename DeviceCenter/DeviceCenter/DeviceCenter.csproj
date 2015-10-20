@@ -139,9 +139,12 @@
     <Compile Include="buttonSideMenu.xaml.cs">
       <DependentUpon>buttonSideMenu.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataContract\AvailableNetworks.cs" />
+    <Compile Include="DataContract\WirelessAdapters.cs" />
     <Compile Include="DiscoveredDevice.cs" />
     <Compile Include="Handlers\OnboardeeAddedHandler.cs" />
     <Compile Include="Handlers\WifiConnectionResultHandler.cs" />
+    <Compile Include="Helper\RestHelper.cs" />
     <Compile Include="ImageHelper.cs" />
     <Compile Include="LastKnownGood.cs" />
     <Compile Include="NativeMethods.cs" />

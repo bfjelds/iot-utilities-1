@@ -7,8 +7,9 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-
+using System.Runtime.Serialization.Json;
+using DeviceCenter.DataContract;
+using DeviceCenter.Helper;
 
 namespace DeviceCenter
 {
@@ -23,6 +24,7 @@ namespace DeviceCenter
         public static string AdminPwd { get; set; } = "p@ssw0rd";
         private static string DeviceApiUrl { get; } = "/api/iot/device/";
         private static string ControlApiUrl { get; } = "/api/control/";
+        private static string NetworkingApiUrl { get; } = "/api/networking/";
         private static string AppxApiUrl { get; } = "/api/appx/packagemanager/";
         private static string HttpUrlPrfx { get; } = "http://";
 
@@ -94,7 +96,7 @@ namespace DeviceCenter
 
         //public async Task<bool> InstallAppx(File appxFile, File certFile)
         //{
-            
+
         //}
 
         private async Task<HttpStatusCode> PostRequest(string url)
@@ -164,5 +166,56 @@ namespace DeviceCenter
             return string64;
         }
 
+        #region webB rest for wifi onboarding
+
+        public async Task<WirelessAdapters> GetWirelessAdaptersAsync()
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + NetworkingApiUrl + "ipconfig";
+
+            var response = await RestHelper.MakeRequest(url, Username, Password);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return RestHelper.ProcessResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+            }
+
+            return new WirelessAdapters();
+        }
+
+        public async Task<AvailableNetworks> GetAvaliableNetworkAsync(string adapterName)
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/networks?";
+            url += "interface=" + adapterName.Trim("{}".ToCharArray());
+
+            try
+            {
+                var response = await RestHelper.MakeRequest(url, Username, Password);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return RestHelper.ProcessResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
+                }
+            }
+            catch(Exception wex)
+            {
+                // expected error
+                Debug.WriteLine(wex);
+            }
+
+            return new AvailableNetworks();
+        }
+
+        public async Task<string> ConnectToNetworkAsync(string adapterName, string ssid, string password)
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/network?";
+            url = url + "interface=" + adapterName.Trim("{}".ToCharArray());
+            url = url + "&ssid=" + Encode64(ssid);
+            url = url + "&op=" + "connect";
+            url = url + "&createprofile=" + "yes";
+
+            await RestHelper.MakeRequest(url, Username, Password);
+
+            return string.Empty;
+        }
+
+        #endregion
     }
 }
