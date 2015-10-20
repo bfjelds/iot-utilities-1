@@ -1,0 +1,21 @@
+﻿<Window x:Class="DeviceCenter.DialogAuthenticate"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DeviceCenter"
+        xmlns:props="clr-namespace:DeviceCenter.Strings"
+        mc:Ignorable="d"
+        Title="{x:Static props:Strings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Background="WhiteSmoke">
+        <TextBlock Margin="10" FontSize="40" FontFamily="Segoe UI Light" Text="{x:Static props:Strings.AppNameDisplay}" />
+        <TextBlock Margin="10" FontSize="24" FontFamily="Segoe UI Light" Text="{Binding DeviceName}" />
+        <TextBox x:Name="EditUserName"  Margin="10" Width="200" HorizontalAlignment="Left" />
+        <PasswordBox x:Name="EditPassword" Margin="10" Width="200" HorizontalAlignment="Left" />
+        <CheckBox Margin="10" HorizontalAlignment="Left" Content="{x:Static props:Strings.RememberMyCredentials}" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="OK" Margin="10" Padding="20 0 20 0" />
+            <Button Content="Cancel" Margin="10" Padding="20 0 20 0" />
+        </StackPanel>
+    </StackPanel>
+</Window>

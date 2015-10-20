@@ -498,4 +498,8 @@
   <data name="WifiRepeatForFutureDevices" xml:space="preserve">
     <value>Do this for all future devices</value>
   </data>
+  <data name="RememberMyCredentials" xml:space="preserve">
+    <value>Remember my credentials</value>
+    <comment>Save password</comment>
+  </data>
 </root>

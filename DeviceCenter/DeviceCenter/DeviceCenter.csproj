@@ -142,6 +142,9 @@
     <Compile Include="DataContract\AvailableNetworks.cs" />
     <Compile Include="DataContract\IPConfigurations.cs" />
     <Compile Include="DataContract\WirelessAdapters.cs" />
+    <Compile Include="DialogAuthenticate.xaml.cs">
+      <DependentUpon>DialogAuthenticate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DiscoveredDevice.cs" />
     <Compile Include="Handlers\OnboardeeAddedHandler.cs" />
     <Compile Include="Handlers\WifiConnectionResultHandler.cs" />
@@ -194,6 +197,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="buttonSideMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DialogAuthenticate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
