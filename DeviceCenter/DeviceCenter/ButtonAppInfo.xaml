@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="DeviceCenter.ButtonAppInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DeviceCenter"
+             mc:Ignorable="d">
+    <Grid Margin="4" VerticalAlignment="Top">
+        <ItemsControl ItemsSource="{Binding Info}" />
+        <Button VerticalAlignment="Top" x:Name="buttonMain" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                <Image Height="150" Width="150" Source="{Binding PosterFile}" Margin="4"/>
+                <TextBlock MaxWidth="150" Text="{Binding Title}" Margin="4" FontSize="14" />
+                <TextBlock MaxWidth="150" TextWrapping="Wrap" Text="{Binding Description}" Margin="4" />
+            </StackPanel>
+        </Button>
+    </Grid>
+</UserControl>

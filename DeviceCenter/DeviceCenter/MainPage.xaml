@@ -63,14 +63,22 @@
         </Style>
     </Window.Resources>
     <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Vertical">
+                <Button x:Name="ButtonBack" FontSize="20" FontFamily="Segoe UI Symbol" Padding="10 5 10 5" VerticalAlignment="Top" HorizontalAlignment="Left" Content="&#xE112;" Foreground="Black" BorderBrush="{x:Null}" Click="ButtonBack_Click" Style="{DynamicResource ButtonStyleNavigation}" >
+                    <Button.Background>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.MenuHighlightColorKey}}"/>
+                    </Button.Background>
+                </Button>
+            </StackPanel>
+        </StackPanel>
         <Grid>
             <DockPanel Margin="0">
                 <StackPanel Orientation="Vertical">
                     <local:buttonSideMenu Text="{x:Static props:Strings.FindMyDeviceButton}" Icon="&#xE959;" Click="buttonMyDevices_Click"/>
                     <local:buttonSideMenu Text="{x:Static props:Strings.IntroSetUpNewDevice}" Icon="&#xE781;" Click="buttonAddDevice_Click"/>
-                    <local:buttonSideMenu Text="Try some samples" Icon="&#xE7BE;" Click="buttonSamples_Click"/>
-                    <local:buttonSideMenu Text="Test page" Icon="&#xEADA;" Click="buttonTestOnly_Click"/>
-                    <local:buttonSideMenu Text="Test wifi" Icon="&#xEADA;" Click="buttonSideMenu_Click"/>
+                    <local:buttonSideMenu Text="{x:Static props:Strings.LeftBarSamples}" Icon="&#xE7BE;" Click="buttonSamples_Click"/>
+                    <local:buttonSideMenu Text="PageTestOnly" Icon="&#xE7BE;" Click="buttonTestOnly_Click"/>
                 </StackPanel>
                 <Frame Margin="10 0" x:Name="_NavigationFrame" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" />
             </DockPanel>

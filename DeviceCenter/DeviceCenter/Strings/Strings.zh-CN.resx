@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppNameDisplay" xml:space="preserve">
-    <value>Device Center</value>
+    <value>设备中心</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>取消</value>
@@ -129,26 +129,32 @@
   <data name="ConnectAlertTitle" xml:space="preserve">
     <value>在继续之前</value>
   </data>
-  <data name="ConnectHelpMessage1" xml:space="preserve">
-    <value>通过 WLAN 连接</value>
+  <data name="ConnectEthernetMessage" xml:space="preserve">
+    <value>将以太网连接到你的网络。请确保你的电脑在同一网络上。当准备就绪时，请单击“查找我的设备”。</value>
   </data>
-  <data name="ConnectHelpMessage2" xml:space="preserve">
-    <value>使用以太网电缆进行连接</value>
-  </data>
-  <data name="ConnectHelpMessage3" xml:space="preserve">
-    <value>稍后连接</value>
-  </data>
-  <data name="ConnectHelpSubTitle" xml:space="preserve">
-    <value>需要更多帮助?</value>
+  <data name="ConnectEthernetTitle" xml:space="preserve">
+    <value>以太网</value>
   </data>
   <data name="ConnectMessage1" xml:space="preserve">
-    <value>首先，将已完成的 SD 卡插入设备。</value>
+    <value>将已完成的 SD 卡插入设备。</value>
   </data>
   <data name="ConnectMessage2" xml:space="preserve">
-    <value>然后，使用 WLAN 或以太网将电路板连接到网络。</value>
+    <value>然后，使用 WLAN 或以太网将开发板连接到网络。</value>
+  </data>
+  <data name="ConnectSetupAnotherDevice" xml:space="preserve">
+    <value>设置其他设备</value>
   </data>
   <data name="ConnectTitle" xml:space="preserve">
     <value>你的 SD 卡已准备就绪。</value>
+  </data>
+  <data name="ConnectWiFiMessage1" xml:space="preserve">
+    <value>插入 WLAN 适配器并启动你的设备。单击“查找我的设备”，系统将会自动检测到该设备。</value>
+  </data>
+  <data name="ConnectWiFiMessage2" xml:space="preserve">
+    <value>查看受支持的 WLAN 适配器列表</value>
+  </data>
+  <data name="ConnectWiFiTitle" xml:space="preserve">
+    <value>WLAN</value>
   </data>
   <data name="ConnetSubTitle" xml:space="preserve">
     <value>现在，让我们进行连接</value>
@@ -159,11 +165,32 @@
   <data name="DeviceListCantFindDevice" xml:space="preserve">
     <value>找不到你的设备?</value>
   </data>
+  <data name="DeviceListColConnection" xml:space="preserve">
+    <value>连接</value>
+  </data>
+  <data name="DeviceListColIPAddress" xml:space="preserve">
+    <value>IP 地址</value>
+  </data>
+  <data name="DeviceListColName" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="DeviceListColOpenInDevicePortal" xml:space="preserve">
+    <value>在 Device Portal 中打开</value>
+  </data>
+  <data name="DeviceListColSettings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="DeviceListColType" xml:space="preserve">
+    <value>类型</value>
+  </data>
   <data name="DeviceListEnterNetworkInfo" xml:space="preserve">
     <value>输入网络信息</value>
   </data>
   <data name="DeviceListManage" xml:space="preserve">
     <value>在 Windows Device Portal 中管理</value>
+  </data>
+  <data name="DeviceListOS" xml:space="preserve">
+    <value>操作系统</value>
   </data>
   <data name="DeviceListScanAgain" xml:space="preserve">
     <value>重新扫描</value>
@@ -181,7 +208,7 @@
     <value>密码</value>
   </data>
   <data name="DeviceNamePwdPassword2" xml:space="preserve">
-    <value>密码</value>
+    <value>重复输入密码</value>
   </data>
   <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
     <value>密码不匹配</value>
@@ -223,8 +250,26 @@
   <data name="IntroSubTitle" xml:space="preserve">
     <value>在运行 Windows 10 IoT 核心版的各种设备上快速创建原型并构建 Windows IoT 解决方案。Windows 10 为你提供了功能强大的工具，让你可以快速开发并部署到设备。</value>
   </data>
+  <data name="IntroSubTitle2" xml:space="preserve">
+    <value>若要设置设备，你需要执行的所有操作就是将 Windows IoT 核心版下载并安装到你的设备上</value>
+  </data>
   <data name="IntroTitle" xml:space="preserve">
     <value>在 Internet 上搜索你感兴趣的内容</value>
+  </data>
+  <data name="LabelInsecureWifi" xml:space="preserve">
+    <value>打开</value>
+    <comment>Same as wifi list in Windows for open access points</comment>
+  </data>
+  <data name="LabelSaveWifiPassword" xml:space="preserve">
+    <value>对所有将来的设备执行此操作</value>
+    <comment>Option to save your wifi password</comment>
+  </data>
+  <data name="LabelSecureWifi" xml:space="preserve">
+    <value>受保护</value>
+    <comment>Same as wifi list in Windows for secured access points</comment>
+  </data>
+  <data name="MBM" xml:space="preserve">
+    <value>Minnow Board Max</value>
   </data>
   <data name="NetworkCredentialsNetworkNameLabel" xml:space="preserve">
     <value>无线网络名称</value>
@@ -240,16 +285,26 @@
     <comment>note to loc: "I accept the" + "terms and conditions" are part of the same sentence</comment>
   </data>
   <data name="NewDeviceAlertMessage" xml:space="preserve">
-    <value>请务必备份卡上的所有文件，然后再继续。刷写将清除以前存储在卡上的所有内容。</value>
+    <value>请务必备份卡上的所有文件，然后再继续。</value>
+  </data>
+  <data name="NewDeviceAlertMessage2" xml:space="preserve">
+    <value>执行刷写将清除以前在该卡上存储的所有内容。</value>
   </data>
   <data name="NewDeviceAlertTitle" xml:space="preserve">
     <value>在继续之前</value>
+  </data>
+  <data name="NewDeviceCancelDownloading" xml:space="preserve">
+    <value>取消</value>
   </data>
   <data name="NewDeviceDownloadAndInstall" xml:space="preserve">
     <value>下载并安装</value>
   </data>
   <data name="NewDeviceDownloading" xml:space="preserve">
-    <value>正在下载 Windows 10 IoT 核心版</value>
+    <value>Windows 10 IoT 核心版</value>
+  </data>
+  <data name="NewDeviceDownloadingProgress" xml:space="preserve">
+    <value>已下载 {0} MB - {1}%</value>
+    <comment>{0} is the number of MB downloaded. {1} is the percent of the download</comment>
   </data>
   <data name="NewDeviceDriveLabel" xml:space="preserve">
     <value>驱动器</value>
@@ -257,8 +312,20 @@
   <data name="NewDeviceFlashing" xml:space="preserve">
     <value>刷写 SD 卡</value>
   </data>
+  <data name="NewDeviceFlashingProgress1" xml:space="preserve">
+    <value>这需要几分钟的时间才能完成。</value>
+  </data>
+  <data name="NewDeviceFlashingProgress2" xml:space="preserve">
+    <value>请不要卸除你的 SD 卡。</value>
+  </data>
   <data name="NewDeviceInsertSDCardMessage" xml:space="preserve">
-    <value>将 SD 卡插入你的计算机。请注意，此过程将清除卡上的所有内容。</value>
+    <value>将 SD 卡插入你的计算机。</value>
+  </data>
+  <data name="NewDeviceInsertSDCardMessage2" xml:space="preserve">
+    <value>请注意，此过程将清除卡上的所有内容。</value>
+  </data>
+  <data name="NewDeviceRecommendedSDCards" xml:space="preserve">
+    <value>查看推荐的 SD 卡列表</value>
   </data>
   <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
     <value>选择设备类型</value>
@@ -268,7 +335,7 @@
     <value>首先，让我们将 Windows 10 IoT 核心版下载到你的设备上。</value>
   </data>
   <data name="NewDeviceTermsAndCondition" xml:space="preserve">
-    <value>条款和条件</value>
+    <value>软件许可条款</value>
     <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
   </data>
   <data name="NewDeviceTitle" xml:space="preserve">
@@ -276,6 +343,9 @@
   </data>
   <data name="OkButton" xml:space="preserve">
     <value>确定</value>
+  </data>
+  <data name="WifiSubTitle" xml:space="preserve">
+    <value>下面是你的设备可以发现的网络</value>
   </data>
   <data name="SuccessAction1" xml:space="preserve">
     <value>在浏览器中打开 Windows Device Portal</value>
@@ -301,5 +371,131 @@
   <data name="SuccessTitle" xml:space="preserve">
     <value>成功! {0} 已联机。</value>
     <comment>{0} is the device name</comment>
+  </data>
+  <data name="WifiTitle" xml:space="preserve">
+    <value>WLAN</value>
+  </data>
+  <data name="ViewAcceptableSDCards" xml:space="preserve">
+    <value>查看推荐的 SD 卡列表</value>
+  </data>
+  <data name="ConnectLater" xml:space="preserve">
+    <value>稍后查找它，只需访问我的设备即可</value>
+  </data>
+  <data name="DeviceDetailDeviceNameLabel" xml:space="preserve">
+    <value>设备名称</value>
+  </data>
+  <data name="DeviceDetailsApplyButton" xml:space="preserve">
+    <value>应用</value>
+  </data>
+  <data name="DeviceDetailsChangePwd" xml:space="preserve">
+    <value>更改设备密码</value>
+  </data>
+  <data name="DeviceDetailsDevicePortal" xml:space="preserve">
+    <value>Device Portal</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
+    <value>使用 Windows System Portal 可以详细配置你的设备</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
+    <value>在浏览器中打开 Device Portal</value>
+  </data>
+  <data name="DeviceDetailSettings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="DeviceDetailsUserNameAdmin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="DeviceDetailsUserNameLabel" xml:space="preserve">
+    <value>用户名</value>
+  </data>
+  <data name="DeviceListLearnMore" xml:space="preserve">
+    <value>了解详细信息</value>
+  </data>
+  <data name="DeviceListNoDevices" xml:space="preserve">
+    <value>在网络上找不到设备</value>
+  </data>
+  <data name="DeviceNamePwdBackButton" xml:space="preserve">
+    <value>上一步</value>
+  </data>
+  <data name="DeviceNamePwdDoneButton" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="LeftBarMyDevices" xml:space="preserve">
+    <value>我的设备</value>
+  </data>
+  <data name="LeftBarSamples" xml:space="preserve">
+    <value>尝试一些示例</value>
+  </data>
+  <data name="LeftBarSetUpNewDevice" xml:space="preserve">
+    <value>设置新设备</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
+    <value>DragonBoard 410c 附带了一套自己的安装工具。在安装 Windows 并将此开发板连接到 Internet 之后， 你将可以在“我的设备”中找到它。</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
+    <value>正在将 Windows IoT 核心版安装到 DragonBoard 410c 上</value>
+  </data>
+  <data name="SamplesAppRunning" xml:space="preserve">
+    <value>此应用正在你的设备上运行。</value>
+  </data>
+  <data name="SamplesBlinkyMessage1" xml:space="preserve">
+    <value>硬件的“Hello World”。</value>
+  </data>
+  <data name="SamplesBlinkyMessage2" xml:space="preserve">
+    <value>打开和关闭设备的板载 LED。</value>
+  </data>
+  <data name="SamplesBlinkyTitle" xml:space="preserve">
+    <value>Hello blinky</value>
+  </data>
+  <data name="SamplesDeployAndRunButton" xml:space="preserve">
+    <value>部署并运行</value>
+  </data>
+  <data name="SamplesDeploying" xml:space="preserve">
+    <value>正在部署...</value>
+  </data>
+  <data name="SamplesDeviceLabel" xml:space="preserve">
+    <value>设备</value>
+  </data>
+  <data name="SamplesDownload" xml:space="preserve">
+    <value>从 GitHub 下载代码</value>
+  </data>
+  <data name="SamplesLearnMore" xml:space="preserve">
+    <value>了解有关你可以执行的操作的详细信息</value>
+  </data>
+  <data name="SamplesOtherProjects" xml:space="preserve">
+    <value>查看其他项目和教程</value>
+  </data>
+  <data name="SamplesRadioMessage1" xml:space="preserve">
+    <value>将你的 Windows IoT 核心版设备转换为可从你家中的任何位置控制的 Internet 收音机。</value>
+  </data>
+  <data name="SamplesRadioTitle" xml:space="preserve">
+    <value>Internet radio</value>
+  </data>
+  <data name="SamplesRun" xml:space="preserve">
+    <value>在你的设备上运行此应用</value>
+  </data>
+  <data name="SamplesStartCoding" xml:space="preserve">
+    <value>开始编码</value>
+  </data>
+  <data name="SamplesStopButton" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="SamplesSubTitle" xml:space="preserve">
+    <value>在你的设备上部署并运行示例应用</value>
+  </data>
+  <data name="SamplesTitle" xml:space="preserve">
+    <value>尝试一些示例</value>
+  </data>
+  <data name="SamplesTutorialOnline" xml:space="preserve">
+    <value>联机查看教程</value>
+  </data>
+  <data name="WifiBackButton" xml:space="preserve">
+    <value>上一步</value>
+  </data>
+  <data name="WifiNextButton" xml:space="preserve">
+    <value>下一步</value>
+  </data>
+  <data name="WifiRepeatForFutureDevices" xml:space="preserve">
+    <value>对所有将来的设备执行此操作</value>
   </data>
 </root>

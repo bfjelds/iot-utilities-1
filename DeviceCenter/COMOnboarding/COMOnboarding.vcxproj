@@ -88,6 +88,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>QCC_OS_GROUP_WINDOWS;WIN32;_DEBUG;_WINDOWS;_USRDLL;COMONBOARDING_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -98,6 +99,7 @@
     <PostBuildEvent>
       <Command>tlbimp "$(SolutionDir)COMOnboarding\Debug\COMOnboarding.tlb" /namespace:Onboarding /out:"$(SolutionDir)Debug\OnboardingTypeLib.dll"
 copy $(SolutionDir)COMOnboarding\COMOnboarding.sxs.manifest $(SolutionDir)IoTOnboardingConsumerWPF\bin\x86\Debug
+copy $(SolutionDir)COMOnboarding\COMOnboarding.sxs.manifest $(SolutionDir)Debug
 copy $(SolutionDir)Debug\COMOnboarding.dll $(SolutionDir)IoTOnboardingConsumerWPF\bin\x86\Debug</Command>
     </PostBuildEvent>
     <Manifest />
@@ -124,6 +126,7 @@ copy $(SolutionDir)Debug\COMOnboarding.dll $(SolutionDir)IoTOnboardingConsumerWP
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>QCC_OS_GROUP_WINDOWS;WIN32;NDEBUG;_WINDOWS;_USRDLL;COMONBOARDING_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -7,7 +7,7 @@
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
       Title="Configure a device" Loaded="Page_Loaded">
-    <Grid  VerticalAlignment="Top" HorizontalAlignment="Left">
+    <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock x:Name="LabelDeviceName" x:Uid="Title" FontSize="30" Text="--" HorizontalAlignment="Left"/>

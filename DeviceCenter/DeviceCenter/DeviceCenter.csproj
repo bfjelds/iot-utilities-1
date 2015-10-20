@@ -30,7 +30,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>28</ApplicationRevision>
+    <ApplicationRevision>31</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -71,7 +71,7 @@
     <ManifestKeyFile>DeviceCenter_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -80,6 +80,14 @@
     <AssemblyOriginatorKeyFile>DeviceCenterDevelopmentKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.ApplicationInsights, Version=1.2.0.5639, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.1.2.0\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights.PersistenceChannel, Version=1.2.0.5639, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PersistenceChannel.1.2.0\lib\net45\Microsoft.ApplicationInsights.PersistenceChannel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="OnboardingTypeLib">
       <HintPath>$(SolutionDir)\Debug\OnboardingTypeLib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -88,9 +96,9 @@
       <HintPath>$(SolutionDir)\Debug\OnboardingTypeLib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>-->
-    <Reference Include="Microsoft.Diagnostics.Tracing.EventSource, Version=1.1.25.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.25\lib\net40\Microsoft.Diagnostics.Tracing.EventSource.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OnboardingTypeLib">
+      <HintPath>..\Debug\OnboardingTypeLib.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Tools.Connectivity, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -125,15 +133,26 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppxPackage.cs" />
+    <Compile Include="AppInformation.cs" />
+    <Compile Include="ButtonAppInfo.xaml.cs">
+      <DependentUpon>ButtonAppInfo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="buttonSideMenu.xaml.cs">
       <DependentUpon>buttonSideMenu.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataContract\AvailableNetworks.cs" />
+    <Compile Include="DataContract\IPConfigurations.cs" />
+    <Compile Include="DataContract\WirelessAdapters.cs" />
     <Compile Include="DiscoveredDevice.cs" />
     <Compile Include="Handlers\OnboardeeAddedHandler.cs" />
     <Compile Include="Handlers\WifiConnectionResultHandler.cs" />
+    <Compile Include="Helper\RestHelper.cs" />
     <Compile Include="ImageHelper.cs" />
     <Compile Include="LastKnownGood.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="PageAppDetails.xaml.cs">
+      <DependentUpon>PageAppDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PageDeviceConfiguration.xaml.cs">
       <DependentUpon>PageDeviceConfiguration.xaml</DependentUpon>
     </Compile>
@@ -145,6 +164,9 @@
     </Compile>
     <Compile Include="PageWifi.xaml.cs">
       <DependentUpon>PageWifi.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SamplesPage.xaml.cs">
+      <DependentUpon>SamplesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Strings\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -160,7 +182,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="TelemetryHelper.cs" />
     <Compile Include="ViewDevicesPage.xaml.cs">
       <DependentUpon>ViewDevicesPage.xaml</DependentUpon>
     </Compile>
@@ -169,6 +190,10 @@
     </Compile>
     <Compile Include="Wrappers\ManagedConsumer.cs" />
     <Compile Include="Wrappers\ManagedWifi.cs" />
+    <Page Include="ButtonAppInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="buttonSideMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -185,6 +210,10 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PageAppDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PageDeviceConfiguration.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -198,6 +227,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageWifi.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SamplesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -240,16 +273,45 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.de-DE.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.es-ES.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.fr-FR.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.it-IT.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.ja-JP.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.ko-KR.resx" />
+    <EmbeddedResource Include="Strings\Strings.pt-BR.resx" />
     <EmbeddedResource Include="Strings\Strings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Strings\Strings.ru-RU.resx" />
+    <EmbeddedResource Include="Strings\Strings.zh-CN.resx" />
+    <EmbeddedResource Include="Strings\Strings.zh-TW.resx" />
+    <Resource Include="Assets\Blinky.png" />
+    <Resource Include="Assets\BlinkyScreenshot.png" />
     <Content Include="Assets\IOTMDL2.1.49.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Assets\Radio.png" />
+    <Resource Include="Assets\RadioScreenshot.png" />
+    <Content Include="Assets\SegMDL2.1.43.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="DeviceCenterDevelopmentKey.snk" />
-    <None Include="DeviceCenterStrongName.pfx" />
     <None Include="DeviceCenter_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest">
@@ -265,16 +327,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\cloud.png" />
-    <Resource Include="Assets\percentage_Circle.png" />
-    <Resource Include="Assets\pixel.png" />
-    <Resource Include="Assets\ribbon.png" />
-    <Resource Include="Assets\rockets.png" />
-    <Resource Include="Assets\SD_Card.png" />
-    <Resource Include="Assets\SD_Card_complete.png" />
-    <Resource Include="Assets\SD_card_outline.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -293,15 +345,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <NativeReference Include="COMOnboarding.sxs, Version=1.0.0.0, Type=win32">
+      <Name>COMOnboarding.sxs.manifest</Name>
+      <HintPath>..\Debug\COMOnboarding.sxs.manifest</HintPath>
+    </NativeReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Microsoft.Diagnostics.Tracing.EventRegister.1.1.25\build\Microsoft.Diagnostics.Tracing.EventRegister.targets" Condition="Exists('..\packages\Microsoft.Diagnostics.Tracing.EventRegister.1.1.25\build\Microsoft.Diagnostics.Tracing.EventRegister.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Diagnostics.Tracing.EventRegister.1.1.25\build\Microsoft.Diagnostics.Tracing.EventRegister.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Diagnostics.Tracing.EventRegister.1.1.25\build\Microsoft.Diagnostics.Tracing.EventRegister.targets'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

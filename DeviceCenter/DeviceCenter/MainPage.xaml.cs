@@ -13,13 +13,20 @@
         public MainWindow()
         {
             // Uncomment to test localization
-            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("it-IT");
+            //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("it-IT");
 
             InitializeComponent();
 
             welcomePage = new PageWelcome(_NavigationFrame);
+            ButtonBack.Visibility = Visibility.Hidden;
 
             _NavigationFrame.Navigate(welcomePage);
+            _NavigationFrame.Navigated += _NavigationFrame_Navigated;
+        }
+
+        private void _NavigationFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            ButtonBack.Visibility = _NavigationFrame.CanGoBack ? Visibility.Visible : Visibility.Hidden;
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -43,6 +50,7 @@
 
         private void buttonSamples_Click(object sender, RoutedEventArgs e)
         {
+            _NavigationFrame.Navigate(new SamplesPage(_NavigationFrame));
         }
 
         private void buttonTestOnly_Click(object sender, RoutedEventArgs e)
@@ -50,9 +58,9 @@
             _NavigationFrame.Navigate(new PageTestOnly());
         }
 
-        private void buttonSideMenu_Click(object sender, RoutedEventArgs e)
+        private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
-            _NavigationFrame.Navigate(new PageWifi());
+            _NavigationFrame.GoBack();
         }
     }
 }

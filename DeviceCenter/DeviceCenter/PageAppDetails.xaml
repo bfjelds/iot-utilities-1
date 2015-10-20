@@ -1,0 +1,52 @@
+﻿<Page x:Class="DeviceCenter.PageAppDetails"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:DeviceCenter"
+      xmlns:props="clr-namespace:DeviceCenter.Strings"
+      mc:Ignorable="d" 
+      d:DesignHeight="362.341" d:DesignWidth="449.956"
+      Title="PageAppDetails">
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="111*"/>
+                <ColumnDefinition Width="113*"/>
+            </Grid.ColumnDefinitions>
+            <Image Source="{Binding Screenshot}" VerticalAlignment="Top" />
+            <StackPanel Orientation="Vertical" Margin="6" Grid.Column="1">
+                <TextBlock Text="{Binding Title}" FontSize="30" TextWrapping="Wrap"  Margin="4" VerticalAlignment="Top"/>
+                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"  Margin="4"/>
+                <TextBlock Margin="4">
+                    <Hyperlink NavigateUri="{Binding OnlineInfo}">
+                        <TextBlock Text="{x:Static props:Strings.SamplesTutorialOnline}" />
+                    </Hyperlink>
+                </TextBlock>
+                <TextBlock Margin="4">
+                    <Hyperlink NavigateUri="{Binding OnlineSourceCode}">
+                        <TextBlock Text="{x:Static props:Strings.SamplesDownload}" />
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+        <StackPanel Margin="0 20 0 0">
+            <TextBlock Text="{x:Static props:Strings.SamplesRun}" FontSize="20" TextWrapping="Wrap"  Margin="4" VerticalAlignment="Top"/>
+            <TextBlock Text="{x:Static props:Strings.SamplesDeviceLabel}" TextWrapping="Wrap"  Margin="4"/>
+            <ComboBox x:Name="comboBoxDevices" Width="200" HorizontalAlignment="Left" Margin="20 4">
+            </ComboBox>
+            <StackPanel x:Name="PanelDeploy">
+                <Button x:Name="ButtonDeploy" Padding="30 0" HorizontalAlignment="Left" Margin="20 4" Content="{x:Static props:Strings.SamplesDeployAndRunButton}" Click="ButtonDeploy_Click" />
+            </StackPanel>
+            <StackPanel x:Name="PanelDeploying" Width="200" HorizontalAlignment="Left" Margin="20 4" >
+                <Button x:Name="ButtonStopDeploy" Padding="30 0"  HorizontalAlignment="Left" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopDeploy_Click" />
+                <TextBlock Text="{x:Static props:Strings.SamplesDeploying}" Margin="0 4" TextWrapping="Wrap" />
+                <ProgressBar x:Name="progressWaiting" IsIndeterminate="True" />
+            </StackPanel>
+            <StackPanel x:Name="PanelDeployed" Width="200" HorizontalAlignment="Left" Margin="20 4" >
+                <TextBlock Text="{x:Static props:Strings.SamplesAppRunning}" Margin="0 4" TextWrapping="Wrap" />
+            </StackPanel>
+        </StackPanel>
+    </DockPanel>
+</Page>

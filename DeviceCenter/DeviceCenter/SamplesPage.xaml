@@ -1,0 +1,31 @@
+﻿<Page x:Class="DeviceCenter.SamplesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:DeviceCenter"
+      xmlns:props="clr-namespace:DeviceCenter.Strings"
+      mc:Ignorable="d" 
+      d:DesignHeight="383.333" d:DesignWidth="394.667"
+      Title="{x:Static props:Strings.LeftBarSamples}">
+    <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <TextBlock DockPanel.Dock="Top" Text="{x:Static props:Strings.SamplesDeployAndRunButton}" FontSize="30" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBlock DockPanel.Dock="Top" Text="{x:Static props:Strings.SamplesSubTitle}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+        <ScrollViewer DockPanel.Dock="Top" MinHeight="160" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+            <StackPanel x:Name="listAppButtons" Orientation="Horizontal">
+            </StackPanel>
+        </ScrollViewer>
+        <TextBlock DockPanel.Dock="Top" Text="{x:Static props:Strings.SamplesLearnMore}" TextWrapping="Wrap" Margin="0,10,0,0" />
+        <TextBlock x:Name="buttonStartCoding" DockPanel.Dock="Top"  FontSize="14" TextWrapping="Wrap" Margin="0,10,0,0">
+            <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/win10/samples/Blinky.htm">
+                <TextBlock Text="{x:Static props:Strings.SamplesStartCoding}"/>
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock x:Name="buttonTutorials" DockPanel.Dock="Top" TextWrapping="Wrap" Margin="0,10,0,0">
+            <Hyperlink  NavigateUri="http://ms-iot.github.io/content/en-US/win10/StartCoding.htm">
+                <TextBlock Text="{x:Static props:Strings.SamplesOtherProjects}" />
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock DockPanel.Dock="Top" Text="" TextWrapping="Wrap" Margin="0,10,0,0" />
+    </DockPanel>
+</Page>
