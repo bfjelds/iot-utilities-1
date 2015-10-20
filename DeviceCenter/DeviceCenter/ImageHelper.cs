@@ -62,12 +62,51 @@ namespace DeviceCenter
             SizeString = s.ToString() + unitString[unit];
         }
 
+
+        static ManagementEventWatcher usbwatcher = null;
+
+        public static void AddRemoveUSBHandler(EventArrivedEventHandler USBRemoved)
+        {            
+            string query = "SELECT * FROM __InstanceDeletionEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";            
+            try
+            {
+                usbwatcher = new ManagementEventWatcher(new EventQuery(query));
+                usbwatcher.EventArrived += USBRemoved;
+                usbwatcher.Start();
+            }
+
+            catch (Exception)
+            {
+                if (usbwatcher != null)
+                    usbwatcher.Stop();
+            }
+        }
+
+
+        public static void AddInsertUSBHandler(EventArrivedEventHandler USBAdded)
+        {
+            string query = "SELECT * FROM __InstanceCreationEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
+            
+            try
+            {            
+                usbwatcher = new ManagementEventWatcher(new EventQuery(query));
+                usbwatcher.EventArrived += USBAdded;
+                usbwatcher.Start();
+            }
+
+            catch (Exception)
+            {                
+                if (usbwatcher != null)
+                    usbwatcher.Stop();
+            }
+        }       
+
         static public List<DriveInfo> GetRemovableDriveList()
         {
             var res = new List<DriveInfo>();
             try
             {
-                var drives = new ManagementClass("Win32_DiskDrive");
+                var drives = new ManagementClass("Win32_DiskDrive");                
                 var moc = drives.GetInstances();
                 foreach (ManagementObject mo in moc)
                 {
