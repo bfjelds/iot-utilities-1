@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Management;
 using System.Windows.Controls;
 
 namespace DeviceCenter
@@ -20,6 +21,8 @@ namespace DeviceCenter
 
         private double flashStartTime = 0;
 
+        public EventArrivedEventHandler usbhandler = null;
+
         public SetupDevicePage()
         {
             InitializeComponent();
@@ -31,6 +34,9 @@ namespace DeviceCenter
         {
             ReadLkgFile();
             RefreshDriveList();
+            this.usbhandler = new EventArrivedEventHandler(USBAddedorRemoved);
+            DriveInfo.AddInsertUSBHandler(usbhandler);
+            DriveInfo.AddRemoveUSBHandler(usbhandler);
         }
 
         private async void ReadLkgFile()
@@ -79,10 +85,11 @@ namespace DeviceCenter
             ComboBoxDeviceType.SelectedIndex = 0;
 
             buttonFlash.IsEnabled = UpdateStartState();
-        }
+        }      
+
 
         private async void RefreshDriveList()
-        {
+        {  
             RemoveableDevicesComboBox.IsEnabled = false;
 
             List<DriveInfo> drives = null;
@@ -113,6 +120,11 @@ namespace DeviceCenter
             }
 
             buttonFlash.IsEnabled = UpdateStartState();
+        }
+
+        public void USBAddedorRemoved(object sender, EventArgs e)
+        {
+            MessageBox.Show("USB Added or Removed");
         }
 
         private Process dismProcess = null;
