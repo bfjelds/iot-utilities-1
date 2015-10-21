@@ -34,7 +34,10 @@ namespace DeviceCenter
             //bool x = await webbRequest.SetDeviceNameAsync("tengtestWohaha");
             //bool y = await webbRequest.SetPasswordAsync("p@ssw0rd", "password1");
             //bool z = await webbRequest.Restart();
-            bool x = await webbRequest.InstallAppxAsync();
+            string[] files = new String[2];
+            files[0] = @"BasicDepthUAP.appx";
+            files[1] = @"testroot-sha2.cer";
+            bool x = await webbRequest.InstallAppxAsync(files);
         }
     }
 }

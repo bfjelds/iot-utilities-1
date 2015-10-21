@@ -146,7 +146,7 @@ namespace DeviceCenter
                 string formDataBoundary = String.Format("----------------------{0:N}", Guid.NewGuid());
                 var content = new MultipartFormDataContent(formDataBoundary);
                 content.Add(new StreamContent(File.Open(appxPath, FileMode.Open)), "appxFile", "BasicDepthUAP.appx");
-                //content.Add(new StreamContent(File.Open(certPath, FileMode.Open)), "certFile", "testroot-sha2.cer");
+                content.Add(new StreamContent(File.Open(certPath, FileMode.Open)), "certFile", "testroot-sha2.cer");
 
                 string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
                 url += Path.GetFileName(appxPath);
@@ -169,6 +169,85 @@ namespace DeviceCenter
                     return false;
                 }
             }
+        }
+
+        public async Task<bool> InstallAppxAsync(string[] fileNames)
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
+            url += fileNames[0];
+
+            string boundary = "-----------------------" + DateTime.Now.Ticks.ToString("x");
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.ContentType = "multipart/form-data; boundary=" + boundary;
+            request.Method = "POST";
+            request.KeepAlive = true;
+            request.Credentials = new NetworkCredential(Username, Password);
+
+            Stream memStream = new MemoryStream();
+
+            byte[] boundaryBytes = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+            memStream.Write(boundaryBytes, 0, boundaryBytes.Length);
+
+            string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\n Content-Type: application/x-zip-compressed\r\n\r\n";
+            string path = @"C:\Users\tenglu\Documents\KinectDepthUWP\x86\";
+
+            for (int i = 0; i < fileNames.Length; i++)
+            {
+                string header = String.Format(headerTemplate, fileNames[i], fileNames[i]);
+                byte[] headerBytes = Encoding.UTF8.GetBytes(header);
+                memStream.Write(headerBytes, 0, headerBytes.Length);
+
+                FileStream fileStream = new FileStream(path + fileNames[i], FileMode.Open, FileAccess.Read);
+                byte[] buffer = new byte[1024];
+                int bytesRead = 0;
+                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    memStream.Write(buffer, 0, bytesRead);
+                }
+                memStream.Write(boundaryBytes, 0, boundaryBytes.Length);
+                fileStream.Close();
+            }
+
+            request.ContentLength = memStream.Length;
+
+            Stream requestStream = request.GetRequestStream();
+
+            memStream.Position = 0;
+            byte[] tempBuffer = new byte[memStream.Length];
+            memStream.Read(tempBuffer, 0, tempBuffer.Length);
+            memStream.Close();
+            requestStream.Write(tempBuffer, 0, tempBuffer.Length);
+            requestStream.Close();
+
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync());
+                HttpStatusCode result = HttpStatusCode.BadRequest;
+                result = response.StatusCode;
+                Stream stream = response.GetResponseStream();
+                StreamReader sr = new StreamReader(stream);
+                string respData = sr.ReadToEnd();
+
+                response.Close();
+                request = null;
+                response = null;
+
+                if (result == HttpStatusCode.Accepted)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return true;
         }
 
         private async Task<HttpStatusCode> PostRequestAsync(string url)
