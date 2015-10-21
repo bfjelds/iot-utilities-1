@@ -60,7 +60,7 @@ namespace DeviceCenter
 
                 // TO DO: make it a dialog before restart
                 MessageBox.Show("Do you want to restart the device?");
-                bool z = await webbRequest.Restart();
+                bool z = await webbRequest.RestartAsync();
             }
             if (!String.IsNullOrWhiteSpace(textBoxCurrentPassword.Password)
                 && !String.IsNullOrWhiteSpace(textBoxPassword1.Password))
