@@ -889,6 +889,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remember my credentials.
+        /// </summary>
+        public static string RememberMyCredentials {
+            get {
+                return ResourceManager.GetString("RememberMyCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This app is running on your device..
         /// </summary>
         public static string SamplesAppRunning {
