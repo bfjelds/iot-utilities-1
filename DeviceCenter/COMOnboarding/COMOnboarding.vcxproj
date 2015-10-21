@@ -98,9 +98,7 @@
     </Link>
     <PostBuildEvent>
       <Command>tlbimp "$(SolutionDir)COMOnboarding\Debug\COMOnboarding.tlb" /namespace:Onboarding /out:"$(SolutionDir)Debug\OnboardingTypeLib.dll"
-copy $(SolutionDir)COMOnboarding\COMOnboarding.sxs.manifest $(SolutionDir)IoTOnboardingConsumerWPF\bin\x86\Debug
-copy $(SolutionDir)COMOnboarding\COMOnboarding.sxs.manifest $(SolutionDir)Debug
-copy $(SolutionDir)Debug\COMOnboarding.dll $(SolutionDir)IoTOnboardingConsumerWPF\bin\x86\Debug</Command>
+copy $(SolutionDir)COMOnboarding\COMOnboarding.sxs.manifest $(SolutionDir)Debug</Command>
     </PostBuildEvent>
     <Manifest />
     <Manifest />
