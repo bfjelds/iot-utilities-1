@@ -106,8 +106,8 @@ namespace DeviceCenter
             request.Referer = @"http://10.125.140.92:8080/AppManager.htm";
             request.Method = "POST";
             request.KeepAlive = true;
-            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
-            request.Headers.Add("Authorization", "Basic " + encoded);
+            string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
+            request.Headers.Add("Authorization", "Basic " + encodedAuth);
 
             Stream memStream = new MemoryStream();
 
@@ -134,6 +134,7 @@ namespace DeviceCenter
                 {
                     memStream.Write(buffer, 0, bytesRead);
                 }
+
                 if (i < fileNames.Length - 1)
                 {
                     memStream.Write(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
@@ -142,6 +143,7 @@ namespace DeviceCenter
                 {
                     memStream.Write(boundaryBytesLast, 0, boundaryBytesLast.Length);
                 }
+
                 fileStream.Close();
             }
 
@@ -195,10 +197,11 @@ namespace DeviceCenter
 
             try
             {
-                HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
                 req.Method = "POST";
                 req.ContentType = "application/x-www-form-urlencoded";
-                req.Credentials = new NetworkCredential(Username, Password);
+                string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
+                req.Headers.Add("Authorization", "Basic " + encodedAuth);
                 req.ContentLength = 0;
 
                 HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
@@ -217,42 +220,42 @@ namespace DeviceCenter
             return result;
         }
 
-        private async Task<HttpStatusCode> PostRequestAsync(string url, string jsonPayload)
-        {
-            Stream objStream = null;
-            StreamReader objReader = null;
-            Debug.WriteLine(url);
-            HttpStatusCode result = HttpStatusCode.BadRequest;
+        //private async Task<HttpStatusCode> PostRequestAsync(string url, string jsonPayload)
+        //{
+        //    Stream objStream = null;
+        //    StreamReader objReader = null;
+        //    Debug.WriteLine(url);
+        //    HttpStatusCode result = HttpStatusCode.BadRequest;
 
-            try
-            {
-                HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
-                req.Method = "POST";
-                req.ContentType = "application/json; charset=utf-8";
-                req.Credentials = new NetworkCredential(Username, Password);
+        //    try
+        //    {
+        //        HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
+        //        req.Method = "POST";
+        //        req.ContentType = "application/json; charset=utf-8";
+        //        req.Credentials = new NetworkCredential(Username, Password);
 
-                using (var streamWriter = new StreamWriter(req.GetRequestStream()))
-                {
-                    streamWriter.Write(jsonPayload);
-                    streamWriter.Flush();
-                    streamWriter.Close();
-                }
+        //        using (var streamWriter = new StreamWriter(req.GetRequestStream()))
+        //        {
+        //            streamWriter.Write(jsonPayload);
+        //            streamWriter.Flush();
+        //            streamWriter.Close();
+        //        }
 
-                HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
-                result = response.StatusCode;
-                if (result == HttpStatusCode.OK)
-                {
-                    objStream = response.GetResponseStream();
-                    objReader = new StreamReader(objStream);
-                    string respData = objReader.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-            return result;
-        }
+        //        HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
+        //        result = response.StatusCode;
+        //        if (result == HttpStatusCode.OK)
+        //        {
+        //            objStream = response.GetResponseStream();
+        //            objReader = new StreamReader(objStream);
+        //            string respData = objReader.ReadToEnd();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message);
+        //    }
+        //    return result;
+        //}
 
         #region webB rest for wifi onboarding
 
