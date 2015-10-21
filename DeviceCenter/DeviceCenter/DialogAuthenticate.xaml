@@ -6,16 +6,20 @@
         xmlns:local="clr-namespace:DeviceCenter"
         xmlns:props="clr-namespace:DeviceCenter.Strings"
         mc:Ignorable="d"
-        Title="{x:Static props:Strings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
-    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Background="WhiteSmoke">
-        <TextBlock Margin="10" FontSize="40" FontFamily="Segoe UI Light" Text="{x:Static props:Strings.AppNameDisplay}" />
-        <TextBlock Margin="10" FontSize="24" FontFamily="Segoe UI Light" Text="{Binding DeviceName}" />
-        <TextBox x:Name="EditUserName"  Margin="10" Width="200" HorizontalAlignment="Left" />
-        <PasswordBox x:Name="EditPassword" Margin="10" Width="200" HorizontalAlignment="Left" />
-        <CheckBox Margin="10" HorizontalAlignment="Left" Content="{x:Static props:Strings.RememberMyCredentials}" />
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="OK" Margin="10" Padding="20 0 20 0" />
-            <Button Content="Cancel" Margin="10" Padding="20 0 20 0" />
+        Title="{x:Static props:Strings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" SizeToContent="WidthAndHeight">
+    <Grid>
+        <StackPanel Background="White">
+            <TextBlock Margin="10" FontSize="40" FontFamily="Segoe UI Light" Text="{x:Static props:Strings.AppNameDisplay}" HorizontalAlignment="Stretch" Width="350" />
+            <TextBlock Margin="10" FontSize="24" FontFamily="Segoe UI Light" Text="{Binding DeviceName}" HorizontalAlignment="Left" />
+            <TextBlock Margin="10 0" FontFamily="Segoe UI Light" Text="{x:Static props:Strings.DeviceNamePwdUserNameLabel}" HorizontalAlignment="Left" />
+            <TextBox x:Name="editUserName" Text="{Binding UserName}" Width="200" Margin="10 0" HorizontalAlignment="Left" TextChanged="TextBox_TextChanged" />
+            <TextBlock Margin="10 10 10 0" FontFamily="Segoe UI Light" Text="{x:Static props:Strings.DeviceNamePwdPassword1}" HorizontalAlignment="Left" />
+            <PasswordBox Margin="10 0" x:Name="editPassword" Width="200" HorizontalAlignment="Left" PasswordChanged="editPassword_PasswordChanged" />
+            <CheckBox x:Name="checkboxSavePassword" IsChecked="{Binding SavePassword}" Margin="10" HorizontalAlignment="Left" Content="{x:Static props:Strings.RememberMyCredentials}" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 10 10">
+                <Button x:Name="buttonOk" Content="OK" Margin="0 0 10 0" Padding="20 0 20 0" Click="buttonOk_Click" />
+                <Button x:Name="buttonCancel" Content="Cancel" Padding="20 0 20 0" Click="buttonCancel_Click" />
+            </StackPanel>
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </Window>
