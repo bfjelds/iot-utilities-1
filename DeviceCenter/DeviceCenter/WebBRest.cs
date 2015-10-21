@@ -4,11 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Runtime.Serialization.Json;
 using DeviceCenter.DataContract;
 using DeviceCenter.Helper;
 
@@ -95,82 +93,6 @@ namespace DeviceCenter
             return true;
         }
 
-        //public async Task<bool> InstallAppxAsync(string appxFilePath,
-        //                                    string certFilePath)
-        //string dependFilePath = null)
-        //{
-        //    string appxFileContent, certFileContent;
-        //    appxFileContent = File.ReadAllText(appxFilePath);
-        //    certFileContent = File.ReadAllText(certFilePath);
-        //    if (!String.IsNullOrEmpty(dependFilePath))
-        //    {
-        //        dependFileContent = File.ReadAllText(dependFilePath);
-        //    }
-
-        //    AppxPackage appx = new AppxPackage(appxFileContent, certFileContent);
-        //    MemoryStream stream1 = new MemoryStream();
-        //    DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(AppxPackage));
-        //    ser.WriteObject(stream1, appx);
-
-        //    string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
-        //    url += Path.GetFileName(appxFilePath);
-
-        //    try
-        //    {
-        //        await PostRequestAsync(url, ser.ToString());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message);
-        //        return false;
-        //    }
-
-        //    return true;
-
-        //}
-
-        public async Task<bool> InstallAppxAsync()
-        {
-            //HttpClientHandler handler = new HttpClientHandler();
-            //handler.Credentials = new NetworkCredential(Username, Password);
-            //var client = new HttpClient();
-
-            using (var handler = new HttpClientHandler { Credentials = new NetworkCredential(Username, Password) })
-            using (var client = new HttpClient(handler))
-            {
-                string appxPath = @"C:\Users\tenglu\Documents\KinectDepthUWP\x86\";
-                string certPath = @"C:\Users\tenglu\Documents\KinectDepthUWP\x86\";
-                appxPath += @"BasicDepthUAP.appx";
-                certPath += @"testroot-sha2.cer";
-
-                string formDataBoundary = String.Format("----------------------{0:N}", Guid.NewGuid());
-                var content = new MultipartFormDataContent(formDataBoundary);
-                content.Add(new StreamContent(File.Open(appxPath, FileMode.Open)), "appxFile", "BasicDepthUAP.appx");
-                content.Add(new StreamContent(File.Open(certPath, FileMode.Open)), "certFile", "testroot-sha2.cer");
-
-                string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
-                url += Path.GetFileName(appxPath);
-
-                try
-                {
-                    var result = await client.PostAsync(url, content);
-                    if (result.StatusCode == HttpStatusCode.Accepted)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                    return false;
-                }
-            }
-        }
-
         public async Task<bool> InstallAppxAsync(string[] fileNames)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
@@ -179,22 +101,29 @@ namespace DeviceCenter
             string boundary = "-----------------------" + DateTime.Now.Ticks.ToString("x");
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Accept = "*/*";
             request.ContentType = "multipart/form-data; boundary=" + boundary;
+            request.Referer = @"http://10.125.140.92:8080/AppManager.htm";
             request.Method = "POST";
             request.KeepAlive = true;
-            request.Credentials = new NetworkCredential(Username, Password);
+            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
+            request.Headers.Add("Authorization", "Basic " + encoded);
 
             Stream memStream = new MemoryStream();
 
-            byte[] boundaryBytes = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
-            memStream.Write(boundaryBytes, 0, boundaryBytes.Length);
+            byte[] boundaryBytesMiddle = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+            byte[] boundaryBytesLast = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
+            memStream.Write(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
 
-            string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\n Content-Type: application/x-zip-compressed\r\n\r\n";
-            string path = @"C:\Users\tenglu\Documents\KinectDepthUWP\x86\";
+            string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
+
+            // TODO: Determine the way to load the file path
+            string path = @"C:\Users\tenglu\Documents\DeployTestAppx\InternetRadio\";
 
             for (int i = 0; i < fileNames.Length; i++)
             {
-                string header = String.Format(headerTemplate, fileNames[i], fileNames[i]);
+                string headerContentType = (fileNames[i].Substring(fileNames[i].Length - 4) == ".cer") ? "application/x-x509-ca-cert" : "application/x-zip-compressed";
+                string header = String.Format(headerTemplate, fileNames[i], fileNames[i], headerContentType);
                 byte[] headerBytes = Encoding.UTF8.GetBytes(header);
                 memStream.Write(headerBytes, 0, headerBytes.Length);
 
@@ -205,7 +134,14 @@ namespace DeviceCenter
                 {
                     memStream.Write(buffer, 0, bytesRead);
                 }
-                memStream.Write(boundaryBytes, 0, boundaryBytes.Length);
+                if (i < fileNames.Length - 1)
+                {
+                    memStream.Write(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
+                }
+                else
+                {
+                    memStream.Write(boundaryBytesLast, 0, boundaryBytesLast.Length);
+                }
                 fileStream.Close();
             }
 
