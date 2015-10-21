@@ -56,7 +56,7 @@
         {
             buttonOk.IsEnabled =
                 editPassword.Password.Length > 0 &&
-                editUserName.Length > 0;
+                editUserName.Text.Length > 0;
         }
 
         private void editPassword_PasswordChanged(object sender, RoutedEventArgs e)
