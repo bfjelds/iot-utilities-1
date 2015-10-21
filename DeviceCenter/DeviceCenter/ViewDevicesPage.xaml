@@ -34,7 +34,7 @@
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColConnection}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonConnect_Click" Visibility="{Binding ConnectVisible}" />
+                                    <TextBlock FontSize="20" Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonConnect_Click" Visibility="{Binding ConnectVisible}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -43,14 +43,14 @@
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColSettings}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
+                                    <TextBlock FontSize="20" Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColOpenInDevicePortal}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="" Foreground="Blue" Cursor="Hand"  FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonPortal_Click" Visibility="{Binding ManageVisible}" />
+                                    <TextBlock FontSize="20" Text="" Foreground="Blue" Cursor="Hand"  FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonPortal_Click" Visibility="{Binding ManageVisible}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

@@ -1,33 +1,30 @@
-﻿using DeviceCenter.Wrappers;
-using Onboarding;
-using System;
-using System.Collections.Generic;
+﻿using DeviceCenter.DataContract;
+using DeviceCenter.Wrappers;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DeviceCenter
 {
     public class WifiEntry : INotifyPropertyChanged
     {
+        private AvailableNetwork network;
         private const string WifiIcons = "";
-        public WifiEntry(Frame navigationFrame, ManagedConsumer consumer, IWifi comWifi)
+        private Frame navigationFrame;
+        private ManagedConsumer consumer;
+        private bool needPassword;
+        private WebBRest webbRequest;
+        private string adapterGUID;
+
+        public WifiEntry(Frame navigationFrame, string adapterGUID, AvailableNetwork ssid, WebBRest webbRequest)
         {
-            this.comWifi = comWifi;
-            this.consumer = consumer;
             this.navigationFrame = navigationFrame;
+            this.network = ssid;
+            this.webbRequest = webbRequest;
+            this.adapterGUID = adapterGUID;
 
             this.Active = false;
             this.ShowConnect = Visibility.Collapsed;
@@ -35,16 +32,11 @@ namespace DeviceCenter
             this.ShowExpanded = Visibility.Collapsed;
             this.SavePassword = false;
 
-            this.needPassword = comWifi.GetSecurity() != 0;
-            this.Name = comWifi.GetSSID();
+            this.needPassword = this.network.SecurityEnabled;
+            this.Name = this.network.ProfileName;
             this.Secure = (this.needPassword) ? Strings.Strings.LabelSecureWifi : Strings.Strings.LabelInsecureWifi;
-            this.SignalStrength = 4; // add when supported
+            this.SignalStrength = this.network.SignalQuality;
         }
-
-        private Frame navigationFrame;
-        private ManagedConsumer consumer;
-        private bool needPassword;
-        private IWifi comWifi;
 
         public string Name { get; private set; }
         public string Secure { get; private set; }
@@ -64,11 +56,7 @@ namespace DeviceCenter
                 }
             }
         }
-        public int SignalStrength
-        {
-            get;
-            set;
-        }
+        public int SignalStrength { get; set; }
 
         public void Expand()
         {
@@ -116,23 +104,8 @@ namespace DeviceCenter
 
         public async void DoConnectAsync(string password)
         {
-            await Task.Run(() =>
-            {
-                try
-                {
-                // start connecting anonymous
-                    string ssid = this.comWifi.GetSSID();
-                    short security = this.comWifi.GetSecurity();
-
-                    this.consumer.NativeConsumer.ConfigWifi(ssid, password, security);
-                    this.consumer.NativeConsumer.Connect();
-
-                    this.navigationFrame.GoBack();
-            }
-                catch (COMException)
-                {
-        }
-            });
+            await webbRequest.ConnectToNetworkAsync(adapterGUID, this.network.ProfileName, "");
+            this.navigationFrame.GoBack();
         }
 
         public void AllowSecure(bool enabled)
@@ -174,37 +147,64 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageWifi : Page
     {
-        private ManagedConsumer consumer;
         private Frame navigationFrame;
+        private DiscoveredDevice device;
 
-        public PageWifi(Frame navigationFrame, IOnboardingManager wifiManager)
+        public PageWifi(Frame navigationFrame, DiscoveredDevice device)
         {
             InitializeComponent();
 
+            this.device = device;
             this.navigationFrame = navigationFrame;
+
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
-            ListViewWifi.ItemsSource = wifiList;
             progressWaiting.Visibility = Visibility.Visible;
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
-        public void SetConsumer(ManagedConsumer consumer)
+        private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync(DiscoveredDevice device)
         {
-            this.consumer = consumer;
+            ObservableCollection<WifiEntry> result = new ObservableCollection<WifiEntry>();
+            UserInfo userInfo;
 
-            LabelDeviceName.Text = consumer.NativeConsumer.GetDisplayName();
+            if (!DialogAuthenticate.GetSavedPassword(device.DeviceName, out userInfo))
+            {
+                userInfo = new UserInfo()
+                {
+                    DeviceName = device.DeviceName,
+                    UserName = "administrator",
+                    Password = "p@ssw0rd"
+                };
+            }
 
-            foreach (var comWifi in consumer.WifiList)
-                wifiList.Add(new WifiEntry(navigationFrame, consumer, comWifi));
+            IPAddress ip = System.Net.IPAddress.Parse("192.168.173.1"); // default on wifi
+            WebBRest webbRequest = new WebBRest(ip, userInfo.UserName, userInfo.Password);
+
+            var adapters = await webbRequest.GetWirelessAdaptersAsync();
+
+            AvailableNetworks networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
+            foreach (AvailableNetwork ssid in networks.Items)
+            {
+                result.Add(new WifiEntry(navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+            }
 
             progressWaiting.Visibility = Visibility.Collapsed;
+
+            /*DialogAuthenticate authDlg = new DialogAuthenticate(userInfo);
+                bool? dlgResult = authDlg.ShowDialog();
+
+                if (!dlgResult.HasValue || !dlgResult.Value)
+                    return;
+            }*/
+
+            return result;
         }
 
-        private ObservableCollection<WifiEntry> wifiList = new ObservableCollection<WifiEntry>();
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            LabelDeviceName.Text = device.DeviceName;
+            ListViewWifi.ItemsSource = await QueryWifiAsync(device);
         }
 
         private void ListViewDevices_Loaded(object sender, RoutedEventArgs e)

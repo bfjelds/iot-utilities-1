@@ -27,7 +27,7 @@
     {
         static Dictionary<string, UserInfo> savedPasswords = new Dictionary<string, UserInfo>();
 
-        public bool GetSavedPassword(string deviceName, out UserInfo info)
+        public static bool GetSavedPassword(string deviceName, out UserInfo info)
         {
             return savedPasswords.TryGetValue(deviceName, out info);
         }
