@@ -55,7 +55,8 @@ namespace DeviceCenter.Helper
                 HttpWebRequest request = WebRequest.Create(requestUrl) as HttpWebRequest;
                 request.Method = isGet ? "Get" : "POST";
                 request.ContentLength = 0;
-                request.Credentials = new NetworkCredential(userName, password);
+                string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(userName + ":" + password));
+                request.Headers.Add("Authorization", "Basic " + encodedAuth);
 
                 Debug.WriteLine(string.Format("RestHelper: MakeRequest: url [{0}]", requestUrl));
                 HttpWebResponse response = await request.GetResponseAsync() as HttpWebResponse;
