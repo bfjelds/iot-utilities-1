@@ -39,7 +39,7 @@
         public bool? SavePassword { get; set; }
 
         /// <summary>
-        /// Encrypted password using ProtectedClass
+        /// Password stored encrypted
         /// </summary>
         private byte[] EncryptedPassword; 
     }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Management;
 using System.Diagnostics;
+using System.IO;
 
 namespace DeviceCenter
 {
@@ -151,13 +152,15 @@ namespace DeviceCenter
     {
         public static Process FlashFFUImageToDrive(string ffuImage, DriveInfo driveInfo)
         {
-            /*
-            // TODO (alecont): Add logic to pick up dism from system32 if available...
-            var current_dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            var dism = System.IO.Path.Combine(current_dir, @"dism\dism.exe");
-            */
-
+            // rely on DISM in system32.
             var dismExe = Environment.SystemDirectory + "\\" + "dism.exe";
+
+            // Bail if FFU file does not exist.
+            if (!File.Exists(ffuImage))
+            {
+                Debug.WriteLine("Dism: ffu file not found: [{0}]", ffuImage);
+                throw new FileNotFoundException(null, ffuImage);
+            }
 
             Process process = new Process();
             process.StartInfo.UseShellExecute = true;
