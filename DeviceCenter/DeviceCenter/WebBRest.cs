@@ -293,12 +293,24 @@ namespace DeviceCenter
 
         public async Task<WirelessAdapters> GetWirelessAdaptersAsync()
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/interfaces";
+            int retries = 0;
 
-            var response = await RestHelper.MakeRequest(url, true, Username, Password);
-            if (response.StatusCode == HttpStatusCode.OK)
+            while (retries < 2)
             {
-                return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+                try
+                {
+                    string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/interfaces";
+
+                    var response = await RestHelper.MakeRequest(url, true, Username, Password);
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+                    }
+                }
+                catch (WebException)
+                {
+                    retries++;
+                }
             }
 
             return new WirelessAdapters();
@@ -339,7 +351,7 @@ namespace DeviceCenter
             return new AvailableNetworks();
         }
 
-        public async Task<string> ConnectToNetworkAsync(string adapterName, string ssid, string password)
+        public async Task<string> ConnectToNetworkAsync(string adapterName, string ssid, string ssidPassword)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/network?";
             url = url + "interface=" + adapterName.Trim("{}".ToCharArray());

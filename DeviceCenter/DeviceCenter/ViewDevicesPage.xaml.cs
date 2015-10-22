@@ -30,18 +30,15 @@ namespace DeviceCenter
         private ObservableCollection<ManagedConsumer> onboardingConsumerList = new ObservableCollection<ManagedConsumer>();
         private ConcurrentDictionary<string, AdhocNetwork> adhocNetworks = new ConcurrentDictionary<string, AdhocNetwork>();
 
-        /*
         private IOnboardingManager wifiManager;
         private DispatcherTimer wifiRefreshTimer;
-        */
 
         private Frame _navigationFrame;
+        private PageWifi wifiPage;
 
         ~ViewDevicesPage()
         {
-            /*
             wifiManager.Shutdown();
-            */
         }
 
         private class AdhocNetwork
@@ -77,28 +74,13 @@ namespace DeviceCenter
 
             ListViewDevices.ItemsSource = devices;
 
-            /*
             wifiManager = new OnboardingManager();
 
             try
             {
                 wifiManager.Init();
-
-                wifiManager.SetOnboardeeAddedHandler(new OnboardeeAddedHandler((OnboardingConsumer consumer) =>
-                {
-                    if (wifiPage != null)
-                    {
-                        ManagedConsumer managedConsumer = new ManagedConsumer(consumer);
-
-                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                        {
-                            wifiPage.SetConsumer(managedConsumer);
-                            wifiPage = null;
-                        }));
-                    }
-                }));
-
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 App.TelemetryClient.TrackException(ex);
             }
@@ -109,19 +91,15 @@ namespace DeviceCenter
             };
             wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
             RefreshWifiAsync();
-            */
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            /*
             wifiRefreshTimer.Stop();
-            */
         }
 
-        /*
         private async void RefreshWifiAsync()
         {
             wifiRefreshTimer.Stop();
@@ -185,7 +163,6 @@ namespace DeviceCenter
         {
             RefreshWifiAsync();
         }
-        */
 
         private void TelemetryTimer_Tick(object sender, EventArgs e)
         {
@@ -317,7 +294,6 @@ namespace DeviceCenter
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
-            /*
             wifiRefreshTimer.Stop();
 
             DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
@@ -332,9 +308,7 @@ namespace DeviceCenter
                 bool? confirmation = dlg.ShowDialog();
                 if (confirmation.HasValue && confirmation.Value)
                 {
-                    wifiPage = new PageWifi(_navigationFrame, wifiManager);
-
-                    ConnectToOnboardeeAsync(device.WifiInstance.NativeWifi, "password");
+                    wifiPage = new PageWifi(_navigationFrame, wifiManager, device);
 
                     _navigationFrame.Navigate(wifiPage);
 
@@ -342,27 +316,8 @@ namespace DeviceCenter
                 }
             }
 
-            wifiRefreshTimer.Start();*/
+            wifiRefreshTimer.Start();
         }
-
-        /*
-        private async void ConnectToOnboardeeAsync(IWifi wifi, string password)
-        {
-            await Task.Run(() =>
-            {
-                try
-                {
-                    onboardingConsumerList.Clear();
-                    wifiManager.ConnectToOnboardingNetwork((Onboarding.wifi)wifi, password);
-                }
-                catch (COMException)
-                {
-                    // todo handle errors
-                    //Dispatcher.Invoke(() => { statusTextBlock.Text = "Failed to connect to onboarding network. HRESULT: " + ex.HResult; });
-                }
-            });
-        }
-        */
 
         private void ButtonPortal_Click(object sender, MouseButtonEventArgs e)
         {
