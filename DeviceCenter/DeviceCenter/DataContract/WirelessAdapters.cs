@@ -40,6 +40,17 @@ namespace DeviceCenter.DataContract
         [DataMember(Name = "Index")]
         public int Index { get; set; }
         [DataMember(Name = "ProfilesList")]
-        public string[] ProfilesList { get; set; }
+        public Profile[] ProfilesList { get; set; }
+    }
+
+    [DataContract]
+    public class Profile
+    {
+        [DataMember(Name = "GroupPolicyProfile")]
+        public bool GroupPolicyProfile { get; set; }
+        [DataMember(Name = "Name")]
+        public string Name { get; set; }
+        [DataMember(Name = "PerUserProfile")]
+        public bool PerUserProfile { get; set; }
     }
 }
