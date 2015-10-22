@@ -94,7 +94,7 @@ namespace DeviceCenter
             return true;
         }
 
-        public async Task<bool> InstallAppxAsync(string[] fileNames, string filePath)
+        public async Task<bool> InstallAppxAsync(string appName, string[] fileNames, string filePath)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
             url += fileNames[0];
@@ -174,16 +174,16 @@ namespace DeviceCenter
 
                 if (result == HttpStatusCode.Accepted)
                 {
-                    bool x = await PollInstallState();
+                    bool x = await PollInstallStateAsync();
                     if (x)
                     {
                         // TODO: start app
-                        var installedPackages = await GetInstalledPackages();
+                        var installedPackages = await GetInstalledPackagesAsync();
                         foreach (AppxPackage app in installedPackages.Items)
                         {
-                            if (app.Name == "InternetRadioHeaded")
+                            if (app.Name == appName)
                             {
-                                bool y = await StartApp(app.PackageRelativeId, app.PackageFullName);
+                                bool y = await StartAppAsync(app.PackageRelativeId, app.PackageFullName);
                             }
                         }
                     }
@@ -206,7 +206,7 @@ namespace DeviceCenter
             return true;
         }
 
-        public async Task<bool> PollInstallState()
+        public async Task<bool> PollInstallStateAsync()
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "state";
             HttpStatusCode result = HttpStatusCode.BadRequest ;
@@ -232,7 +232,7 @@ namespace DeviceCenter
             return true;
         }
 
-        public async Task<InstalledPackages> GetInstalledPackages()
+        public async Task<InstalledPackages> GetInstalledPackagesAsync()
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "packages";
             try
@@ -252,7 +252,7 @@ namespace DeviceCenter
             return new InstalledPackages();
         }
 
-        public async Task<bool> StartApp(string appid, string package)
+        public async Task<bool> StartAppAsync(string appid, string package)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppTaskUrl
                          + "?appid=" + RestHelper.Encode64(appid)
@@ -278,12 +278,12 @@ namespace DeviceCenter
             }
         }
 
-        public async Task<bool> StopApp(string name)
+        public async Task<bool> StopAppAsync(string name)
         {
             string url = String.Empty;
             bool isFound = false;
 
-            var installedPackages = await GetInstalledPackages();
+            var installedPackages = await GetInstalledPackagesAsync();
             foreach (AppxPackage app in installedPackages.Items)
             {
                 if (app.Name == name)
@@ -381,43 +381,6 @@ namespace DeviceCenter
             }
             return result;
         }
-
-        //private async Task<HttpStatusCode> PostRequestAsync(string url, string jsonPayload)
-        //{
-        //    Stream objStream = null;
-        //    StreamReader objReader = null;
-        //    Debug.WriteLine(url);
-        //    HttpStatusCode result = HttpStatusCode.BadRequest;
-
-        //    try
-        //    {
-        //        HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
-        //        req.Method = "POST";
-        //        req.ContentType = "application/json; charset=utf-8";
-        //        req.Credentials = new NetworkCredential(Username, Password);
-
-        //        using (var streamWriter = new StreamWriter(req.GetRequestStream()))
-        //        {
-        //            streamWriter.Write(jsonPayload);
-        //            streamWriter.Flush();
-        //            streamWriter.Close();
-        //        }
-
-        //        HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
-        //        result = response.StatusCode;
-        //        if (result == HttpStatusCode.OK)
-        //        {
-        //            objStream = response.GetResponseStream();
-        //            objReader = new StreamReader(objStream);
-        //            string respData = objReader.ReadToEnd();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message);
-        //    }
-        //    return result;
-        //}
 
         #region webB rest for wifi onboarding
 
