@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Management;
 using System.Windows.Controls;
+using System.IO;
+using System.ComponentModel;
 
 namespace DeviceCenter
 {
@@ -157,7 +159,27 @@ namespace DeviceCenter
                     BuildInfo build = ComboBoxIotBuild.SelectedItem as BuildInfo;
                     Debug.Assert(build != null);
 
-                    Process dismProcess = Dism.FlashFFUImageToDrive(build.Path, driveInfo);
+                    try
+                    {
+                        Process dismProcess = Dism.FlashFFUImageToDrive(build.Path, driveInfo);
+                    }
+                    catch (Exception ex)
+                    {   
+                        Debug.WriteLine(ex.ToString());
+
+                        if (ex is FileNotFoundException)
+                        {
+                            // the app name as caption
+                            string errorCaption = Strings.Strings.AppNameDisplay;   
+
+                            // show the filename
+                            string errorMsg = new Win32Exception(2).Message + ": " + ((FileNotFoundException)ex).FileName;
+
+                            MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            return;
+                        }
+                    }
+
                     dismProcess.EnableRaisingEvents = true;
 
                     dismProcess.Exited += DismProcess_Exited;
