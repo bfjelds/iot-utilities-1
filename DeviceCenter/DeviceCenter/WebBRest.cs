@@ -173,6 +173,12 @@ namespace DeviceCenter
 
                 if (result == HttpStatusCode.Accepted)
                 {
+                    Thread.Sleep(20000);
+                    bool x = await PollInstallState();
+                    if (x)
+                    {
+                        // TODO: start app
+                    }
                     return true;
                 }
                 else
@@ -186,6 +192,32 @@ namespace DeviceCenter
             }
 
             return true;
+        }
+
+        public async Task<bool> PollInstallState()
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "state";
+            try
+            {
+                var response = await RestHelper.MakeRequest(url, true, Username, Password);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return true;
+                }
+                else if (response.StatusCode == HttpStatusCode.NoContent)
+                {
+                    return false;
+                }
+                else
+                {
+                    throw new WebException("Bad response when getting deployment status.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
         }
 
         private async Task<HttpStatusCode> PostRequestAsync(string url)

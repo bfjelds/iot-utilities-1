@@ -12,35 +12,19 @@ namespace DeviceCenter
     [DataContract]
     class AppxPackage
     {
-        public AppxPackage(string appxFileName, string certFileName)
-        {
-            string appxPath = @"";
-            appxPath += appxFileName;
-
-            string certPath = @"";
-            certPath += certFileName;
-
-            //try
-            //{
-            //    using (StreamReader sr = File.OpenText(path))
-            //    {
-
-            //    }
-            //}
-        }
-
-        /// <summary>
-        /// The appx file for the package to install.
-        /// </summary>
         [DataMember]
-        //public string AppxFileName { get; set; }
-        public byte[] AppxFileContent { get; set; }
+        public string Name { get; set; }
 
-        /// <summary>
-        /// The certificate file for the package to install.
-        /// </summary>
         [DataMember]
-        //public string CertFileName { get; set; }
-        public byte[] CertFileContent { get; set; }
+        public string PackageFamilyName { get; set; }
+
+        [DataMember]
+        public string PackageFullName { get; set; }
+
+        [DataMember]
+        public string PackageOrigin { get; set; }
+
+        [DataMember]
+        public string PackageRelativeId { get; set; }
     }
 }
