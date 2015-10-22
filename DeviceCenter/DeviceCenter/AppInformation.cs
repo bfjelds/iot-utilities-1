@@ -11,9 +11,14 @@ namespace DeviceCenter
         public string Screenshot { get; private set; }
         public string Description { get; private set; }
 
-        public FileInfo AppX { get; private set; }
-        public FileInfo Certificate { get; private set; }
-        public List<FileInfo> Dependencies { get; private set; }
+        public class ApplicationFiles
+        {
+            public FileInfo AppX { get; set; }
+            public FileInfo Certificate { get; set; }
+            public List<FileInfo> Dependencies { get; set; }
+        }
+        
+        public Dictionary<string, ApplicationFiles> PlatformFiles { get; private set; }
 
         public string OnlineInfo { get; private set; }
         public string OnlineSourceCode { get; private set; }
@@ -27,13 +32,33 @@ namespace DeviceCenter
                     Screenshot = "Assets/BlinkyScreenshot.png",
                     Title = Strings.Strings.SamplesBlinkyTitle,
                     Description = Strings.Strings.SamplesBlinkyMessage1 + "\n" + Strings.Strings.SamplesBlinkyMessage2,
-                    AppX = new FileInfo("Blinky.appx"),
-                    Certificate = new FileInfo("Blinky.cer"),
-                    Dependencies = new List<FileInfo>()
-                {
-                    new FileInfo("runtime1.appx"),
-                    new FileInfo("runtime2.appx")
-                },
+                    PlatformFiles = new Dictionary<string, ApplicationFiles>()
+                    {
+                        {
+                            "x86", new ApplicationFiles()
+                            {
+                                AppX = new FileInfo("Blinky\\x86\\BlinkyHeadedWebService_1.0.1.0_x86.appx"),
+                                Certificate = new FileInfo("Blinky\\x86\\BlinkyHeadedWebService_1.0.1.0_x86.cer"),
+                                Dependencies = new List<FileInfo>()
+                                {
+                                    new FileInfo("Dependencies\\X86\\Microsoft.NET.Native.Runtime.1.1.appx"),
+                                    new FileInfo("Dependencies\\X86\\Microsoft.VCLibs.x86.14.00.appx")
+                                }
+                            }
+                        },
+                        {
+                            "arm", new ApplicationFiles()
+                            {
+                                AppX = new FileInfo("Blinky\\arm\\BlinkyHeadedWebService_1.0.1.0_ARM.appx"),
+                                Certificate = new FileInfo("Blinky\\arm\\BlinkyHeadedWebService_1.0.1.0_ARM.cer"),
+                                Dependencies = new List<FileInfo>()
+                                {
+                                    new FileInfo("Dependencies\\ARM\\Microsoft.NET.Native.Runtime.1.1.appx"),
+                                    new FileInfo("Dependencies\\ARM\\Microsoft.VCLibs.ARM.14.00.appx")
+                                }
+                            }
+                        }
+                    },
                     OnlineInfo = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm",
                     OnlineSourceCode = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm"
                 });
@@ -44,13 +69,33 @@ namespace DeviceCenter
                     Screenshot = "Assets/RadioScreenshot.png",
                     Title = Strings.Strings.SamplesRadioTitle,
                     Description = Strings.Strings.SamplesRadioMessage1,
-                    AppX = new FileInfo("Radio.appx"),
-                    Certificate = new FileInfo("Radio.cer"),
-                    Dependencies = new List<FileInfo>()
-                {
-                    new FileInfo("runtime1.appx"),
-                    new FileInfo("runtime2.appx")
-                },
+                    PlatformFiles = new Dictionary<string, ApplicationFiles>()
+                    {
+                        {
+                            "x86", new ApplicationFiles()
+                            {
+                                AppX = new FileInfo("InternetRadio\\x86\\InternetRadioHeaded_1.0.1.0_x86.appx"),
+                                Certificate = new FileInfo("InternetRadio\\X86\\InternetRadioHeaded_1.0.1.0_x86.cer"),
+                                Dependencies = new List<FileInfo>()
+                                {
+                                    new FileInfo("Dependencies\\X86\\Microsoft.NET.Native.Runtime.1.1.appx"),
+                                    new FileInfo("Dependencies\\X86\\Microsoft.VCLibs.x86.14.00.appx")
+                                }
+                            }
+                        },
+                        {
+                            "arm", new ApplicationFiles()
+                            {
+                                AppX = new FileInfo("InternetRadio\\ARM\\InternetRadioHeaded_1.0.1.0_ARM.appx"),
+                                Certificate = new FileInfo("InternetRadio\\ARM\\InternetRadioHeaded_1.0.1.0_ARM.cer"),
+                                Dependencies = new List<FileInfo>()
+                                {
+                                    new FileInfo("Dependencies\\ARM\\Microsoft.NET.Native.Runtime.1.1.appx"),
+                                    new FileInfo("Dependencies\\ARM\\Microsoft.VCLibs.ARM.14.00.appx")
+                                }
+                            }
+                        }
+                    },
                     OnlineInfo = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm",
                     OnlineSourceCode = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm"
                 });

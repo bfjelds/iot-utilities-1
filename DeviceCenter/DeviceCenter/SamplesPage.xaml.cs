@@ -11,9 +11,12 @@ namespace DeviceCenter
     /// </summary>
     public partial class SamplesPage : Page
     {
-        public SamplesPage(Frame navigation)
+        private DiscoveredDevice device;
+
+        public SamplesPage(Frame navigation, DiscoveredDevice device)
         {
             this._navigation = navigation;
+            this.device = device;
 
             InitializeComponent();
 
@@ -30,7 +33,7 @@ namespace DeviceCenter
 
         private void ShowApp_Click(object sender, ButtonAppInfo.ButtonAppEventArgs e)
         {
-            this._navigation.Navigate(new PageAppDetails(e.Info));
+            this._navigation.Navigate(new PageAppDetails(e.Info, this.device));
         }
 
         private Frame _navigation;
