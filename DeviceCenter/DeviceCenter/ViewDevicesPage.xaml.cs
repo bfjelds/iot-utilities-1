@@ -308,7 +308,7 @@ namespace DeviceCenter
                 bool? confirmation = dlg.ShowDialog();
                 if (confirmation.HasValue && confirmation.Value)
                 {
-                    wifiPage = new PageWifi(_navigationFrame, device);
+                    wifiPage = new PageWifi(_navigationFrame, wifiManager, device);
 
                     _navigationFrame.Navigate(wifiPage);
 

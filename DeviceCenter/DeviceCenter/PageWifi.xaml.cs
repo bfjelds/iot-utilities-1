@@ -1,11 +1,15 @@
 ﻿using DeviceCenter.DataContract;
 using DeviceCenter.Wrappers;
+using Onboarding;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace DeviceCenter
 {
@@ -14,7 +18,6 @@ namespace DeviceCenter
         private AvailableNetwork network;
         private const string WifiIcons = "";
         private Frame navigationFrame;
-        private ManagedConsumer consumer;
         private bool needPassword;
         private WebBRest webbRequest;
         private string adapterGUID;
@@ -33,9 +36,9 @@ namespace DeviceCenter
             this.SavePassword = false;
 
             this.needPassword = this.network.SecurityEnabled;
-            this.Name = this.network.ProfileName;
+            this.Name = this.network.SSID;
             this.Secure = (this.needPassword) ? Strings.Strings.LabelSecureWifi : Strings.Strings.LabelInsecureWifi;
-            this.SignalStrength = this.network.SignalQuality;
+            this.SignalStrength = this.network.SignalQuality / 20;
         }
 
         public string Name { get; private set; }
@@ -104,7 +107,7 @@ namespace DeviceCenter
 
         public async void DoConnectAsync(string password)
         {
-            await webbRequest.ConnectToNetworkAsync(adapterGUID, this.network.ProfileName, "");
+            await webbRequest.ConnectToNetworkAsync(adapterGUID, this.network.SSID, password);
             this.navigationFrame.GoBack();
         }
 
@@ -149,18 +152,41 @@ namespace DeviceCenter
     {
         private Frame navigationFrame;
         private DiscoveredDevice device;
+        private IOnboardingManager wifiManager;
+        private DispatcherTimer delayStart;
 
-        public PageWifi(Frame navigationFrame, DiscoveredDevice device)
+        public PageWifi(Frame navigationFrame, IOnboardingManager wifiManager, DiscoveredDevice device)
         {
             InitializeComponent();
 
             this.device = device;
             this.navigationFrame = navigationFrame;
+            this.wifiManager = wifiManager;
 
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
             progressWaiting.Visibility = Visibility.Visible;
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
+            LabelDeviceName.Text = device.DeviceName;
+
+            delayStart = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(5),
+                IsEnabled = true
+            };
+            delayStart.Tick += delayStartTimer_Tick;
+
+            this.wifiManager.ConnectToOnboardingNetwork((Onboarding.wifi)device.WifiInstance.NativeWifi, "password");
+        }
+
+        private async void delayStartTimer_Tick(object sender, EventArgs e)
+        {
+            delayStart.Stop();
+
+            await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+            {
+                ListViewWifi.ItemsSource = await QueryWifiAsync(device);
+            }));
         }
 
         private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync(DiscoveredDevice device)
@@ -201,13 +227,11 @@ namespace DeviceCenter
             return result;
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            LabelDeviceName.Text = device.DeviceName;
-            ListViewWifi.ItemsSource = await QueryWifiAsync(device);
         }
 
-        private void ListViewDevices_Loaded(object sender, RoutedEventArgs e)
+        private async void ListViewDevices_Loaded(object sender, RoutedEventArgs e)
         {
         }
 
