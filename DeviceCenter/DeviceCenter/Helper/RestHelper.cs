@@ -48,7 +48,7 @@ namespace DeviceCenter.Helper
             return string64;
         }
 
-        public static async Task<HttpWebResponse> MakeRequest(string requestUrl, bool isGet, string userName, string password)
+        public static async Task<HttpWebResponse> GetOrPostRequestAsync(string requestUrl, bool isGet, string userName, string password)
         {
             try
             {

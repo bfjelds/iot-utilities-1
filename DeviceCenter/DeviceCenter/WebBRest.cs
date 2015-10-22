@@ -25,6 +25,7 @@ namespace DeviceCenter
         private static string ControlApiUrl { get; } = "/api/control/";
         private static string NetworkingApiUrl { get; } = "/api/networking/";
         private static string AppxApiUrl { get; } = "/api/appx/packagemanager/";
+        private static string AppTaskUrl { get; } = "/api/taskmanager/app";
         private static string HttpUrlPrfx { get; } = "http://";
 
         public WebBRest(IPAddress ip, string username, string password)
@@ -93,7 +94,7 @@ namespace DeviceCenter
             return true;
         }
 
-        public async Task<bool> InstallAppxAsync(string[] fileNames)
+        public async Task<bool> InstallAppxAsync(string appName, string[] fileNames, string filePath)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
             url += fileNames[0];
@@ -118,7 +119,7 @@ namespace DeviceCenter
             string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
 
             // TODO: Determine the way to load the file path
-            string path = @"C:\Users\tenglu\Documents\DeployTestAppx\InternetRadio\";
+            //string path = @"C:\Users\tenglu\Documents\DeployTestAppx\InternetRadio\";
 
             for (int i = 0; i < fileNames.Length; i++)
             {
@@ -127,7 +128,7 @@ namespace DeviceCenter
                 byte[] headerBytes = Encoding.UTF8.GetBytes(header);
                 memStream.Write(headerBytes, 0, headerBytes.Length);
 
-                FileStream fileStream = new FileStream(path + fileNames[i], FileMode.Open, FileAccess.Read);
+                FileStream fileStream = new FileStream(filePath + fileNames[i], FileMode.Open, FileAccess.Read);
                 byte[] buffer = new byte[1024];
                 int bytesRead = 0;
                 while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
@@ -173,11 +174,22 @@ namespace DeviceCenter
 
                 if (result == HttpStatusCode.Accepted)
                 {
-                    Thread.Sleep(20000);
-                    bool x = await PollInstallState();
+                    bool x = await PollInstallStateAsync();
                     if (x)
                     {
                         // TODO: start app
+                        var installedPackages = await GetInstalledPackagesAsync();
+                        foreach (AppxPackage app in installedPackages.Items)
+                        {
+                            if (app.Name == appName)
+                            {
+                                bool y = await StartAppAsync(app.PackageRelativeId, app.PackageFullName);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return false;
                     }
                     return true;
                 }
@@ -194,28 +206,114 @@ namespace DeviceCenter
             return true;
         }
 
-        public async Task<bool> PollInstallState()
+        public async Task<bool> PollInstallStateAsync()
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "state";
-            try
+            HttpStatusCode result = HttpStatusCode.BadRequest ;
+
+            while (result != HttpStatusCode.NotFound && result != HttpStatusCode.OK)
             {
-                var response = await RestHelper.MakeRequest(url, true, Username, Password);
-                if (response.StatusCode == HttpStatusCode.OK)
+                try
                 {
-                    return true;
+                    var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
+                    result = response.StatusCode;
+                    if (response.StatusCode == HttpStatusCode.NoContent)
+                    {
+                        Thread.Sleep(3000);
+                    }
                 }
-                else if (response.StatusCode == HttpStatusCode.NoContent)
+                catch (Exception ex)
                 {
+                    Debug.WriteLine(ex.Message);
                     return false;
                 }
-                else
+            }
+
+            return true;
+        }
+
+        public async Task<InstalledPackages> GetInstalledPackagesAsync()
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "packages";
+            try
+            {
+                var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    throw new WebException("Bad response when getting deployment status.");
+                    return RestHelper.ProcessJsonResponse(response, typeof(InstalledPackages)) as InstalledPackages;
                 }
+            }
+            catch (Exception wex)
+            {
+                // expected error
+                Debug.WriteLine(wex);
+            }
+
+            return new InstalledPackages();
+        }
+
+        public async Task<bool> StartAppAsync(string appid, string package)
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppTaskUrl
+                         + "?appid=" + RestHelper.Encode64(appid)
+                         + "&package=" + RestHelper.Encode64(package);
+
+            HttpStatusCode result = HttpStatusCode.BadRequest;
+            try
+            {
+                result = await PostRequestAsync(url);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+            }
+
+            if (result == HttpStatusCode.OK)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> StopAppAsync(string name)
+        {
+            string url = String.Empty;
+            bool isFound = false;
+
+            var installedPackages = await GetInstalledPackagesAsync();
+            foreach (AppxPackage app in installedPackages.Items)
+            {
+                if (app.Name == name)
+                {
+                    isFound = true;
+                    url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppTaskUrl
+                         + "?package=" + RestHelper.Encode64(app.PackageFullName);
+                }
+            }
+            if (!isFound)
+            {
+                throw new ArgumentException("Application name is not valid!");
+            }
+
+            HttpStatusCode result = HttpStatusCode.BadRequest;
+            try
+            {
+                result = await DeleteRequestAsync(url);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            if (result == HttpStatusCode.OK)
+            {
+                return true;
+            }
+            else
+            {
                 return false;
             }
         }
@@ -252,42 +350,37 @@ namespace DeviceCenter
             return result;
         }
 
-        //private async Task<HttpStatusCode> PostRequestAsync(string url, string jsonPayload)
-        //{
-        //    Stream objStream = null;
-        //    StreamReader objReader = null;
-        //    Debug.WriteLine(url);
-        //    HttpStatusCode result = HttpStatusCode.BadRequest;
+        private async Task<HttpStatusCode> DeleteRequestAsync(string url)
+        {
+            Stream objStream = null;
+            StreamReader objReader = null;
+            Debug.WriteLine(url);
+            HttpStatusCode result = HttpStatusCode.BadRequest;
 
-        //    try
-        //    {
-        //        HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
-        //        req.Method = "POST";
-        //        req.ContentType = "application/json; charset=utf-8";
-        //        req.Credentials = new NetworkCredential(Username, Password);
+            try
+            {
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+                req.Method = "DELETE";
+                req.ContentType = "application/x-www-form-urlencoded";
+                string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
+                req.Headers.Add("Authorization", "Basic " + encodedAuth);
+                req.ContentLength = 0;
 
-        //        using (var streamWriter = new StreamWriter(req.GetRequestStream()))
-        //        {
-        //            streamWriter.Write(jsonPayload);
-        //            streamWriter.Flush();
-        //            streamWriter.Close();
-        //        }
-
-        //        HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
-        //        result = response.StatusCode;
-        //        if (result == HttpStatusCode.OK)
-        //        {
-        //            objStream = response.GetResponseStream();
-        //            objReader = new StreamReader(objStream);
-        //            string respData = objReader.ReadToEnd();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message);
-        //    }
-        //    return result;
-        //}
+                HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
+                result = response.StatusCode;
+                if (result == HttpStatusCode.OK)
+                {
+                    objStream = response.GetResponseStream();
+                    objReader = new StreamReader(objStream);
+                    string respData = objReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return result;
+        }
 
         #region webB rest for wifi onboarding
 
@@ -301,7 +394,7 @@ namespace DeviceCenter
                 {
                     string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/interfaces";
 
-                    var response = await RestHelper.MakeRequest(url, true, Username, Password);
+                    var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
@@ -320,7 +413,7 @@ namespace DeviceCenter
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + NetworkingApiUrl + "ipconfig";
 
-            var response = await RestHelper.MakeRequest(url, true, Username, Password);
+            var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 return RestHelper.ProcessJsonResponse(response, typeof(IPConfigurations)) as IPConfigurations;
@@ -336,7 +429,7 @@ namespace DeviceCenter
 
             try
             {
-                var response = await RestHelper.MakeRequest(url, true, Username, Password);
+                var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     return RestHelper.ProcessJsonResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
@@ -360,7 +453,7 @@ namespace DeviceCenter
             url = url + "&createprofile=" + "yes";
             url = url + "&key=" + RestHelper.Encode64(ssidPassword);
 
-            await RestHelper.MakeRequest(url, false, Username, Password);
+            await RestHelper.GetOrPostRequestAsync(url, false, Username, Password);
 
             return string.Empty;
         }
