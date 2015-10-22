@@ -10,21 +10,29 @@ using System.Threading.Tasks;
 namespace DeviceCenter
 {
     [DataContract]
-    class AppxPackage
+    public class InstalledPackages
     {
-        [DataMember]
+        [DataMember(Name = "InstalledPackages")]
+        public AppxPackage[] Items { get; set; }
+    }
+
+
+    [DataContract]
+    public class AppxPackage
+    {
+        [DataMember(Name = "Name")]
         public string Name { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "PackageFamilyName")]
         public string PackageFamilyName { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "PackageFullName")]
         public string PackageFullName { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "PackageOrigin")]
         public string PackageOrigin { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "PackageRelativeId")]
         public string PackageRelativeId { get; set; }
     }
 }

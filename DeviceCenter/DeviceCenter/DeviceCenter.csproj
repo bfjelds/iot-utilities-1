@@ -133,7 +133,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AppxPackage.cs" />
+    <Compile Include="DataContract\AppxPackage.cs" />
     <Compile Include="AppInformation.cs" />
     <Compile Include="ButtonAppInfo.xaml.cs">
       <DependentUpon>ButtonAppInfo.xaml</DependentUpon>

@@ -34,12 +34,13 @@ namespace DeviceCenter
             //bool x = await webbRequest.SetDeviceNameAsync("tengtestWohaha");
             //bool y = await webbRequest.SetPasswordAsync("p@ssw0rd", "password1");
             //bool z = await webbRequest.Restart();
-            string[] files = new String[4];
-            files[0] = @"InternetRadioHeaded_1.0.0.0_ARM.appx";
-            files[1] = @"InternetRadioHeaded_1.0.0.0_ARM.cer";
-            files[2] = @"Microsoft.NET.Native.Runtime.1.1.appx";
-            files[3] = @"Microsoft.VCLibs.ARM.14.00.appx";
-            bool x = await webbRequest.InstallAppxAsync(files);
+            //string[] files = new String[4];
+            //files[0] = @"InternetRadioHeaded_1.0.1.0_ARM.appx";
+            //files[1] = @"InternetRadioHeaded_1.0.1.0_ARM.cer";
+            //files[2] = @"Microsoft.NET.Native.Runtime.1.1.appx";
+            //files[3] = @"Microsoft.VCLibs.ARM.14.00.appx";
+            //bool x = await webbRequest.InstallAppxAsync(files, @"C:\Users\tenglu\Documents\DeviceCenterSamples\DeployFolder\arm\");
+            bool y = await webbRequest.StopApp("InternetRadioHeaded");
         }
     }
 }
