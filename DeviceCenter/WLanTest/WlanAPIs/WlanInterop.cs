@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WLanTest
+namespace DeviceCenter.WlanAPIs
 {
     public class WlanInterop
     {
@@ -68,6 +68,11 @@ namespace WLanTest
             [In, Out] StringBuilder stringBuffer,
             IntPtr pReserved
         );
+
+        [DllImport("wlanapi.dll")]
+        public static extern int WlanCloseHandle(
+            [In] IntPtr clientHandle,
+            [In, Out] IntPtr pReserved);
         #endregion
 
         #region Enum
@@ -641,9 +646,12 @@ namespace WLanTest
             /// </summary>
             uint reserved;
 
-            public string GetStringForSSID()
+            public string SSIDString
             {
-                return Encoding.ASCII.GetString(dot11Ssid.SSID, 0, (int)dot11Ssid.SSIDLength);
+                get
+                {
+                    return Encoding.ASCII.GetString(dot11Ssid.SSID, 0, (int)dot11Ssid.SSIDLength);
+                }
             }
         }
 

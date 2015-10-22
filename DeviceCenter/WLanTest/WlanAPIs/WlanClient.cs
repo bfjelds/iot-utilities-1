@@ -6,9 +6,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WLanTest;
 
-namespace WLanTest
+namespace DeviceCenter.WlanAPIs
 {
     public class WlanClient
     {
@@ -16,22 +15,32 @@ namespace WLanTest
         {
             _interfaces = new List<WlanInterface>();
 
-            WlanInterop.WlanOpenHandle(WlanInterop.WLAN_API_VERSION_2_0, IntPtr.Zero, out _negotiatedVersion, out _nativeHandle);
+            Util.ThrowIfFail(
+                WlanInterop.WlanOpenHandle(WlanInterop.WLAN_API_VERSION_2_0, IntPtr.Zero, out _negotiatedVersion, out _nativeHandle),
+                "WlanOpenHandle"
+            );
 
             WlanInterop.WlanNotificationSource prevSrc;
             _wlanNotificationCallback = new WlanInterop.WlanNotificationCallbackDelegate(OnWlanNotification);
 
-            WlanInterop.WlanRegisterNotification(
-                _nativeHandle,
-                WlanInterop.WlanNotificationSource.All, 
-                false,
-                _wlanNotificationCallback, 
-                IntPtr.Zero, 
-                IntPtr.Zero, 
-                out prevSrc);
+            Util.ThrowIfFail(
+                WlanInterop.WlanRegisterNotification(
+                    _nativeHandle,
+                    WlanInterop.WlanNotificationSource.All,
+                    false,
+                    _wlanNotificationCallback,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    out prevSrc),
+                "WlanRegisterNotification"
+                );
 
             IntPtr ifaceList;
-            WlanInterop.WlanEnumInterfaces(_nativeHandle, IntPtr.Zero, out ifaceList);
+            Util.ThrowIfFail(
+                WlanInterop.WlanEnumInterfaces(_nativeHandle, IntPtr.Zero, out ifaceList),
+                "WlanEnumInterfaces"
+                );
+
             try
             {
                 WlanInterop.WlanInterfaceInfoList header =
@@ -47,10 +56,6 @@ namespace WLanTest
                     _interfaces.Add(new WlanInterface(this, info));
                 }
             }
-            catch(Exception ex)
-            {
-                Debug.WriteLine(ex.ToString());
-            }
             finally
             {
                 WlanInterop.WlanFreeMemory(ifaceList);
@@ -59,7 +64,7 @@ namespace WLanTest
 
         ~WlanClient()
         {
-            // WlanInterop.WlanCloseHandle(_nativeHandle, IntPtr.Zero);
+            WlanInterop.WlanCloseHandle(_nativeHandle, IntPtr.Zero);
         }
 
         public List<WlanInterface> Interfaces
@@ -110,7 +115,7 @@ namespace WLanTest
 
                                 string notificationCode = Enum.GetName(typeof(WlanInterop.WlanNotificationCodeAcm), notifyData.notificationCode);
                                 string rcStr = Enum.GetName(typeof(WlanInterop.WlanReasonCode), connNotifyData.Value.wlanReasonCode);
-                                Console.WriteLine("ACM [{0}] [{1}]", notificationCode, rcStr);
+                                Debug.WriteLine(string.Format("ACM [{0}] [{1}]", notificationCode, rcStr));
                                 /*if (connNotifyData.HasValue)
                                     if (wlanIface != null)
                                         wlanIface.OnWlanConnection(notifyData, connNotifyData.Value);
@@ -119,7 +124,7 @@ namespace WLanTest
                             break;
                         case WlanInterop.WlanNotificationCodeAcm.ScanFail:
                             {
-                                Console.WriteLine("ACM [{0}] [{1}]", "ScanFail", "");
+                                Debug.WriteLine(string.Format("ACM [{0}] [{1}]", "ScanFail", ""));
                                 
                                 int expectedSize = Marshal.SizeOf(typeof(uint));
                                 if (notifyData.dataSize >= expectedSize)
@@ -152,7 +157,7 @@ namespace WLanTest
 
                             string notificationCode = Enum.GetName(typeof(WlanInterop.WlanNotificationCodeAcm), notifyData.notificationCode);
                             string rcStr = Enum.GetName(typeof(WlanInterop.WlanReasonCode), connNotifyData.Value.wlanReasonCode);
-                            Console.WriteLine("MSM [{0}] [{1}]", notificationCode, rcStr);
+                            Debug.WriteLine(string.Format("MSM [{0}] [{1}]", notificationCode, rcStr));
 
                             /*if (connNotifyData.HasValue)
                                 if (wlanIface != null)
