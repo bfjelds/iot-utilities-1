@@ -7,6 +7,7 @@ using System.Management;
 using System.Windows.Controls;
 using System.IO;
 using System.ComponentModel;
+using System.Windows.Threading;
 
 namespace DeviceCenter
 {
@@ -37,8 +38,7 @@ namespace DeviceCenter
             ReadLkgFile();
             RefreshDriveList();
             this.usbhandler = new EventArrivedEventHandler(USBAddedorRemoved);
-            DriveInfo.AddInsertUSBHandler(usbhandler);
-            DriveInfo.AddRemoveUSBHandler(usbhandler);
+            DriveInfo.AddUSBDetectionHandler(usbhandler);      
         }
 
         private async void ReadLkgFile()
@@ -90,7 +90,7 @@ namespace DeviceCenter
         }      
 
 
-        private async void RefreshDriveList()
+        private async Task RefreshDriveList()
         {  
             RemoveableDevicesComboBox.IsEnabled = false;
 
@@ -124,9 +124,12 @@ namespace DeviceCenter
             buttonFlash.IsEnabled = UpdateStartState();
         }
 
-        public void USBAddedorRemoved(object sender, EventArgs e)
+        public async void USBAddedorRemoved(object sender, EventArgs e)
         {
-            MessageBox.Show("USB Added or Removed");
+            await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () => 
+            {
+                await RefreshDriveList();
+            }));
         }
 
         private Process _dismProcess = null;
