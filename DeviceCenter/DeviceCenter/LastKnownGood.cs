@@ -101,9 +101,7 @@ namespace DeviceCenter
         /// Deserialize info in json.        
         /// </summary>
         public void ReadFile()
-        {            
-            string fileContent; 
-            
+        {
             if (!File.Exists(LKGFileName))
             {
                 Debug.WriteLine("LkgInsider: LKG file not found");
@@ -147,12 +145,13 @@ namespace DeviceCenter
 
             try
             {
-                using (StreamReader sr = File.OpenText(LKGFileName))
+                string fileContent;
+                using (var sr = File.OpenText(LKGFileName))
                 {
                     fileContent = sr.ReadToEnd();
                 }
 
-                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(LKGAllPlatforms));
+                var jsonSerializer = new DataContractJsonSerializer(typeof(LKGAllPlatforms));
 
                 lkgAllPlatforms = (LKGAllPlatforms)jsonSerializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(fileContent)));
             }

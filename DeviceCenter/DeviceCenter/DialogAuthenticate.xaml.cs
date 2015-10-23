@@ -4,7 +4,11 @@
     using System.Collections.Generic;
     using System.Windows;
     using System.Security.Cryptography;
+    using LoginInfoDictionary = System.Collections.Generic.Dictionary<string, UserInfo>;
 
+    /// <summary>
+    /// WebB login info for specified DeviceName
+    /// </summary>
     public class UserInfo
     {
         public UserInfo()
@@ -26,33 +30,42 @@
             get
             {
                 return System.Text.Encoding.UTF8.GetString(
-                                    ProtectedData.Unprotect(EncryptedPassword, null, DataProtectionScope.CurrentUser));
+                                    ProtectedData.Unprotect(SecurePassword, null, DataProtectionScope.CurrentUser));
             }
 
 
             set
             {
-                EncryptedPassword = ProtectedData.Protect(System.Text.Encoding.UTF8.GetBytes(value), null, DataProtectionScope.CurrentUser);
+                SecurePassword = ProtectedData.Protect(System.Text.Encoding.UTF8.GetBytes(value), null, DataProtectionScope.CurrentUser);
             }
         }
-        
-        public bool? SavePassword { get; set; }
 
         /// <summary>
-        /// Password stored encrypted
+        /// Returns encrypted password
         /// </summary>
-        private byte[] EncryptedPassword; 
-    }
+        public byte[] SecurePassword { get; set; }
 
+        public bool? SavePassword { get; set; }
+    }
+    
     /// <summary>
     /// Interaction logic for DialogAuthenticate.xaml
     /// </summary>
     public partial class DialogAuthenticate : Window
     {
-        static Dictionary<string, UserInfo> savedPasswords = new Dictionary<string, UserInfo>();
+        // tbd - away from static?
+        static LoginInfoDictionary savedPasswords = new Dictionary<string, UserInfo>();
+        static bool firstLoaded = false;
 
         public static bool GetSavedPassword(string deviceName, out UserInfo info)
         {
+            // tbd - a hack. should be properly loaded 
+            if (firstLoaded != true)
+            {
+                savedPasswords = AppData.LoadWebBUserInfo();
+                firstLoaded = true;
+            }
+
             return savedPasswords.TryGetValue(deviceName, out info);
         }
 
@@ -77,20 +90,28 @@
 
         private void buttonOk_Click(object sender, RoutedEventArgs e)
         {
-            UserInfo info = this.DataContext as UserInfo;
+            var info = this.DataContext as UserInfo;
 
-            info.UserName = editUserName.Text;
-            info.Password = editPassword.Password;
-            info.SavePassword = checkboxSavePassword.IsChecked;
+            if (info != null)
+            {
+                info.UserName = editUserName.Text;
+                info.Password = editPassword.Password;
+                info.SavePassword = checkboxSavePassword.IsChecked;
 
-            if (info.SavePassword.HasValue && info.SavePassword.Value)
-                savedPasswords.Add(info.DeviceName, info);
+                if (info.SavePassword.HasValue && info.SavePassword.Value)
+                {
+                    savedPasswords.Add(info.DeviceName, info);
+                }
+                else if (savedPasswords.ContainsKey(info.DeviceName))
+                {
+                    savedPasswords.Remove(info.DeviceName);
+                }
 
-            else if (savedPasswords.ContainsKey(info.DeviceName))
-                savedPasswords.Remove(info.DeviceName);
+                // store to permanent storage
+                AppData.StoreWebBUserInfo(savedPasswords);
+            }
 
             this.DialogResult = true;
-
             this.Close();
         }
 
