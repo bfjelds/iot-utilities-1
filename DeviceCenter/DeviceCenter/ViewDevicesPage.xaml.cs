@@ -323,7 +323,15 @@ namespace DeviceCenter
 
         private void ButtonPortal_Click(object sender, MouseButtonEventArgs e)
         {
-            DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
+            FrameworkElement frameworkElement = sender as FrameworkElement;
+
+            DiscoveredDevice device = null;
+
+            if (frameworkElement != null)
+            {
+                device = frameworkElement.DataContext as DiscoveredDevice;
+            }
+
             if (device != null && device.Manage != null)
             {
                 App.TelemetryClient.TrackEvent("PortalButtonClick", new Dictionary<string, string>()
@@ -342,7 +350,15 @@ namespace DeviceCenter
 
         private void ButtonManage_Click(object sender, MouseButtonEventArgs e)
         {
-            DiscoveredDevice device = this.ListViewDevices.SelectedItem as DiscoveredDevice;
+            FrameworkElement frameworkElement = sender as FrameworkElement;
+
+            DiscoveredDevice device = null;
+
+            if (frameworkElement != null)
+            {
+                device = frameworkElement.DataContext as DiscoveredDevice;
+            }
+
             if (device != null)
             {
                 App.TelemetryClient.TrackEvent("ManageButtonClick", new Dictionary<string, string>()
@@ -359,7 +375,15 @@ namespace DeviceCenter
 
         private void ButtonAppInstall_Click(object sender, MouseButtonEventArgs e)
         {
-            DiscoveredDevice device = this.ListViewDevices.SelectedItem as DiscoveredDevice;
+            FrameworkElement frameworkElement = sender as FrameworkElement;
+
+            DiscoveredDevice device = null;
+
+            if (frameworkElement != null)
+            {
+                device = frameworkElement.DataContext as DiscoveredDevice;
+            }
+
             if (device != null)
             {
                 App.TelemetryClient.TrackEvent("AppInstallButtonClick", new Dictionary<string, string>()
