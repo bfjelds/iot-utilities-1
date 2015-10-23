@@ -39,17 +39,14 @@ namespace DeviceCenter
             //IPAddress ip = IPAddress.Parse("10.125.140.162");
             //WebBRest webbRequest = new WebBRest(ip, "Administrator", "Eiger!23");
 
-            var installedApps = await webbRequest.GetInstalledPackagesAsync();
-            foreach (var app in installedApps.Items)
+            if (await webbRequest.IsAppRunning(this.AppItem.AppName))
             {
-                if (app.Name == this.AppItem.AppName)
-                {
-                    PanelDeployed.Visibility = Visibility.Visible;
-                    return;
-                }
+                PanelDeployed.Visibility = Visibility.Visible;
             }
-
-            PanelDeploy.Visibility = Visibility.Visible;
+            else
+            {
+                PanelDeploy.Visibility = Visibility.Visible;
+            }
         }
 
         private async void ButtonDeploy_Click(object sender, RoutedEventArgs e)
@@ -91,6 +88,25 @@ namespace DeviceCenter
             PanelDeploying.Visibility = Visibility.Collapsed;
             PanelDeployed.Visibility = Visibility.Collapsed;
             PanelDeploy.Visibility = Visibility.Visible;
+        }
+
+        private async void ButtonStopApp_Click(object sender, RoutedEventArgs e)
+        {
+            IPAddress ip = IPAddress.Parse(this.device.IPAddress);
+            WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
+
+            if (await webbRequest.StopAppAsync(this.AppItem.AppName))
+            {
+                PanelDeployed.Visibility = Visibility.Collapsed;
+                PanelDeploying.Visibility = Visibility.Collapsed;
+                PanelDeploy.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                PanelDeploying.Visibility = Visibility.Collapsed;
+                PanelDeployed.Visibility = Visibility.Collapsed;
+                PanelDeploy.Visibility = Visibility.Visible;
+            }
         }
     }
 }

@@ -283,7 +283,7 @@ namespace DeviceCenter
             return (result == HttpStatusCode.OK);
         }
 
-        public async Task<bool> StopAppAsync(string name)
+        public async Task<bool> StopAppAsync(string appName)
         {
             string url = String.Empty;
             bool isFound = false;
@@ -291,7 +291,7 @@ namespace DeviceCenter
             var installedPackages = await GetInstalledPackagesAsync();
             foreach (AppxPackage app in installedPackages.Items)
             {
-                if (app.Name == name)
+                if (app.Name == appName)
                 {
                     isFound = true;
                     url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppTaskUrl
