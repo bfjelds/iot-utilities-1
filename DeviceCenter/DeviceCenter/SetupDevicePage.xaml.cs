@@ -129,7 +129,7 @@ namespace DeviceCenter
             MessageBox.Show("USB Added or Removed");
         }
 
-        private Process dismProcess = null;
+        private Process _dismProcess = null;
 
         /// <summary>
         /// Called when user clicks Continue to flash image to SD card. 
@@ -152,37 +152,39 @@ namespace DeviceCenter
                     Message = Strings.Strings.NewDeviceAlertMessage + "\n" + Strings.Strings.NewDeviceAlertMessage2
                 };
 
-                bool? confirmation = dlg.ShowDialog();
+                var confirmation = dlg.ShowDialog();
+
                 if (confirmation.HasValue && confirmation.Value)
                 {
                     // Flash it.
-                    BuildInfo build = ComboBoxIotBuild.SelectedItem as BuildInfo;
+                    var build = ComboBoxIotBuild.SelectedItem as BuildInfo;
                     Debug.Assert(build != null);
 
                     try
                     {
-                        Process dismProcess = Dism.FlashFFUImageToDrive(build.Path, driveInfo);
+                        _dismProcess = Dism.FlashFFUImageToDrive(build.Path, driveInfo);
+                        _dismProcess.EnableRaisingEvents = true;
+                        _dismProcess.Exited += DismProcess_Exited;
                     }
                     catch (Exception ex)
                     {   
                         Debug.WriteLine(ex.ToString());
 
-                        if (ex is FileNotFoundException)
+                        var exception = ex as FileNotFoundException;
+
+                        if (exception != null)
                         {
                             // the app name as caption
-                            string errorCaption = Strings.Strings.AppNameDisplay;   
+                            var errorCaption = Strings.Strings.AppNameDisplay;   
 
-                            // show the filename
-                            string errorMsg = new Win32Exception(2).Message + ": " + ((FileNotFoundException)ex).FileName;
+                            // show the filename, use standard windows error
+                            var errorMsg = new Win32Exception(2).Message + ": " + exception.FileName;
 
                             MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
                             return;
                         }
                     }
-
-                    dismProcess.EnableRaisingEvents = true;
-
-                    dismProcess.Exited += DismProcess_Exited;
 
                     var deviceType = ComboBoxDeviceType.SelectedItem as LKGPlatform;
 
@@ -206,10 +208,10 @@ namespace DeviceCenter
                 // Measure how long it took to flash the image
                 App.TelemetryClient.TrackMetric("FlashSDCardTimeMs", App.GlobalStopwatch.ElapsedMilliseconds - flashStartTime);
 
-                if (dismProcess != null)
+                if (_dismProcess != null)
                 {
-                    dismProcess.Dispose();
-                    dismProcess = null;
+                    _dismProcess.Dispose();
+                    _dismProcess = null;
                 }
             }
         }
@@ -218,9 +220,9 @@ namespace DeviceCenter
         {
             lock (dismLock)
             {
-                if (dismProcess != null)
+                if (_dismProcess != null)
                 {
-                    NativeMethods.GenerateConsoleCtrlEvent(NativeMethods.CTRL_BREAK_EVENT, (uint)dismProcess.Id);
+                    NativeMethods.GenerateConsoleCtrlEvent(NativeMethods.CTRL_BREAK_EVENT, (uint)_dismProcess.Id);
 
                     App.TelemetryClient.TrackEvent("FlashSDCardCancel");
                 }
@@ -249,7 +251,7 @@ namespace DeviceCenter
             if (!RemoveableDevicesComboBox.IsEnabled || !ComboBoxDeviceType.IsEnabled)
                 return false;
 
-            if (dismProcess != null)
+            if (_dismProcess != null)
                 return false;
 
             // guards for invalid data
