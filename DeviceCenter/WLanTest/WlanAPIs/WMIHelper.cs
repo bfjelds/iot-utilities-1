@@ -35,8 +35,8 @@ namespace DeviceCenter.WlanAPIs
                 }
                 catch(Exception ex)
                 {
-                    Debug.WriteLine(string.Format("Error occurred parsing SettingID - [{0}]", settingID));
-                    Debug.WriteLine(string.Format("  {0}", ex.Message));
+                    Util.Error("Error occurred parsing SettingID - [{0}]", settingID);
+                    Util.Error("  {0}", ex.Message);
                 }
             }
 
@@ -76,12 +76,12 @@ namespace DeviceCenter.WlanAPIs
 
         public void DebugPrint()
         {
-            Debug.WriteLine("----------------");
+            Util.Info("----------------");
             foreach (PropertyData prop in _networkAdapterMO.Properties)
             {
-                Debug.WriteLine(string.Format("{0}: {1}", prop.Name, prop.Value));
+                Util.Info("{0}: {1}", prop.Name, prop.Value);
             }
-            Debug.WriteLine("----------------");
+            Util.Info("----------------");
         }
 
         private WMIHelper()
