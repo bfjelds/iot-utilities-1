@@ -354,5 +354,23 @@ namespace DeviceCenter
                 _navigationFrame.Navigate(new PageDeviceConfiguration(_navigationFrame, device));
             }
         }
+
+        private void ButtonAppInstall_Click(object sender, MouseButtonEventArgs e)
+        {
+            DiscoveredDevice device = this.ListViewDevices.SelectedItem as DiscoveredDevice;
+            if (device != null)
+            {
+                App.TelemetryClient.TrackEvent("ButtonManage_Click", new Dictionary<string, string>()
+                {
+                    { "DeviceId", device.UniqueId.ToString() },
+                    { "DeviceArchitecture", device.Architecture },
+                    { "DeviceOSVersion", device.OSVersion },
+                    { "DeviceModel", device.DeviceModel }
+                });
+
+                _navigationFrame.Navigate(new SamplesPage(_navigationFrame, device));
+            }
+        }
+
     }
 }

@@ -33,18 +33,15 @@
         </Grid>
         <StackPanel Margin="0 20 0 0">
             <TextBlock Text="{x:Static props:Strings.SamplesRun}" FontSize="20" TextWrapping="Wrap"  Margin="4" VerticalAlignment="Top"/>
-            <TextBlock Text="{x:Static props:Strings.SamplesDeviceLabel}" TextWrapping="Wrap"  Margin="4"/>
-            <ComboBox x:Name="comboBoxDevices" Width="200" HorizontalAlignment="Left" Margin="20 4">
-            </ComboBox>
             <StackPanel x:Name="PanelDeploy">
-                <Button x:Name="ButtonDeploy" Padding="30 0" HorizontalAlignment="Left" Margin="20 4" Content="{x:Static props:Strings.SamplesDeployAndRunButton}" Click="ButtonDeploy_Click" />
+                <Button x:Name="ButtonDeploy" Padding="30 6" HorizontalAlignment="Left" Margin="0 4" Content="{x:Static props:Strings.SamplesDeployAndRunButton}" Click="ButtonDeploy_Click" />
             </StackPanel>
-            <StackPanel x:Name="PanelDeploying" Width="200" HorizontalAlignment="Left" Margin="20 4" >
-                <Button x:Name="ButtonStopDeploy" Padding="30 0"  HorizontalAlignment="Left" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopDeploy_Click" />
+            <StackPanel x:Name="PanelDeploying" Width="200" HorizontalAlignment="Left" Margin="0 4" >
+                <Button x:Name="ButtonStopDeploy" Padding="30 6"  HorizontalAlignment="Left" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopDeploy_Click" />
                 <TextBlock Text="{x:Static props:Strings.SamplesDeploying}" Margin="0 4" TextWrapping="Wrap" />
                 <ProgressBar x:Name="progressWaiting" IsIndeterminate="True" />
             </StackPanel>
-            <StackPanel x:Name="PanelDeployed" Width="200" HorizontalAlignment="Left" Margin="20 4" >
+            <StackPanel x:Name="PanelDeployed" Width="200" HorizontalAlignment="Left" Margin="0 4" >
                 <TextBlock Text="{x:Static props:Strings.SamplesAppRunning}" Margin="0 4" TextWrapping="Wrap" />
             </StackPanel>
         </StackPanel>

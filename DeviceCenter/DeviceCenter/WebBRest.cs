@@ -25,6 +25,7 @@ namespace DeviceCenter
         private static string ControlApiUrl { get; } = "/api/control/";
         private static string NetworkingApiUrl { get; } = "/api/networking/";
         private static string AppxApiUrl { get; } = "/api/appx/packagemanager/";
+        private static string AppTaskUrl { get; } = "/api/taskmanager/app";
         private static string HttpUrlPrfx { get; } = "http://";
 
         public WebBRest(IPAddress ip, string username, string password)
@@ -93,129 +94,208 @@ namespace DeviceCenter
             return true;
         }
 
-        public async Task<bool> InstallAppxAsync(string[] fileNames)
+        public async Task<bool> InstallAppxAsync(string appName, IEnumerable<FileInfo> files)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
-            url += fileNames[0];
+            url += files.First().Name;
 
             string boundary = "-----------------------" + DateTime.Now.Ticks.ToString("x");
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Accept = "*/*";
             request.ContentType = "multipart/form-data; boundary=" + boundary;
-            request.Referer = @"http://10.125.140.92:8080/AppManager.htm";
             request.Method = "POST";
             request.KeepAlive = true;
             string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
             request.Headers.Add("Authorization", "Basic " + encodedAuth);
 
-            Stream memStream = new MemoryStream();
-
-            byte[] boundaryBytesMiddle = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
-            byte[] boundaryBytesLast = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
-            memStream.Write(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
-
-            string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
-
-            // TODO: Determine the way to load the file path
-            string path = @"C:\Users\tenglu\Documents\DeployTestAppx\InternetRadio\";
-
-            for (int i = 0; i < fileNames.Length; i++)
+            using (Stream memStream = new MemoryStream())
             {
-                string headerContentType = (fileNames[i].Substring(fileNames[i].Length - 4) == ".cer") ? "application/x-x509-ca-cert" : "application/x-zip-compressed";
-                string header = String.Format(headerTemplate, fileNames[i], fileNames[i], headerContentType);
-                byte[] headerBytes = Encoding.UTF8.GetBytes(header);
-                memStream.Write(headerBytes, 0, headerBytes.Length);
+                byte[] boundaryBytesMiddle = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+                byte[] boundaryBytesLast = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
+                await memStream.WriteAsync(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
 
-                FileStream fileStream = new FileStream(path + fileNames[i], FileMode.Open, FileAccess.Read);
-                byte[] buffer = new byte[1024];
-                int bytesRead = 0;
-                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
+
+                int count = files.Count();
+                foreach (var file in files)
                 {
-                    memStream.Write(buffer, 0, bytesRead);
+                    string headerContentType = (file.Extension == ".cer") ? "application/x-x509-ca-cert" : "application/x-zip-compressed";
+                    string header = String.Format(headerTemplate, file.Name, file.Name, headerContentType);
+                    byte[] headerBytes = Encoding.UTF8.GetBytes(header);
+                    await memStream.WriteAsync(headerBytes, 0, headerBytes.Length);
+
+                    using (FileStream fileStream = file.OpenRead())
+                    {
+                        await fileStream.CopyToAsync(memStream);
+
+                        if (--count > 0)
+                        {
+                            await memStream.WriteAsync(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
+                        }
+                        else
+                        {
+                            await memStream.WriteAsync(boundaryBytesLast, 0, boundaryBytesLast.Length);
+                        }
+                    }
                 }
 
-                if (i < fileNames.Length - 1)
-                {
-                    memStream.Write(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
-                }
-                else
-                {
-                    memStream.Write(boundaryBytesLast, 0, boundaryBytesLast.Length);
-                }
+                request.ContentLength = memStream.Length;
 
-                fileStream.Close();
+                using (Stream requestStream = await request.GetRequestStreamAsync())
+                {
+                    memStream.Position = 0;
+                    await memStream.CopyToAsync(requestStream);
+                }
             }
 
-            request.ContentLength = memStream.Length;
-
-            Stream requestStream = request.GetRequestStream();
-
-            memStream.Position = 0;
-            byte[] tempBuffer = new byte[memStream.Length];
-            memStream.Read(tempBuffer, 0, tempBuffer.Length);
-            memStream.Close();
-            requestStream.Write(tempBuffer, 0, tempBuffer.Length);
-            requestStream.Close();
+            // wait 3 seconds to let webb install it
+            await Task.Delay(3000);
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync());
                 HttpStatusCode result = HttpStatusCode.BadRequest;
-                result = response.StatusCode;
-                Stream stream = response.GetResponseStream();
-                StreamReader sr = new StreamReader(stream);
-                string respData = sr.ReadToEnd();
 
-                response.Close();
-                request = null;
-                response = null;
+                using (HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync()))
+                {
+                    result = response.StatusCode;
+
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        using (StreamReader sr = new StreamReader(stream))
+                        {
+                            Debug.WriteLine(await sr.ReadToEndAsync());
+                        }
+                    }
+                }
 
                 if (result == HttpStatusCode.Accepted)
                 {
-                    Thread.Sleep(20000);
-                    bool x = await PollInstallState();
-                    if (x)
+                    if (await PollInstallStateAsync())
                     {
-                        // TODO: start app
+                        await Task.Delay(3000);
+
+                        var installedPackages = await GetInstalledPackagesAsync();
+                        foreach (AppxPackage app in installedPackages.Items)
+                        {
+                            if (app.Name == appName)
+                            {
+                                return await StartAppAsync(app.PackageRelativeId, app.PackageFullName);
+                            }
+                        }
                     }
-                    return true;
-                }
-                else
-                {
-                    return false;
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> PollInstallStateAsync()
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "state";
+            HttpStatusCode result = HttpStatusCode.BadRequest ;
+
+            while (result != HttpStatusCode.NotFound && result != HttpStatusCode.OK)
+            {
+                try
+                {
+                    var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
+                    result = response.StatusCode;
+                    if (response.StatusCode == HttpStatusCode.NoContent)
+                    {
+                        await Task.Delay(3000);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    return false;
+                }
             }
 
             return true;
         }
 
-        public async Task<bool> PollInstallState()
+        public async Task<InstalledPackages> GetInstalledPackagesAsync()
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "state";
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "packages";
             try
             {
-                var response = await RestHelper.MakeRequest(url, true, Username, Password);
+                var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return true;
+                    return RestHelper.ProcessJsonResponse(response, typeof(InstalledPackages)) as InstalledPackages;
                 }
-                else if (response.StatusCode == HttpStatusCode.NoContent)
-                {
-                    return false;
-                }
-                else
-                {
-                    throw new WebException("Bad response when getting deployment status.");
-                }
+            }
+            catch (Exception wex)
+            {
+                // expected error
+                Debug.WriteLine(wex);
+            }
+
+            return new InstalledPackages();
+        }
+
+        public async Task<bool> StartAppAsync(string appid, string package)
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppTaskUrl
+                         + "?appid=" + RestHelper.Encode64(appid)
+                         + "&package=" + RestHelper.Encode64(package);
+
+            HttpStatusCode result = HttpStatusCode.BadRequest;
+            try
+            {
+                result = await PostRequestAsync(url);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                return false;
+            }
+
+            return (result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> StopAppAsync(string name)
+        {
+            string url = String.Empty;
+            bool isFound = false;
+
+            var installedPackages = await GetInstalledPackagesAsync();
+            foreach (AppxPackage app in installedPackages.Items)
+            {
+                if (app.Name == name)
+                {
+                    isFound = true;
+                    url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppTaskUrl
+                         + "?package=" + RestHelper.Encode64(app.PackageFullName);
+                }
+            }
+            if (!isFound)
+            {
+                throw new ArgumentException("Application name is not valid!");
+            }
+
+            HttpStatusCode result = HttpStatusCode.BadRequest;
+            try
+            {
+                result = await DeleteRequestAsync(url);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            if (result == HttpStatusCode.OK)
+            {
+                return true;
+            }
+            else
+            {
                 return false;
             }
         }
@@ -252,42 +332,37 @@ namespace DeviceCenter
             return result;
         }
 
-        //private async Task<HttpStatusCode> PostRequestAsync(string url, string jsonPayload)
-        //{
-        //    Stream objStream = null;
-        //    StreamReader objReader = null;
-        //    Debug.WriteLine(url);
-        //    HttpStatusCode result = HttpStatusCode.BadRequest;
+        private async Task<HttpStatusCode> DeleteRequestAsync(string url)
+        {
+            Stream objStream = null;
+            StreamReader objReader = null;
+            Debug.WriteLine(url);
+            HttpStatusCode result = HttpStatusCode.BadRequest;
 
-        //    try
-        //    {
-        //        HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
-        //        req.Method = "POST";
-        //        req.ContentType = "application/json; charset=utf-8";
-        //        req.Credentials = new NetworkCredential(Username, Password);
+            try
+            {
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+                req.Method = "DELETE";
+                req.ContentType = "application/x-www-form-urlencoded";
+                string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
+                req.Headers.Add("Authorization", "Basic " + encodedAuth);
+                req.ContentLength = 0;
 
-        //        using (var streamWriter = new StreamWriter(req.GetRequestStream()))
-        //        {
-        //            streamWriter.Write(jsonPayload);
-        //            streamWriter.Flush();
-        //            streamWriter.Close();
-        //        }
-
-        //        HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
-        //        result = response.StatusCode;
-        //        if (result == HttpStatusCode.OK)
-        //        {
-        //            objStream = response.GetResponseStream();
-        //            objReader = new StreamReader(objStream);
-        //            string respData = objReader.ReadToEnd();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine(ex.Message);
-        //    }
-        //    return result;
-        //}
+                HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
+                result = response.StatusCode;
+                if (result == HttpStatusCode.OK)
+                {
+                    objStream = response.GetResponseStream();
+                    objReader = new StreamReader(objStream);
+                    string respData = objReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return result;
+        }
 
         #region webB rest for wifi onboarding
 
@@ -301,7 +376,7 @@ namespace DeviceCenter
                 {
                     string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/interfaces";
 
-                    var response = await RestHelper.MakeRequest(url, true, Username, Password);
+                    var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
@@ -320,7 +395,7 @@ namespace DeviceCenter
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + NetworkingApiUrl + "ipconfig";
 
-            var response = await RestHelper.MakeRequest(url, true, Username, Password);
+            var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 return RestHelper.ProcessJsonResponse(response, typeof(IPConfigurations)) as IPConfigurations;
@@ -336,7 +411,7 @@ namespace DeviceCenter
 
             try
             {
-                var response = await RestHelper.MakeRequest(url, true, Username, Password);
+                var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     return RestHelper.ProcessJsonResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
@@ -360,7 +435,7 @@ namespace DeviceCenter
             url = url + "&createprofile=" + "yes";
             url = url + "&key=" + RestHelper.Encode64(ssidPassword);
 
-            await RestHelper.MakeRequest(url, false, Username, Password);
+            await RestHelper.GetOrPostRequestAsync(url, false, Username, Password);
 
             return string.Empty;
         }

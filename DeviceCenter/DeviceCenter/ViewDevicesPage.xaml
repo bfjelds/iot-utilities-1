@@ -54,6 +54,13 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
+                        <GridViewColumn Header="{x:Static props:Strings.SamplesTitle}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontSize="20" Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonAppInstall_Click" Visibility="{Binding ManageVisible}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>

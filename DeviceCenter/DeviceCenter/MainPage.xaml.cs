@@ -48,11 +48,6 @@
             _NavigationFrame.Navigate(new SetupDevicePage());
         }
 
-        private void buttonSamples_Click(object sender, RoutedEventArgs e)
-        {
-            _NavigationFrame.Navigate(new SamplesPage(_NavigationFrame));
-        }
-
         private void buttonTestOnly_Click(object sender, RoutedEventArgs e)
         {
             _NavigationFrame.Navigate(new PageTestOnly());

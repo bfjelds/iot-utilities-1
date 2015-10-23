@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WlanAPIs", "WlanAPIs\WlanAPIs.csproj", "{5DB87652-C90B-409F-A10E-89022EB931B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WLanTestApp", "WLanTestApp\WLanTestApp.csproj", "{F797801C-23A2-4365-9B86-676FD0D0882D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Debug|x64.Build.0 = Debug|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Debug|x86.Build.0 = Debug|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Release|x64.ActiveCfg = Release|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Release|x64.Build.0 = Release|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Release|x86.ActiveCfg = Release|Any CPU
+		{5DB87652-C90B-409F-A10E-89022EB931B3}.Release|x86.Build.0 = Release|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Debug|x64.Build.0 = Debug|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Debug|x86.Build.0 = Debug|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Release|x64.ActiveCfg = Release|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Release|x64.Build.0 = Release|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Release|x86.ActiveCfg = Release|Any CPU
+		{F797801C-23A2-4365-9B86-676FD0D0882D}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

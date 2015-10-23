@@ -231,7 +231,7 @@ namespace DeviceCenter
         {
         }
 
-        private async void ListViewDevices_Loaded(object sender, RoutedEventArgs e)
+        private void ListViewDevices_Loaded(object sender, RoutedEventArgs e)
         {
         }
 
