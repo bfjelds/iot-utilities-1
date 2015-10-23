@@ -326,7 +326,7 @@ namespace DeviceCenter
             DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
             if (device != null && device.Manage != null)
             {
-                App.TelemetryClient.TrackEvent("ButtonPortal_Click", new Dictionary<string, string>()
+                App.TelemetryClient.TrackEvent("PortalButtonClick", new Dictionary<string, string>()
                 {
                     { "DeviceId", device.UniqueId.ToString() },
                     { "DeviceArchitecture", device.Architecture },
@@ -345,7 +345,7 @@ namespace DeviceCenter
             DiscoveredDevice device = this.ListViewDevices.SelectedItem as DiscoveredDevice;
             if (device != null)
             {
-                App.TelemetryClient.TrackEvent("ButtonManage_Click", new Dictionary<string, string>()
+                App.TelemetryClient.TrackEvent("ManageButtonClick", new Dictionary<string, string>()
                 {
                     { "DeviceId", device.UniqueId.ToString() },
                     { "DeviceArchitecture", device.Architecture },
@@ -362,7 +362,7 @@ namespace DeviceCenter
             DiscoveredDevice device = this.ListViewDevices.SelectedItem as DiscoveredDevice;
             if (device != null)
             {
-                App.TelemetryClient.TrackEvent("ButtonManage_Click", new Dictionary<string, string>()
+                App.TelemetryClient.TrackEvent("AppInstallButtonClick", new Dictionary<string, string>()
                 {
                     { "DeviceId", device.UniqueId.ToString() },
                     { "DeviceArchitecture", device.Architecture },
