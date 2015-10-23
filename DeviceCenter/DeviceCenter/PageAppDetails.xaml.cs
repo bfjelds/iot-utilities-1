@@ -35,9 +35,9 @@ namespace DeviceCenter
         private async void GetAppState()
         {
             IPAddress ip = IPAddress.Parse(this.device.IPAddress);
-            //WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
+            WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
             //IPAddress ip = IPAddress.Parse("10.125.140.162");
-            WebBRest webbRequest = new WebBRest(ip, "Administrator", "Eiger!23");
+            //WebBRest webbRequest = new WebBRest(ip, "Administrator", "Eiger!23");
 
             var installedApps = await webbRequest.GetInstalledPackagesAsync();
             foreach (var app in installedApps.Items)
@@ -59,9 +59,9 @@ namespace DeviceCenter
             PanelDeployed.Visibility = Visibility.Collapsed;
 
             IPAddress ip = IPAddress.Parse(this.device.IPAddress);
-            //WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
+            WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
             //IPAddress ip = IPAddress.Parse("10.125.140.162");
-            WebBRest webbRequest = new WebBRest(ip, "Administrator", "Eiger!23");
+            //WebBRest webbRequest = new WebBRest(ip, "Administrator", "Eiger!23");
 
             AppInformation.ApplicationFiles sourceFiles = this.AppItem.PlatformFiles[device.Architecture];
 
