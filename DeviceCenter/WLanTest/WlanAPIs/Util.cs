@@ -7,7 +7,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WLanTest
+namespace DeviceCenter.WlanAPIs
 {
     public class Util
     {
@@ -134,6 +134,15 @@ namespace WLanTest
                 Debug.WriteLine("Ping failed with exception - " + ex.Message);
             }
             return false;
+        }
+
+        [DebuggerStepThrough]
+        public static void ThrowIfFail(uint errorCode, string method)
+        {
+            if(errorCode != 0)
+            {
+                throw new WLanException(errorCode, method);
+            }
         }
     }
 }

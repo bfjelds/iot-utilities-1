@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WLanTest
+namespace DeviceCenter.WlanAPIs
 {
     public class WlanInterface
     {
@@ -17,12 +17,15 @@ namespace WLanTest
 
         public void Scan()
         {
-            WlanInterop.WlanScan(
-                _client._nativeHandle, 
-                _nativeInterfaceInfo.interfaceGuid, 
-                IntPtr.Zero, 
-                IntPtr.Zero, 
-                IntPtr.Zero);
+            Util.ThrowIfFail(
+                WlanInterop.WlanScan(
+                    _client._nativeHandle,
+                    _nativeInterfaceInfo.interfaceGuid,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    IntPtr.Zero),
+                "WlanScan"
+                );
         }
 
         public List<WlanInterop.WlanAvailableNetwork> GetAvailableNetworkList()
@@ -32,12 +35,15 @@ namespace WLanTest
 
             try
             {
-                WlanInterop.WlanGetAvailableNetworkList(
-                    _client._nativeHandle,
-                    _nativeInterfaceInfo.interfaceGuid,
-                    WlanInterop.WlanGetAvailableNetworkFlags.IncludeAllAdhocProfiles,
-                    IntPtr.Zero,
-                    out availNetListPtr);
+                Util.ThrowIfFail(
+                    WlanInterop.WlanGetAvailableNetworkList(
+                        _client._nativeHandle,
+                        _nativeInterfaceInfo.interfaceGuid,
+                        WlanInterop.WlanGetAvailableNetworkFlags.IncludeAllAdhocProfiles,
+                        IntPtr.Zero,
+                        out availNetListPtr),
+                    "WlanGetAvailableNetworkList"
+                    );
 
                 var availNetListHeader = (WlanInterop.WlanAvailableNetworkList)Marshal.PtrToStructure(
                     availNetListPtr, 
@@ -66,7 +72,6 @@ namespace WLanTest
             WlanInterop.WlanConnectionMode connectionMode,
             WlanInterop.Dot11BssType bssType,
             WlanInterop.WlanAvailableNetwork network,
-            WlanInterop.WlanConnectionFlags flags,
             string password)
         {
             var connectionParams = new WlanInterop.WlanConnectionParameters();
@@ -87,10 +92,23 @@ namespace WLanTest
             Marshal.FreeHGlobal(connectionParams.dot11SsidPtr);
         }
 
+        public void Disconnect()
+        {
+            Util.ThrowIfFail(
+                WlanInterop.WlanDisconnect(
+                    _client._nativeHandle, 
+                    ref _nativeInterfaceInfo.interfaceGuid, 
+                    IntPtr.Zero),
+                "Disconnect"
+                );
+        }
+
         protected void Connect(WlanInterop.WlanConnectionParameters connectionParams)
         {
-            int result = WlanInterop.WlanConnect(_client._nativeHandle, _nativeInterfaceInfo.interfaceGuid, ref connectionParams, IntPtr.Zero);
-            Console.WriteLine(result);
+            Util.ThrowIfFail(
+                WlanInterop.WlanConnect(_client._nativeHandle, _nativeInterfaceInfo.interfaceGuid, ref connectionParams, IntPtr.Zero),
+                "WlanConnect"
+                );
         }
 
         public Guid GUID
