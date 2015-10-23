@@ -11,10 +11,12 @@ namespace DeviceCenter.WlanAPIs
 {
     public class Util
     {
+        public const string WLAN_PROFILE_NAME = "AthensSoftAP";
+
         static readonly string PROFILE_TEMPLATE =
             "<?xml version =\"1.0\" encoding=\"US-ASCII\"?>" +
             "<WLANProfile xmlns =\"http://www.microsoft.com/networking/WLAN/profile/v1\">" +
-                "<name>SampleWPAPSK</name>" +
+                string.Format("<name>{0}</name>", WLAN_PROFILE_NAME) +
                 "<SSIDConfig>" +
                     "<SSID>" +
                         "<name>$ssid</name>" +
@@ -107,7 +109,7 @@ namespace DeviceCenter.WlanAPIs
             return ipStr.StartsWith("192.168");
         }
 
-        public static bool Ping(string ip)
+        public static async Task<bool> Ping(string ip)
         {
             Ping pingSender = new Ping();
             PingOptions options = new PingOptions();
@@ -118,7 +120,7 @@ namespace DeviceCenter.WlanAPIs
             int timeout = 120;
             try
             {
-                PingReply reply = pingSender.Send(ip, timeout, buffer, options);
+                PingReply reply = await pingSender.SendPingAsync(ip, timeout, buffer, options);
                 if (reply.Status == IPStatus.Success)
                 {
                     return true;
@@ -126,13 +128,14 @@ namespace DeviceCenter.WlanAPIs
                 else
                 {
                     string pingStatusText = Enum.GetName(typeof(IPStatus), reply.Status);
-                    Debug.WriteLine("Ping failed - " + pingStatusText);
+                    Info("Ping failed - " + pingStatusText);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Ping failed with exception - " + ex.Message);
+                Info("Ping failed with exception - " + ex.Message);
             }
+
             return false;
         }
 
@@ -141,8 +144,24 @@ namespace DeviceCenter.WlanAPIs
         {
             if(errorCode != 0)
             {
-                throw new WLanException(errorCode, method);
+                var ex = new WLanException(errorCode, method);
+                Error(ex.ToString());
+                throw ex;
             }
+        }
+
+        public static void Info(string message, params object[] paras)
+        {
+            var msg = string.Format(message, paras);
+            Debug.WriteLine("Info: " + msg);
+            Console.WriteLine("Info: " + msg);
+        }
+
+        public static void Error(string message, params object[] paras)
+        {
+            var msg = string.Format(message, paras);
+            Debug.WriteLine("Error: " + msg);
+            Console.WriteLine("Error: " + msg);
         }
     }
 }
