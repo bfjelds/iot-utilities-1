@@ -9,8 +9,12 @@ using System.Threading.Tasks;
 
 namespace DeviceCenter.WlanAPIs
 {
+    public delegate void ACMNotificationHandler(string profileName, int notificationCode, WlanInterop.WlanReasonCode reasonCode);
+
     public class WlanClient
     {
+        public event ACMNotificationHandler OnACMNotification;
+
         public WlanClient()
         {
             _interfaces = new List<WlanInterface>();
@@ -52,7 +56,7 @@ namespace DeviceCenter.WlanAPIs
                 var currentIfaceGuids = new List<Guid>();
                 for (int i = 0; i < header.numberOfItems; ++i)
                 {
-                    WlanInterop.WlanInterfaceInfo info =
+                    var info =
                         (WlanInterop.WlanInterfaceInfo)Marshal.PtrToStructure(new IntPtr(listIterator), typeof(WlanInterop.WlanInterfaceInfo));
                     listIterator += Marshal.SizeOf(info);
                     _interfaces.Add(new WlanInterface(this, info));
@@ -85,13 +89,7 @@ namespace DeviceCenter.WlanAPIs
             var connNotifyData =
                 (WlanInterop.WlanConnectionNotificationData)
                 Marshal.PtrToStructure(notifyData.dataPtr, typeof(WlanInterop.WlanConnectionNotificationData));
-            if (connNotifyData.wlanReasonCode == WlanInterop.WlanReasonCode.Success)
-            {
-                var profileXmlPtr = new IntPtr(
-                    notifyData.dataPtr.ToInt64() +
-                    Marshal.OffsetOf(typeof(WlanInterop.WlanConnectionNotificationData), "profileXml").ToInt64());
-                connNotifyData.profileXml = Marshal.PtrToStringUni(profileXmlPtr);
-            }
+
             return connNotifyData;
         }
 
@@ -101,18 +99,31 @@ namespace DeviceCenter.WlanAPIs
             string source = Enum.GetName(typeof(WlanInterop.WlanNotificationSource), notifyData.notificationSource);
             string notification = Enum.GetName(typeof(WlanInterop.WlanNotificationCodeAcm), notifyData.notificationCode);
             string reason = string.Empty;
-            uint reasonCode = 0;
+            uint reasonCode = uint.MaxValue;
+            string profileName = string.Empty;
             if (connNotifyData != null)
             {
                 reasonCode = (uint)connNotifyData.Value.wlanReasonCode;
                 reason = Enum.GetName(typeof(WlanInterop.WlanReasonCode), connNotifyData.Value.wlanReasonCode);
+                var dot11Ssid = connNotifyData.Value.dot11Ssid;
+                profileName = connNotifyData.Value.profileName;
             }
 
-            Debug.WriteLine(string.Format("{0} [{1}] [{2}]({3},{4})", source, notification, reason, notifyData.notificationCode, reasonCode));
+            Util.Info("*** {0} notification [{1}] [{2}] [{3}]({4},{5})", 
+                source,
+                profileName,
+                notification, 
+                reason, 
+                notifyData.notificationCode, 
+                reasonCode);
 
             if (notifyData.notificationSource == WlanInterop.WlanNotificationSource.ACM)
             {
                 HandleACMNotification(notifyData, connNotifyData);
+                if(OnACMNotification != null)
+                {
+                    OnACMNotification(profileName, notifyData.notificationCode, (WlanInterop.WlanReasonCode)reasonCode);
+                }
             }
         }
 
@@ -125,7 +136,7 @@ namespace DeviceCenter.WlanAPIs
                         if (connNotifyData.Value.wlanReasonCode == WlanInterop.WlanReasonCode.Success)
                         {
                             _connectDoneEvent.Set();
-                            Debug.WriteLine(string.Format("ACM Connected [{0}]", _isConnectAttemptSuccess));
+                            Util.Info("Connection Complete [{0}]", _isConnectAttemptSuccess);
                         }
                         else
                         {

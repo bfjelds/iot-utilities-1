@@ -66,13 +66,14 @@ namespace DeviceCenter
 
         static ManagementEventWatcher usbwatcher = null;
 
-        public static void AddRemoveUSBHandler(EventArrivedEventHandler USBRemoved)
-        {            
-            string query = "SELECT * FROM __InstanceDeletionEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";            
+        public static void AddUSBDetectionHandler(EventArrivedEventHandler USBDetectionHandler)
+        {
+            string query = "SELECT * FROM __InstanceCreationEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
+
             try
             {
                 usbwatcher = new ManagementEventWatcher(new EventQuery(query));
-                usbwatcher.EventArrived += USBRemoved;
+                usbwatcher.EventArrived += USBDetectionHandler;
                 usbwatcher.Start();
             }
 
@@ -81,25 +82,29 @@ namespace DeviceCenter
                 if (usbwatcher != null)
                     usbwatcher.Stop();
             }
+
+            query = "SELECT * FROM __InstanceDeletionEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";            
+
+            try
+            {
+                usbwatcher = new ManagementEventWatcher(new EventQuery(query));
+                usbwatcher.EventArrived += USBDetectionHandler;
+                usbwatcher.Start();
+            }
+
+            catch (Exception)
+            {
+                if (usbwatcher != null)
+                    usbwatcher.Stop();
+            }
+
+           
         }
 
 
         public static void AddInsertUSBHandler(EventArrivedEventHandler USBAdded)
         {
-            string query = "SELECT * FROM __InstanceCreationEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
             
-            try
-            {            
-                usbwatcher = new ManagementEventWatcher(new EventQuery(query));
-                usbwatcher.EventArrived += USBAdded;
-                usbwatcher.Start();
-            }
-
-            catch (Exception)
-            {                
-                if (usbwatcher != null)
-                    usbwatcher.Stop();
-            }
         }       
 
         static public List<DriveInfo> GetRemovableDriveList()

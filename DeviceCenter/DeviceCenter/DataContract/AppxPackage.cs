@@ -7,7 +7,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeviceCenter
+namespace DeviceCenter.DataContract
 {
     [DataContract]
     public class InstalledPackages

@@ -139,9 +139,6 @@ namespace DeviceCenter
                 }
             }
 
-            // wait 3 seconds to let webb install it
-            await Task.Delay(3000);
-
             try
             {
                 HttpStatusCode result = HttpStatusCode.BadRequest;
@@ -163,8 +160,6 @@ namespace DeviceCenter
                 {
                     if (await PollInstallStateAsync())
                     {
-                        await Task.Delay(3000);
-
                         var installedPackages = await GetInstalledPackagesAsync();
                         foreach (AppxPackage app in installedPackages.Items)
                         {
@@ -230,11 +225,37 @@ namespace DeviceCenter
             return new InstalledPackages();
         }
 
+        public async Task<bool> IsAppRunning(string appName)
+        {
+            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + PerfMgrUrl + "processes";
+            try
+            {
+                var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    IoTProcesses runningProcesses = RestHelper.ProcessJsonResponse(response, typeof(IoTProcesses)) as IoTProcesses;
+                    foreach (IoTProcess runningProcess in runningProcesses.Items)
+                    {
+                        if (runningProcess.AppName == appName)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+
+            return false;
+        }
+
         public async Task<bool> StartAppAsync(string appid, string package)
         {
-            string url = AppTaskUrl
-                         + "?appid=" + RestHelper.Encode64(appid)
-                         + "&package=" + RestHelper.Encode64(package);
+            string url = AppTaskUrl + "?appid=" + RestHelper.Encode64(appid) 
+                + "&package=" + RestHelper.Encode64(package);
 
             HttpStatusCode result = HttpStatusCode.BadRequest;
             try
@@ -250,7 +271,7 @@ namespace DeviceCenter
             return (result == HttpStatusCode.OK);
         }
 
-        public async Task<bool> StopAppAsync(string name)
+        public async Task<bool> StopAppAsync(string appName)
         {
             string url = String.Empty;
             bool isFound = false;
@@ -258,10 +279,10 @@ namespace DeviceCenter
             var installedPackages = await GetInstalledPackagesAsync();
             foreach (AppxPackage app in installedPackages.Items)
             {
-                if (app.Name == name)
+                if (app.Name == appName)
                 {
                     isFound = true;
-                    url = AppTaskUrl + "?package=" + RestHelper.Encode64(app.PackageFullName);
+                    url = AppTaskUrl + "app?package=" + RestHelper.Encode64(app.PackageFullName);
                 }
             }
             if (!isFound)
