@@ -73,14 +73,12 @@ namespace WLanTestApp
             _isConnectFailed = !success;
             Console.WriteLine(string.Format("Current IP [{0}]", _softAP.IPV4));
             Console.WriteLine("Connect " + (success ? "succeeded" : "failed"));
+            
+            // disconnect
+            Console.WriteLine("Press enter to disconnect");
+            Console.ReadLine();
 
-            if (!_isConnectFailed)
-            {
-                // disconnect
-                Console.WriteLine("Press enter to disconnect");
-                Console.ReadLine();
-                _softAP.Disconnect();
-            }
+            _softAP.Disconnect();
         }
 
         Program()
