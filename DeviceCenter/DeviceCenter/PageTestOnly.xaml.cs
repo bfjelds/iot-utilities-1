@@ -39,7 +39,7 @@ namespace DeviceCenter
             files[1] = @"InternetRadioHeaded_1.0.1.0_ARM.cer";
             files[2] = @"Microsoft.NET.Native.Runtime.1.1.appx";
             files[3] = @"Microsoft.VCLibs.ARM.14.00.appx";
-            bool x = await webbRequest.InstallAppxAsync("InternetRadioHeaded", files, @"C:\Users\tenglu\Documents\DeviceCenterSamples\DeployFolder\arm\");
+            //bool x = await webbRequest.InstallAppxAsync("InternetRadioHeaded", files, @"C:\Users\tenglu\Documents\DeviceCenterSamples\DeployFolder\arm\");
             //bool y = await webbRequest.StopAppAsync("InternetRadioHeaded");
         }
     }

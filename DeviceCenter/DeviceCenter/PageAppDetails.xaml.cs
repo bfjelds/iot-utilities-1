@@ -1,6 +1,9 @@
 ﻿using Microsoft.Tools.Connectivity;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -12,6 +15,7 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageAppDetails : Page
     {
+        private DiscoveredDevice device;
         public AppInformation AppItem { get; private set; }
         public PageAppDetails(AppInformation item, DiscoveredDevice device)
         {
@@ -19,17 +23,67 @@ namespace DeviceCenter
 
             this.AppItem = item;
             this.DataContext = this.AppItem;
+            this.device = device;
 
             PanelDeploying.Visibility = Visibility.Collapsed;
             PanelDeployed.Visibility = Visibility.Collapsed;
+            PanelDeploy.Visibility = Visibility.Collapsed;
+
+            GetAppState();
+        }
+
+        private async void GetAppState()
+        {
+            IPAddress ip = IPAddress.Parse(this.device.IPAddress);
+            //WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
+            //IPAddress ip = IPAddress.Parse("10.125.140.162");
+            WebBRest webbRequest = new WebBRest(ip, "Administrator", "Eiger!23");
+
+            var installedApps = await webbRequest.GetInstalledPackagesAsync();
+            foreach (var app in installedApps.Items)
+            {
+                if (app.Name == this.AppItem.AppName)
+                {
+                    PanelDeployed.Visibility = Visibility.Visible;
+                    return;
+                }
+            }
+
             PanelDeploy.Visibility = Visibility.Visible;
         }
 
-        private void ButtonDeploy_Click(object sender, RoutedEventArgs e)
+        private async void ButtonDeploy_Click(object sender, RoutedEventArgs e)
         {
-            PanelDeploying.Visibility = Visibility.Collapsed;
+            PanelDeploy.Visibility = Visibility.Collapsed;
             PanelDeploying.Visibility = Visibility.Visible;
             PanelDeployed.Visibility = Visibility.Collapsed;
+
+            IPAddress ip = IPAddress.Parse(this.device.IPAddress);
+            //WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
+            //IPAddress ip = IPAddress.Parse("10.125.140.162");
+            WebBRest webbRequest = new WebBRest(ip, "Administrator", "Eiger!23");
+
+            AppInformation.ApplicationFiles sourceFiles = this.AppItem.PlatformFiles[device.Architecture];
+
+            List<FileInfo> files = new List<FileInfo>();
+            files.Add(sourceFiles.AppX);
+            files.Add(sourceFiles.Certificate);
+
+            foreach (var cur in sourceFiles.Dependencies)
+                files.Add(cur);
+
+            if (!await webbRequest.InstallAppxAsync(this.AppItem.AppName, files))
+            {
+                PanelDeploying.Visibility = Visibility.Collapsed;
+                PanelDeployed.Visibility = Visibility.Collapsed;
+                PanelDeploy.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                PanelDeploying.Visibility = Visibility.Collapsed;
+                PanelDeployed.Visibility = Visibility.Visible;
+                PanelDeploy.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void ButtonStopDeploy_Click(object sender, RoutedEventArgs e)

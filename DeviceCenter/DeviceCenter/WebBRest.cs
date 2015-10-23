@@ -94,108 +94,96 @@ namespace DeviceCenter
             return true;
         }
 
-        public async Task<bool> InstallAppxAsync(string appName, string[] fileNames, string filePath)
+        public async Task<bool> InstallAppxAsync(string appName, IEnumerable<FileInfo> files)
         {
             string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
-            url += fileNames[0];
+            url += files.First().Name;
 
             string boundary = "-----------------------" + DateTime.Now.Ticks.ToString("x");
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Accept = "*/*";
             request.ContentType = "multipart/form-data; boundary=" + boundary;
-            request.Referer = @"http://10.125.140.92:8080/AppManager.htm";
             request.Method = "POST";
             request.KeepAlive = true;
             string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
             request.Headers.Add("Authorization", "Basic " + encodedAuth);
 
-            Stream memStream = new MemoryStream();
-
-            byte[] boundaryBytesMiddle = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
-            byte[] boundaryBytesLast = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
-            memStream.Write(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
-
-            string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
-
-            // TODO: Determine the way to load the file path
-            //string path = @"C:\Users\tenglu\Documents\DeployTestAppx\InternetRadio\";
-
-            for (int i = 0; i < fileNames.Length; i++)
+            using (Stream memStream = new MemoryStream())
             {
-                string headerContentType = (fileNames[i].Substring(fileNames[i].Length - 4) == ".cer") ? "application/x-x509-ca-cert" : "application/x-zip-compressed";
-                string header = String.Format(headerTemplate, fileNames[i], fileNames[i], headerContentType);
-                byte[] headerBytes = Encoding.UTF8.GetBytes(header);
-                memStream.Write(headerBytes, 0, headerBytes.Length);
+                byte[] boundaryBytesMiddle = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+                byte[] boundaryBytesLast = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
+                await memStream.WriteAsync(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
 
-                FileStream fileStream = new FileStream(filePath + fileNames[i], FileMode.Open, FileAccess.Read);
-                byte[] buffer = new byte[1024];
-                int bytesRead = 0;
-                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
+
+                int count = files.Count();
+                foreach (var file in files)
                 {
-                    memStream.Write(buffer, 0, bytesRead);
+                    string headerContentType = (file.Extension == ".cer") ? "application/x-x509-ca-cert" : "application/x-zip-compressed";
+                    string header = String.Format(headerTemplate, file.Name, file.Name, headerContentType);
+                    byte[] headerBytes = Encoding.UTF8.GetBytes(header);
+                    await memStream.WriteAsync(headerBytes, 0, headerBytes.Length);
+
+                    using (FileStream fileStream = file.OpenRead())
+                    {
+                        await fileStream.CopyToAsync(memStream);
+
+                        if (--count > 0)
+                        {
+                            await memStream.WriteAsync(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
+                        }
+                        else
+                        {
+                            await memStream.WriteAsync(boundaryBytesLast, 0, boundaryBytesLast.Length);
+                        }
+                    }
                 }
 
-                if (i < fileNames.Length - 1)
-                {
-                    memStream.Write(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
-                }
-                else
-                {
-                    memStream.Write(boundaryBytesLast, 0, boundaryBytesLast.Length);
-                }
+                request.ContentLength = memStream.Length;
 
-                fileStream.Close();
+                using (Stream requestStream = await request.GetRequestStreamAsync())
+                {
+                    memStream.Position = 0;
+                    await memStream.CopyToAsync(requestStream);
+                }
             }
 
-            request.ContentLength = memStream.Length;
-
-            Stream requestStream = request.GetRequestStream();
-
-            memStream.Position = 0;
-            byte[] tempBuffer = new byte[memStream.Length];
-            memStream.Read(tempBuffer, 0, tempBuffer.Length);
-            memStream.Close();
-            requestStream.Write(tempBuffer, 0, tempBuffer.Length);
-            requestStream.Close();
+            // wait 3 seconds to let webb install it
+            await Task.Delay(3000);
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync());
                 HttpStatusCode result = HttpStatusCode.BadRequest;
-                result = response.StatusCode;
-                Stream stream = response.GetResponseStream();
-                StreamReader sr = new StreamReader(stream);
-                string respData = sr.ReadToEnd();
 
-                response.Close();
-                request = null;
-                response = null;
+                using (HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync()))
+                {
+                    result = response.StatusCode;
+
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        using (StreamReader sr = new StreamReader(stream))
+                        {
+                            Debug.WriteLine(await sr.ReadToEndAsync());
+                        }
+                    }
+                }
 
                 if (result == HttpStatusCode.Accepted)
                 {
-                    bool x = await PollInstallStateAsync();
-                    if (x)
+                    if (await PollInstallStateAsync())
                     {
-                        // TODO: start app
+                        await Task.Delay(3000);
+
                         var installedPackages = await GetInstalledPackagesAsync();
                         foreach (AppxPackage app in installedPackages.Items)
                         {
                             if (app.Name == appName)
                             {
-                                bool y = await StartAppAsync(app.PackageRelativeId, app.PackageFullName);
+                                return await StartAppAsync(app.PackageRelativeId, app.PackageFullName);
                             }
                         }
                     }
-                    else
-                    {
-                        return false;
-                    }
-                    return true;
-                }
-                else
-                {
-                    return false;
                 }
             }
             catch (Exception ex)
@@ -203,7 +191,7 @@ namespace DeviceCenter
                 Debug.WriteLine(ex.Message);
             }
 
-            return true;
+            return false;
         }
 
         public async Task<bool> PollInstallStateAsync()
@@ -219,7 +207,7 @@ namespace DeviceCenter
                     result = response.StatusCode;
                     if (response.StatusCode == HttpStatusCode.NoContent)
                     {
-                        Thread.Sleep(3000);
+                        await Task.Delay(3000);
                     }
                 }
                 catch (Exception ex)
@@ -266,16 +254,10 @@ namespace DeviceCenter
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-            }
-
-            if (result == HttpStatusCode.OK)
-            {
-                return true;
-            }
-            else
-            {
                 return false;
             }
+
+            return (result == HttpStatusCode.OK);
         }
 
         public async Task<bool> StopAppAsync(string name)
