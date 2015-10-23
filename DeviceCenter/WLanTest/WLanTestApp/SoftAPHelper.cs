@@ -46,16 +46,19 @@ namespace DeviceCenter
 
             var list = _wlanInterface.GetAvailableNetworkList();
             var sortedList = new SortedList<uint, WlanInterop.WlanAvailableNetwork>();
+            var networkSet = new HashSet<string>();
+
             uint index = 0;
             foreach (var network in list)
             {
                 string ssid = network.SSIDString;
-                if (ssid.StartsWith(SOFT_AP_NAME_PREFIX))
+                if (ssid.StartsWith(SOFT_AP_NAME_PREFIX) && !networkSet.Contains(ssid))
                 {
                     Debug.WriteLine(string.Format("{0} {1}", ssid, network.wlanSignalQuality));
                     // dup keys is not allowed
                     uint key = network.wlanSignalQuality * 10 + index;
                     sortedList.Add(key, network);
+                    networkSet.Add(ssid);
                     index++;
                 }
             }
@@ -152,6 +155,10 @@ namespace DeviceCenter
             {
                 Util.Error("Disconnect: No Wlan interface");
             }
+
+            var wmi = WMIHelper.CreateByNICGuid(_wlanInterface.GUID);
+            Util.Info("Enable DHCP");
+            wmi.EnableDHCP();
 
             _wlanInterface.Disconnect();
         }

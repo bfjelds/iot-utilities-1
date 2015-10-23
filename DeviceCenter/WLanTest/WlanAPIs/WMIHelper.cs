@@ -57,21 +57,34 @@ namespace DeviceCenter.WlanAPIs
             return ip;
         }
 
-        public void SetIP(string IpAddresses, string SubnetMask)
+        public void SetIP(string ipAddresses, string subnetMask)
         {
             Debug.Assert(_networkAdapterMO != null);
 
+            Util.Info("WMIHelper: set IP to [{0}] subnet [{1}]", ipAddresses, subnetMask);
             ManagementBaseObject newIP = _networkAdapterMO.GetMethodParameters("EnableStatic");
-            ManagementBaseObject newGate = _networkAdapterMO.GetMethodParameters("SetGateways");
+            // ManagementBaseObject newGate = _networkAdapterMO.GetMethodParameters("SetGateways");
             ManagementBaseObject newDNS = _networkAdapterMO.GetMethodParameters("SetDNSServerSearchOrder");
 
-            newGate["GatewayCostMetric"] = new int[] { 1 };
+            // newGate["GatewayCostMetric"] = new int[] { 1 };
 
-            newIP["IPAddress"] = IpAddresses.Split(',');
-            newIP["SubnetMask"] = new string[] { SubnetMask };
+            newIP["IPAddress"] = ipAddresses.Split(',');
+            newIP["SubnetMask"] = new string[] { subnetMask };
 
             _networkAdapterMO.InvokeMethod("EnableStatic", newIP, null);
-            _networkAdapterMO.InvokeMethod("SetGateways", newGate, null);
+            // _networkAdapterMO.InvokeMethod("SetGateways", newGate, null);
+        }
+
+        public void EnableDHCP()
+        {
+            Debug.Assert(_networkAdapterMO != null);
+
+            Util.Info("WMIHelper: Enabling DHCP");
+
+            var newDNS = _networkAdapterMO.GetMethodParameters("SetDNSServerSearchOrder");
+            newDNS["DNSServerSearchOrder"] = null;
+            _networkAdapterMO.InvokeMethod("EnableDHCP", null, null);
+            _networkAdapterMO.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
         }
 
         public void DebugPrint()
