@@ -86,8 +86,7 @@ namespace DeviceCenter
 
         private async void ButtonStopApp_Click(object sender, RoutedEventArgs e)
         {
-            IPAddress ip = IPAddress.Parse(this.device.IPAddress);
-            WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
+            WebBRest webbRequest = new WebBRest(this.device.IPAddress, this.device.Authentication);
 
             if (await webbRequest.StopAppAsync(this.AppItem.AppName))
             {

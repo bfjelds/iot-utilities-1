@@ -82,6 +82,11 @@ namespace DeviceCenter.Helper
             return HttpErrorResult.fail;
         }
 
+        public Uri CreateUri(string restPath)
+        {
+            return new Uri(string.Format(UrlFormat, this.IPAddress.ToString(), restPath), UriKind.Absolute);
+        }
+
         public async Task<HttpWebResponse> GetOrPostRequestAsync(string restPath, bool isGet)
         {
             Uri requestUrl = new Uri(string.Format(UrlFormat, this.IPAddress.ToString(), restPath), UriKind.Absolute);

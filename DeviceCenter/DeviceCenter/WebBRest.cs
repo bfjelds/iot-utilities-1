@@ -19,6 +19,7 @@ namespace DeviceCenter
         private const string NetworkingApiUrl = "/api/networking/";
         private const string AppxApiUrl = "/api/appx/packagemanager/";
         private const string AppTaskUrl = "/api/taskmanager/app";
+        private const string PerfMgrUrl = "/api/resourcemanager/";
 
         private RestHelper restHelper;
 
@@ -91,7 +92,7 @@ namespace DeviceCenter
 
             string boundary = "-----------------------" + DateTime.Now.Ticks.ToString("x");
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(this.restHelper.CreateUri(url));
             request.Accept = "*/*";
             request.ContentType = "multipart/form-data; boundary=" + boundary;
             request.Method = "POST";
@@ -227,10 +228,10 @@ namespace DeviceCenter
 
         public async Task<bool> IsAppRunning(string appName)
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + PerfMgrUrl + "processes";
+            string url = PerfMgrUrl + "processes";
             try
             {
-                var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
+                var response = await this.restHelper.GetOrPostRequestAsync(url, true);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     IoTProcesses runningProcesses = RestHelper.ProcessJsonResponse(response, typeof(IoTProcesses)) as IoTProcesses;

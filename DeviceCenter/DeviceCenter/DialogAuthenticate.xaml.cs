@@ -62,6 +62,13 @@
 
         public static UserInfo GetSavedPassword(string deviceName)
         {
+            // tbd - a hack. should be properly loaded 
+            if (firstLoaded != true)
+            {
+                savedPasswords = AppData.LoadWebBUserInfo();
+                firstLoaded = true;
+            }
+
             UserInfo result;
 
             if (!savedPasswords.TryGetValue(deviceName, out result))
@@ -79,14 +86,13 @@
 
         public static void SavePassword(UserInfo userInfo)
         {
-            savedPasswords.Add(userInfo.DeviceName, userInfo);
+            if (savedPasswords.ContainsKey(userInfo.DeviceName))
+                savedPasswords[userInfo.DeviceName] = userInfo;
+            else
+                savedPasswords.Add(userInfo.DeviceName, userInfo);
 
-            // tbd - a hack. should be properly loaded 
-            if (firstLoaded != true)
-            {
-                savedPasswords = AppData.LoadWebBUserInfo();
-                firstLoaded = true;
-            }
+            // store to permanent storage
+            AppData.StoreWebBUserInfo(savedPasswords);
         }
 
         public DialogAuthenticate(UserInfo info)
@@ -120,11 +126,8 @@
 
                 if (info.SavePassword.HasValue && info.SavePassword.Value)
                 {
-                    savedPasswords.Add(info.DeviceName, info);
+                    SavePassword(info);
                 }
-
-                // store to permanent storage
-                AppData.StoreWebBUserInfo(savedPasswords);
             }
 
             this.DialogResult = true;
