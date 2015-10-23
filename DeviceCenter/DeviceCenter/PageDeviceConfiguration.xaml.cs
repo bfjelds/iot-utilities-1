@@ -47,13 +47,7 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            //textBoxDeviceName.Text;
-            //textBoxCurrentPassword.Text
-            //textBoxPassword1
-
-            // do stuff here
-            IPAddress ip = IPAddress.Parse(this.Device.IPAddress);
-            WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
+            WebBRest webbRequest = new WebBRest(this.Device.IPAddress, this.Device.Authentication);
             if (!String.IsNullOrWhiteSpace(textBoxDeviceName.Text))
             {
                 bool x = await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text);

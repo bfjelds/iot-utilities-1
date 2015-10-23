@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -205,9 +206,10 @@ namespace DeviceCenter
                     DeviceModel = args.Info.Location,
                     Architecture = args.Info.Architecture,
                     OSVersion = args.Info.OSVersion,
-                    IPAddress = args.Info.Address,
+                    IPAddress = IPAddress.Parse(args.Info.Address),
                     UniqueId = args.Info.UniqueId,
-                    Manage = new Uri(string.Format("http://administrator@{0}/", args.Info.Address))
+                    Manage = new Uri(string.Format("http://administrator@{0}/", args.Info.Address)),
+                    Authentication = DialogAuthenticate.GetSavedPassword(args.Info.Name)
                 };
 
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>

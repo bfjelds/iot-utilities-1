@@ -10,7 +10,7 @@
     <Page.Resources>
         <DataTemplate x:Key="CleanHeaderTemplate">
             <Grid>
-                <TextBlock FontWeight="Bold">
+                <TextBlock FontWeight="Bold" FontSize="8" Padding="4 0 20 0">
                     <TextBlock.Text>
                         <Binding/>
                     </TextBlock.Text>

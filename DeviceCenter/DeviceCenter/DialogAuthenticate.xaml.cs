@@ -50,10 +50,30 @@
     public partial class DialogAuthenticate : Window
     {
         static Dictionary<string, UserInfo> savedPasswords = new Dictionary<string, UserInfo>();
+        private const string defaultUser = "Administrator";
+        private const string defaultPassword = "p@ssw0rd";
 
-        public static bool GetSavedPassword(string deviceName, out UserInfo info)
+        public static UserInfo GetSavedPassword(string deviceName)
         {
-            return savedPasswords.TryGetValue(deviceName, out info);
+            UserInfo result;
+
+            if (!savedPasswords.TryGetValue(deviceName, out result))
+            {
+                result = new UserInfo()
+                {
+                    DeviceName = deviceName,
+                    UserName = defaultUser,
+                    Password = defaultPassword
+                };
+            }
+            // else read from disk
+
+            return result;
+        }
+
+        public static void SavePassword(UserInfo userInfo)
+        {
+            savedPasswords.Add(userInfo.DeviceName, userInfo);
         }
 
         public DialogAuthenticate(UserInfo info)
@@ -83,11 +103,13 @@
             info.Password = editPassword.Password;
             info.SavePassword = checkboxSavePassword.IsChecked;
 
-            if (info.SavePassword.HasValue && info.SavePassword.Value)
-                savedPasswords.Add(info.DeviceName, info);
+            // save password to memory
+            SavePassword(info);
 
-            else if (savedPasswords.ContainsKey(info.DeviceName))
-                savedPasswords.Remove(info.DeviceName);
+            if (info.SavePassword.HasValue && info.SavePassword.Value)
+            {
+                // save to disk
+            }
 
             this.DialogResult = true;
 
