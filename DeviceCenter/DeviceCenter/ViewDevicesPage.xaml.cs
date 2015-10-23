@@ -1,16 +1,10 @@
-﻿using DeviceCenter.Handlers;
-using DeviceCenter.Wrappers;
+﻿using DeviceCenter.Wrappers;
 using Microsoft.Tools.Connectivity;
-using Onboarding;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -29,19 +23,25 @@ namespace DeviceCenter
         private DeviceDiscoveryService deviceDiscoverySvc;
         private ObservableCollection<DiscoveredDevice> devices = new ObservableCollection<DiscoveredDevice>();
         private ObservableCollection<ManagedConsumer> onboardingConsumerList = new ObservableCollection<ManagedConsumer>();
+
+        /* bugbug
         private ConcurrentDictionary<string, AdhocNetwork> adhocNetworks = new ConcurrentDictionary<string, AdhocNetwork>();
 
         private IOnboardingManager wifiManager;
         private DispatcherTimer wifiRefreshTimer;
+        */
 
         private Frame _navigationFrame;
         private PageWifi wifiPage;
 
         ~ViewDevicesPage()
         {
+            /*
             wifiManager.Shutdown();
+            */
         }
 
+        /* bugbug
         private class AdhocNetwork
         {
             public AdhocNetwork(IWifi wifi)
@@ -55,7 +55,7 @@ namespace DeviceCenter
             }
 
             public IWifi Wifi { get; private set; }
-        }
+        }*/
 
         public ViewDevicesPage(Frame navigationFrame)
         {
@@ -75,6 +75,7 @@ namespace DeviceCenter
 
             ListViewDevices.ItemsSource = devices;
 
+            /* bugbug replace with new framework
             wifiManager = new OnboardingManager();
 
             try
@@ -92,15 +93,19 @@ namespace DeviceCenter
             };
             wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
             RefreshWifiAsync();
+            */
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
+            /* bugbug
             wifiRefreshTimer.Stop();
+            */
         }
 
+        /* bugbug
         private async void RefreshWifiAsync()
         {
             wifiRefreshTimer.Stop();
@@ -164,6 +169,7 @@ namespace DeviceCenter
         {
             RefreshWifiAsync();
         }
+        */
 
         private void TelemetryTimer_Tick(object sender, EventArgs e)
         {
@@ -296,7 +302,9 @@ namespace DeviceCenter
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
+            /* bugbug
             wifiRefreshTimer.Stop();
+            */
 
             DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
             if (device != null)
@@ -310,7 +318,7 @@ namespace DeviceCenter
                 bool? confirmation = dlg.ShowDialog();
                 if (confirmation.HasValue && confirmation.Value)
                 {
-                    wifiPage = new PageWifi(_navigationFrame, wifiManager, device);
+                    wifiPage = new PageWifi(_navigationFrame, /* bugbug wifiManager*/null, device);
 
                     _navigationFrame.Navigate(wifiPage);
 
@@ -318,7 +326,9 @@ namespace DeviceCenter
                 }
             }
 
+            /* bugbug
             wifiRefreshTimer.Start();
+            */
         }
 
         private void ButtonPortal_Click(object sender, MouseButtonEventArgs e)

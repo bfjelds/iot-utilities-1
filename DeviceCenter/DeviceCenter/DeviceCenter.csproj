@@ -88,10 +88,6 @@
       <HintPath>..\packages\Microsoft.ApplicationInsights.PersistenceChannel.1.2.0\lib\net45\Microsoft.ApplicationInsights.PersistenceChannel.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="OnboardingTypeLib">
-      <HintPath>$(SolutionDir)\Debug\OnboardingTypeLib.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <!--<Reference Include="OnboardingTypeLib" Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
       <HintPath>$(SolutionDir)\Debug\OnboardingTypeLib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -391,12 +387,6 @@
     <Content Include="SirepClient.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <NativeReference Include="COMOnboarding.sxs, Version=1.0.0.0, Type=win32">
-      <Name>COMOnboarding.sxs.manifest</Name>
-      <HintPath>..\Debug\COMOnboarding.sxs.manifest</HintPath>
-    </NativeReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
