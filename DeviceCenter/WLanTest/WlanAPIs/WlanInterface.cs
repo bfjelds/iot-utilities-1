@@ -72,7 +72,6 @@ namespace DeviceCenter.WlanAPIs
             WlanInterop.WlanConnectionMode connectionMode,
             WlanInterop.Dot11BssType bssType,
             WlanInterop.WlanAvailableNetwork network,
-            WlanInterop.WlanConnectionFlags flags,
             string password)
         {
             var connectionParams = new WlanInterop.WlanConnectionParameters();
@@ -91,6 +90,17 @@ namespace DeviceCenter.WlanAPIs
             Connect(connectionParams);
             Marshal.DestroyStructure(connectionParams.dot11SsidPtr, ssid.GetType());
             Marshal.FreeHGlobal(connectionParams.dot11SsidPtr);
+        }
+
+        public void Disconnect()
+        {
+            Util.ThrowIfFail(
+                WlanInterop.WlanDisconnect(
+                    _client._nativeHandle, 
+                    ref _nativeInterfaceInfo.interfaceGuid, 
+                    IntPtr.Zero),
+                "Disconnect"
+                );
         }
 
         protected void Connect(WlanInterop.WlanConnectionParameters connectionParams)

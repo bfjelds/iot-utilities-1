@@ -8,10 +8,10 @@ namespace DeviceCenter.WlanAPIs
 {
     public class WLanException : Exception
     {
-        public int ErrorCode;
+        public uint ErrorCode;
         public string NativeMethod;
 
-        public WLanException(int error, string method)
+        public WLanException(uint error, string method)
         {
             ErrorCode = error;
             NativeMethod = method;

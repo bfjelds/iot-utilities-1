@@ -37,6 +37,9 @@ namespace DeviceCenter
                 return networkList;
             }
 
+            Scan();
+            // Sleep(4000);
+
             var list = _wlanInterface.GetAvailableNetworkList();
             var sortedList = new SortedList<uint, WlanInterop.WlanAvailableNetwork>();
             foreach (var network in list)
@@ -48,8 +51,8 @@ namespace DeviceCenter
                     sortedList.Add(network.wlanSignalQuality, network);
                 }
             }
-
-            return sortedList.Values;
+            IList<WlanInterop.WlanAvailableNetwork> descList = sortedList.Values.Reverse().ToList();
+            return descList;
         }
 
         public async Task<bool> ConnectAsync(WlanInterop.WlanAvailableNetwork network, string password)
@@ -60,15 +63,20 @@ namespace DeviceCenter
                 return false;
             }
 
+            _ssidToConnect = network.SSIDString;
+
             _wlanInterface.Connect(
                 WlanInterop.WlanConnectionMode.TemporaryProfile,
                 WlanInterop.Dot11BssType.Any,
                 network,
-                WlanInterop.WlanConnectionFlags.AdhocJoinOnly,
                 password
                 );
 
-            _wlanClient.WaitConnectComplete();
+            bool isSuccess = _wlanClient.WaitConnectComplete();
+            if(!isSuccess)
+            {
+                return false;
+            }
 
             var wmi = WMIHelper.CreateByNICGuid(_wlanInterface.GUID);
             // wmi.DebugPrint();
@@ -101,6 +109,16 @@ namespace DeviceCenter
             return false;
         }
 
+        public void Disconnect()
+        {
+            if (_wlanInterface == null)
+            {
+                Debug.WriteLine("Disconnect: No Wlan interface");
+            }
+
+            _wlanInterface.Disconnect();
+        }
+
         public static SoftAPHelper Instance
         {
             get
@@ -114,12 +132,22 @@ namespace DeviceCenter
             }
         }
 
+        public string IPV4
+        {
+            get
+            {
+                var wmi = WMIHelper.CreateByNICGuid(_wlanInterface.GUID);
+                return wmi.GetIPV4();
+            }
+        }
+
         private SoftAPHelper()
         {
             _wlanClient = new WlanClient();
             var interfaces = _wlanClient.Interfaces;
             if (interfaces != null && interfaces.Count != 0)
             {
+                // TBD - to support multiple wlan interfaces
                 _wlanInterface = interfaces[0];
             }
         }
@@ -127,5 +155,7 @@ namespace DeviceCenter
         private static SoftAPHelper _instance;
         private WlanClient _wlanClient;
         private WlanInterface _wlanInterface;
+        private string _ssidToConnect;
+        private bool _isConnected;
     }
 }

@@ -137,7 +137,7 @@ namespace DeviceCenter.WlanAPIs
         }
 
         [DebuggerStepThrough]
-        public static void ThrowIfFail(int errorCode, string method)
+        public static void ThrowIfFail(uint errorCode, string method)
         {
             if(errorCode != 0)
             {

@@ -15,6 +15,7 @@ namespace DeviceCenter.WlanAPIs
         {
             _interfaces = new List<WlanInterface>();
 
+            // open handle
             Util.ThrowIfFail(
                 WlanInterop.WlanOpenHandle(WlanInterop.WLAN_API_VERSION_2_0, IntPtr.Zero, out _negotiatedVersion, out _nativeHandle),
                 "WlanOpenHandle"
@@ -23,6 +24,7 @@ namespace DeviceCenter.WlanAPIs
             WlanInterop.WlanNotificationSource prevSrc;
             _wlanNotificationCallback = new WlanInterop.WlanNotificationCallbackDelegate(OnWlanNotification);
 
+            // register notification
             Util.ThrowIfFail(
                 WlanInterop.WlanRegisterNotification(
                     _nativeHandle,
@@ -35,6 +37,7 @@ namespace DeviceCenter.WlanAPIs
                 "WlanRegisterNotification"
                 );
 
+            // enum interfaces
             IntPtr ifaceList;
             Util.ThrowIfFail(
                 WlanInterop.WlanEnumInterfaces(_nativeHandle, IntPtr.Zero, out ifaceList),
@@ -43,11 +46,10 @@ namespace DeviceCenter.WlanAPIs
 
             try
             {
-                WlanInterop.WlanInterfaceInfoList header =
-                    (WlanInterop.WlanInterfaceInfoList)Marshal.PtrToStructure(ifaceList, typeof(WlanInterop.WlanInterfaceInfoList));
+                var header = (WlanInterop.WlanInterfaceInfoList)Marshal.PtrToStructure(ifaceList, typeof(WlanInterop.WlanInterfaceInfoList));
                 Int64 listIterator = ifaceList.ToInt64() + Marshal.SizeOf(header);
 
-                List<Guid> currentIfaceGuids = new List<Guid>();
+                var currentIfaceGuids = new List<Guid>();
                 for (int i = 0; i < header.numberOfItems; ++i)
                 {
                     WlanInterop.WlanInterfaceInfo info =
@@ -76,14 +78,16 @@ namespace DeviceCenter.WlanAPIs
         {
             int expectedSize = Marshal.SizeOf(typeof(WlanInterop.WlanConnectionNotificationData));
             if (notifyData.dataSize < expectedSize)
+            {
                 return null;
+            }
 
             var connNotifyData =
                 (WlanInterop.WlanConnectionNotificationData)
                 Marshal.PtrToStructure(notifyData.dataPtr, typeof(WlanInterop.WlanConnectionNotificationData));
             if (connNotifyData.wlanReasonCode == WlanInterop.WlanReasonCode.Success)
             {
-                IntPtr profileXmlPtr = new IntPtr(
+                var profileXmlPtr = new IntPtr(
                     notifyData.dataPtr.ToInt64() +
                     Marshal.OffsetOf(typeof(WlanInterop.WlanConnectionNotificationData), "profileXml").ToInt64());
                 connNotifyData.profileXml = Marshal.PtrToStringUni(profileXmlPtr);
@@ -93,84 +97,57 @@ namespace DeviceCenter.WlanAPIs
 
         private void OnWlanNotification(ref WlanInterop.WlanNotificationData notifyData, IntPtr context)
         {
-            // WlanInterface wlanIface = _interfaces.ContainsKey(notifyData.interfaceGuid) ? _interfaces[notifyData.interfaceGuid] : null;
-
-            switch (notifyData.notificationSource)
+            var connNotifyData = ParseWlanConnectionNotification(ref notifyData);
+            string source = Enum.GetName(typeof(WlanInterop.WlanNotificationSource), notifyData.notificationSource);
+            string notification = Enum.GetName(typeof(WlanInterop.WlanNotificationCodeAcm), notifyData.notificationCode);
+            string reason = string.Empty;
+            uint reasonCode = 0;
+            if (connNotifyData != null)
             {
-                case WlanInterop.WlanNotificationSource.ACM:
-                    switch ((WlanInterop.WlanNotificationCodeAcm)notifyData.notificationCode)
-                    {
-                        case WlanInterop.WlanNotificationCodeAcm.ConnectionStart:
-                        case WlanInterop.WlanNotificationCodeAcm.ConnectionComplete:
-                        case WlanInterop.WlanNotificationCodeAcm.ConnectionAttemptFail:
-                        case WlanInterop.WlanNotificationCodeAcm.Disconnecting:
-                        case WlanInterop.WlanNotificationCodeAcm.Disconnected:
-                            {
-                                if((WlanInterop.WlanNotificationCodeAcm)notifyData.notificationCode == WlanInterop.WlanNotificationCodeAcm.ConnectionComplete)
-                                {
-                                    _connectDoneEvent.Set();
-                                    Console.WriteLine("Connected");
-                                }
-                                WlanInterop.WlanConnectionNotificationData? connNotifyData = ParseWlanConnectionNotification(ref notifyData);
+                reasonCode = (uint)connNotifyData.Value.wlanReasonCode;
+                reason = Enum.GetName(typeof(WlanInterop.WlanReasonCode), connNotifyData.Value.wlanReasonCode);
+            }
 
-                                string notificationCode = Enum.GetName(typeof(WlanInterop.WlanNotificationCodeAcm), notifyData.notificationCode);
-                                string rcStr = Enum.GetName(typeof(WlanInterop.WlanReasonCode), connNotifyData.Value.wlanReasonCode);
-                                Debug.WriteLine(string.Format("ACM [{0}] [{1}]", notificationCode, rcStr));
-                                /*if (connNotifyData.HasValue)
-                                    if (wlanIface != null)
-                                        wlanIface.OnWlanConnection(notifyData, connNotifyData.Value);
-                                        */
-                            }
-                            break;
-                        case WlanInterop.WlanNotificationCodeAcm.ScanFail:
-                            {
-                                Debug.WriteLine(string.Format("ACM [{0}] [{1}]", "ScanFail", ""));
-                                
-                                int expectedSize = Marshal.SizeOf(typeof(uint));
-                                if (notifyData.dataSize >= expectedSize)
-                                {
-                                    WlanInterop.WlanReasonCode reasonCode = (WlanInterop.WlanReasonCode)Marshal.ReadInt32(notifyData.dataPtr);
-                                /*
-                                if (wlanIface != null)
-                                    wlanIface.OnWlanReason(notifyData, reasonCode);
-                                    */
-                                }
-                            }
-                            break;
+            Debug.WriteLine(string.Format("{0} [{1}] [{2}]({3},{4})", source, notification, reason, notifyData.notificationCode, reasonCode));
+
+            if (notifyData.notificationSource == WlanInterop.WlanNotificationSource.ACM)
+            {
+                HandleACMNotification(notifyData, connNotifyData);
+            }
+        }
+
+        private void HandleACMNotification(WlanInterop.WlanNotificationData notifyData, WlanInterop.WlanConnectionNotificationData? connNotifyData)
+        {
+            switch ((WlanInterop.WlanNotificationCodeAcm)notifyData.notificationCode)
+            {
+                case WlanInterop.WlanNotificationCodeAcm.ConnectionComplete:
+                    {
+                        if (connNotifyData.Value.wlanReasonCode == WlanInterop.WlanReasonCode.Success)
+                        {
+                            _connectDoneEvent.Set();
+                            Debug.WriteLine(string.Format("ACM Connected [{0}]", _isConnectAttemptSuccess));
+                        }
+                        else
+                        {
+                            // never get here
+                            _isConnectAttemptSuccess = false;
+                            Debug.Fail("debug");
+                            _connectDoneEvent.Set();
+                        }
                     }
                     break;
-                case WlanInterop.WlanNotificationSource.MSM:
-                    switch ((WlanInterop.WlanNotificationCodeMsm)notifyData.notificationCode)
+                case WlanInterop.WlanNotificationCodeAcm.ConnectionAttemptFail:
                     {
-                        case WlanInterop.WlanNotificationCodeMsm.Associating:
-                        case WlanInterop.WlanNotificationCodeMsm.Associated:
-                        case WlanInterop.WlanNotificationCodeMsm.Authenticating:
-                        case WlanInterop.WlanNotificationCodeMsm.Connected:
-                        case WlanInterop.WlanNotificationCodeMsm.RoamingStart:
-                        case WlanInterop.WlanNotificationCodeMsm.RoamingEnd:
-                        case WlanInterop.WlanNotificationCodeMsm.Disassociating:
-                        case WlanInterop.WlanNotificationCodeMsm.Disconnected:
-                        case WlanInterop.WlanNotificationCodeMsm.PeerJoin:
-                        case WlanInterop.WlanNotificationCodeMsm.PeerLeave:
-                        case WlanInterop.WlanNotificationCodeMsm.AdapterRemoval:
-                            WlanInterop.WlanConnectionNotificationData? connNotifyData = ParseWlanConnectionNotification(ref notifyData);
-
-                            string notificationCode = Enum.GetName(typeof(WlanInterop.WlanNotificationCodeAcm), notifyData.notificationCode);
-                            string rcStr = Enum.GetName(typeof(WlanInterop.WlanReasonCode), connNotifyData.Value.wlanReasonCode);
-                            Debug.WriteLine(string.Format("MSM [{0}] [{1}]", notificationCode, rcStr));
-
-                            /*if (connNotifyData.HasValue)
-                                if (wlanIface != null)
-                                    wlanIface.OnWlanConnection(notifyData, connNotifyData.Value);*/
-                            break;
+                        _isConnectAttemptSuccess = false;
                     }
                     break;
             }
         }
 
-        public void WaitConnectComplete()
+        public bool WaitConnectComplete()
         {
             _connectDoneEvent.WaitOne();
+            return _isConnectAttemptSuccess;
         }
 
         internal IntPtr _nativeHandle;
@@ -178,5 +155,6 @@ namespace DeviceCenter.WlanAPIs
         private List<WlanInterface> _interfaces;
         private WlanInterop.WlanNotificationCallbackDelegate _wlanNotificationCallback;
         private AutoResetEvent _connectDoneEvent = new AutoResetEvent(false);
+        private bool _isConnectAttemptSuccess = true;
     }
 }
