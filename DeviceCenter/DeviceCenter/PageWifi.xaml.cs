@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace DeviceCenter
@@ -174,12 +175,18 @@ namespace DeviceCenter
                 IsEnabled = true
             };
             delayStart.Tick += delayStartTimer_Tick;
-
-            //bugbug
-            //this.wifiManager.ConnectToOnboardingNetwork((Onboarding.wifi)device.WifiInstance.NativeWifi, "password");
         }
 
         private bool connected = false;
+
+        private void ReturnAsError(string message)
+        {
+            wifiManager.Disconnect();
+
+            MessageBox.Show(message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
+
+            navigationFrame.GoBack();
+        }
 
         private async void delayStartTimer_Tick(object sender, EventArgs e)
         {
@@ -201,14 +208,13 @@ namespace DeviceCenter
                 }
                 catch (Exception error)
                 {
-                    Debug.WriteLine(error.Message);
+                    ReturnAsError(error.Message);
 
-                    wifiManager.Disconnect();
                 }
             }
             else
             {
-                wifiManager.Disconnect();
+                ReturnAsError(Strings.Strings.MessageUnableToGetWifi);
             }
         }
 
@@ -338,6 +344,11 @@ namespace DeviceCenter
                         entry.AllowSecure(edit.Password.Length > 0);
                 }
             }
+        }
+
+        private void textboxWifiPassword_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            // todo handle escape and enter
         }
     }
 }

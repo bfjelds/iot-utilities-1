@@ -673,6 +673,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The remote device did not respond to from the selected access point..
+        /// </summary>
+        public static string MessageUnableToGetWifi {
+            get {
+                return ResourceManager.GetString("MessageUnableToGetWifi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wireless network name.
         /// </summary>
         public static string NetworkCredentialsNetworkNameLabel {

@@ -505,4 +505,7 @@
   <data name="DeviceNamePwdPassword3" xml:space="preserve">
     <value>Confirm Password</value>
   </data>
+  <data name="MessageUnableToGetWifi" xml:space="preserve">
+    <value>The remote device did not respond to from the selected access point.</value>
+  </data>
 </root>
