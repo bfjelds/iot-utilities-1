@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 using DeviceCenter.WlanAPIs;
 using DeviceCenter;
+using System.Net.NetworkInformation;
 
 namespace WLanTestApp
 {
@@ -89,10 +90,10 @@ namespace WLanTestApp
 
         private void OnSoftAPDisconnected()
         {
-            _isConnectFailed = true;
+            // _isConnectFailed = true;
             Console.WriteLine("********* Info: disconnected from soft AP");
         }
-
+        
         static void Main(string[] args)
         {
             try
