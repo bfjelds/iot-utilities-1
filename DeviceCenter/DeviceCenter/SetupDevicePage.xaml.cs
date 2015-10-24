@@ -76,7 +76,8 @@ namespace DeviceCenter
 
             if (ComboBoxDeviceType.Items.Count == 0)
             {
-                ComboBoxDeviceType.Items.Add(Strings.Strings.DeviceListNoDevices);
+                // TBD - this list should be hardcoded to MBM and RPi2.  
+                ComboBoxDeviceType.Items.Add("LKG not found \\\\webnas\\AthensDrop");
             }
             else
             {
