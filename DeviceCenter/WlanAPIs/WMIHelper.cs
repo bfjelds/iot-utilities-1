@@ -11,7 +11,7 @@ namespace DeviceCenter.WlanAPIs
     public class WMIHelper
     {
         private const string NETSH_SET_STATIC_IP_ARGUMENT = "interface ip set address \"{0}\" static 192.168.173.2 255.255.0.0";
-        private const string NETSH_ENABLE_DHCP_ARGUMENT = "netsh interface ip set address \"{0}\" dhcp";
+        private const string NETSH_ENABLE_DHCP_ARGUMENT = "interface ip set address \"{0}\" dhcp";
 
         static public WMIHelper CreateByNICGuid(Guid interfaceGuid)
         {
