@@ -153,13 +153,56 @@ namespace DeviceCenter.WlanAPIs
         public static void Info(string message, params object[] paras)
         {
             var msg = string.Format(message, paras);
+            Console.WriteLine(msg);
             Debug.WriteLine("Info: " + msg);
         }
 
         public static void Error(string message, params object[] paras)
         {
             var msg = string.Format(message, paras);
+            Console.WriteLine(msg);
             Debug.WriteLine("Error: " + msg);
+        }
+
+        public static void RunNetshElevated(string arguments)
+        {
+            var procInfo = new ProcessStartInfo();
+            procInfo.UseShellExecute = true;
+            procInfo.WorkingDirectory = @"C:\Windows\System32";
+            procInfo.FileName = @"C:\Windows\System32\netsh.exe";
+            procInfo.Arguments = arguments;
+            procInfo.Verb = "runas";
+            procInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            Info("RunNetshElevated [{0}]", arguments);
+            try
+            {
+                Process proc = new Process();
+                proc.StartInfo = procInfo;
+                proc.Start();
+
+                Console.WriteLine("Successfully elevated!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to elevate.");
+            }
+        }
+
+        public static string GetNameByGuid(Guid guid)
+        {
+            NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (var adapter in interfaces)
+            {
+                if(Guid.Parse(adapter.Id) == guid)
+                {
+                    Info("Find name [{0}] for guid [{1}]", adapter.Name, guid.ToString());
+                    return adapter.Name;
+                }
+            }
+
+            Error("Can't Find name for guid [{1}]", guid.ToString());
+            return string.Empty;
         }
     }
 }

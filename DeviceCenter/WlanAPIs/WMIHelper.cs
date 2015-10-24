@@ -10,6 +10,9 @@ namespace DeviceCenter.WlanAPIs
 {
     public class WMIHelper
     {
+        private const string NETSH_SET_STATIC_IP_ARGUMENT = "interface ip set address \"{0}\" static 192.168.173.2 255.255.0.0";
+        private const string NETSH_ENABLE_DHCP_ARGUMENT = "netsh interface ip set address \"{0}\" dhcp";
+
         static public WMIHelper CreateByNICGuid(Guid interfaceGuid)
         {
             if(interfaceGuid == Guid.Empty)
@@ -33,6 +36,7 @@ namespace DeviceCenter.WlanAPIs
                     if(guid == interfaceGuid)
                     {
                         newInstance._networkAdapterMO = mo;
+                        newInstance._interfaceName = Util.GetNameByGuid(guid);
                     }
                 }
                 catch(Exception ex)
@@ -63,14 +67,9 @@ namespace DeviceCenter.WlanAPIs
         {
             Debug.Assert(_networkAdapterMO != null);
 
-            Util.Info("WMIHelper: set IP to [{0}] subnet [{1}]", ipAddresses, subnetMask);
-            ManagementBaseObject newIP = _networkAdapterMO.GetMethodParameters("EnableStatic");
-            ManagementBaseObject newDNS = _networkAdapterMO.GetMethodParameters("SetDNSServerSearchOrder");
-
-            newIP["IPAddress"] = ipAddresses.Split(',');
-            newIP["SubnetMask"] = new string[] { subnetMask };
-
-            TraceMOResult(_networkAdapterMO.InvokeMethod("EnableStatic", newIP, null), "EnableStatic");
+            Util.Info("WMIHelper: Seting static IP to [{0}] [{1}]", ipAddresses, subnetMask);
+            string argument = string.Format(NETSH_SET_STATIC_IP_ARGUMENT, _interfaceName);
+            Util.RunNetshElevated(argument);
         }
 
         public void EnableDHCP()
@@ -80,10 +79,8 @@ namespace DeviceCenter.WlanAPIs
             // netsh interface ip set address "Wi-Fi" dhcp
             Util.Info("WMIHelper: Enabling DHCP");
 
-            var newDNS = _networkAdapterMO.GetMethodParameters("SetDNSServerSearchOrder");
-            newDNS["DNSServerSearchOrder"] = null;
-            TraceMOResult(_networkAdapterMO.InvokeMethod("EnableDHCP", null, null), "EnableDHCP");
-            TraceMOResult(_networkAdapterMO.InvokeMethod("SetDNSServerSearchOrder", newDNS, null), "SetDNSServerSearchOrder");
+            string argument = string.Format(NETSH_ENABLE_DHCP_ARGUMENT, _interfaceName);
+            Util.RunNetshElevated(argument);
         }
 
         public void DebugPrint()
@@ -107,5 +104,6 @@ namespace DeviceCenter.WlanAPIs
         }
 
         private ManagementObject _networkAdapterMO;
+        private string _interfaceName;
     }
 }
