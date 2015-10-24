@@ -367,7 +367,10 @@ namespace DeviceCenter
             url = url + "&ssid=" + RestHelper.Encode64(ssid);
             url = url + "&op=" + "connect";
             url = url + "&createprofile=" + "yes";
-            url = url + "&key=" + RestHelper.Encode64(ssidPassword);
+            if (!string.IsNullOrEmpty(ssidPassword))
+            {
+                url = url + "&key=" + RestHelper.Encode64(ssidPassword);
+            }
 
             await this.restHelper.GetOrPostRequestAsync(url, false);
 
