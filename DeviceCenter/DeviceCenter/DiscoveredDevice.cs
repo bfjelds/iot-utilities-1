@@ -1,4 +1,4 @@
-﻿using DeviceCenter.Wrappers;
+﻿using DeviceCenter.WlanAPIs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +20,7 @@ namespace DeviceCenter
             this.ConnectVisible = Visibility.Collapsed;
         }
 
-        public DiscoveredDevice(ManagedWifi wifi)
+        public DiscoveredDevice(WlanInterop.WlanAvailableNetwork wifi)
         {
             this.Network = NetworkType.adhoc;
 
@@ -36,7 +36,7 @@ namespace DeviceCenter
             return this.DeviceName;
         }
 
-        public ManagedWifi WifiInstance { get; private set; }
+        public WlanInterop.WlanAvailableNetwork WifiInstance { get; private set; }
 
         public NetworkType Network { get; private set; }
         public string DeviceName { get; set; }

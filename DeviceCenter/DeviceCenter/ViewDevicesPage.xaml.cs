@@ -1,10 +1,12 @@
-﻿using DeviceCenter.Wrappers;
+﻿using DeviceCenter.WlanAPIs;
 using Microsoft.Tools.Connectivity;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -18,44 +20,27 @@ namespace DeviceCenter
     /// </summary>
     public partial class ViewDevicesPage : Page
     {
-        private DispatcherTimer telemetryTimer;
+        private DispatcherTimer telemetryTimer = new DispatcherTimer();
         private DiscoveredDevice newestBuildDevice, oldestBuildDevice;
         private DeviceDiscoveryService deviceDiscoverySvc;
         private ObservableCollection<DiscoveredDevice> devices = new ObservableCollection<DiscoveredDevice>();
-        private ObservableCollection<ManagedConsumer> onboardingConsumerList = new ObservableCollection<ManagedConsumer>();
 
-        /* bugbug
-        private ConcurrentDictionary<string, AdhocNetwork> adhocNetworks = new ConcurrentDictionary<string, AdhocNetwork>();
-
-        private IOnboardingManager wifiManager;
-        private DispatcherTimer wifiRefreshTimer;
-        */
+        private SoftAPHelper softwareAccessPoint = new SoftAPHelper();
+        private DispatcherTimer wifiRefreshTimer = new DispatcherTimer();
+        private ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork> adhocNetworks = new ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork>();
 
         private Frame _navigationFrame;
         private PageWifi wifiPage;
+        private bool connectedToAdhoc = false;
 
         ~ViewDevicesPage()
         {
-            /*
-            wifiManager.Shutdown();
-            */
+            wifiRefreshTimer.Stop();
+            if (connectedToAdhoc)
+            {
+                softwareAccessPoint.Disconnect();
+            }
         }
-
-        /* bugbug
-        private class AdhocNetwork
-        {
-            public AdhocNetwork(IWifi wifi)
-            {
-                this.Wifi = wifi;
-            }
-
-            public override string ToString()
-            {
-                return this.Wifi.GetSSID();
-            }
-
-            public IWifi Wifi { get; private set; }
-        }*/
 
         public ViewDevicesPage(Frame navigationFrame)
         {
@@ -65,7 +50,6 @@ namespace DeviceCenter
             newestBuildDevice = null;
             oldestBuildDevice = null;
 
-            telemetryTimer = new DispatcherTimer();
             telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             telemetryTimer.Tick += TelemetryTimer_Tick;
 
@@ -75,89 +59,54 @@ namespace DeviceCenter
 
             ListViewDevices.ItemsSource = devices;
 
-            /* bugbug replace with new framework
-            wifiManager = new OnboardingManager();
+            softwareAccessPoint.OnSoftAPDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
 
-            try
-            {
-                wifiManager.Init();
-            }
-            catch (Exception ex)
-            {
-                App.TelemetryClient.TrackException(ex);
-            }
-
-            wifiRefreshTimer = new DispatcherTimer()
-            {
-                Interval = TimeSpan.FromSeconds(10)
-            };
+            wifiRefreshTimer.Interval = TimeSpan.FromSeconds(10);
             wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
+
             RefreshWifiAsync();
-            */
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
-        private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
+        private void SoftwareAccessPoint_OnSoftAPDisconnected()
         {
-            /* bugbug
-            wifiRefreshTimer.Stop();
-            */
+            connectedToAdhoc = false;
         }
 
-        /* bugbug
-        private async void RefreshWifiAsync()
+        private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
+        {
+            wifiRefreshTimer.Stop();
+        }
+
+        private void RefreshWifiAsync()
         {
             wifiRefreshTimer.Stop();
 
             try
             {
-                await Task.Run((Action)(() =>
+                var list = softwareAccessPoint.GetAvailableNetworkList();
+
+                if (list == null)
+                    return;
+
+                foreach (WlanInterop.WlanAvailableNetwork accessPoint in list)
                 {
-                    WifiList list = null;
-                    try
+                    adhocNetworks.GetOrAdd(accessPoint.SSIDString, (key) =>
                     {
-                        list = wifiManager.GetOnboardingNetworks();
-
-                        if (list == null)
-                            return;
-
-                        uint size = list.Size();
-
-                        for (uint i = 0; i < size; i++)
+                        var newDevice = new DiscoveredDevice(accessPoint)
                         {
-                            IWifi item = list.GetItem(i);
+                            DeviceName = key
+                        };
 
-                            AdhocNetwork ssid = adhocNetworks.GetOrAdd(item.GetSSID(), (key) =>
-                            {
-                                var newDevice = new DiscoveredDevice(new ManagedWifi(item))
-                                {
-                                    DeviceName = item.GetSSID()
-                                };
-
-                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                                {
-                                    devices.Add(newDevice);
-                                }));
-
-                                return new AdhocNetwork(item);
-                            });
-                        }
-                    }
-                    catch (COMException)
-                    {
-                        // TODO handle errors
-                        //Dispatcher.Invoke(() => { statusTextBlock.Text = "Failed to find onboardees. HRESULT: " + ex.HResult; });
-                    }
-                    finally
-                    {
-                        if (list != null)
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                         {
-                            Marshal.ReleaseComObject(list);
-                            list = null;
-                        }
-                    }
-                }));
+                            devices.Add(newDevice);
+                        }));
+
+                        return accessPoint;
+                    });
+                }
             }
             finally
             {
@@ -169,7 +118,6 @@ namespace DeviceCenter
         {
             RefreshWifiAsync();
         }
-        */
 
         private void TelemetryTimer_Tick(object sender, EventArgs e)
         {
@@ -302,33 +250,33 @@ namespace DeviceCenter
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
-            /* bugbug
             wifiRefreshTimer.Stop();
-            */
-
-            DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
-            if (device != null)
+            try
             {
-                WindowWarning dlg = new WindowWarning()
+                DiscoveredDevice device = ListViewDevices.SelectedItem as DiscoveredDevice;
+                if (device != null)
                 {
-                    Header = Strings.Strings.ConnectAlertTitle,
-                    Message = Strings.Strings.ConnectAlertMessage
-                };
+                    WindowWarning dlg = new WindowWarning()
+                    {
+                        Header = Strings.Strings.ConnectAlertTitle,
+                        Message = Strings.Strings.ConnectAlertMessage
+                    };
 
-                bool? confirmation = dlg.ShowDialog();
-                if (confirmation.HasValue && confirmation.Value)
-                {
-                    wifiPage = new PageWifi(_navigationFrame, /* bugbug wifiManager*/null, device);
+                    bool? confirmation = dlg.ShowDialog();
+                    if (confirmation.HasValue && confirmation.Value)
+                    {
+                        wifiPage = new PageWifi(_navigationFrame, this.softwareAccessPoint, device);
 
-                    _navigationFrame.Navigate(wifiPage);
+                        _navigationFrame.Navigate(wifiPage);
 
-                    return;
+                        return;
+                    }
                 }
             }
-
-            /* bugbug
-            wifiRefreshTimer.Start();
-            */
+            finally
+            {
+                wifiRefreshTimer.Start();
+            }
         }
 
         private void ButtonPortal_Click(object sender, MouseButtonEventArgs e)

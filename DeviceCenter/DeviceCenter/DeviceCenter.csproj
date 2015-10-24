@@ -92,10 +92,6 @@
       <HintPath>$(SolutionDir)\Debug\OnboardingTypeLib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>-->
-    <Reference Include="OnboardingTypeLib">
-      <HintPath>..\Debug\OnboardingTypeLib.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Tools.Connectivity, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -146,9 +142,8 @@
       <DependentUpon>DialogAuthenticate.xaml</DependentUpon>
     </Compile>
     <Compile Include="DiscoveredDevice.cs" />
-    <Compile Include="Handlers\OnboardeeAddedHandler.cs" />
-    <Compile Include="Handlers\WifiConnectionResultHandler.cs" />
     <Compile Include="Helper\RestHelper.cs" />
+    <Compile Include="Helper\SoftAPHelper.cs" />
     <Compile Include="ImageHelper.cs" />
     <Compile Include="LastKnownGood.cs" />
     <Compile Include="NativeMethods.cs" />
@@ -190,8 +185,6 @@
     <Compile Include="WindowWarning.xaml.cs">
       <DependentUpon>WindowWarning.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Wrappers\ManagedConsumer.cs" />
-    <Compile Include="Wrappers\ManagedWifi.cs" />
     <Page Include="ButtonAppInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -388,7 +381,16 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\WlanAPIs\WlanAPIs.csproj">
+      <Project>{5db87652-c90b-409f-a10e-89022eb931b3}</Project>
+      <Name>WlanAPIs</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Handlers\" />
+    <Folder Include="Wrappers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
