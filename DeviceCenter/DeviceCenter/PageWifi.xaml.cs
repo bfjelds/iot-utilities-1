@@ -2,6 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -178,14 +179,37 @@ namespace DeviceCenter
             //this.wifiManager.ConnectToOnboardingNetwork((Onboarding.wifi)device.WifiInstance.NativeWifi, "password");
         }
 
+        private bool connected = false;
+
         private async void delayStartTimer_Tick(object sender, EventArgs e)
         {
             delayStart.Stop();
 
-            await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+            bool connected = await wifiManager.ConnectAsync(device.WifiInstance, "password");
+            if (connected)
             {
-                ListViewWifi.ItemsSource = await QueryWifiAsync(device);
-            }));
+                this.connected = true;
+
+                UserInfo authentication = DialogAuthenticate.GetSavedPassword(this.device.WifiInstance.SSIDString);
+
+                try
+                {
+                    await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+                    {
+                        ListViewWifi.ItemsSource = await QueryWifiAsync(device);
+                    }));
+                }
+                catch (Exception error)
+                {
+                    Debug.WriteLine(error.Message);
+
+                    wifiManager.Disconnect();
+                }
+            }
+            else
+            {
+                wifiManager.Disconnect();
+            }
         }
 
         private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync(DiscoveredDevice device)
@@ -219,6 +243,8 @@ namespace DeviceCenter
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
+            if (this.connected)
+                wifiManager.Disconnect();
         }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)

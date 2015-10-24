@@ -85,7 +85,15 @@ namespace DeviceCenter
 
             try
             {
-                var list = softwareAccessPoint.GetAvailableNetworkList();
+                IList<WlanInterop.WlanAvailableNetwork> list = null;
+                try
+                {
+                    list = softwareAccessPoint.GetAvailableNetworkList();
+                }
+                catch (WLanException)
+                {
+                    // probably not connected to wifi
+                }
 
                 if (list == null)
                     return;
