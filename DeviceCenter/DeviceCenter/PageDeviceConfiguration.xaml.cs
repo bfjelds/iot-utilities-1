@@ -26,6 +26,7 @@ namespace DeviceCenter
         {
             LabelDeviceName.Text = this.Device.DeviceName;
             textBoxDeviceName.Text = this.Device.DeviceName;
+            ButtonOk.IsEnabled = false;
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
@@ -41,7 +42,7 @@ namespace DeviceCenter
                 bool x = await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text);
 
                 // TO DO: make it a dialog before restart
-                MessageBox.Show("Do you want to restart the device?");
+                MessageBox.Show("Rebooting the Device Now...");
                 bool z = await webbRequest.RestartAsync();
             }
             if (!String.IsNullOrWhiteSpace(textBoxCurrentPassword.Password)
@@ -50,5 +51,23 @@ namespace DeviceCenter
                 bool y = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
             }
         }
+             
+        private void textBoxPassword2_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (textBoxPassword1.Password == textBoxPassword2.Password)
+            {
+                PasswordCheckLabel.Text = "";
+                ButtonOk.IsEnabled = true;
+            }
+            else
+            {
+                PasswordCheckLabel.Text = Strings.Strings.DeviceNamePwdPasswordDontMatch;
+            }
+        }
+       
+        private void textBoxDeviceName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ButtonOk.IsEnabled = true;
+        }       
     }
 }

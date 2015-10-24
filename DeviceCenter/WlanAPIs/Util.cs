@@ -146,7 +146,7 @@ namespace DeviceCenter.WlanAPIs
             {
                 var ex = new WLanException(errorCode, method);
                 Error(ex.ToString());
-                throw ex;
+                // throw ex;
             }
         }
 
