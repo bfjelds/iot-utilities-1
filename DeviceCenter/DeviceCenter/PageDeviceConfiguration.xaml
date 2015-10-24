@@ -14,9 +14,9 @@
                 <TextBlock x:Uid="Subtitle" FontSize="21.333" VerticalAlignment="Top" Text="{x:Static props:Strings.NewDeviceTitle}" HorizontalAlignment="Left" Margin="0,20,0,0" TextWrapping="Wrap"/>
                 <TextBlock x:Uid="MessageSetPassword" VerticalAlignment="Top" Text="{x:Static props:Strings.DeviceNamePwdMessage}" Margin="0,10,0,6" HorizontalAlignment="Left"/>
                 <TextBlock x:Uid="LabelDeviceName" VerticalAlignment="Top" Text="{x:Static props:Strings.DeviceNamePwdDeviceNameLabel}" Margin="0,10,0,6" HorizontalAlignment="Left"/>
-                <TextBox x:Name="textBoxDeviceName" Height="23" Width="200" TextWrapping="Wrap"  Text="" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                <TextBox x:Name="textBoxDeviceName" Height="23" Width="200" TextWrapping="Wrap"  Text="" HorizontalAlignment="Left" VerticalAlignment="Top" TextChanged="textBoxDeviceName_TextChanged"/>
                 <TextBlock x:Uid="LabelDeviceCurrentPassword" VerticalAlignment="Top" Text="{x:Static props:Strings.DeviceNamePwdPassword1}" Margin="0,20,0,6" HorizontalAlignment="Left"/>
-                <PasswordBox x:Name="textBoxCurrentPassword" Height="23" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                <PasswordBox x:Name="textBoxCurrentPassword" Height="23" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <TextBlock x:Uid="LabelDevicePassword1" VerticalAlignment="Top" Text="{x:Static props:Strings.DeviceNamePwdPassword2}" Margin="0,20,0,6" HorizontalAlignment="Left"/>
                 <PasswordBox x:Name="textBoxPassword1" Height="23" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <TextBlock x:Uid="LabelDevicePassword2" VerticalAlignment="Top" Text="{x:Static props:Strings.DeviceNamePwdPassword3}" Margin="0,20,0,6" HorizontalAlignment="Left"/>
@@ -25,7 +25,7 @@
                     <TextBlock x:Name="PasswordCheckLabel" x:Uid="LabelCheckmark" VerticalAlignment="Top" Text="{x:Static props:Strings.DeviceNamePwdPasswordDontMatch}" HorizontalAlignment="Left" Margin="20,0,0,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,20,0,6" HorizontalAlignment="Left">
-                    <Button x:Name="ButtonOk"  Content="{x:Static props:Strings.FinishButton}" Padding="50 5 50 5" Click="ButtonOk_Click" >
+                    <Button x:Name="ButtonOk"  Content="{x:Static props:Strings.FinishButton}" Padding="50 5 50 5" Click="ButtonOk_Click">
                         <Button.Background>
                             <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.GradientActiveCaptionColorKey}}"/>
                         </Button.Background>
