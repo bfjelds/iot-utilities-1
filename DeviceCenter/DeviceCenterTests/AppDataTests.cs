@@ -15,13 +15,11 @@ namespace DeviceCenterTests
         {
             InitializeTestData();
 
-            var appData = new AppData();
-            
             // store it
-            appData.StoreWebBUserInfo(UserInfoList);
+            AppData.StoreWebBUserInfo(UserInfoList);
 
             //read it back
-            var x = appData.LoadWebBUserInfo();
+            var x = AppData.LoadWebBUserInfo();
 
             // compare with original
             Assert.AreEqual(x[_userInfo1.DeviceName].UserName, _userInfo1.UserName);

@@ -1,6 +1,4 @@
 ﻿using DeviceCenter.DataContract;
-using DeviceCenter.Wrappers;
-using Onboarding;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -152,10 +150,10 @@ namespace DeviceCenter
     {
         private Frame navigationFrame;
         private DiscoveredDevice device;
-        private IOnboardingManager wifiManager;
+        private SoftAPHelper wifiManager;
         private DispatcherTimer delayStart;
 
-        public PageWifi(Frame navigationFrame, IOnboardingManager wifiManager, DiscoveredDevice device)
+        public PageWifi(Frame navigationFrame, SoftAPHelper wifiManager, DiscoveredDevice device)
         {
             InitializeComponent();
 
@@ -176,7 +174,8 @@ namespace DeviceCenter
             };
             delayStart.Tick += delayStartTimer_Tick;
 
-            this.wifiManager.ConnectToOnboardingNetwork((Onboarding.wifi)device.WifiInstance.NativeWifi, "password");
+            //bugbug
+            //this.wifiManager.ConnectToOnboardingNetwork((Onboarding.wifi)device.WifiInstance.NativeWifi, "password");
         }
 
         private async void delayStartTimer_Tick(object sender, EventArgs e)
@@ -192,20 +191,10 @@ namespace DeviceCenter
         private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync(DiscoveredDevice device)
         {
             ObservableCollection<WifiEntry> result = new ObservableCollection<WifiEntry>();
-            UserInfo userInfo;
-
-            if (!DialogAuthenticate.GetSavedPassword(device.DeviceName, out userInfo))
-            {
-                userInfo = new UserInfo()
-                {
-                    DeviceName = device.DeviceName,
-                    UserName = "administrator",
-                    Password = "p@ssw0rd"
-                };
-            }
+            UserInfo userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
 
             IPAddress ip = System.Net.IPAddress.Parse("192.168.173.1"); // default on wifi
-            WebBRest webbRequest = new WebBRest(ip, userInfo.UserName, userInfo.Password);
+            WebBRest webbRequest = new WebBRest(ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
 
             var adapters = await webbRequest.GetWirelessAdaptersAsync();
 
@@ -216,13 +205,6 @@ namespace DeviceCenter
             }
 
             progressWaiting.Visibility = Visibility.Collapsed;
-
-            /*DialogAuthenticate authDlg = new DialogAuthenticate(userInfo);
-                bool? dlgResult = authDlg.ShowDialog();
-
-                if (!dlgResult.HasValue || !dlgResult.Value)
-                    return;
-            }*/
 
             return result;
         }

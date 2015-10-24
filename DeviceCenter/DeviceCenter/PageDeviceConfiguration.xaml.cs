@@ -1,18 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DeviceCenter
 {
@@ -38,6 +26,7 @@ namespace DeviceCenter
         {
             LabelDeviceName.Text = this.Device.DeviceName;
             textBoxDeviceName.Text = this.Device.DeviceName;
+            ButtonOk.IsEnabled = false;
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
@@ -47,19 +36,13 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            //textBoxDeviceName.Text;
-            //textBoxCurrentPassword.Text
-            //textBoxPassword1
-
-            // do stuff here
-            IPAddress ip = IPAddress.Parse(this.Device.IPAddress);
-            WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
+            WebBRest webbRequest = new WebBRest(this.Device.IPAddress, this.Device.Authentication);
             if (!String.IsNullOrWhiteSpace(textBoxDeviceName.Text))
             {
                 bool x = await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text);
 
                 // TO DO: make it a dialog before restart
-                MessageBox.Show("Do you want to restart the device?");
+                MessageBox.Show("Rebooting the Device Now...");
                 bool z = await webbRequest.RestartAsync();
             }
             if (!String.IsNullOrWhiteSpace(textBoxCurrentPassword.Password)
@@ -68,5 +51,23 @@ namespace DeviceCenter
                 bool y = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
             }
         }
+             
+        private void textBoxPassword2_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (textBoxPassword1.Password == textBoxPassword2.Password)
+            {
+                PasswordCheckLabel.Text = "";
+                ButtonOk.IsEnabled = true;
+            }
+            else
+            {
+                PasswordCheckLabel.Text = Strings.Strings.DeviceNamePwdPasswordDontMatch;
+            }
+        }
+       
+        private void textBoxDeviceName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ButtonOk.IsEnabled = true;
+        }       
     }
 }

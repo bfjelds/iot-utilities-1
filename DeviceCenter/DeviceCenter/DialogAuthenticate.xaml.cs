@@ -53,11 +53,14 @@
     /// </summary>
     public partial class DialogAuthenticate : Window
     {
+        private const string defaultUser = "Administrator";
+        private const string defaultPassword = "p@ssw0rd";
+
         // tbd - away from static?
         static LoginInfoDictionary savedPasswords = new Dictionary<string, UserInfo>();
         static bool firstLoaded = false;
 
-        public static bool GetSavedPassword(string deviceName, out UserInfo info)
+        public static UserInfo GetSavedPassword(string deviceName)
         {
             // tbd - a hack. should be properly loaded 
             if (firstLoaded != true)
@@ -66,7 +69,30 @@
                 firstLoaded = true;
             }
 
-            return savedPasswords.TryGetValue(deviceName, out info);
+            UserInfo result;
+
+            if (!savedPasswords.TryGetValue(deviceName, out result))
+            {
+                result = new UserInfo()
+                {
+                    DeviceName = deviceName,
+                    UserName = defaultUser,
+                    Password = defaultPassword
+                };
+            }
+
+            return result;
+        }
+
+        public static void SavePassword(UserInfo userInfo)
+        {
+            if (savedPasswords.ContainsKey(userInfo.DeviceName))
+                savedPasswords[userInfo.DeviceName] = userInfo;
+            else
+                savedPasswords.Add(userInfo.DeviceName, userInfo);
+
+            // store to permanent storage
+            AppData.StoreWebBUserInfo(savedPasswords);
         }
 
         public DialogAuthenticate(UserInfo info)
@@ -100,15 +126,8 @@
 
                 if (info.SavePassword.HasValue && info.SavePassword.Value)
                 {
-                    savedPasswords.Add(info.DeviceName, info);
+                    SavePassword(info);
                 }
-                else if (savedPasswords.ContainsKey(info.DeviceName))
-                {
-                    savedPasswords.Remove(info.DeviceName);
-                }
-
-                // store to permanent storage
-                AppData.StoreWebBUserInfo(savedPasswords);
             }
 
             this.DialogResult = true;

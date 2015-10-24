@@ -146,7 +146,7 @@ namespace DeviceCenter.WlanAPIs
             {
                 var ex = new WLanException(errorCode, method);
                 Error(ex.ToString());
-                throw ex;
+                // throw ex;
             }
         }
 
@@ -154,14 +154,12 @@ namespace DeviceCenter.WlanAPIs
         {
             var msg = string.Format(message, paras);
             Debug.WriteLine("Info: " + msg);
-            Console.WriteLine("Info: " + msg);
         }
 
         public static void Error(string message, params object[] paras)
         {
             var msg = string.Format(message, paras);
             Debug.WriteLine("Error: " + msg);
-            Console.WriteLine("Error: " + msg);
         }
     }
 }

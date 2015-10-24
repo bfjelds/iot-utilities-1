@@ -34,10 +34,7 @@ namespace DeviceCenter
 
         private async void GetAppState()
         {
-            IPAddress ip = IPAddress.Parse(this.device.IPAddress);
-            WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
-            //IPAddress ip = IPAddress.Parse("10.125.140.162");
-            //WebBRest webbRequest = new WebBRest(ip, "Administrator", "Eiger!23");
+            WebBRest webbRequest = new WebBRest(this.device.IPAddress, this.device.Authentication);
 
             if (await webbRequest.IsAppRunning(this.AppItem.AppName))
             {
@@ -55,10 +52,7 @@ namespace DeviceCenter
             PanelDeploying.Visibility = Visibility.Visible;
             PanelDeployed.Visibility = Visibility.Collapsed;
 
-            IPAddress ip = IPAddress.Parse(this.device.IPAddress);
-            WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
-            //IPAddress ip = IPAddress.Parse("10.125.140.162");
-            //WebBRest webbRequest = new WebBRest(ip, "Administrator", "Eiger!23");
+            WebBRest webbRequest = new WebBRest(this.device.IPAddress, this.device.Authentication);
 
             AppInformation.ApplicationFiles sourceFiles = this.AppItem.PlatformFiles[device.Architecture];
 
@@ -92,8 +86,7 @@ namespace DeviceCenter
 
         private async void ButtonStopApp_Click(object sender, RoutedEventArgs e)
         {
-            IPAddress ip = IPAddress.Parse(this.device.IPAddress);
-            WebBRest webbRequest = new WebBRest(ip, "Administrator", "p@ssw0rd");
+            WebBRest webbRequest = new WebBRest(this.device.IPAddress, this.device.Authentication);
 
             if (await webbRequest.StopAppAsync(this.AppItem.AppName))
             {

@@ -14,36 +14,28 @@ namespace DeviceCenter
 {
     public class WebBRest
     {
-        public static IPAddress IpAddr;
+        private const string DeviceApiUrl = "/api/iot/device/";
+        private const string ControlApiUrl = "/api/control/";
+        private const string NetworkingApiUrl = "/api/networking/";
+        private const string AppxApiUrl = "/api/appx/packagemanager/";
+        private const string AppTaskUrl = "/api/taskmanager/app";
+        private const string PerfMgrUrl = "/api/resourcemanager/";
 
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public static string Port { get; set; } = "8080";
-        public static string Admin { get; } = "Administrator";
-        public static string AdminPwd { get; set; } = "p@ssw0rd";
-        private static string DeviceApiUrl { get; } = "/api/iot/device/";
-        private static string ControlApiUrl { get; } = "/api/control/";
-        private static string NetworkingApiUrl { get; } = "/api/networking/";
-        private static string AppxApiUrl { get; } = "/api/appx/packagemanager/";
-        private static string AppTaskUrl { get; } = "/api/taskmanager/";
-        private static string PerfMgrUrl { get; } = "/api/resourcemanager/";
-        private static string HttpUrlPrfx { get; } = "http://";
+        private RestHelper restHelper;
 
-        public WebBRest(IPAddress ip, string username, string password)
+        public WebBRest(IPAddress ipAddress, UserInfo userInfo)
         {
-            IpAddr = ip;
-            Username = username;
-            Password = password;
+            this.restHelper = new RestHelper(ipAddress, userInfo);
         }
 
         public async Task<bool> SetDeviceNameAsync(string newDeviceName)
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "name?newdevicename=";
+            string url = DeviceApiUrl + "name?newdevicename=";
             url += RestHelper.Encode64(newDeviceName);
 
             try
             {
-                await PostRequestAsync(url);
+                await restHelper.PostRequestAsync(url);
             }
             catch (Exception ex)
             {
@@ -55,13 +47,17 @@ namespace DeviceCenter
 
         public async Task<bool> SetPasswordAsync(string oldPassword, string newPassword)
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + DeviceApiUrl + "password?";
+            string url = DeviceApiUrl + "password?";
             url = url + "oldpassword=" + RestHelper.Encode64(oldPassword);
             url = url + "&newpassword=" + RestHelper.Encode64(newPassword);
 
             try
             {
-                await PostRequestAsync(url);
+                await restHelper.PostRequestAsync(url);
+
+                // resaves the password
+                restHelper.DeviceAuthentication.Password = newPassword;
+                DialogAuthenticate.SavePassword(restHelper.DeviceAuthentication);
             }
             catch (Exception ex)
             {
@@ -69,22 +65,16 @@ namespace DeviceCenter
                 return false;
             }
 
-            if (Username == Admin)
-            {
-                AdminPwd = newPassword;
-            }
-            Password = newPassword;
-
             return true;
         }
 
         public async Task<bool> RestartAsync()
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + ControlApiUrl + "restart";
+            string url = ControlApiUrl + "restart";
 
             try
             {
-                await PostRequestAsync(url);
+                await restHelper.PostRequestAsync(url);
             }
             catch (Exception ex)
             {
@@ -97,17 +87,17 @@ namespace DeviceCenter
 
         public async Task<bool> InstallAppxAsync(string appName, IEnumerable<FileInfo> files)
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "package?package=";
+            string url = AppxApiUrl + "package?package=";
             url += files.First().Name;
 
             string boundary = "-----------------------" + DateTime.Now.Ticks.ToString("x");
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(this.restHelper.CreateUri(url));
             request.Accept = "*/*";
             request.ContentType = "multipart/form-data; boundary=" + boundary;
             request.Method = "POST";
             request.KeepAlive = true;
-            string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
+            string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(this.restHelper.DeviceAuthentication.UserName + ":" + this.restHelper.DeviceAuthentication.Password));
             request.Headers.Add("Authorization", "Basic " + encodedAuth);
 
             using (Stream memStream = new MemoryStream())
@@ -192,14 +182,14 @@ namespace DeviceCenter
 
         public async Task<bool> PollInstallStateAsync()
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "state";
-            HttpStatusCode result = HttpStatusCode.BadRequest ;
+            string url = AppxApiUrl + "state";
+            HttpStatusCode result = HttpStatusCode.BadRequest;
 
             while (result != HttpStatusCode.NotFound && result != HttpStatusCode.OK)
             {
                 try
                 {
-                    var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
+                    var response = await restHelper.GetOrPostRequestAsync(url, true);
                     result = response.StatusCode;
                     if (response.StatusCode == HttpStatusCode.NoContent)
                     {
@@ -218,10 +208,10 @@ namespace DeviceCenter
 
         public async Task<InstalledPackages> GetInstalledPackagesAsync()
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppxApiUrl + "packages";
+            string url = AppxApiUrl + "packages";
             try
             {
-                var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
+                var response = await this.restHelper.GetOrPostRequestAsync(url, true);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     return RestHelper.ProcessJsonResponse(response, typeof(InstalledPackages)) as InstalledPackages;
@@ -238,10 +228,10 @@ namespace DeviceCenter
 
         public async Task<bool> IsAppRunning(string appName)
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + PerfMgrUrl + "processes";
+            string url = PerfMgrUrl + "processes";
             try
             {
-                var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
+                var response = await this.restHelper.GetOrPostRequestAsync(url, true);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     IoTProcesses runningProcesses = RestHelper.ProcessJsonResponse(response, typeof(IoTProcesses)) as IoTProcesses;
@@ -265,14 +255,13 @@ namespace DeviceCenter
 
         public async Task<bool> StartAppAsync(string appid, string package)
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppTaskUrl
-                         + "app?appid=" + RestHelper.Encode64(appid)
-                         + "&package=" + RestHelper.Encode64(package);
+            string url = AppTaskUrl + "?appid=" + RestHelper.Encode64(appid) 
+                + "&package=" + RestHelper.Encode64(package);
 
             HttpStatusCode result = HttpStatusCode.BadRequest;
             try
             {
-                result = await PostRequestAsync(url);
+                result = await this.restHelper.PostRequestAsync(url);
             }
             catch (Exception ex)
             {
@@ -294,8 +283,7 @@ namespace DeviceCenter
                 if (app.Name == appName)
                 {
                     isFound = true;
-                    url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + AppTaskUrl
-                         + "app?package=" + RestHelper.Encode64(app.PackageFullName);
+                    url = AppTaskUrl + "app?package=" + RestHelper.Encode64(app.PackageFullName);
                 }
             }
             if (!isFound)
@@ -306,7 +294,7 @@ namespace DeviceCenter
             HttpStatusCode result = HttpStatusCode.BadRequest;
             try
             {
-                result = await DeleteRequestAsync(url);
+                result = await this.restHelper.DeleteRequestAsync(url);
             }
             catch (Exception ex)
             {
@@ -323,92 +311,16 @@ namespace DeviceCenter
             }
         }
 
-        private async Task<HttpStatusCode> PostRequestAsync(string url)
-        {
-            Stream objStream = null;
-            StreamReader objReader = null;
-            Debug.WriteLine(url);
-            HttpStatusCode result = HttpStatusCode.BadRequest;
-
-            try
-            {
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-                req.Method = "POST";
-                req.ContentType = "application/x-www-form-urlencoded";
-                string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
-                req.Headers.Add("Authorization", "Basic " + encodedAuth);
-                req.ContentLength = 0;
-
-                HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
-                result = response.StatusCode;
-                if (result == HttpStatusCode.OK)
-                {
-                    objStream = response.GetResponseStream();
-                    objReader = new StreamReader(objStream);
-                    string respData = objReader.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-            return result;
-        }
-
-        private async Task<HttpStatusCode> DeleteRequestAsync(string url)
-        {
-            Stream objStream = null;
-            StreamReader objReader = null;
-            Debug.WriteLine(url);
-            HttpStatusCode result = HttpStatusCode.BadRequest;
-
-            try
-            {
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-                req.Method = "DELETE";
-                req.ContentType = "application/x-www-form-urlencoded";
-                string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(Username + ":" + Password));
-                req.Headers.Add("Authorization", "Basic " + encodedAuth);
-                req.ContentLength = 0;
-
-                HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
-                result = response.StatusCode;
-                if (result == HttpStatusCode.OK)
-                {
-                    objStream = response.GetResponseStream();
-                    objReader = new StreamReader(objStream);
-                    string respData = objReader.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-            return result;
-        }
-
         #region webB rest for wifi onboarding
 
         public async Task<WirelessAdapters> GetWirelessAdaptersAsync()
         {
-            int retries = 0;
+            string url = "/api/wifi/interfaces";
 
-            while (retries < 2)
+            var response = await this.restHelper.GetOrPostRequestAsync(url, true);
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                try
-                {
-                    string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/interfaces";
-
-                    var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
-                    }
-                }
-                catch (WebException)
-                {
-                    retries++;
-                }
+                return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
             }
 
             return new WirelessAdapters();
@@ -416,9 +328,9 @@ namespace DeviceCenter
 
         public async Task<IPConfigurations> GetIPConfigurationsAsync()
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + NetworkingApiUrl + "ipconfig";
+            string url = NetworkingApiUrl + "ipconfig";
 
-            var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
+            var response = await this.restHelper.GetOrPostRequestAsync(url, true);
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 return RestHelper.ProcessJsonResponse(response, typeof(IPConfigurations)) as IPConfigurations;
@@ -429,12 +341,11 @@ namespace DeviceCenter
 
         public async Task<AvailableNetworks> GetAvaliableNetworkAsync(string adapterName)
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/networks?";
-            url += "interface=" + adapterName.Trim("{}".ToCharArray());
+            string url = "/api/wifi/networks?interface=" + adapterName.Trim("{}".ToCharArray());
 
             try
             {
-                var response = await RestHelper.GetOrPostRequestAsync(url, true, Username, Password);
+                var response = await this.restHelper.GetOrPostRequestAsync(url, true);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     return RestHelper.ProcessJsonResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
@@ -451,14 +362,14 @@ namespace DeviceCenter
 
         public async Task<string> ConnectToNetworkAsync(string adapterName, string ssid, string ssidPassword)
         {
-            string url = HttpUrlPrfx + IpAddr.ToString() + ":" + Port + "/api/wifi/network?";
+            string url = "/api/wifi/network?";
             url = url + "interface=" + adapterName.Trim("{}".ToCharArray());
             url = url + "&ssid=" + RestHelper.Encode64(ssid);
             url = url + "&op=" + "connect";
             url = url + "&createprofile=" + "yes";
             url = url + "&key=" + RestHelper.Encode64(ssidPassword);
 
-            await RestHelper.GetOrPostRequestAsync(url, false, Username, Password);
+            await this.restHelper.GetOrPostRequestAsync(url, false);
 
             return string.Empty;
         }
