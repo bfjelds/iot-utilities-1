@@ -62,5 +62,17 @@ namespace DeviceCenter
                 bool y = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
             }
         }
+             
+        private void textBoxPassword2_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (textBoxPassword1.Password == textBoxPassword2.Password)
+            {
+                PasswordCheckLabel.Text = "";
+            }
+            else
+            {
+                PasswordCheckLabel.Text = Strings.Strings.DeviceNamePwdPasswordDontMatch;
+            }
+        }
     }
 }

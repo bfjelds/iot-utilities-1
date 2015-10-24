@@ -448,7 +448,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password.
+        ///   Looks up a localized string similar to Old Password.
         /// </summary>
         public static string DeviceNamePwdPassword1 {
             get {
@@ -457,11 +457,20 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Repeat Password.
+        ///   Looks up a localized string similar to New Password.
         /// </summary>
         public static string DeviceNamePwdPassword2 {
             get {
                 return ResourceManager.GetString("DeviceNamePwdPassword2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm Password.
+        /// </summary>
+        public static string DeviceNamePwdPassword3 {
+            get {
+                return ResourceManager.GetString("DeviceNamePwdPassword3", resourceCulture);
             }
         }
         
