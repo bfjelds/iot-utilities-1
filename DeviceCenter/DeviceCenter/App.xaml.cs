@@ -72,6 +72,9 @@ namespace DeviceCenter
             });
             TelemetryClient.TrackMetric("UpTimeMinutes", GlobalStopwatch.Elapsed.TotalMinutes);
             GlobalStopwatch.Stop();
+
+            // Disconnect from softAP and enable DHCP
+            Helper.SoftApHelper.Instance.Disconnect();
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -79,6 +82,9 @@ namespace DeviceCenter
             var exception = e.ExceptionObject as Exception;
             if (exception != null)
             {
+                // Disconnect from softAP and enable DHCP on exception
+                Helper.SoftApHelper.Instance.Disconnect();
+
                 // Track exception
                 TelemetryClient.TrackException(exception);
             }

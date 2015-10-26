@@ -106,16 +106,19 @@ namespace WlanAPIs
                 profileName = connNotifyData.Value.profileName;
             }
 
-            Util.Info("*** {0} notification [{1}] [{2}] [{3}]({4},{5})", 
-                source,
-                profileName,
-                notification, 
-                reason, 
-                notifyData.notificationCode, 
-                reasonCode);
-
             if (notifyData.notificationSource == WlanInterop.WlanNotificationSource.ACM)
             {
+                if (!string.IsNullOrEmpty(profileName))
+                {
+                    Util.Info("*** {0} notification [{1}] [{2}] [{3}]({4},{5})",
+                    source,
+                    profileName,
+                    notification,
+                    reason,
+                    notifyData.notificationCode,
+                    reasonCode);
+                }
+
                 HandleAcmNotification(notifyData, connNotifyData);
                 OnAcmNotification?.Invoke(profileName, notifyData.notificationCode, (WlanInterop.WlanReasonCode)reasonCode);
             }
@@ -143,7 +146,7 @@ namespace WlanAPIs
                     break;
                 case WlanInterop.WlanNotificationCodeAcm.ConnectionAttemptFail:
                     {
-                        _isConnectAttemptSuccess = false;
+                        // _isConnectAttemptSuccess = false;
                     }
                     break;
             }

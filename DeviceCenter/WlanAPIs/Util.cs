@@ -168,7 +168,7 @@ namespace WlanAPIs
             Debug.WriteLine("Error: " + msg);
         }
 
-        public static void RunNetshElevated(string arguments)
+        public static bool RunNetshElevated(string arguments)
         {
             var procInfo = new ProcessStartInfo
             {
@@ -186,25 +186,13 @@ namespace WlanAPIs
                 var proc = new Process {StartInfo = procInfo};
                 proc.Start();
 
-                Console.WriteLine("Successfully elevated!");
+                return true;
             }
             catch (Exception)
             {
-                Console.WriteLine("Failed to elevate.");
+                Console.WriteLine("Failed to run elevated.");
+                return false;
             }
-        }
-
-        public static string GetNameByGuid(Guid guid)
-        {
-            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (var adapter in interfaces.Where(adapter => Guid.Parse(adapter.Id) == guid))
-            {
-                Info("Find name [{0}] for guid [{1}]", adapter.Name, guid.ToString());
-                return adapter.Name;
-            }
-
-            Error("Can't Find name for guid [{1}]", guid.ToString());
-            return string.Empty;
         }
     }
 }

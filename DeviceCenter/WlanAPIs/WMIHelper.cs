@@ -2,110 +2,113 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Management;
+using System.Net;
+using System.Net.NetworkInformation;
 
 namespace WlanAPIs
 {
     /// <summary>
-    /// Access to WMI apis.
+    /// Helper class for setting static IP, enabling DHCP
     /// </summary>
-    public class WmiHelper
+    public class SubnetHelper
     {
         private const string NetshSetStaticIpArgument = "interface ip set address \"{0}\" static 192.168.173.2 255.255.0.0";
         private const string NetshEnableDhcpArgument = "interface ip set address \"{0}\" dhcp";
 
-        static public WmiHelper CreateByNicGuid(Guid interfaceGuid)
+        static public SubnetHelper CreateByNicGuid(Guid interfaceGuid)
         {
             if(interfaceGuid == Guid.Empty)
             {
                 return null;
             }
 
-            var newInstance = new WmiHelper();
+            var newInstance = new SubnetHelper();
 
             // netsh interface ip show addresses
             // netsh interface ip show addresses "Wi-Fi"
-            var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-            var moc = mc.GetInstances();
-            foreach (var o in moc)
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (var interf in interfaces.Where(interf => Guid.Parse(interf.Id) == interfaceGuid))
             {
-                var mo = (ManagementObject) o;
-                var settingId = mo["SettingID"].ToString();
-                try
-                {
-                    var guid = Guid.Parse(settingId);
-
-                    if(guid == interfaceGuid)
-                    {
-                        newInstance._networkAdapterMo = mo;
-                        newInstance._interfaceName = Util.GetNameByGuid(guid);
-                    }
-                }
-                catch(Exception ex)
-                {
-                    Util.Error("Error occurred parsing SettingID - [{0}]", settingId);
-                    Util.Error("  {0}", ex.Message);
-                }
+                Util.Info("Find name [{0}] for guid [{1}]", interf.Name, interfaceGuid.ToString());
+                newInstance._networkInterface = interf;
             }
 
-            Debug.Assert(newInstance._networkAdapterMo != null);
+            if (newInstance._networkInterface == null)
+            {
+                Util.Error("Can't Find name for guid [{1}]", interfaceGuid.ToString());
+                return null;
+            }
 
             return newInstance;
         }
 
-        public string GetIpv4()
+        public IPAddress GetIpv4()
         {
-            Debug.Assert(_networkAdapterMo != null);
-            var ip = string.Empty;
-            var ips = (string[])_networkAdapterMo["IPAddress"];
-            if(ips != null && ips.Length > 0)
+            Debug.Assert(_networkInterface != null);
+            if (_networkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
+                _networkInterface.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
             {
-                ip = ips[0];
+                foreach (var ip in _networkInterface.GetIPProperties().UnicastAddresses)
+                {
+                    if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    {
+                        return ip.Address;
+                    }
+                }
             }
-            return ip;
+
+            return IPAddress.None;
         }
 
-        public void SetIp(string ipAddresses, string subnetMask)
+        public bool SetIp(string ipAddresses, string subnetMask)
         {
-            Debug.Assert(_networkAdapterMo != null);
+            Debug.Assert(_networkInterface != null);
+
+            lock (_dhcpLockObj)
+            {
+                if (_isStaticIPSet) return true;
+                _isStaticIPSet = true;
+            }
 
             Util.Info("WMIHelper: Seting static IP to [{0}] [{1}]", ipAddresses, subnetMask);
-            string argument = string.Format(NetshSetStaticIpArgument, _interfaceName);
-            Util.RunNetshElevated(argument);
+            string argument = string.Format(NetshSetStaticIpArgument, _networkInterface.Name);
+            _isStaticIPSet = Util.RunNetshElevated(argument);
+            return _isStaticIPSet;
         }
 
-        public void EnableDhcp()
+        public bool EnableDhcp()
         {
-            Debug.Assert(_networkAdapterMo != null);
+            Debug.Assert(_networkInterface != null);
+
+            lock(_dhcpLockObj)
+            {
+                if (!_isStaticIPSet) return true;
+                _isStaticIPSet = false;
+            }
 
             // netsh interface ip set address "Wi-Fi" dhcp
             Util.Info("WMIHelper: Enabling DHCP");
 
-            var argument = string.Format(NetshEnableDhcpArgument, _interfaceName);
-            Util.RunNetshElevated(argument);
+            var argument = string.Format(NetshEnableDhcpArgument, _networkInterface.Name);
+            bool isDHCPEnabled = Util.RunNetshElevated(argument);
+            _isStaticIPSet = !isDHCPEnabled;
+            return isDHCPEnabled;
         }
 
         public void DebugPrint()
         {
             Util.Info("----------------");
-            foreach (var prop in _networkAdapterMo.Properties)
-            {
-                Util.Info("{0}: {1}", prop.Name, prop.Value);
-            }
             Util.Info("----------------");
         }
 
-        private void TraceMoResult(ManagementBaseObject mo, string methodName)
+        private SubnetHelper()
         {
-            Util.Info("===== MO method [{0}] returns - [{1}]", methodName, mo["returnValue"]);
         }
 
-        private WmiHelper()
-        {
-
-        }
-
-        private ManagementObject _networkAdapterMo;
-        private string _interfaceName;
+        private NetworkInterface _networkInterface;
+        private bool _isStaticIPSet;
+        private Object _dhcpLockObj = new Object();
     }
 }

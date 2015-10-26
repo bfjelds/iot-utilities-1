@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using WlanAPIs;
 
@@ -85,7 +87,11 @@ namespace DeviceCenter.Helper
                     }
 
                     Util.Info("--------- Checking IP and subnet ----------");
-                    CheckIpAndSubnet();
+                    if(CheckIpAndSubnet() == false)
+                    {
+                        Util.Error("Failed to Check Ip And Subnet");
+                        return false;
+                    }
 
                     Util.Info("--------- Testing connection ----------");
                     return await TestConnection();
@@ -100,30 +106,52 @@ namespace DeviceCenter.Helper
                 Util.Error("Disconnect: No Wlan interface");
             }
 
-            var wmi = WmiHelper.CreateByNicGuid(_wlanInterface.Guid);
-            Util.Info("Enable DHCP");
-            wmi.EnableDhcp();
+            lock(_disconnectLockObj)
+            {
+                if (_isDisconnecting)
+                {
+                    Util.Info("Disconnecting, exit");
+                    return;
+                }
+
+                _isDisconnecting = true;
+            }
+
+            if(!_subnetHelper.EnableDhcp())
+            {
+                Debug.Fail("User selects not to enable DHCP");
+            }
 
             try
             {
-                _wlanInterface.Disconnect();
+                if (_isConnectedToSoftAP)
+                {
+                    _wlanInterface.Disconnect();
+                }
+                else
+                {
+                    Util.Info("Disconnect: Not connected to any softAP");
+                }
             }
-            catch(WLanException)
+            catch (WLanException)
             {
                 return;
             }
-        }
-
-        public string IPV4
-        {
-            get
+            finally
             {
-                var wmi = WmiHelper.CreateByNicGuid(_wlanInterface.Guid);
-                return wmi.GetIpv4();
+                _isDisconnecting = false;
             }
         }
 
-        public SoftApHelper()
+        public IPAddress IPV4
+        {
+            get
+            {
+                return _subnetHelper.GetIpv4();
+            }
+        }
+
+        private SoftApHelper()
         {
             _wlanClient = new WlanClient();
             var interfaces = _wlanClient.Interfaces;
@@ -132,6 +160,21 @@ namespace DeviceCenter.Helper
                 // TBD - to support multiple wlan interfaces
                 _wlanInterface = interfaces[0];
                 _wlanClient.OnAcmNotification += OnACMNotification;
+            }
+
+            _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
+        }
+
+        public static SoftApHelper Instance
+        {
+            get
+            {
+                if(_instance == null)
+                {
+                    _instance = new SoftApHelper();
+                }
+
+                return _instance;
             }
         }
         #endregion
@@ -153,32 +196,26 @@ namespace DeviceCenter.Helper
                 return false;
             }
 
-            var isSuccess = _wlanClient.WaitConnectComplete();
-            if (!isSuccess)
-            {
-                return false;
-            }
-            _isConnected = true;
-
-            return true;
+            _isConnectedToSoftAP = _wlanClient.WaitConnectComplete();
+            return _isConnectedToSoftAP;
         }
 
-        private void CheckIpAndSubnet()
+        private bool CheckIpAndSubnet()
         {
-            var wmi = WmiHelper.CreateByNicGuid(_wlanInterface.Guid);
-            // wmi.DebugPrint();
-            var ipv4 = wmi.GetIpv4();
+            var ipv4 = _subnetHelper.GetIpv4();
             Util.Info("Curernt IP [{0}]", ipv4);
 
 
-            bool isDhcp = Util.IsDhcpipAddress(ipv4);
+            bool isDhcp = Util.IsDhcpipAddress(ipv4.ToString());
             Util.Info("Is DHCP IP [{0}]", isDhcp ? "yes" : "no");
 
             if (!isDhcp)
             {
                 Util.Info("Switch to IP address {0}", SoftApClientIp);
-                wmi.SetIp(SoftApClientIp, SoftApSubnetAddr);
+                return _subnetHelper.SetIp(SoftApClientIp, SoftApSubnetAddr);
             }
+
+            return true;
         }
 
         private async Task<bool> TestConnection()
@@ -206,9 +243,9 @@ namespace DeviceCenter.Helper
                 case WlanInterop.WlanNotificationCodeAcm.Disconnected:
                     {
                         Util.Info("Disconnected from [{0}]", profileName);
-                        if (_isConnected && profileName == Util.WlanProfileName)
+                        if (_isConnectedToSoftAP && profileName == Util.WlanProfileName)
                         {
-                            _isConnected = false;
+                            _isConnectedToSoftAP = false;
                             OnSoftApDisconnected?.Invoke();
                         }
                     }
@@ -218,7 +255,11 @@ namespace DeviceCenter.Helper
 
         private readonly WlanClient _wlanClient;
         private readonly WlanInterface _wlanInterface;
-        private bool _isConnected;
+        private bool _isConnectedToSoftAP;
+        private SubnetHelper _subnetHelper;
+        private static SoftApHelper _instance;
+        private bool _isDisconnecting;
+        private Object _disconnectLockObj = new Object();
         #endregion
     }
 }

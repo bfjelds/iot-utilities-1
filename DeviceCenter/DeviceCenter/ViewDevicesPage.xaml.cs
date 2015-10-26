@@ -26,7 +26,7 @@ namespace DeviceCenter
         private readonly DeviceDiscoveryService _deviceDiscoverySvc;
         private readonly ObservableCollection<DiscoveredDevice> _devices = new ObservableCollection<DiscoveredDevice>();
 
-        private readonly SoftApHelper _softwareAccessPoint = new SoftApHelper();
+        private readonly SoftApHelper _softwareAccessPoint;
         private readonly DispatcherTimer _wifiRefreshTimer = new DispatcherTimer();
         private readonly ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork> _adhocNetworks = new ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork>();
 
@@ -60,6 +60,7 @@ namespace DeviceCenter
 
             ListViewDevices.ItemsSource = _devices;
 
+            _softwareAccessPoint = SoftApHelper.Instance;
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
 
             _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(10);
