@@ -13,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using DeviceCenter.Helper;
 using WlanAPIs;
+using System.Windows.Data;
+using System.ComponentModel;
 
 namespace DeviceCenter
 {
@@ -62,6 +64,10 @@ namespace DeviceCenter
 
             _softwareAccessPoint = SoftApHelper.Instance;
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
+			
+            //Sort the listview
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
+            view.SortDescriptions.Add(new SortDescription("DeviceName", ListSortDirection.Ascending));
 
             _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(10);
             _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
@@ -346,6 +352,11 @@ namespace DeviceCenter
 
                 _navigationFrame.Navigate(new PageDeviceConfiguration(_navigationFrame, device));
             }
+        }
+
+        private void ButtonRefresh_Click(object sender, MouseButtonEventArgs e)
+        {
+            _navigationFrame.Navigate(new ViewDevicesPage(_navigationFrame));
         }
 
         private void ButtonAppInstall_Click(object sender, MouseButtonEventArgs e)

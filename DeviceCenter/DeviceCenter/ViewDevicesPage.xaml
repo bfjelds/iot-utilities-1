@@ -21,7 +21,8 @@
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel >
             <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left"/>
-            <ListView DockPanel.Dock="Top" x:Name="ListViewDevices" Unloaded="ListViewDevices_Unloaded" Margin="0 10 0 10" BorderBrush="{x:Null}" BorderThickness="0">
+            <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="Refresh" MouseDown="ButtonRefresh_Click"  HorizontalAlignment="Left"/>
+            <ListView DockPanel.Dock="Top" x:Name="ListViewDevices" Unloaded="ListViewDevices_Unloaded" Margin="0 10 0 10" BorderBrush="{x:Null}" BorderThickness="0" >
                 <ListView.View>
                     <GridView ColumnHeaderTemplate="{StaticResource CleanHeaderTemplate}">
                         <GridViewColumn Header="{x:Static props:Strings.DeviceDetailDeviceNameLabel}">
