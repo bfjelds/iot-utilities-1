@@ -18,7 +18,7 @@ namespace DeviceCenter
         private const string ControlApiUrl = "/api/control/";
         private const string NetworkingApiUrl = "/api/networking/";
         private const string AppxApiUrl = "/api/appx/packagemanager/";
-        private const string AppTaskUrl = "/api/taskmanager/app";
+        private const string AppTaskUrl = "/api/taskmanager/";
         private const string PerfMgrUrl = "/api/resourcemanager/";
 
         private readonly RestHelper _restHelper;
@@ -257,7 +257,7 @@ namespace DeviceCenter
 
         public async Task<bool> StartAppAsync(string appid, string package)
         {
-            string url = AppTaskUrl + "?appid=" + RestHelper.Encode64(appid) 
+            string url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(appid) 
                 + "&package=" + RestHelper.Encode64(package);
 
             HttpStatusCode result = HttpStatusCode.BadRequest;
