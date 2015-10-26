@@ -39,7 +39,7 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceListColType}" DisplayMemberBinding="{Binding DeviceModel}"/>
-                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IPAddress}" />
+                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IpAddress}" />
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColSettings}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
