@@ -191,11 +191,13 @@ namespace DeviceCenter
             {
                 try
                 {
-                    var response = await _restHelper.GetOrPostRequestAsync(URL, true);
-                    result = response.StatusCode;
-                    if (response.StatusCode == HttpStatusCode.NoContent)
+                    using (var response = await _restHelper.GetOrPostRequestAsync(URL, true))
                     {
-                        await Task.Delay(3000);
+                        result = response.StatusCode;
+                        if (response.StatusCode == HttpStatusCode.NoContent)
+                        {
+                            await Task.Delay(3000);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -213,10 +215,12 @@ namespace DeviceCenter
             var url = AppxApiUrl + "packages";
             try
             {
-                var response = await this._restHelper.GetOrPostRequestAsync(url, true);
-                if (response.StatusCode == HttpStatusCode.OK)
+                using (var response = await this._restHelper.GetOrPostRequestAsync(url, true))
                 {
-                    return RestHelper.ProcessJsonResponse(response, typeof(InstalledPackages)) as InstalledPackages;
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        return RestHelper.ProcessJsonResponse(response, typeof(InstalledPackages)) as InstalledPackages;
+                    }
                 }
             }
             catch (Exception wex)
@@ -233,18 +237,21 @@ namespace DeviceCenter
             string url = PerfMgrUrl + "processes";
             try
             {
-                var response = await this._restHelper.GetOrPostRequestAsync(url, true);
-                if (response.StatusCode == HttpStatusCode.OK)
+                using (var response = await this._restHelper.GetOrPostRequestAsync(url, true))
                 {
-                    IoTProcesses runningProcesses = RestHelper.ProcessJsonResponse(response, typeof(IoTProcesses)) as IoTProcesses;
-                    foreach (IoTProcess runningProcess in runningProcesses.Items)
+                    if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        if (runningProcess.AppName == appName)
+                        IoTProcesses runningProcesses = RestHelper.ProcessJsonResponse(response, typeof(IoTProcesses)) as IoTProcesses;
+                        foreach (IoTProcess runningProcess in runningProcesses.Items)
                         {
-                            return true;
+                            if (runningProcess.AppName == appName)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
+                    
             }
             catch (Exception ex)
             {
