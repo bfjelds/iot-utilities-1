@@ -261,7 +261,15 @@ namespace DeviceCenter
             _wifiRefreshTimer.Stop();
             try
             {
-                var device = ListViewDevices.SelectedItem as DiscoveredDevice;
+                var frameworkElement = sender as FrameworkElement;
+
+                DiscoveredDevice device = null;
+
+                if (frameworkElement != null)
+                {
+                    device = frameworkElement.DataContext as DiscoveredDevice;
+                }
+
                 if (device != null)
                 {
                     var dlg = new WindowWarning()
