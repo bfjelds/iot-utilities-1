@@ -18,6 +18,7 @@ namespace DeviceCenter
     {
         public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
         public static Stopwatch GlobalStopwatch;
+        private static string machineId = "";
 
         public App()
         {
@@ -56,13 +57,19 @@ namespace DeviceCenter
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            TelemetryClient.TrackEvent("AppStart");
+            TelemetryClient.TrackEvent("AppStart", new Dictionary<string, string>()
+            {
+                { "MachineId", machineId }
+            });
             GlobalStopwatch.Start();
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            TelemetryClient.TrackEvent("AppExit");
+            TelemetryClient.TrackEvent("AppExit", new Dictionary<string, string>()
+            {
+                { "MachineId", machineId }
+            });
             TelemetryClient.TrackMetric("UpTimeMinutes", GlobalStopwatch.Elapsed.TotalMinutes);
             GlobalStopwatch.Stop();
         }
