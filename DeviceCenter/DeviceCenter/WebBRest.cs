@@ -213,6 +213,7 @@ namespace DeviceCenter
         public async Task<InstalledPackages> GetInstalledPackagesAsync()
         {
             var url = AppxApiUrl + "packages";
+
             try
             {
                 using (var response = await this._restHelper.GetOrPostRequestAsync(url, true))
@@ -317,10 +318,17 @@ namespace DeviceCenter
         {
             var url = "/api/wifi/interfaces";
 
-            var response = await this._restHelper.GetOrPostRequestAsync(url, true);
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+                var response = await this._restHelper.GetOrPostRequestAsync(url, true);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
 
             return new WirelessAdapters();
@@ -330,10 +338,17 @@ namespace DeviceCenter
         {
             const string URL = NetworkingApiUrl + "ipconfig";
 
-            var response = await this._restHelper.GetOrPostRequestAsync(URL, true);
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                return RestHelper.ProcessJsonResponse(response, typeof(IPConfigurations)) as IPConfigurations;
+                var response = await this._restHelper.GetOrPostRequestAsync(URL, true);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return RestHelper.ProcessJsonResponse(response, typeof(IPConfigurations)) as IPConfigurations;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
 
             return new IPConfigurations();

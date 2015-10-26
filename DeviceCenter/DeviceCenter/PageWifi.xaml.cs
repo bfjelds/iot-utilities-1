@@ -113,8 +113,6 @@ namespace DeviceCenter
 
         public async void DoConnectAsync(string password)
         {
-            // [stjong] tbd, this exception is hit consistently at my home network.  It makes sense since the Adhoc network 
-            // may disapper earier before the web response is sent back.  
             await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
             this._navigationFrame.GoBack();
         }
