@@ -100,6 +100,7 @@ namespace DeviceCenter.Helper
                     HttpWebRequest request = WebRequest.Create(requestUrl) as HttpWebRequest;
                     request.Method = isGet ? "Get" : "POST";
                     request.ContentLength = 0;
+                    request.KeepAlive = false;
                     string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(DeviceAuthentication.UserName + ":" + DeviceAuthentication.Password));
                     request.Headers.Add("Authorization", "Basic " + encodedAuth);
 
@@ -116,11 +117,8 @@ namespace DeviceCenter.Helper
                         case HttpErrorResult.fail:
                             Debug.WriteLine(string.Format("Error in MakeRequest, url [{0}]", requestUrl));
                             Debug.WriteLine(error.ToString());
-                            // gneves: Need to understand what this is.
-                            // Commenting this out to make the package deploy and run work
-                            //Debug.Fail("Debug break");
-                            //throw error;
-                            break;
+                            Debug.Fail("Debug break");
+                            throw error;
                         case HttpErrorResult.retry:
                             break;
                         case HttpErrorResult.cancel:
@@ -204,6 +202,7 @@ namespace DeviceCenter.Helper
                     HttpWebRequest req = (HttpWebRequest)WebRequest.Create(requestUrl);
                     req.Method = "DELETE";
                     req.ContentType = "application/x-www-form-urlencoded";
+                    req.KeepAlive = false;
                     string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(this.DeviceAuthentication.UserName + ":" + this.DeviceAuthentication.Password));
                     req.Headers.Add("Authorization", "Basic " + encodedAuth);
                     req.ContentLength = 0;
