@@ -90,19 +90,20 @@ namespace DeviceCenter
         /// <summary>
         /// LKG info file.  tbd point to the final file.
         /// </summary>
-        static string LKGFileName = "\\\\webnas\\AthensDrop\\LKG\\iot_lkg.txt";
+        // static string LKGFileName = "\\\\webnas\\AthensDrop\\LKG\\iot_lkg.txt";
+        static readonly string LkgFileName = "c:\\temp\\iot_lkg.txt";
 
         /// <summary>
         /// Deserialized contents.
         /// </summary>
-        public LKGAllPlatforms lkgAllPlatforms { get; private set; }
+        public LKGAllPlatforms LkgAllPlatforms { get; private set; }
         
         /// <summary>
         /// Deserialize info in json.        
         /// </summary>
         public void ReadFile()
         {
-            if (!File.Exists(LKGFileName))
+            if (!File.Exists(LkgFileName))
             {
                 Debug.WriteLine("LkgInsider: LKG file not found");
                 return;
@@ -146,14 +147,14 @@ namespace DeviceCenter
             try
             {
                 string fileContent;
-                using (var sr = File.OpenText(LKGFileName))
+                using (var sr = File.OpenText(LkgFileName))
                 {
                     fileContent = sr.ReadToEnd();
                 }
 
                 var jsonSerializer = new DataContractJsonSerializer(typeof(LKGAllPlatforms));
 
-                lkgAllPlatforms = (LKGAllPlatforms)jsonSerializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(fileContent)));
+                LkgAllPlatforms = (LKGAllPlatforms)jsonSerializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(fileContent)));
             }
             catch (Exception ex)
             {

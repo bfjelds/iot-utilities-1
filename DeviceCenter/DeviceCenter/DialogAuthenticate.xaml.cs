@@ -20,6 +20,7 @@
         }
 
         public string DeviceName { get; set; }
+
         public string UserName { get; set; }
 
         /// <summary>
@@ -53,31 +54,31 @@
     /// </summary>
     public partial class DialogAuthenticate : Window
     {
-        private const string defaultUser = "Administrator";
-        private const string defaultPassword = "p@ssw0rd";
+        private const string DefaultUser = "Administrator";
+        private const string DefaultPassword = "p@ssw0rd";
 
         // tbd - away from static?
-        static LoginInfoDictionary savedPasswords = new Dictionary<string, UserInfo>();
-        static bool firstLoaded = false;
+        static LoginInfoDictionary _savedPasswords = new Dictionary<string, UserInfo>();
+        static bool _firstLoaded = false;
 
         public static UserInfo GetSavedPassword(string deviceName)
         {
             // tbd - a hack. should be properly loaded 
-            if (firstLoaded != true)
+            if (_firstLoaded != true)
             {
-                savedPasswords = AppData.LoadWebBUserInfo();
-                firstLoaded = true;
+                _savedPasswords = AppData.LoadWebBUserInfo();
+                _firstLoaded = true;
             }
 
             UserInfo result;
 
-            if (!savedPasswords.TryGetValue(deviceName, out result))
+            if (!_savedPasswords.TryGetValue(deviceName, out result))
             {
                 result = new UserInfo()
                 {
                     DeviceName = deviceName,
-                    UserName = defaultUser,
-                    Password = defaultPassword
+                    UserName = DefaultUser,
+                    Password = DefaultPassword
                 };
             }
 
@@ -86,13 +87,13 @@
 
         public static void SavePassword(UserInfo userInfo)
         {
-            if (savedPasswords.ContainsKey(userInfo.DeviceName))
-                savedPasswords[userInfo.DeviceName] = userInfo;
+            if (_savedPasswords.ContainsKey(userInfo.DeviceName))
+                _savedPasswords[userInfo.DeviceName] = userInfo;
             else
-                savedPasswords.Add(userInfo.DeviceName, userInfo);
+                _savedPasswords.Add(userInfo.DeviceName, userInfo);
 
             // store to permanent storage
-            AppData.StoreWebBUserInfo(savedPasswords);
+            AppData.StoreWebBUserInfo(_savedPasswords);
         }
 
         public DialogAuthenticate(UserInfo info)

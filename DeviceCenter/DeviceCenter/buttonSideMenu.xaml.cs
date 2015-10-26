@@ -20,9 +20,9 @@ namespace DeviceCenter
     /// <summary>
     /// Interaction logic for buttonSideMenu.xaml
     /// </summary>
-    public partial class buttonSideMenu : UserControl
+    public partial class ButtonSideMenu : UserControl
     {
-        public buttonSideMenu()
+        public ButtonSideMenu()
         {
             InitializeComponent();
 
@@ -115,7 +115,7 @@ namespace DeviceCenter
             {
                 foreach (var cur in myParent.Children)
                 {
-                    buttonSideMenu currentButton = cur as buttonSideMenu;
+                    ButtonSideMenu currentButton = cur as ButtonSideMenu;
                     if (currentButton != null && currentButton != this)
                     {
                         currentButton.Selected = false;

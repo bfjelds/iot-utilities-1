@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DeviceCenter.WlanAPIs;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using WlanAPIs;
 
-namespace DeviceCenter
+namespace DeviceCenter.Helper
 {
-    public delegate void SoftAPDisconnectedHandler();
+    public delegate void SoftApDisconnectedHandler();
 
-    public class SoftAPHelper
+    public class SoftApHelper
     {
-        const string SOFT_AP_HOST_IP = "192.168.173.1";
-        const string SOFT_AP_CLIENT_IP = "192.168.173.2";
-        const string SOFT_AP_SUBNET_ADDR = "255.255.0.0";
-        const string SOFT_AP_NAME_PREFIX = "AJ_";
-        const int PING_RETRY_NUMBER = 10;
-        const int PING_DELAY = 500;
+        public const string SoftApHostIp = "192.168.173.1";
+        public const string SoftApClientIp = "192.168.173.2";
+        public const string SoftApSubnetAddr = "255.255.0.0";
+        public const string SoftApNamePrefix = "AJ_";
+        public const int PingRetryNumber = 10;
+        public const int PingDelay = 500;
 
-        public event SoftAPDisconnectedHandler OnSoftAPDisconnected;
+        public event SoftApDisconnectedHandler OnSoftApDisconnected;
 
         public void Scan()
         {
@@ -42,6 +40,8 @@ namespace DeviceCenter
             }
 
             Scan();
+            
+            // TBD to be removed? 
             // Sleep(4000);
 
             var list = _wlanInterface.GetAvailableNetworkList();
@@ -51,16 +51,17 @@ namespace DeviceCenter
             uint index = 0;
             foreach (var network in list)
             {
-                string ssid = network.SSIDString;
-                if (ssid.StartsWith(SOFT_AP_NAME_PREFIX) && !networkSet.Contains(ssid))
-                {
-                    Debug.WriteLine(string.Format("{0} {1}", ssid, network.wlanSignalQuality));
-                    // dup keys is not allowed
-                    uint key = network.wlanSignalQuality * 10 + index;
-                    sortedList.Add(key, network);
-                    networkSet.Add(ssid);
-                    index++;
-                }
+                var ssid = network.SsidString;
+
+                if (!ssid.StartsWith(SoftApNamePrefix) || networkSet.Contains(ssid)) continue;
+
+                Debug.WriteLine($"{ssid} {network.wlanSignalQuality}");
+                
+                // dup keys is not allowed
+                var key = network.wlanSignalQuality * 10 + index;
+                sortedList.Add(key, network);
+                networkSet.Add(ssid);
+                index++;
             }
             IList<WlanInterop.WlanAvailableNetwork> descList = sortedList.Values.Reverse().ToList();
             return descList;
@@ -74,18 +75,18 @@ namespace DeviceCenter
                 return false;
             }
 
-            return await Task<bool>.Run(
+            return await Task.Run(
                 async () =>
                 {
                     Util.Info("--------- connecting to soft AP ----------");
-                    if (ConnectToSoftAP(network, password) == false)
+                    if (ConnectToSoftAp(network, password) == false)
                     {
                         Util.Error("Failed to connect to soft AP");
                         return false;
                     }
 
                     Util.Info("--------- Checking IP and subnet ----------");
-                    CheckIPAndSubnet();
+                    CheckIpAndSubnet();
 
                     Util.Info("--------- Testing connection ----------");
                     return await TestConnection();
@@ -93,7 +94,7 @@ namespace DeviceCenter
             );
         }
 
-        private bool ConnectToSoftAP(WlanInterop.WlanAvailableNetwork network, string password)
+        private bool ConnectToSoftAp(WlanInterop.WlanAvailableNetwork network, string password)
         {
             _wlanInterface.Connect(
                             WlanInterop.WlanConnectionMode.TemporaryProfile,
@@ -102,7 +103,7 @@ namespace DeviceCenter
                             password
                             );
 
-            bool isSuccess = _wlanClient.WaitConnectComplete();
+            var isSuccess = _wlanClient.WaitConnectComplete();
             if (!isSuccess)
             {
                 return false;
@@ -112,37 +113,36 @@ namespace DeviceCenter
             return true;
         }
 
-        private void CheckIPAndSubnet()
+        private void CheckIpAndSubnet()
         {
-            var wmi = WMIHelper.CreateByNICGuid(_wlanInterface.GUID);
+            var wmi = WmiHelper.CreateByNicGuid(_wlanInterface.Guid);
             // wmi.DebugPrint();
-            var ipv4 = wmi.GetIPV4();
+            var ipv4 = wmi.GetIpv4();
             Util.Info("Curernt IP [{0}]", ipv4);
 
 
-            bool isDHCP = Util.IsDHCPIPAddress(ipv4);
-            Util.Info("Is DHCP IP [{0}]", isDHCP ? "yes" : "no");
+            bool isDhcp = Util.IsDhcpipAddress(ipv4);
+            Util.Info("Is DHCP IP [{0}]", isDhcp ? "yes" : "no");
 
-            if (!isDHCP)
+            if (!isDhcp)
             {
-                Util.Info("Switch to IP address {0}", SOFT_AP_CLIENT_IP);
-                wmi.SetIP(SOFT_AP_CLIENT_IP, SOFT_AP_SUBNET_ADDR);
+                Util.Info("Switch to IP address {0}", SoftApClientIp);
+                wmi.SetIp(SoftApClientIp, SoftApSubnetAddr);
             }
         }
 
         private async Task<bool> TestConnection()
         {
-            bool isReachable = false;
-            for (int i = 0; i < PING_RETRY_NUMBER; i++)
+            for (var i = 0; i < PingRetryNumber; i++)
             {
-                isReachable = await Util.Ping(SOFT_AP_HOST_IP);
+                var isReachable = await Util.Ping(SoftApHostIp);
                 Util.Info("Reachable [{0}]", isReachable ? "yes" : "no");
                 if (isReachable)
                 {
                     return true;
                 }
 
-                await Task.Delay(PING_DELAY);
+                await Task.Delay(PingDelay);
             }
 
             Util.Error("Ping failed after retries");
@@ -156,9 +156,9 @@ namespace DeviceCenter
                 Util.Error("Disconnect: No Wlan interface");
             }
 
-            var wmi = WMIHelper.CreateByNICGuid(_wlanInterface.GUID);
+            var wmi = WmiHelper.CreateByNicGuid(_wlanInterface.Guid);
             Util.Info("Enable DHCP");
-            wmi.EnableDHCP();
+            wmi.EnableDhcp();
 
             _wlanInterface.Disconnect();
         }
@@ -167,12 +167,12 @@ namespace DeviceCenter
         {
             get
             {
-                var wmi = WMIHelper.CreateByNICGuid(_wlanInterface.GUID);
-                return wmi.GetIPV4();
+                var wmi = WmiHelper.CreateByNicGuid(_wlanInterface.Guid);
+                return wmi.GetIpv4();
             }
         }
 
-        public SoftAPHelper()
+        public SoftApHelper()
         {
             _wlanClient = new WlanClient();
             var interfaces = _wlanClient.Interfaces;
@@ -180,7 +180,7 @@ namespace DeviceCenter
             {
                 // TBD - to support multiple wlan interfaces
                 _wlanInterface = interfaces[0];
-                _wlanClient.OnACMNotification += OnACMNotification;
+                _wlanClient.OnAcmNotification += OnACMNotification;
             }
         }
 
@@ -191,21 +191,18 @@ namespace DeviceCenter
                 case WlanInterop.WlanNotificationCodeAcm.Disconnected:
                     {
                         Util.Info("Disconnected from [{0}]", profileName);
-                        if (_isConnected && profileName == Util.WLAN_PROFILE_NAME)
+                        if (_isConnected && profileName == Util.WlanProfileName)
                         {
                             _isConnected = false;
-                            if(OnSoftAPDisconnected != null)
-                            {
-                                OnSoftAPDisconnected();
-                            }
+                            OnSoftApDisconnected?.Invoke();
                         }
                     }
                     break;
             }
         }
 
-        private WlanClient _wlanClient;
-        private WlanInterface _wlanInterface;
+        private readonly WlanClient _wlanClient;
+        private readonly WlanInterface _wlanInterface;
         private bool _isConnected;
     }
 }

@@ -20,7 +20,7 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageWelcome : Page
     {
-        private Frame _navigationFrame;
+        private readonly Frame _navigationFrame;
 
         public PageWelcome(Frame navigationFrame)
         {

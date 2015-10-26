@@ -11,7 +11,6 @@ namespace DeviceCenter
         public WindowWarning()
         {
             InitializeComponent();
-
         }
 
         public string Header

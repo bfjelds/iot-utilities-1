@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace DeviceCenter.WlanAPIs
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
+namespace WlanAPIs
 {
     public class WlanInterface
     {
@@ -19,7 +18,7 @@ namespace DeviceCenter.WlanAPIs
         {
             Util.ThrowIfFail(
                 WlanInterop.WlanScan(
-                    _client._nativeHandle,
+                    _client.NativeHandle,
                     _nativeInterfaceInfo.interfaceGuid,
                     IntPtr.Zero,
                     IntPtr.Zero,
@@ -30,14 +29,14 @@ namespace DeviceCenter.WlanAPIs
 
         public List<WlanInterop.WlanAvailableNetwork> GetAvailableNetworkList()
         {
-            IntPtr availNetListPtr = IntPtr.Zero;
+            var availNetListPtr = IntPtr.Zero;
             var networkList = new List<WlanInterop.WlanAvailableNetwork>();
 
             try
             {
                 Util.ThrowIfFail(
                     WlanInterop.WlanGetAvailableNetworkList(
-                        _client._nativeHandle,
+                        _client.NativeHandle,
                         _nativeInterfaceInfo.interfaceGuid,
                         WlanInterop.WlanGetAvailableNetworkFlags.IncludeAllAdhocProfiles,
                         IntPtr.Zero,
@@ -49,7 +48,7 @@ namespace DeviceCenter.WlanAPIs
                     availNetListPtr, 
                     typeof(WlanInterop.WlanAvailableNetworkList));
 
-                long availNetListIt = availNetListPtr.ToInt64() + Marshal.SizeOf(typeof(WlanInterop.WlanAvailableNetworkList));
+                var availNetListIt = availNetListPtr.ToInt64() + Marshal.SizeOf(typeof(WlanInterop.WlanAvailableNetworkList));
                 
                 for (int i = 0; i < availNetListHeader.numberOfItems; ++i)
                 {
@@ -74,15 +73,14 @@ namespace DeviceCenter.WlanAPIs
             WlanInterop.WlanAvailableNetwork network,
             string password)
         {
-            var connectionParams = new WlanInterop.WlanConnectionParameters();
-            connectionParams.wlanConnectionMode = connectionMode;
+            var connectionParams = new WlanInterop.WlanConnectionParameters {wlanConnectionMode = connectionMode};
             var ssid = network.dot11Ssid;
             connectionParams.dot11SsidPtr = Marshal.AllocHGlobal(Marshal.SizeOf(ssid));
             Marshal.StructureToPtr(ssid, connectionParams.dot11SsidPtr, false);
             connectionParams.dot11BssType = bssType;
             connectionParams.flags = 0;
             connectionParams.profile = Util.MakeProfileString(
-                Util.GetStringForSSID(ssid),
+                Util.GetStringForSsid(ssid),
                 network.dot11DefaultAuthAlgorithm,
                 network.dot11DefaultCipherAlgorithm,
                 password
@@ -96,7 +94,7 @@ namespace DeviceCenter.WlanAPIs
         {
             Util.ThrowIfFail(
                 WlanInterop.WlanDisconnect(
-                    _client._nativeHandle, 
+                    _client.NativeHandle, 
                     ref _nativeInterfaceInfo.interfaceGuid, 
                     IntPtr.Zero),
                 "Disconnect"
@@ -106,20 +104,14 @@ namespace DeviceCenter.WlanAPIs
         protected void Connect(WlanInterop.WlanConnectionParameters connectionParams)
         {
             Util.ThrowIfFail(
-                WlanInterop.WlanConnect(_client._nativeHandle, _nativeInterfaceInfo.interfaceGuid, ref connectionParams, IntPtr.Zero),
+                WlanInterop.WlanConnect(_client.NativeHandle, _nativeInterfaceInfo.interfaceGuid, ref connectionParams, IntPtr.Zero),
                 "WlanConnect"
                 );
         }
 
-        public Guid GUID
-        {
-            get
-            {
-                return _nativeInterfaceInfo.interfaceGuid;
-            }
-        }
+        public Guid Guid => _nativeInterfaceInfo.interfaceGuid;
 
-        private WlanClient _client;
+        private readonly WlanClient _client;
         private WlanInterop.WlanInterfaceInfo _nativeInterfaceInfo;
     }
 }

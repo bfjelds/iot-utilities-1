@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace DeviceCenter.WlanAPIs
+using System;
+
+namespace WlanAPIs
 {
     public class WLanException : Exception
     {
@@ -19,7 +17,7 @@ namespace DeviceCenter.WlanAPIs
 
         public override string ToString()
         {
-            return string.Format("Native function [{0}] failed, error code [{1}]", ErrorCode, NativeMethod);
+            return $"Native function [{ErrorCode}] failed, error code [{NativeMethod}]";
         }
     }
 }

@@ -15,15 +15,17 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageAppDetails : Page
     {
-        private DiscoveredDevice device;
+        private readonly DiscoveredDevice _device;
+
         public AppInformation AppItem { get; private set; }
+
         public PageAppDetails(AppInformation item, DiscoveredDevice device)
         {
             InitializeComponent();
 
             this.AppItem = item;
             this.DataContext = this.AppItem;
-            this.device = device;
+            this._device = device;
 
             PanelDeploying.Visibility = Visibility.Collapsed;
             PanelDeployed.Visibility = Visibility.Collapsed;
@@ -34,7 +36,7 @@ namespace DeviceCenter
 
         private async void GetAppState()
         {
-            WebBRest webbRequest = new WebBRest(this.device.IPAddress, this.device.Authentication);
+            var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
 
             if (await webbRequest.IsAppRunning(this.AppItem.AppName))
             {
@@ -52,16 +54,13 @@ namespace DeviceCenter
             PanelDeploying.Visibility = Visibility.Visible;
             PanelDeployed.Visibility = Visibility.Collapsed;
 
-            WebBRest webbRequest = new WebBRest(this.device.IPAddress, this.device.Authentication);
+            var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
 
-            AppInformation.ApplicationFiles sourceFiles = this.AppItem.PlatformFiles[device.Architecture];
+            var sourceFiles = this.AppItem.PlatformFiles[_device.Architecture];
 
-            List<FileInfo> files = new List<FileInfo>();
-            files.Add(sourceFiles.AppX);
-            files.Add(sourceFiles.Certificate);
+            var files = new List<FileInfo> {sourceFiles.AppX, sourceFiles.Certificate};
 
-            foreach (var cur in sourceFiles.Dependencies)
-                files.Add(cur);
+            files.AddRange(sourceFiles.Dependencies);
 
             if (!await webbRequest.InstallAppxAsync(this.AppItem.AppName, files))
             {
@@ -86,7 +85,7 @@ namespace DeviceCenter
 
         private async void ButtonStopApp_Click(object sender, RoutedEventArgs e)
         {
-            WebBRest webbRequest = new WebBRest(this.device.IPAddress, this.device.Authentication);
+            var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
 
             if (await webbRequest.StopAppAsync(this.AppItem.AppName))
             {

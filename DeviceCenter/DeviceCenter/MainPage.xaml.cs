@@ -17,7 +17,7 @@
 
             InitializeComponent();
 
-            welcomePage = new PageWelcome(_NavigationFrame);
+            Page welcomePage = new PageWelcome(_NavigationFrame);
             ButtonBack.Visibility = Visibility.Hidden;
 
             _NavigationFrame.Navigate(welcomePage);
@@ -35,8 +35,6 @@
 
             base.OnSourceInitialized(e);
         }
-
-        private Page welcomePage;
 
         private void buttonMyDevices_Click(object sender, RoutedEventArgs e)
         {

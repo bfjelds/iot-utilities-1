@@ -23,23 +23,25 @@ namespace DeviceCenter
 
         public override string ToString()
         {
-            return String.Format("{0} {1} [{2}]", this.DriveName, this.SizeString, this.Model);
+            return $"{this.DriveName} {this.SizeString} [{this.Model}]";
         }
 
         public string DriveName { get; private set; }
+
         public string PhysicalDriveId { get; private set; }
 
-        private ulong size;
+        private ulong _size;
+
         public ulong Size
         {
             get
             {
-                return size;
+                return _size;
             }
 
             private set
             {
-                size = value;
+                _size = value;
                 InitSizeString();
             }
         }
@@ -48,61 +50,57 @@ namespace DeviceCenter
 
         public string SizeString { get; private set; }
 
-        private readonly string[] unitString = { "bytes", "Kb", "Mb", "Gb" };
+        private readonly string[] _unitString = { "bytes", "Kb", "Mb", "Gb" };
 
         private void InitSizeString()
         {
-            var s = size;
-            int unit = 0;
+            var s = _size;
+            var unit = 0;
             while (s > 1024 && unit < 3)
             {
                 s /= 1024;
                 ++unit;
             }
 
-            SizeString = s.ToString() + unitString[unit];
+            SizeString = s.ToString() + _unitString[unit];
         }
 
 
-        static ManagementEventWatcher usbwatcher = null;
+        static ManagementEventWatcher _usbwatcher = null;
 
-        public static void AddUSBDetectionHandler(EventArrivedEventHandler USBDetectionHandler)
+        public static void AddUSBDetectionHandler(EventArrivedEventHandler usbDetectionHandler)
         {
             string query = "SELECT * FROM __InstanceCreationEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
 
             try
             {
-                usbwatcher = new ManagementEventWatcher(new EventQuery(query));
-                usbwatcher.EventArrived += USBDetectionHandler;
-                usbwatcher.Start();
+                _usbwatcher = new ManagementEventWatcher(new EventQuery(query));
+                _usbwatcher.EventArrived += usbDetectionHandler;
+                _usbwatcher.Start();
             }
 
             catch (Exception)
             {
-                if (usbwatcher != null)
-                    usbwatcher.Stop();
+                _usbwatcher?.Stop();
             }
 
             query = "SELECT * FROM __InstanceDeletionEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";            
 
             try
             {
-                usbwatcher = new ManagementEventWatcher(new EventQuery(query));
-                usbwatcher.EventArrived += USBDetectionHandler;
-                usbwatcher.Start();
+                _usbwatcher = new ManagementEventWatcher(new EventQuery(query));
+                _usbwatcher.EventArrived += usbDetectionHandler;
+                _usbwatcher.Start();
             }
 
             catch (Exception)
             {
-                if (usbwatcher != null)
-                    usbwatcher.Stop();
+                _usbwatcher?.Stop();
             }
-
-           
         }
 
 
-        public static void AddInsertUSBHandler(EventArrivedEventHandler USBAdded)
+        public static void AddInsertUSBHandler(EventArrivedEventHandler usbAdded)
         {
             
         }       
@@ -114,7 +112,7 @@ namespace DeviceCenter
             {
                 var drives = new ManagementClass("Win32_DiskDrive");                
                 var moc = drives.GetInstances();
-                foreach (ManagementObject mo in moc)
+                foreach (var mo in moc.Cast<ManagementObject>())
                 {
                     try
                     {
@@ -124,8 +122,9 @@ namespace DeviceCenter
                             continue;
                         }
                         var partitions = mo.GetRelated("Win32_DiskPartition");
-                        foreach (ManagementObject partition in partitions)
+                        foreach (var o in partitions)
                         {
+                            var partition = (ManagementObject) o;
                             var logicalDisks = partition.GetRelated("Win32_LogicalDisk");
                             if (logicalDisks.Count != 1)
                             {
@@ -142,11 +141,13 @@ namespace DeviceCenter
                     }
                     catch (Exception)
                     {
+                        // tbd ignored?
                     }
                 }
             }
             catch (Exception)
             {
+                // tbd ignored?
             }
             return res;
         }
@@ -155,7 +156,7 @@ namespace DeviceCenter
 
     public class Dism
     {
-        public static Process FlashFFUImageToDrive(string ffuImage, DriveInfo driveInfo)
+        public static Process FlashFfuImageToDrive(string ffuImage, DriveInfo driveInfo)
         {
             // rely on DISM in system32.
             var dismExe = Environment.SystemDirectory + "\\" + "dism.exe";
@@ -172,9 +173,7 @@ namespace DeviceCenter
             process.StartInfo.Verb = "runas";
             process.StartInfo.FileName = dismExe;
             process.StartInfo.Arguments =
-                String.Format("/Apply-Image /ApplyDrive:{0} /SkipPlatformCheck /ImageFile:{1}",                
-                    driveInfo.PhysicalDriveId,
-                    ffuImage);
+                $"/Apply-Image /ApplyDrive:{driveInfo.PhysicalDriveId} /SkipPlatformCheck /ImageFile:{ffuImage}";
             System.Diagnostics.Debug.WriteLine("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 
             // TBD make this async and cancellable.

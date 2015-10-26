@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) Microsoft. All rights reserved.
+
+using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeviceCenter.WlanAPIs
+namespace WlanAPIs
 {
     public class Util
     {
-        public const string WLAN_PROFILE_NAME = "AthensSoftAP";
+        public const string WlanProfileName = "AthensSoftAP";
 
-        static readonly string PROFILE_TEMPLATE =
+        static readonly string ProfileTemplate =
             "<?xml version =\"1.0\" encoding=\"US-ASCII\"?>" +
             "<WLANProfile xmlns =\"http://www.microsoft.com/networking/WLAN/profile/v1\">" +
-                string.Format("<name>{0}</name>", WLAN_PROFILE_NAME) +
+                $"<name>{WlanProfileName}</name>" +
                 "<SSIDConfig>" +
                     "<SSID>" +
                         "<name>$ssid</name>" +
@@ -36,7 +36,7 @@ namespace DeviceCenter.WlanAPIs
                 "</MSM>" +
             "</WLANProfile>";
 
-        static readonly string SECURITY_SECTION_TEMPLATE = 
+        static readonly string SecuritySectionTemplate = 
             "<sharedKey><keyType>passPhrase</keyType><protected>false</protected><keyMaterial>$key</keyMaterial></sharedKey>";
 
         static readonly string[] AuthAlgStrings = new string[] {
@@ -52,12 +52,12 @@ namespace DeviceCenter.WlanAPIs
 
         public static string MakeProfileString(string ssid, uint authAlg, uint cipherAlg, string password)
         {
-            string profileStr = PROFILE_TEMPLATE;
+            var profileStr = ProfileTemplate;
             profileStr = profileStr.Replace("$ssid", ssid);
             profileStr = profileStr.Replace("$authentication", AuthAlgToString(authAlg));
             profileStr = profileStr.Replace("$encryption", CipherAlgToString(cipherAlg));
 
-            string securityStr = SECURITY_SECTION_TEMPLATE;
+            var securityStr = SecuritySectionTemplate;
             securityStr = securityStr.Replace("$key", "password");
             profileStr = profileStr.Replace("$securitySection", securityStr);
 
@@ -94,40 +94,46 @@ namespace DeviceCenter.WlanAPIs
             }
         }
 
-        public static string GetStringForSSID(WlanInterop.Dot11Ssid ssid)
+        public static string GetStringForSsid(WlanInterop.Dot11Ssid ssid)
         {
-            return Encoding.ASCII.GetString(ssid.SSID, 0, (int)ssid.SSIDLength);
+            return Encoding.ASCII.GetString(ssid.Ssid, 0, (int)ssid.SsidLength);
         }
 
-        public static bool IsDHCPIPAddress(string ipStr)
+        /// <summary>
+        /// tbd comment
+        /// </summary>
+        /// <param name="ipStr"></param>
+        /// <returns></returns>
+        public static bool IsDhcpipAddress(string ipStr)
         {
-            if(string.IsNullOrWhiteSpace(ipStr))
-            {
-                return false;
-            }
-
-            return ipStr.StartsWith("192.168");
+            // tbd it's safer to check if auto IP.  i.e. 169.254
+            return !string.IsNullOrWhiteSpace(ipStr) && ipStr.StartsWith("192.168");
         }
 
+        /// <summary>
+        /// tbd comment
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <returns></returns>
         public static async Task<bool> Ping(string ip)
         {
-            Ping pingSender = new Ping();
-            PingOptions options = new PingOptions();
+            var pingSender = new Ping();
+            var options = new PingOptions();
 
             // Create a buffer of 32 bytes of data to be transmitted.
-            string data = "test ping";
-            byte[] buffer = Encoding.ASCII.GetBytes(data);
-            int timeout = 120;
+            const string DATA = "test ping";
+            var buffer = Encoding.ASCII.GetBytes(DATA);
+            const int TIMEOUT = 120;
             try
             {
-                PingReply reply = await pingSender.SendPingAsync(ip, timeout, buffer, options);
+                var reply = await pingSender.SendPingAsync(ip, TIMEOUT, buffer, options);
                 if (reply.Status == IPStatus.Success)
                 {
                     return true;
                 }
                 else
                 {
-                    string pingStatusText = Enum.GetName(typeof(IPStatus), reply.Status);
+                    var pingStatusText = Enum.GetName(typeof(IPStatus), reply.Status);
                     Info("Ping failed - " + pingStatusText);
                 }
             }
@@ -142,12 +148,10 @@ namespace DeviceCenter.WlanAPIs
         [DebuggerStepThrough]
         public static void ThrowIfFail(uint errorCode, string method)
         {
-            if(errorCode != 0)
-            {
-                var ex = new WLanException(errorCode, method);
-                Error(ex.ToString());
-                // throw ex;
-            }
+            if (errorCode == 0) return;
+            var ex = new WLanException(errorCode, method);
+            Error(ex.ToString());
+            // throw ex;
         }
 
         public static void Info(string message, params object[] paras)
@@ -166,24 +170,25 @@ namespace DeviceCenter.WlanAPIs
 
         public static void RunNetshElevated(string arguments)
         {
-            var procInfo = new ProcessStartInfo();
-            procInfo.UseShellExecute = true;
-            procInfo.WorkingDirectory = @"C:\Windows\System32";
-            procInfo.FileName = @"C:\Windows\System32\netsh.exe";
-            procInfo.Arguments = arguments;
-            procInfo.Verb = "runas";
-            procInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            var procInfo = new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                WorkingDirectory = @"C:\Windows\System32",
+                FileName = @"C:\Windows\System32\netsh.exe",
+                Arguments = arguments,
+                Verb = "runas",
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
 
             Info("RunNetshElevated [{0}]", arguments);
             try
             {
-                Process proc = new Process();
-                proc.StartInfo = procInfo;
+                var proc = new Process {StartInfo = procInfo};
                 proc.Start();
 
                 Console.WriteLine("Successfully elevated!");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Console.WriteLine("Failed to elevate.");
             }
@@ -191,14 +196,11 @@ namespace DeviceCenter.WlanAPIs
 
         public static string GetNameByGuid(Guid guid)
         {
-            NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (var adapter in interfaces)
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (var adapter in interfaces.Where(adapter => Guid.Parse(adapter.Id) == guid))
             {
-                if(Guid.Parse(adapter.Id) == guid)
-                {
-                    Info("Find name [{0}] for guid [{1}]", adapter.Name, guid.ToString());
-                    return adapter.Name;
-                }
+                Info("Find name [{0}] for guid [{1}]", adapter.Name, guid.ToString());
+                return adapter.Name;
             }
 
             Error("Can't Find name for guid [{1}]", guid.ToString());

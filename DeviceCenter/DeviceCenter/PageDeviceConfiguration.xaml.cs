@@ -10,7 +10,7 @@ namespace DeviceCenter
     public partial class PageDeviceConfiguration : Page
     {
         public DiscoveredDevice Device { get; private set; }
-        private Frame _navigationFrame;
+        private readonly Frame _navigationFrame;
 
         public PageDeviceConfiguration(Frame navigationFrame, DiscoveredDevice device)
         {
@@ -36,19 +36,19 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            WebBRest webbRequest = new WebBRest(this.Device.IPAddress, this.Device.Authentication);
+            var webbRequest = new WebBRest(this.Device.IpAddress, this.Device.Authentication);
             if (!String.IsNullOrWhiteSpace(textBoxDeviceName.Text))
             {
-                bool x = await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text);
+                var x = await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text);
 
                 // TO DO: make it a dialog before restart
                 MessageBox.Show("Rebooting the Device Now...");
-                bool z = await webbRequest.RestartAsync();
+                var z = await webbRequest.RestartAsync();
             }
             if (!String.IsNullOrWhiteSpace(textBoxCurrentPassword.Password)
                 && !String.IsNullOrWhiteSpace(textBoxPassword1.Password))
             {
-                bool y = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
+                var y = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
             }
         }
              

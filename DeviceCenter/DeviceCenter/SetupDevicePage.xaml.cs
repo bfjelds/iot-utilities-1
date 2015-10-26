@@ -20,11 +20,11 @@ namespace DeviceCenter
         /// Parser for the LKG file.   
         /// TBD this is needed only for internal build.
         /// </summary>
-        LastKnownGood lkg = new LastKnownGood();
+        readonly LastKnownGood _lkg = new LastKnownGood();
 
-        private double flashStartTime = 0;
+        private double _flashStartTime = 0;
 
-        public EventArrivedEventHandler usbhandler = null;
+        private EventArrivedEventHandler _usbhandler = null;
 
         public SetupDevicePage()
         {
@@ -33,30 +33,30 @@ namespace DeviceCenter
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             ReadLkgFile();
-            RefreshDriveList();
-            this.usbhandler = new EventArrivedEventHandler(USBAddedorRemoved);
-            DriveInfo.AddUSBDetectionHandler(usbhandler);      
+            await RefreshDriveList();
+            this._usbhandler = new EventArrivedEventHandler(UsbAddedorRemoved);
+            DriveInfo.AddUSBDetectionHandler(_usbhandler);      
         }
 
         private async void ReadLkgFile()
         {
-            List<LKGPlatform> entries = new List<LKGPlatform>();
+            var entries = new List<LKGPlatform>();
 
             ComboBoxDeviceType.IsEnabled = false;
             ComboBoxIotBuild.IsEnabled = false;
 
             await Task.Run((Action)(() =>
             {
-                lkg.ReadFile();
+                _lkg.ReadFile();
 
-                if (lkg.lkgAllPlatforms != null &&
-                    lkg.lkgAllPlatforms.AllPlatforms != null &&
-                    lkg.lkgAllPlatforms.AllPlatforms.Count > 0)
+                if (_lkg.LkgAllPlatforms != null &&
+                    _lkg.LkgAllPlatforms.AllPlatforms != null &&
+                    _lkg.LkgAllPlatforms.AllPlatforms.Count > 0)
                 {
-                    foreach (var currentPlatform in lkg.lkgAllPlatforms.AllPlatforms)
+                    foreach (var currentPlatform in _lkg.LkgAllPlatforms.AllPlatforms)
                     {
                         switch (currentPlatform.Platform)
                         {
@@ -125,7 +125,7 @@ namespace DeviceCenter
             buttonFlash.IsEnabled = UpdateStartState();
         }
 
-        public async void USBAddedorRemoved(object sender, EventArgs e)
+        public async void UsbAddedorRemoved(object sender, EventArgs e)
         {
             await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () => 
             {
@@ -142,15 +142,15 @@ namespace DeviceCenter
         /// <param name="e">not used</param>
         private void FlashSDCard_Click(object sender, RoutedEventArgs e)
         {
-            lock (dismLock)
+            lock (_dismLock)
             {
                 if (!UpdateStartState())
                     return;
                 
-                DriveInfo driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
+                var driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
                 Debug.Assert(driveInfo != null);
 
-                WindowWarning dlg = new WindowWarning()
+                var dlg = new WindowWarning()
                 {
                     Header = Strings.Strings.ConnectAlertTitle,
                     Message = Strings.Strings.NewDeviceAlertMessage + "\n" + Strings.Strings.NewDeviceAlertMessage2
@@ -166,7 +166,7 @@ namespace DeviceCenter
 
                     try
                     {
-                        _dismProcess = Dism.FlashFFUImageToDrive(build.Path, driveInfo);
+                        _dismProcess = Dism.FlashFfuImageToDrive(build.Path, driveInfo);
                         _dismProcess.EnableRaisingEvents = true;
                         _dismProcess.Exited += DismProcess_Exited;
                     }
@@ -198,19 +198,19 @@ namespace DeviceCenter
                         { "Build",  (build != null) ? build.Build.ToString() : ""}
                     });
 
-                    flashStartTime = App.GlobalStopwatch.ElapsedMilliseconds;
+                    _flashStartTime = App.GlobalStopwatch.ElapsedMilliseconds;
                 }
             }
         }
 
-        private object dismLock = new object();
+        private readonly object _dismLock = new object();
 
         private void DismProcess_Exited(object sender, EventArgs e)
         {
-            lock(dismLock)
+            lock(_dismLock)
             {
                 // Measure how long it took to flash the image
-                App.TelemetryClient.TrackMetric("FlashSDCardTimeMs", App.GlobalStopwatch.ElapsedMilliseconds - flashStartTime);
+                App.TelemetryClient.TrackMetric("FlashSDCardTimeMs", App.GlobalStopwatch.ElapsedMilliseconds - _flashStartTime);
 
                 if (_dismProcess != null)
                 {
@@ -222,7 +222,7 @@ namespace DeviceCenter
 
         private void buttonCancelDism_Click(object sender, RoutedEventArgs e)
         {
-            lock (dismLock)
+            lock (_dismLock)
             {
                 if (_dismProcess != null)
                 {

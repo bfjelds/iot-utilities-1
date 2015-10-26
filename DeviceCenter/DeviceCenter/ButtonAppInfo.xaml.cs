@@ -35,8 +35,7 @@ namespace DeviceCenter
 
         private void ButtonMain_Click(object sender, RoutedEventArgs e)
         {
-            if (this.Click != null)
-                this.Click(this, new ButtonAppEventArgs(Info));
+            this.Click?.Invoke(this, new ButtonAppEventArgs(Info));
         }
 
         public delegate void RoutedAppEventHandler(object sender, ButtonAppEventArgs e);

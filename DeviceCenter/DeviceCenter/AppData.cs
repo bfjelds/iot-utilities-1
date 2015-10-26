@@ -11,10 +11,10 @@ namespace DeviceCenter
     /// </summary>
     public class AppData
     {
-        private const string HKCU = "HKEY_CURRENT_USER";
-        private const string WebBLoginRootKey = "Software\\IoT\\DeviceCenter\\WebBUserInfo";
-        private const string WebBUserName = "UserName";
-        private const string WebBPassword = "Password";
+        public const string Hkcu = "HKEY_CURRENT_USER";
+        public const string WebBLoginRootKey = "Software\\IoT\\DeviceCenter\\WebBUserInfo";
+        public const string WebBUserName = "UserName";
+        public const string WebBPassword = "Password";
 
         /// <summary>
         /// Store per device login info to registry. Key is device name.
@@ -24,7 +24,7 @@ namespace DeviceCenter
         {
             foreach (var x in userInfoList)
             {   
-                var deviceNameKey = HKCU + "\\" + WebBLoginRootKey + "\\" + x.Key;
+                var deviceNameKey = Hkcu + "\\" + WebBLoginRootKey + "\\" + x.Key;
                 Registry.SetValue(deviceNameKey, WebBUserName, x.Value.UserName);
                 Registry.SetValue(deviceNameKey, WebBPassword, x.Value.SecurePassword);
             }
@@ -40,27 +40,26 @@ namespace DeviceCenter
 
             var key = Registry.CurrentUser.OpenSubKey(WebBLoginRootKey);
 
-            if (key != null)
+            if (key == null) return userInfoList;
+
+            foreach (var subKeyName in key.GetSubKeyNames())
             {
-                foreach (var subKeyName in key.GetSubKeyNames())
+                var deviceNameKey = Hkcu + "\\" + WebBLoginRootKey + "\\" + subKeyName;
+                var userName = Registry.GetValue(deviceNameKey, WebBUserName, null);
+                var password = Registry.GetValue(deviceNameKey, WebBPassword, null);
+
+                var userInfo = new UserInfo()
                 {
-                    var deviceNameKey = HKCU + "\\" + WebBLoginRootKey + "\\" + subKeyName;
-                    var userName = Registry.GetValue(deviceNameKey, WebBUserName, null);
-                    var password = Registry.GetValue(deviceNameKey, WebBPassword, null);
+                    UserName = userName as string,
+                    SecurePassword = password as byte[],
+                    SavePassword = true,
+                    DeviceName = subKeyName
+                };
 
-                    var userInfo = new UserInfo()
-                    {
-                        UserName = userName as string,
-                        SecurePassword = password as byte[],
-                        SavePassword = true,
-                        DeviceName = subKeyName
-                    };
-
-                    userInfoList.Add(subKeyName, userInfo);
-                }
-
-                key.Close();
+                userInfoList.Add(subKeyName, userInfo);
             }
+
+            key.Close();
 
             return userInfoList;           
         }

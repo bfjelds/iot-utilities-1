@@ -5,38 +5,54 @@ using System.Reflection;
 
 namespace DeviceCenter
 {
+    /// <summary>
+    /// TBD
+    /// </summary>
     public class AppInformation
     {
         public string PosterFile { get; private set; }
+
         public string Title { get; private set; }
+
         public string AppName { get; private set; }
+
         public string Screenshot { get; private set; }
+
         public string Description { get; private set; }
 
         public class ApplicationFiles
         {
             public FileInfo AppX { get; set; }
+
             public FileInfo Certificate { get; set; }
+
             public List<FileInfo> Dependencies { get; set; }
         }
         
         public Dictionary<string, ApplicationFiles> PlatformFiles { get; private set; }
 
-        internal static string cachedRootDirectory = null;
+        internal static string CachedRootDirectory = null;
+
         internal static FileInfo MakePath(string fileName)
         {
-            if (cachedRootDirectory == null)
-                cachedRootDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return new FileInfo(Path.Combine(cachedRootDirectory, "Assets", "Apps", fileName));
+            if (CachedRootDirectory == null)
+                CachedRootDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            if (CachedRootDirectory != null)
+                return new FileInfo(Path.Combine(CachedRootDirectory, "Assets", "Apps", fileName));
+
+            return null;
         }
 
         public string OnlineInfo { get; private set; }
+
         public string OnlineSourceCode { get; private set; }
+
         public static ObservableCollection<AppInformation> Initialize()
         {
-            if (_appList.Count == 0)
+            if (AppList.Count == 0)
             {
-                _appList.Add(new AppInformation()
+                AppList.Add(new AppInformation()
                 {
                     AppName = "BlinkyHeadedWebService",
                     PosterFile = "Assets/Blinky.png",
@@ -74,7 +90,7 @@ namespace DeviceCenter
                     OnlineSourceCode = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm"
                 });
 
-                _appList.Add(new AppInformation()
+                AppList.Add(new AppInformation()
                 {
                     AppName = "InternetRadioHeaded",
                     PosterFile = "Assets/Radio.png",
@@ -113,9 +129,9 @@ namespace DeviceCenter
                 });
             }
 
-            return _appList;
+            return AppList;
         }
 
-        private static ObservableCollection<AppInformation> _appList = new ObservableCollection<AppInformation>();
+        private static readonly ObservableCollection<AppInformation> AppList = new ObservableCollection<AppInformation>();
     }
 }

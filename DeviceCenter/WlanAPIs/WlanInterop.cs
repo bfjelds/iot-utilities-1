@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// Copyright (c) Microsoft. All rights reserved.
+
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace DeviceCenter.WlanAPIs
+namespace WlanAPIs
 {
     public class WlanInterop
     {
@@ -82,7 +81,7 @@ namespace DeviceCenter.WlanAPIs
         #endregion
 
         #region Enum
-        public static uint WLAN_API_VERSION_2_0 = 0x00000002;
+        public static uint WlanApiVersion2 = 0x00000002;
 
         public enum WlanInterfaceState
         {
@@ -209,9 +208,9 @@ namespace DeviceCenter.WlanAPIs
 
         public struct Dot11Ssid
         {
-            public uint SSIDLength;
+            public uint SsidLength;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] SSID;
+            public byte[] Ssid;
         }
 
         public enum Dot11BssType
@@ -236,24 +235,18 @@ namespace DeviceCenter.WlanAPIs
             public uint numberOfBssids;
             public bool networkConnectable;
             public WlanReasonCode wlanNotConnectableReason;
-            private uint numberOfPhyTypes;
+            private readonly uint numberOfPhyTypes;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            private uint[] dot11PhyTypes;
+            private readonly uint[] dot11PhyTypes;
             public bool morePhyTypes;
             public uint wlanSignalQuality;
             public bool securityEnabled;
             public uint dot11DefaultAuthAlgorithm;
             public uint dot11DefaultCipherAlgorithm;
             public uint flags;
-            uint reserved;
+            readonly uint reserved;
 
-            public string SSIDString
-            {
-                get
-                {
-                    return Encoding.ASCII.GetString(dot11Ssid.SSID, 0, (int)dot11Ssid.SSIDLength);
-                }
-            }
+            public string SsidString => Encoding.ASCII.GetString(dot11Ssid.Ssid, 0, (int)dot11Ssid.SsidLength);
         }
 
         [StructLayout(LayoutKind.Sequential)]
