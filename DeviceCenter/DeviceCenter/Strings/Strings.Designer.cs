@@ -673,7 +673,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The remote device did not respond to from the selected access point..
+        ///   Looks up a localized string similar to The remote device did not respond to request for Access Point list..
         /// </summary>
         public static string MessageUnableToGetWifi {
             get {

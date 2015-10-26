@@ -506,6 +506,6 @@
     <value>Confirm Password</value>
   </data>
   <data name="MessageUnableToGetWifi" xml:space="preserve">
-    <value>The remote device did not respond to from the selected access point.</value>
+    <value>The remote device did not respond to request for Access Point list.</value>
   </data>
 </root>
