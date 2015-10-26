@@ -354,7 +354,7 @@ namespace DeviceCenter
             }
         }
 
-        private void ButtonRefresh_Click(object sender, MouseButtonEventArgs e)
+        private void ButtonRefresh_Click(object sender, RoutedEventArgs e)
         {
             _navigationFrame.Navigate(new ViewDevicesPage(_navigationFrame));
         }

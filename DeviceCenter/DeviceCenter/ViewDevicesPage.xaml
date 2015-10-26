@@ -21,7 +21,14 @@
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel >
             <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left"/>
-            <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="Refresh" MouseDown="ButtonRefresh_Click"  HorizontalAlignment="Left"/>
+            <Button DockPanel.Dock="Top" x:Name="buttonRefresh" x:Uid="FlashButton" Grid.Row="4" Padding="30 5 30 5" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Refresh" Click="ButtonRefresh_Click">
+                <Button.BorderBrush>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
+                </Button.BorderBrush>
+                <Button.Foreground>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}" Opacity="0.8"/>
+                </Button.Foreground>
+            </Button>
             <ListView DockPanel.Dock="Top" x:Name="ListViewDevices" Unloaded="ListViewDevices_Unloaded" Margin="0 10 0 10" BorderBrush="{x:Null}" BorderThickness="0" >
                 <ListView.View>
                     <GridView ColumnHeaderTemplate="{StaticResource CleanHeaderTemplate}">
