@@ -151,7 +151,7 @@ namespace WlanAPIs
             if (errorCode == 0) return;
             var ex = new WLanException(errorCode, method);
             Error(ex.ToString());
-            // throw ex;
+            throw ex;
         }
 
         public static void Info(string message, params object[] paras)
