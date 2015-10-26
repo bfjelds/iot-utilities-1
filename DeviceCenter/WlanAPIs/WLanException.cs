@@ -17,7 +17,7 @@ namespace WlanAPIs
 
         public override string ToString()
         {
-            return $"Native function [{ErrorCode}] failed, error code [{NativeMethod}]";
+            return $"Native function [{NativeMethod}] failed, error code [0x{ErrorCode:x}]";
         }
     }
 }

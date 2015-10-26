@@ -10,25 +10,17 @@ namespace DeviceCenter.Helper
 
     public class SoftApHelper
     {
+        #region consts
         public const string SoftApHostIp = "192.168.173.1";
         public const string SoftApClientIp = "192.168.173.2";
         public const string SoftApSubnetAddr = "255.255.0.0";
         public const string SoftApNamePrefix = "AJ_";
         public const int PingRetryNumber = 10;
         public const int PingDelay = 500;
+        #endregion
 
+        #region public
         public event SoftApDisconnectedHandler OnSoftApDisconnected;
-
-        public void Scan()
-        {
-            if (_wlanInterface == null)
-            {
-                Util.Error("Scan: No Wlan interface");
-                return ;
-            }
-
-            _wlanInterface.Scan();
-        }
 
         public IList<WlanInterop.WlanAvailableNetwork> GetAvailableNetworkList()
         {
@@ -39,31 +31,38 @@ namespace DeviceCenter.Helper
                 return networkList;
             }
 
-            Scan();
-            
-            // TBD to be removed? 
-            // Sleep(4000);
+            List<WlanInterop.WlanAvailableNetwork> nativeNetworkList = null;
+            try
+            {
+                _wlanInterface.Scan();
 
-            var list = _wlanInterface.GetAvailableNetworkList();
-            var sortedList = new SortedList<uint, WlanInterop.WlanAvailableNetwork>();
-            var networkSet = new HashSet<string>();
+                nativeNetworkList = _wlanInterface.GetAvailableNetworkList();
+            }
+            catch(WLanException)
+            {
+                // error occurred at calling wlan WINAPI
+                return networkList;
+            }
+
+            var sortedWLanNetworks = new SortedList<uint, WlanInterop.WlanAvailableNetwork>();
+            var uniqueWlanNetworks = new HashSet<string>();
 
             uint index = 0;
-            foreach (var network in list)
+            foreach (var network in nativeNetworkList)
             {
                 var ssid = network.SsidString;
 
-                if (!ssid.StartsWith(SoftApNamePrefix) || networkSet.Contains(ssid)) continue;
+                if (!ssid.StartsWith(SoftApNamePrefix) || uniqueWlanNetworks.Contains(ssid)) continue;
 
                 Debug.WriteLine($"{ssid} {network.wlanSignalQuality}");
                 
                 // dup keys is not allowed
                 var key = network.wlanSignalQuality * 10 + index;
-                sortedList.Add(key, network);
-                networkSet.Add(ssid);
+                sortedWLanNetworks.Add(key, network);
+                uniqueWlanNetworks.Add(ssid);
                 index++;
             }
-            IList<WlanInterop.WlanAvailableNetwork> descList = sortedList.Values.Reverse().ToList();
+            IList<WlanInterop.WlanAvailableNetwork> descList = sortedWLanNetworks.Values.Reverse().ToList();
             return descList;
         }
 
@@ -94,14 +93,65 @@ namespace DeviceCenter.Helper
             );
         }
 
+        public void Disconnect()
+        {
+            if (_wlanInterface == null)
+            {
+                Util.Error("Disconnect: No Wlan interface");
+            }
+
+            var wmi = WmiHelper.CreateByNicGuid(_wlanInterface.Guid);
+            Util.Info("Enable DHCP");
+            wmi.EnableDhcp();
+
+            try
+            {
+                _wlanInterface.Disconnect();
+            }
+            catch(WLanException)
+            {
+                return;
+            }
+        }
+
+        public string IPV4
+        {
+            get
+            {
+                var wmi = WmiHelper.CreateByNicGuid(_wlanInterface.Guid);
+                return wmi.GetIpv4();
+            }
+        }
+
+        public SoftApHelper()
+        {
+            _wlanClient = new WlanClient();
+            var interfaces = _wlanClient.Interfaces;
+            if (interfaces != null && interfaces.Count != 0)
+            {
+                // TBD - to support multiple wlan interfaces
+                _wlanInterface = interfaces[0];
+                _wlanClient.OnAcmNotification += OnACMNotification;
+            }
+        }
+        #endregion
+
+        #region private
         private bool ConnectToSoftAp(WlanInterop.WlanAvailableNetwork network, string password)
         {
-            _wlanInterface.Connect(
-                            WlanInterop.WlanConnectionMode.TemporaryProfile,
-                            WlanInterop.Dot11BssType.Any,
-                            network,
-                            password
-                            );
+            try
+            {
+                _wlanInterface.Connect(
+                                WlanInterop.WlanConnectionMode.TemporaryProfile,
+                                WlanInterop.Dot11BssType.Any,
+                                network,
+                                password
+                                );
+            }
+            catch(WLanException)
+            {
+                return false;
+            }
 
             var isSuccess = _wlanClient.WaitConnectComplete();
             if (!isSuccess)
@@ -149,41 +199,6 @@ namespace DeviceCenter.Helper
             return false;
         }
 
-        public void Disconnect()
-        {
-            if (_wlanInterface == null)
-            {
-                Util.Error("Disconnect: No Wlan interface");
-            }
-
-            var wmi = WmiHelper.CreateByNicGuid(_wlanInterface.Guid);
-            Util.Info("Enable DHCP");
-            wmi.EnableDhcp();
-
-            _wlanInterface.Disconnect();
-        }
-
-        public string IPV4
-        {
-            get
-            {
-                var wmi = WmiHelper.CreateByNicGuid(_wlanInterface.Guid);
-                return wmi.GetIpv4();
-            }
-        }
-
-        public SoftApHelper()
-        {
-            _wlanClient = new WlanClient();
-            var interfaces = _wlanClient.Interfaces;
-            if (interfaces != null && interfaces.Count != 0)
-            {
-                // TBD - to support multiple wlan interfaces
-                _wlanInterface = interfaces[0];
-                _wlanClient.OnAcmNotification += OnACMNotification;
-            }
-        }
-
         private void OnACMNotification(string profileName, int notificationCode, WlanInterop.WlanReasonCode reasonCode)
         {
             switch ((WlanInterop.WlanNotificationCodeAcm)notificationCode)
@@ -204,5 +219,6 @@ namespace DeviceCenter.Helper
         private readonly WlanClient _wlanClient;
         private readonly WlanInterface _wlanInterface;
         private bool _isConnected;
+        #endregion
     }
 }
