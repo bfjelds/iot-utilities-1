@@ -142,11 +142,11 @@ namespace DeviceCenter
 
                 App.TelemetryClient.TrackEvent("DeviceDiscovery", new Dictionary<string, string>()
                 {
-                    { "oldestDeviceId", _oldestBuildDevice.UniqueId.ToString() },
-                    { "oldestBuildVersion", _oldestBuildDevice.OsVersion },
-                    { "newestDeviceId", _newestBuildDevice.UniqueId.ToString() },
-                    { "newestBuildVersion", _newestBuildDevice.OsVersion },
-                    { "numDevices", deviceCount.ToString() }
+                    { "OldestDeviceId", _oldestBuildDevice.UniqueId.ToString() },
+                    { "OldestBuildVersion", _oldestBuildDevice.OsVersion },
+                    { "NewestDeviceId", _newestBuildDevice.UniqueId.ToString() },
+                    { "NewestBuildVersion", _newestBuildDevice.OsVersion },
+                    { "NumDevices", deviceCount.ToString() }
                 });
             }
 
