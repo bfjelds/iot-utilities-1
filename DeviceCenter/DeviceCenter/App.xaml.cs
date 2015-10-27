@@ -62,6 +62,7 @@ namespace DeviceCenter
                 { "MachineId", machineId }
             });
             GlobalStopwatch.Start();
+            DriveInfo.InitializeWatcher();
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -72,6 +73,8 @@ namespace DeviceCenter
             });
             TelemetryClient.TrackMetric("UpTimeMinutes", GlobalStopwatch.Elapsed.TotalMinutes);
             GlobalStopwatch.Stop();
+
+            DriveInfo.DisposeWatcher();
 
             // Disconnect from softAP and enable DHCP
             Helper.SoftApHelper.Instance.Disconnect();
