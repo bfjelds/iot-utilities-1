@@ -58,11 +58,18 @@ namespace WlanAPIs
             }
         }
 
+        public List<WlanInterface> Interfaces { get; }
+
+        ~WlanClient()
+        {
+            WlanInterop.WlanCloseHandle(NativeHandle, IntPtr.Zero);
+        }
+
         private List<WlanInterface> ParseNativeWlanInterfaceList(IntPtr nativeInterfaceList)
         {
             List<WlanInterface> wlanInterfaces = new List<WlanInterface>();
             var header = (WlanInterop.WlanInterfaceInfoList)Marshal.PtrToStructure(
-                nativeInterfaceList, 
+                nativeInterfaceList,
                 typeof(WlanInterop.WlanInterfaceInfoList));
 
             Int64 listIterator = nativeInterfaceList.ToInt64() + Marshal.SizeOf(header);
@@ -71,7 +78,7 @@ namespace WlanAPIs
             for (var i = 0; i < header.numberOfItems; ++i)
             {
                 var info = (WlanInterop.WlanInterfaceInfo)Marshal.PtrToStructure(
-                    new IntPtr(listIterator), 
+                    new IntPtr(listIterator),
                     typeof(WlanInterop.WlanInterfaceInfo)
                     );
 
@@ -80,13 +87,6 @@ namespace WlanAPIs
             }
 
             return wlanInterfaces;
-        }
-
-        public List<WlanInterface> Interfaces { get; }
-
-        ~WlanClient()
-        {
-            WlanInterop.WlanCloseHandle(NativeHandle, IntPtr.Zero);
         }
 
         private WlanInterop.WlanConnectionNotificationData? ParseWlanConnectionNotification(ref WlanInterop.WlanNotificationData notifyData)
@@ -175,6 +175,6 @@ namespace WlanAPIs
         internal IntPtr NativeHandle;
         private WlanInterop.WlanNotificationCallbackDelegate _wlanNotificationCallback;
         private readonly AutoResetEvent _connectDoneEvent = new AutoResetEvent(false);
-        private bool _isConnectAttemptSuccess = true;
+        internal bool _isConnectAttemptSuccess;
     }
 }

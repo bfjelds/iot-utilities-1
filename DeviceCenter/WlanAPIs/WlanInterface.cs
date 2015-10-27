@@ -60,6 +60,8 @@ namespace WlanAPIs
             WlanInterop.WlanAvailableNetwork network,
             string password)
         {
+            this._client._isConnectAttemptSuccess = true;
+
             var connectionParams = new WlanInterop.WlanConnectionParameters { wlanConnectionMode = connectionMode };
             var ssid = network.dot11Ssid;
             connectionParams.dot11SsidPtr = Marshal.AllocHGlobal(Marshal.SizeOf(ssid));
@@ -74,24 +76,20 @@ namespace WlanAPIs
                 );
 
             Connect(connectionParams);
+
             Marshal.DestroyStructure(connectionParams.dot11SsidPtr, ssid.GetType());
             Marshal.FreeHGlobal(connectionParams.dot11SsidPtr);
         }
 
         public void Disconnect()
         {
-            if (_client.NativeHandle != IntPtr.Zero)
-            {
-                Util.ThrowIfFail(
-                    WlanInterop.WlanDisconnect(
-                        _client.NativeHandle,
-                        ref _nativeInterfaceInfo.interfaceGuid,
-                        IntPtr.Zero),
-                    "Disconnect"
-                    );
-
-                _client.NativeHandle = IntPtr.Zero;
-            }
+            Util.ThrowIfFail(
+                WlanInterop.WlanDisconnect(
+                    _client.NativeHandle,
+                    ref _nativeInterfaceInfo.interfaceGuid,
+                    IntPtr.Zero),
+                "Disconnect"
+                );
         }
 
         protected void Connect(WlanInterop.WlanConnectionParameters connectionParams)

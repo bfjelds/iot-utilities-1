@@ -12,6 +12,8 @@ namespace WlanAPIs
     public class Util
     {
         public const string WlanProfileName = "AthensSoftAP";
+        public const string Athens_SoftAP_Authentication = "WPA2PSK";
+        public const string Athens_SoftAP_Encryption = "AES";
 
         static readonly string ProfileTemplate =
             "<?xml version =\"1.0\" encoding=\"US-ASCII\"?>" +
@@ -39,59 +41,18 @@ namespace WlanAPIs
         static readonly string SecuritySectionTemplate =
             "<sharedKey><keyType>passPhrase</keyType><protected>false</protected><keyMaterial>$key</keyMaterial></sharedKey>";
 
-        static readonly string[] AuthAlgStrings = new string[] {
-            "",
-            "open",
-            "shared",
-            "WPA",
-            "WPAPSK",
-            "",
-            "WPA2",
-            "WPA2PSK"
-        };
-
         public static string MakeProfileString(string ssid, uint authAlg, uint cipherAlg, string password)
         {
             var profileStr = ProfileTemplate;
             profileStr = profileStr.Replace("$ssid", ssid);
-            profileStr = profileStr.Replace("$authentication", AuthAlgToString(authAlg));
-            profileStr = profileStr.Replace("$encryption", CipherAlgToString(cipherAlg));
+            profileStr = profileStr.Replace("$authentication", Athens_SoftAP_Authentication);
+            profileStr = profileStr.Replace("$encryption", Athens_SoftAP_Encryption);
 
             var securityStr = SecuritySectionTemplate;
             securityStr = securityStr.Replace("$key", "password");
             profileStr = profileStr.Replace("$securitySection", securityStr);
 
             return profileStr;
-        }
-
-        static string AuthAlgToString(uint alg)
-        {
-            if (alg != 0 && alg < AuthAlgStrings.Length)
-            {
-                return AuthAlgStrings[alg];
-            }
-
-            Debug.Fail("debug break");
-            return string.Empty;
-        }
-
-        static string CipherAlgToString(uint alg)
-        {
-            switch (alg)
-            {
-                case 0:
-                    return "none";
-                case 257:
-                case 5:
-                case 1:
-                    return "WEP";
-                case 2:
-                    return "TKIP";
-                case 4:
-                    return "AES";
-                default:
-                    return "undefined";
-            }
         }
 
         public static string GetStringForSsid(WlanInterop.Dot11Ssid ssid)
