@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Windows;
@@ -49,11 +50,24 @@ namespace DeviceCenter
 
         private async void ButtonDeploy_Click(object sender, RoutedEventArgs e)
         {
+            if (_device.Architecture == null || _device.Architecture.Length == 0)
+            {
+                // the app name as caption
+                var errorCaption = Strings.Strings.AppNameDisplay;
+
+                // show the filename, use standard windows error
+                var errorMsg = Strings.Strings.ErrorUnknownArchitecture;
+
+                MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                return;
+            }
+
             PanelDeploy.Visibility = Visibility.Collapsed;
             PanelDeploying.Visibility = Visibility.Visible;
             PanelDeployed.Visibility = Visibility.Collapsed;
 
-            var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
+            var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);                      
 
             var sourceFiles = this.AppItem.PlatformFiles[_device.Architecture];
 

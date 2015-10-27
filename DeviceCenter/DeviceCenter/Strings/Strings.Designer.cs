@@ -520,6 +520,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unknown Device Architecture.
+        /// </summary>
+        public static string ErrorUnknownArchitecture {
+            get {
+                return ResourceManager.GetString("ErrorUnknownArchitecture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finding Windows 10 IoT Core devices on your network.
         /// </summary>
         public static string FindDeviceMessage {
