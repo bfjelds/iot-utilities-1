@@ -331,6 +331,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OS Version.
+        /// </summary>
+        public static string DeviceListColOSVersion {
+            get {
+                return ResourceManager.GetString("DeviceListColOSVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string DeviceListColSettings {

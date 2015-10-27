@@ -1,5 +1,4 @@
-﻿using Microsoft.Tools.Connectivity;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,7 +24,6 @@ namespace DeviceCenter
     {
         private readonly DispatcherTimer _telemetryTimer = new DispatcherTimer();
         private DiscoveredDevice _newestBuildDevice, _oldestBuildDevice;
-        private readonly DeviceDiscoveryService _deviceDiscoverySvc;
         private readonly ObservableCollection<DiscoveredDevice> _devices = new ObservableCollection<DiscoveredDevice>();
 
         private readonly SoftApHelper _softwareAccessPoint;
@@ -35,6 +33,7 @@ namespace DeviceCenter
         private readonly Frame _navigationFrame;
         private PageWifi _wifiPage;
         private bool _connectedToAdhoc = false;
+        NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
 
         ~ViewDevicesPage()
         {
@@ -43,11 +42,13 @@ namespace DeviceCenter
             {
                 _softwareAccessPoint.Disconnect();
             }
+            NativeMethods.StopDiscovery();
         }
 
         public ViewDevicesPage(Frame navigationFrame)
         {
             InitializeComponent();
+            _addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
             _navigationFrame = navigationFrame;
 
             _newestBuildDevice = null;
@@ -56,9 +57,15 @@ namespace DeviceCenter
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             _telemetryTimer.Tick += TelemetryTimer_Tick;
 
-            _deviceDiscoverySvc = new DeviceDiscoveryService();
-            _deviceDiscoverySvc.Discovered += MdnsDeviceDiscovered;
-            _deviceDiscoverySvc.Start();
+            //Stop Discovery if it was already started
+            NativeMethods.StopDiscovery();
+
+            //Register the callback
+            
+            NativeMethods.RegisterCallback(_addCallbackdel);
+
+            //Start device discovery using DNS-SD
+            NativeMethods.StartDiscovery();
 
             ListViewDevices.ItemsSource = _devices;
 
@@ -143,7 +150,7 @@ namespace DeviceCenter
             // Only send a telemetry event if we've found build information
             if (_oldestBuildDevice != null && _newestBuildDevice != null)
             {
-                int deviceCount = _deviceDiscoverySvc.DevicesDiscovered().Count;
+                int deviceCount = _devices.Count;
 
                 Debug.WriteLine("Sending telemetry event... ");
                 Debug.WriteLine("Max OS Version: " + _newestBuildDevice.OsVersion);
@@ -163,64 +170,99 @@ namespace DeviceCenter
             _telemetryTimer.Stop();
         }
 
-        public void MdnsDeviceDiscovered(object sender, DiscoveredEventArgs args)
+        private void AddDeviceCallback(string deviceName, string ipV4Address, string ipV6Address, string txtParameters)
         {
-            // EventArgs args should never be null, added a check just to be sure. 
+            //Debug.WriteLine(deviceName);
 
-            if (args?.Info.Connection == DiscoveredDeviceInfo.ConnectionType.MDNS)
+            if (String.IsNullOrEmpty(deviceName)
+                || String.IsNullOrEmpty(ipV4Address)
+                || String.IsNullOrEmpty(txtParameters))
             {
-                var newDevice = new DiscoveredDevice()
+                return;
+            }
+
+            string deviceModel = "";
+            string osVersion = "";
+            string deviceGuid = "";
+            string arch = "";
+
+            //The txt parameter are in following format
+            // txtParameters = "guid=79F50796-F59B-D97A-A00F-63D798C6C144,model=Virtual,architecture=x86,osversion=10.0.10557,"
+            // Split them with ',' and '=' and get the odd values 
+            string[] deviceDetails = txtParameters.Split(',', '=');
+            int index = 0;
+            while(index < deviceDetails.Length)
+            {
+                switch(deviceDetails[index])
                 {
-                    DeviceName = args.Info.Name,
-                    DeviceModel = args.Info.Location,
-                    Architecture = args.Info.Architecture,
-                    OsVersion = args.Info.OSVersion,
-                    IpAddress = IPAddress.Parse(args.Info.Address),
-                    UniqueId = args.Info.UniqueId,
-                    Manage = new Uri($"http://administrator@{args.Info.Address}/"),
-                    Authentication = DialogAuthenticate.GetSavedPassword(args.Info.Name)
-                };
+                    case "guid":
+                        deviceGuid = deviceDetails[index + 1];
+                        break;
+                    case "model":
+                        deviceModel = deviceDetails[index + 1];
+                        break;
+                    case "osversion":
+                        osVersion = deviceDetails[index + 1];
+                        break;
+                    case "architecture":
+                        arch = deviceDetails[index + 1];
+                        break;
+                }
+                index += 2;
+            }
+            
+            var newDevice = new DiscoveredDevice()
+            {
+                DeviceName = deviceName.Substring(0, deviceName.IndexOf('.')),
+                DeviceModel = deviceModel,
+                Architecture = arch,
+                OsVersion = osVersion,
+                IpAddress = IPAddress.Parse(ipV4Address),
+                UniqueId =  String.IsNullOrEmpty(deviceGuid) ? Guid.Empty : new Guid(deviceDetails[1]),
+                Manage = new Uri($"http://administrator@{ipV4Address}/"),
+                Authentication = DialogAuthenticate.GetSavedPassword(deviceName)
+            };
 
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                _devices.Add(newDevice);
+            }));
+
+            // Figure out which device has the latest build and the oldest build
+            if (!string.IsNullOrWhiteSpace(newDevice.OsVersion))
+            {
+                // Set initial value if null
+                if (_newestBuildDevice == null && _oldestBuildDevice == null)
                 {
-                    _devices.Add(newDevice);
-                }));
-
-                // Figure out which device has the latest build and the oldest build
-                if (!string.IsNullOrWhiteSpace(newDevice.OsVersion))
-                {
-                    // Set initial value if null
-                    if (_newestBuildDevice == null && _oldestBuildDevice == null)
-                    {
-                        _newestBuildDevice = _oldestBuildDevice = newDevice;
-                    }
-
-                    // Compare OS Versions
-                    try
-                    {
-                        if (_newestBuildDevice != null)
-                        {
-                            var compareResult = compareOsVersions(newDevice.OsVersion, _newestBuildDevice.OsVersion);
-
-                            if (compareResult > 0)
-                            {
-                                _newestBuildDevice = newDevice;
-                            }
-                            else if (compareResult < 0)
-                            {
-                                _oldestBuildDevice = newDevice;
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e.Message);
-                    }
+                    _newestBuildDevice = _oldestBuildDevice = newDevice;
                 }
 
-                // Refresh delay until telemetry is sent
-                _telemetryTimer.Start();
+                // Compare OS Versions
+                try
+                {
+                    if (_newestBuildDevice != null)
+                    {
+                        var compareResult = compareOsVersions(newDevice.OsVersion, _newestBuildDevice.OsVersion);
+
+                        if (compareResult > 0)
+                        {
+                            _newestBuildDevice = newDevice;
+                        }
+                        else if (compareResult < 0)
+                        {
+                            _oldestBuildDevice = newDevice;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                }
             }
+
+            // Refresh delay until telemetry is sent
+            _telemetryTimer.Start();
+
         }
 
         private int compareOsVersions(string osVersion1, string osVersion2)

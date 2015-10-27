@@ -37,5 +37,21 @@ namespace DeviceCenter
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
+
+        public delegate void AddDeviceCallbackDelegate(
+          [MarshalAs(UnmanagedType.LPWStr)]string deviceName,
+          [MarshalAs(UnmanagedType.LPWStr)]string ipV4Address,
+          [MarshalAs(UnmanagedType.LPWStr)]string ipV6Address,
+          [MarshalAs(UnmanagedType.LPWStr)]string txtParameters);
+
+        [DllImport("DeviceDiscovery.dll", ExactSpelling = true, SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool StartDiscovery();
+
+        [DllImport("DeviceDiscovery.dll", ExactSpelling = true, SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void StopDiscovery();
+
+        [DllImport("DeviceDiscovery.dll", ExactSpelling = true, SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RegisterCallback(AddDeviceCallbackDelegate cbFunction);
     }
 }
