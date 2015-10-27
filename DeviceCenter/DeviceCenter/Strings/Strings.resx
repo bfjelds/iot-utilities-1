@@ -508,4 +508,7 @@
   <data name="MessageUnableToGetWifi" xml:space="preserve">
     <value>The remote device did not respond to request for Access Point list.</value>
   </data>
+  <data name="DeviceListColOSVersion" xml:space="preserve">
+    <value>OS Version</value>
+  </data>
 </root>
