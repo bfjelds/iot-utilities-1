@@ -23,7 +23,7 @@ namespace DeviceCenter
         public About()
         {
             InitializeComponent();
-            labelVersion.Text = DateTime.Now.ToShortDateString() + "::" + DateTime.Now.ToShortTimeString();
+            labelVersion.Text = DateTime.Now.ToShortDateString() + "  " + DateTime.Now.ToShortTimeString().ToLower();
         }
     }
 }
