@@ -102,6 +102,8 @@ namespace DeviceCenter.Helper
 
         public void Disconnect()
         {
+            // tbd this code need refactor to cleanly handle when Wi-Fi doesn't exist in the system.
+
             if (_wlanInterface == null)
             {
                 Util.Error("Disconnect: No Wlan interface");
@@ -118,14 +120,14 @@ namespace DeviceCenter.Helper
                 _isDisconnecting = true;
             }
 
-            if(!_subnetHelper.EnableDhcp())
+            if(_subnetHelper != null && !_subnetHelper.EnableDhcp())
             {
                 Debug.Fail("User selects not to enable DHCP");
             }
 
             try
             {
-                if (_isConnectedToSoftAP)
+                if (_isConnectedToSoftAP && _wlanInterface != null)
                 {
                     _wlanInterface.Disconnect();
                 }
@@ -164,7 +166,8 @@ namespace DeviceCenter.Helper
                 _wlanInterface = null;
             }
 
-            var interfaces = _wlanClient.Interfaces;
+            var interfaces = _wlanClient?.Interfaces;
+
             if (interfaces != null && interfaces.Count != 0)
             {
                 // TBD - to support multiple wlan interfaces
