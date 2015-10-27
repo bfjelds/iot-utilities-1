@@ -42,38 +42,52 @@ namespace WlanAPIs
                 );
 
             // enum interfaces
-            IntPtr ifaceList;
+            IntPtr nativeInterfaceList = IntPtr.Zero;
             Util.ThrowIfFail(
-                WlanInterop.WlanEnumInterfaces(NativeHandle, IntPtr.Zero, out ifaceList),
+                WlanInterop.WlanEnumInterfaces(NativeHandle, IntPtr.Zero, out nativeInterfaceList),
                 "WlanEnumInterfaces"
                 );
 
             try
             {
-                var header = (WlanInterop.WlanInterfaceInfoList)Marshal.PtrToStructure(ifaceList, typeof(WlanInterop.WlanInterfaceInfoList));
-                Int64 listIterator = ifaceList.ToInt64() + Marshal.SizeOf(header);
-
-                var currentIfaceGuids = new List<Guid>();
-                for (var i = 0; i < header.numberOfItems; ++i)
-                {
-                    var info =
-                        (WlanInterop.WlanInterfaceInfo)Marshal.PtrToStructure(new IntPtr(listIterator), typeof(WlanInterop.WlanInterfaceInfo));
-                    listIterator += Marshal.SizeOf(info);
-                    Interfaces.Add(new WlanInterface(this, info));
-                }
+                this.Interfaces = ParseNativeWlanInterfaceList(nativeInterfaceList);
             }
             finally
             {
-                WlanInterop.WlanFreeMemory(ifaceList);
+                WlanInterop.WlanFreeMemory(nativeInterfaceList);
             }
         }
+
+        private List<WlanInterface> ParseNativeWlanInterfaceList(IntPtr nativeInterfaceList)
+        {
+            List<WlanInterface> wlanInterfaces = new List<WlanInterface>();
+            var header = (WlanInterop.WlanInterfaceInfoList)Marshal.PtrToStructure(
+                nativeInterfaceList, 
+                typeof(WlanInterop.WlanInterfaceInfoList));
+
+            Int64 listIterator = nativeInterfaceList.ToInt64() + Marshal.SizeOf(header);
+
+            var currentIfaceGuids = new List<Guid>();
+            for (var i = 0; i < header.numberOfItems; ++i)
+            {
+                var info = (WlanInterop.WlanInterfaceInfo)Marshal.PtrToStructure(
+                    new IntPtr(listIterator), 
+                    typeof(WlanInterop.WlanInterfaceInfo)
+                    );
+
+                listIterator += Marshal.SizeOf(info);
+                wlanInterfaces.Add(new WlanInterface(this, info));
+            }
+
+            return wlanInterfaces;
+        }
+
+        public List<WlanInterface> Interfaces { get; }
 
         ~WlanClient()
         {
             WlanInterop.WlanCloseHandle(NativeHandle, IntPtr.Zero);
         }
-
-        public List<WlanInterface> Interfaces { get; }
 
         private WlanInterop.WlanConnectionNotificationData? ParseWlanConnectionNotification(ref WlanInterop.WlanNotificationData notifyData)
         {
@@ -108,15 +122,15 @@ namespace WlanAPIs
 
             if (notifyData.notificationSource == WlanInterop.WlanNotificationSource.ACM)
             {
-                if (!string.IsNullOrEmpty(profileName))
+                if(!string.IsNullOrEmpty(profileName))
                 {
                     Util.Info("*** {0} notification [{1}] [{2}] [{3}]({4},{5})",
-                    source,
-                    profileName,
-                    notification,
-                    reason,
-                    notifyData.notificationCode,
-                    reasonCode);
+                        source,
+                        profileName,
+                        notification,
+                        reason,
+                        notifyData.notificationCode,
+                        reasonCode);
                 }
 
                 HandleAcmNotification(notifyData, connNotifyData);

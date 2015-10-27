@@ -29,7 +29,7 @@ namespace WlanAPIs
 
         public List<WlanInterop.WlanAvailableNetwork> GetAvailableNetworkList()
         {
-            var availNetListPtr = IntPtr.Zero;
+            var nativeNetworkList = IntPtr.Zero;
             var networkList = new List<WlanInterop.WlanAvailableNetwork>();
 
             try
@@ -40,28 +40,15 @@ namespace WlanAPIs
                         _nativeInterfaceInfo.interfaceGuid,
                         WlanInterop.WlanGetAvailableNetworkFlags.IncludeAllAdhocProfiles,
                         IntPtr.Zero,
-                        out availNetListPtr),
+                        out nativeNetworkList),
                     "WlanGetAvailableNetworkList"
                     );
 
-                var availNetListHeader = (WlanInterop.WlanAvailableNetworkList)Marshal.PtrToStructure(
-                    availNetListPtr, 
-                    typeof(WlanInterop.WlanAvailableNetworkList));
-
-                var availNetListIt = availNetListPtr.ToInt64() + Marshal.SizeOf(typeof(WlanInterop.WlanAvailableNetworkList));
-                
-                for (int i = 0; i < availNetListHeader.numberOfItems; ++i)
-                {
-                    var network = (WlanInterop.WlanAvailableNetwork)Marshal.PtrToStructure(
-                        new IntPtr(availNetListIt), 
-                        typeof(WlanInterop.WlanAvailableNetwork));
-                    networkList.Add(network);
-                    availNetListIt += Marshal.SizeOf(typeof(WlanInterop.WlanAvailableNetwork));
-                }
+                networkList = ParseNativeWlanAvaliableNetwork(nativeNetworkList);
             }
             finally
             {
-                WlanInterop.WlanFreeMemory(availNetListPtr);
+                WlanInterop.WlanFreeMemory(nativeNetworkList);
             }
 
             return networkList;
@@ -73,7 +60,7 @@ namespace WlanAPIs
             WlanInterop.WlanAvailableNetwork network,
             string password)
         {
-            var connectionParams = new WlanInterop.WlanConnectionParameters {wlanConnectionMode = connectionMode};
+            var connectionParams = new WlanInterop.WlanConnectionParameters { wlanConnectionMode = connectionMode };
             var ssid = network.dot11Ssid;
             connectionParams.dot11SsidPtr = Marshal.AllocHGlobal(Marshal.SizeOf(ssid));
             Marshal.StructureToPtr(ssid, connectionParams.dot11SsidPtr, false);
@@ -85,6 +72,7 @@ namespace WlanAPIs
                 network.dot11DefaultCipherAlgorithm,
                 password
                 );
+
             Connect(connectionParams);
             Marshal.DestroyStructure(connectionParams.dot11SsidPtr, ssid.GetType());
             Marshal.FreeHGlobal(connectionParams.dot11SsidPtr);
@@ -92,13 +80,18 @@ namespace WlanAPIs
 
         public void Disconnect()
         {
-            Util.ThrowIfFail(
-                WlanInterop.WlanDisconnect(
-                    _client.NativeHandle, 
-                    ref _nativeInterfaceInfo.interfaceGuid, 
-                    IntPtr.Zero),
-                "Disconnect"
-                );
+            if (_client.NativeHandle != IntPtr.Zero)
+            {
+                Util.ThrowIfFail(
+                    WlanInterop.WlanDisconnect(
+                        _client.NativeHandle,
+                        ref _nativeInterfaceInfo.interfaceGuid,
+                        IntPtr.Zero),
+                    "Disconnect"
+                    );
+
+                _client.NativeHandle = IntPtr.Zero;
+            }
         }
 
         protected void Connect(WlanInterop.WlanConnectionParameters connectionParams)
@@ -107,6 +100,28 @@ namespace WlanAPIs
                 WlanInterop.WlanConnect(_client.NativeHandle, _nativeInterfaceInfo.interfaceGuid, ref connectionParams, IntPtr.Zero),
                 "WlanConnect"
                 );
+        }
+
+        private static List<WlanInterop.WlanAvailableNetwork> ParseNativeWlanAvaliableNetwork(IntPtr nativeNetworkList)
+        {
+            var networkList = new List<WlanInterop.WlanAvailableNetwork>();
+            var avaliableNLHeader = (WlanInterop.WlanAvailableNetworkList)Marshal.PtrToStructure(
+                                nativeNetworkList,
+                                typeof(WlanInterop.WlanAvailableNetworkList));
+
+            var availNetListIt = nativeNetworkList.ToInt64() + Marshal.SizeOf(typeof(WlanInterop.WlanAvailableNetworkList));
+
+            for (int i = 0; i < avaliableNLHeader.numberOfItems; ++i)
+            {
+                var network = (WlanInterop.WlanAvailableNetwork)Marshal.PtrToStructure(
+                    new IntPtr(availNetListIt),
+                    typeof(WlanInterop.WlanAvailableNetwork));
+
+                networkList.Add(network);
+                availNetListIt += Marshal.SizeOf(typeof(WlanInterop.WlanAvailableNetwork));
+            }
+
+            return networkList;
         }
 
         public Guid Guid => _nativeInterfaceInfo.interfaceGuid;

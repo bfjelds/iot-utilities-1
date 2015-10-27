@@ -36,7 +36,7 @@ namespace WlanAPIs
                 "</MSM>" +
             "</WLANProfile>";
 
-        static readonly string SecuritySectionTemplate = 
+        static readonly string SecuritySectionTemplate =
             "<sharedKey><keyType>passPhrase</keyType><protected>false</protected><keyMaterial>$key</keyMaterial></sharedKey>";
 
         static readonly string[] AuthAlgStrings = new string[] {
@@ -66,7 +66,7 @@ namespace WlanAPIs
 
         static string AuthAlgToString(uint alg)
         {
-            if(alg != 0 && alg < AuthAlgStrings.Length)
+            if (alg != 0 && alg < AuthAlgStrings.Length)
             {
                 return AuthAlgStrings[alg];
             }
@@ -183,16 +183,16 @@ namespace WlanAPIs
             Info("RunNetshElevated [{0}]", arguments);
             try
             {
-                var proc = new Process {StartInfo = procInfo};
+                var proc = new Process { StartInfo = procInfo };
                 proc.Start();
-
-                return true;
             }
             catch (Exception)
             {
                 Console.WriteLine("Failed to run elevated.");
                 return false;
             }
+
+            return true;
         }
     }
 }

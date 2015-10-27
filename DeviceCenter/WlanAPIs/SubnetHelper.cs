@@ -19,7 +19,7 @@ namespace WlanAPIs
 
         static public SubnetHelper CreateByNicGuid(Guid interfaceGuid)
         {
-            if(interfaceGuid == Guid.Empty)
+            if (interfaceGuid == Guid.Empty)
             {
                 return null;
             }
@@ -72,7 +72,7 @@ namespace WlanAPIs
                 _isStaticIPSet = true;
             }
 
-            Util.Info("WMIHelper: Seting static IP to [{0}] [{1}]", ipAddresses, subnetMask);
+            Util.Info("SubnetHelper: Seting static IP to [{0}] [{1}]", ipAddresses, subnetMask);
             string argument = string.Format(NetshSetStaticIpArgument, _networkInterface.Name);
             _isStaticIPSet = Util.RunNetshElevated(argument);
             return _isStaticIPSet;
@@ -82,14 +82,14 @@ namespace WlanAPIs
         {
             Debug.Assert(_networkInterface != null);
 
-            lock(_dhcpLockObj)
+            lock (_dhcpLockObj)
             {
                 if (!_isStaticIPSet) return true;
                 _isStaticIPSet = false;
             }
 
             // netsh interface ip set address "Wi-Fi" dhcp
-            Util.Info("WMIHelper: Enabling DHCP");
+            Util.Info("SubnetHelper: Enabling DHCP");
 
             var argument = string.Format(NetshEnableDhcpArgument, _networkInterface.Name);
             bool isDHCPEnabled = Util.RunNetshElevated(argument);

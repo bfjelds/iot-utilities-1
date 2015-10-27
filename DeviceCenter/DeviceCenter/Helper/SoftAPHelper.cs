@@ -40,7 +40,7 @@ namespace DeviceCenter.Helper
 
                 nativeNetworkList = _wlanInterface.GetAvailableNetworkList();
             }
-            catch(WLanException)
+            catch (WLanException)
             {
                 // error occurred at calling wlan WINAPI
                 return networkList;
@@ -57,15 +57,15 @@ namespace DeviceCenter.Helper
                 if (!ssid.StartsWith(SoftApNamePrefix) || uniqueWlanNetworks.Contains(ssid)) continue;
 
                 Debug.WriteLine($"{ssid} {network.wlanSignalQuality}");
-                
+
                 // dup keys is not allowed
                 var key = network.wlanSignalQuality * 10 + index;
                 sortedWLanNetworks.Add(key, network);
                 uniqueWlanNetworks.Add(ssid);
                 index++;
             }
-            IList<WlanInterop.WlanAvailableNetwork> descList = sortedWLanNetworks.Values.Reverse().ToList();
-            return descList;
+
+            return sortedWLanNetworks.Values.Reverse().ToList();
         }
 
         public async Task<bool> ConnectAsync(WlanInterop.WlanAvailableNetwork network, string password)
@@ -87,7 +87,8 @@ namespace DeviceCenter.Helper
                     }
 
                     Util.Info("--------- Checking IP and subnet ----------");
-                    if(CheckIpAndSubnet() == false)
+
+                    if (CheckIpAndSubnet() == false)
                     {
                         Util.Error("Failed to Check Ip And Subnet");
                         return false;
@@ -153,13 +154,36 @@ namespace DeviceCenter.Helper
 
         private SoftApHelper()
         {
-            _wlanClient = new WlanClient();
+            try
+            {
+                _wlanClient = new WlanClient();
+            }
+            catch (WLanException)
+            {
+                _wlanClient = null;
+                _wlanInterface = null;
+            }
+
             var interfaces = _wlanClient.Interfaces;
             if (interfaces != null && interfaces.Count != 0)
             {
                 // TBD - to support multiple wlan interfaces
                 _wlanInterface = interfaces[0];
                 _wlanClient.OnAcmNotification += OnACMNotification;
+                _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
+            }
+        }
+
+        public static SoftApHelper Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new SoftApHelper();
+                }
+
+                return _instance;
             }
 
             _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
@@ -185,18 +209,19 @@ namespace DeviceCenter.Helper
             try
             {
                 _wlanInterface.Connect(
-                                WlanInterop.WlanConnectionMode.TemporaryProfile,
-                                WlanInterop.Dot11BssType.Any,
-                                network,
-                                password
-                                );
+                            WlanInterop.WlanConnectionMode.TemporaryProfile,
+                            WlanInterop.Dot11BssType.Any,
+                            network,
+                            password
+                            );
+
+				_isConnectedToSoftAP = _wlanClient.WaitConnectComplete();
             }
-            catch(WLanException)
+            catch (WLanException)
             {
-                return false;
+                _isConnectedToSoftAP = false;
             }
 
-            _isConnectedToSoftAP = _wlanClient.WaitConnectComplete();
             return _isConnectedToSoftAP;
         }
 

@@ -88,6 +88,9 @@ namespace DeviceCenter
                 // Track exception
                 TelemetryClient.TrackException(exception);
             }
+
+            // Disconnect from softAP and enable DHCP on exception
+            Helper.SoftApHelper.Instance.Disconnect();
         }
     }
 }

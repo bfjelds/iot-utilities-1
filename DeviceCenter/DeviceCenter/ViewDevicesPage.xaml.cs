@@ -69,6 +69,9 @@ namespace DeviceCenter
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("DeviceName", ListSortDirection.Ascending));
 
+            _softwareAccessPoint = SoftApHelper.Instance;
+            _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
+
             _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(10);
             _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
 

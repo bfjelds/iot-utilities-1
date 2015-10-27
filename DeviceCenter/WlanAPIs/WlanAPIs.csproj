@@ -47,7 +47,7 @@
     <Compile Include="WLanException.cs" />
     <Compile Include="WlanInterface.cs" />
     <Compile Include="WlanInterop.cs" />
-    <Compile Include="WMIHelper.cs" />
+    <Compile Include="SubnetHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
