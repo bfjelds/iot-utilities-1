@@ -185,21 +185,6 @@ namespace DeviceCenter.Helper
 
                 return _instance;
             }
-
-            _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
-        }
-
-        public static SoftApHelper Instance
-        {
-            get
-            {
-                if(_instance == null)
-                {
-                    _instance = new SoftApHelper();
-                }
-
-                return _instance;
-            }
         }
         #endregion
 
