@@ -93,14 +93,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>-->
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Tools.Connectivity, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Microsoft.Tools.Connectivity.dll</HintPath>
-    </Reference>
-    <Reference Include="SirepInterop, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\SirepInterop.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
@@ -384,9 +376,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="MainIcon.ico" />
-    <Content Include="SirepClient.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WlanAPIs\WlanAPIs.csproj">
