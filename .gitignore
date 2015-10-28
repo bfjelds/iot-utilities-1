@@ -19,7 +19,7 @@ bld/
 [Oo]bj/
 
 # Binary files
-DeviceDiscovery.dll
+DeviceCenter/DeviceCenter/DeviceDiscovery.dll
 
 # Roslyn cache directories
 *.ide/
