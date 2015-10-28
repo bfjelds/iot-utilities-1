@@ -41,9 +41,9 @@
                 <TextBlock Text="{x:Static props:Strings.SamplesDeploying}" Margin="0 4" TextWrapping="Wrap" />
                 <ProgressBar x:Name="progressWaiting" IsIndeterminate="True" />
             </StackPanel>
-            <StackPanel x:Name="PanelDeployed" Width="430" HorizontalAlignment="Left" Margin="0 4" Height="133" >
+            <StackPanel x:Name="PanelDeployed" Width="430" HorizontalAlignment="Left" Margin="0 4" Height="160" >
                 <TextBlock Text="{x:Static props:Strings.SamplesAppRunning}" Margin="0 4" TextWrapping="Wrap" />
-                <Button x:Name="ButtonStopApp" Padding="30 6" HorizontalAlignment="Left" Margin="0 4" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopApp_Click" />
+                <Button x:Name="ButtonStopApp" Padding="50 6" HorizontalAlignment="Left" Margin="0 4" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopApp_Click" />
                 <TextBlock Text="{x:Static props:Strings.SamplesAppRunningBackground}" Margin="0 4" TextWrapping="Wrap" />
                 <Button x:Name="ButtonBringAppForground" Padding="30 6" HorizontalAlignment="Left" Margin="0 4" Content="{x:Static props:Strings.SamplesForegroundButton}" Click="ButtonBringAppForground_Click" />
             </StackPanel>
