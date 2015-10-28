@@ -518,6 +518,6 @@
     <value>If this app is not running in the foreground, you can press the button below to bring it to foreground.</value>
   </data>
   <data name="SamplesForegroundButton" xml:space="preserve">
-    <value>Foreground</value>
+    <value>Show</value>
   </data>
 </root>
