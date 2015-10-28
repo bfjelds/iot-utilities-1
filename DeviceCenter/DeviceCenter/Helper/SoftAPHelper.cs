@@ -15,7 +15,7 @@ namespace DeviceCenter.Helper
         #region consts
         public const string SoftApHostIp = "192.168.173.1";
         public const string SoftApClientIp = "192.168.173.2";
-        public const string SoftApSubnetAddr = "255.255.0.0";
+        public const string SoftApSubnetAddr = "255.255.255.0";
         public const string SoftApNamePrefix = "AJ_";
         public const int PingRetryNumber = 10;
         public const int PingDelay = 500;
