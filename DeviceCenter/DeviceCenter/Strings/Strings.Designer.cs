@@ -1015,7 +1015,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Foreground.
+        ///   Looks up a localized string similar to Show.
         /// </summary>
         public static string SamplesForegroundButton {
             get {
