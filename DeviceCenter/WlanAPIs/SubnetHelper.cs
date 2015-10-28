@@ -37,7 +37,7 @@ namespace WlanAPIs
 
             if (newInstance._networkInterface == null)
             {
-                Util.Error("Can't Find name for guid [{1}]", interfaceGuid.ToString());
+                Util.Error("Can't Find name for guid [{0}]", interfaceGuid.ToString());
                 return null;
             }
 
