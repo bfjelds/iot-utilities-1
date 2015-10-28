@@ -49,7 +49,6 @@ namespace DeviceCenter
 		// Hook-up the Event Handlers
 		m_mdnsDeviceWatcher->Updated += ref new TypedEventHandler<DeviceWatcher ^, DeviceInformationUpdate ^>(this, &CDeviceDiscovery::OnUpdate);
 		m_mdnsDeviceWatcher->Added += ref new TypedEventHandler<DeviceWatcher ^, DeviceInformation ^>(this, &CDeviceDiscovery::OnAdded);
-
 		// Start Device Discovery 
 		m_mdnsDeviceWatcher->Start();
 		return true; 
@@ -61,6 +60,7 @@ namespace DeviceCenter
 		{
 			m_mdnsDeviceWatcher->Stop();
 			g_AddCallback = nullptr;
+			m_mdnsDeviceWatcher = nullptr;
 		}
 	}
 
@@ -91,26 +91,33 @@ namespace DeviceCenter
 			auto ipAddresses = dynamic_cast<IBoxArray<String^>^>(ipAddressesProperty);
 			if (nullptr != ipAddresses)
 			{
-				String^ newDeviceIPV4Address = ipAddresses->Value[0];
-				int newDeviceIPV4AddressLength = wcslen(newDeviceIPV4Address->Data()) + 1;
-				newDeviceIPV4AddressNative = (LPWSTR)CoTaskMemAlloc(newDeviceIPV4AddressLength * sizeof(wchar_t));
-				if (NULL != newDeviceIPV4AddressNative)
+				try
 				{
-					if (FAILED(StringCchCopy(newDeviceIPV4AddressNative, newDeviceIPV4AddressLength, newDeviceIPV4Address->Data())))
+					String^ newDeviceIPV4Address = ipAddresses->Value[0];
+					int newDeviceIPV4AddressLength = wcslen(newDeviceIPV4Address->Data()) + 1;
+					newDeviceIPV4AddressNative = (LPWSTR)CoTaskMemAlloc(newDeviceIPV4AddressLength * sizeof(wchar_t));
+					if (NULL != newDeviceIPV4AddressNative)
 					{
-						return;
+						if (FAILED(StringCchCopy(newDeviceIPV4AddressNative, newDeviceIPV4AddressLength, newDeviceIPV4Address->Data())))
+						{
+							return;
+						}
+					}
+
+					String^ newDeviceIPV6Address = ipAddresses->Value[1];
+					int newDeviceIPV6AddressLength = wcslen(newDeviceIPV6Address->Data()) + 1;
+					newDeviceIPV6AddressNative = (LPWSTR)CoTaskMemAlloc(newDeviceIPV6AddressLength * sizeof(wchar_t));
+					if (NULL != newDeviceIPV6AddressNative)
+					{
+						if (FAILED(StringCchCopy(newDeviceIPV6AddressNative, newDeviceIPV6AddressLength, newDeviceIPV6Address->Data())))
+						{
+							return;
+						}
 					}
 				}
-
-				String^ newDeviceIPV6Address = ipAddresses->Value[1];
-				int newDeviceIPV6AddressLength = wcslen(newDeviceIPV6Address->Data()) + 1;
-				newDeviceIPV6AddressNative = (LPWSTR)CoTaskMemAlloc(newDeviceIPV6AddressLength * sizeof(wchar_t));
-				if (NULL != newDeviceIPV6AddressNative)
+				catch(Exception^ exp)
 				{
-					if (FAILED(StringCchCopy(newDeviceIPV6AddressNative, newDeviceIPV6AddressLength, newDeviceIPV6Address->Data())))
-					{
-						return;
-					}
+					return; 
 				}
 			}
 				
