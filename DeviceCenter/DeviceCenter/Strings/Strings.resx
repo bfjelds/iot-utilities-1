@@ -514,4 +514,10 @@
   <data name="ErrorUnknownArchitecture" xml:space="preserve">
     <value>Unknown Device Architecture</value>
   </data>
+  <data name="SamplesAppRunningBackground" xml:space="preserve">
+    <value>If this app is not running in the foreground, you can press the button below to bring it to foreground.</value>
+  </data>
+  <data name="SamplesForegroundButton" xml:space="preserve">
+    <value>Foreground</value>
+  </data>
 </root>

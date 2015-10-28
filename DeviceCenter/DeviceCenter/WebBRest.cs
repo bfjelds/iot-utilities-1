@@ -163,14 +163,8 @@ namespace DeviceCenter
                 {
                     if (await PollInstallStateAsync())
                     {
-                        var installedPackages = await GetInstalledPackagesAsync();
-                        foreach (var app in installedPackages.Items)
-                        {
-                            if (app.Name == appName)
-                            {
-                                return await StartAppAsync(app.PackageRelativeId, app.PackageFullName);
-                            }
-                        }
+                        return await StartAppAsync(appName);
+                        
                     }
                 }
             }
@@ -263,15 +257,23 @@ namespace DeviceCenter
             return false;
         }
 
-        public async Task<bool> StartAppAsync(string appid, string package)
+        public async Task<bool> StartAppAsync(string appName)
         {
-            string url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(appid) 
-                + "&package=" + RestHelper.Encode64(package);
-
             HttpStatusCode result = HttpStatusCode.BadRequest;
             try
             {
-                result = await this._restHelper.PostRequestAsync(url);
+                var installedPackages = await GetInstalledPackagesAsync();
+
+                foreach (var app in installedPackages.Items)
+                {
+                    if (app.Name == appName)
+                    {
+                        string url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(app.PackageRelativeId)
+                                     + "&package=" + RestHelper.Encode64(app.PackageFullName);
+
+                        result = await this._restHelper.PostRequestAsync(url);
+                    }
+                }
             }
             catch (Exception ex)
             {

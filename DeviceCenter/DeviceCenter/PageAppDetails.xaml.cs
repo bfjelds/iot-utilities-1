@@ -113,5 +113,17 @@ namespace DeviceCenter
                 PanelDeploy.Visibility = Visibility.Visible;
             }
         }
+
+        private async void ButtonBringAppForground_Click(object sender, RoutedEventArgs e)
+        {
+            var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
+
+            if (!(await webbRequest.StartAppAsync(this.AppItem.AppName)))
+            {
+                PanelDeploying.Visibility = Visibility.Collapsed;
+                PanelDeployed.Visibility = Visibility.Collapsed;
+                PanelDeploy.Visibility = Visibility.Visible;
+            }
+        }
     }
 }
