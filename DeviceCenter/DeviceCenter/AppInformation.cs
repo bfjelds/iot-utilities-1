@@ -16,6 +16,8 @@ namespace DeviceCenter
 
         public string AppName { get; private set; }
 
+        public string AppPort { get; private set; }
+
         public string Screenshot { get; private set; }
 
         public string Description { get; private set; }
@@ -55,6 +57,7 @@ namespace DeviceCenter
                 AppList.Add(new AppInformation()
                 {
                     AppName = "BlinkyHeadedWebService",
+                    AppPort = "8000",
                     PosterFile = "Assets/Blinky.png",
                     Screenshot = "Assets/BlinkyScreenshot.png",
                     Title = Strings.Strings.SamplesBlinkyTitle,
@@ -93,6 +96,7 @@ namespace DeviceCenter
                 AppList.Add(new AppInformation()
                 {
                     AppName = "InternetRadioHeaded",
+                    AppPort = "8001",
                     PosterFile = "Assets/Radio.png",
                     Screenshot = "Assets/RadioScreenshot.png",
                     Title = Strings.Strings.SamplesRadioTitle,

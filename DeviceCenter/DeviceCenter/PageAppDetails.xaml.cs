@@ -86,6 +86,9 @@ namespace DeviceCenter
                 PanelDeploying.Visibility = Visibility.Collapsed;
                 PanelDeployed.Visibility = Visibility.Visible;
                 PanelDeploy.Visibility = Visibility.Collapsed;
+
+                var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
+                System.Diagnostics.Process.Start("IExplore.exe", appUrl);
             }
         }
 
@@ -123,6 +126,11 @@ namespace DeviceCenter
                 PanelDeploying.Visibility = Visibility.Collapsed;
                 PanelDeployed.Visibility = Visibility.Collapsed;
                 PanelDeploy.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
+                System.Diagnostics.Process.Start("IExplore.exe", appUrl);
             }
         }
     }
