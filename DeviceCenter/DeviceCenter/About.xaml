@@ -10,9 +10,7 @@
 
     <Grid>
         <TextBlock Text="About" FontSize="42.667" TextWrapping="Wrap" VerticalAlignment="Top" />
-        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="labelVersionHeader" Margin="10,62,182,0" FontSize="20" FontFamily="Segoe UI SemiLight" Text="Compiled on:" />
-        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="labelVersion"  Margin="139,62,10,0" FontFamily="Segoe UI Light" FontSize="20" TextWrapping="Wrap" Text="VersionInfo" Height="27"/>
-        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="labelClickOnceVersionHeader" Margin="10,90,182,0" FontSize="20" FontFamily="Segoe UI SemiLight" Text="Version:" />
-        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="labelClickOnceVersion"  Margin="139,90,10,0" FontFamily="Segoe UI Light" FontSize="20" TextWrapping="Wrap" Text="VersionInfo" Height="27"/>
+        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="labelVersionHeader" Margin="10,62,143,0" FontSize="20" FontFamily="Segoe UI SemiLight" Text="Publish Number:" />
+        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="labelVersion"  Margin="163,62,10,0" FontFamily="Segoe UI Light" FontSize="20" TextWrapping="Wrap" Text="VersionInfo" Height="27"/>
     </Grid>
 </Page>

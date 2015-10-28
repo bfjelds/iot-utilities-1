@@ -13,16 +13,14 @@ namespace DeviceCenter
         {
             InitializeComponent();
 
-            labelVersion.Text = DateTime.Now.ToShortDateString() + "  " + DateTime.Now.ToShortTimeString().ToLower();
-
             // Check if this is a ClickOnce deployment
             if(ApplicationDeployment.IsNetworkDeployed)
             {
-                labelClickOnceVersion.Text = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+                labelVersion.Text = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
             }
             else
             {
-                labelClickOnceVersion.Text = "Private Build";
+                labelVersion.Text = "Private Build";
             }
         }
     }
