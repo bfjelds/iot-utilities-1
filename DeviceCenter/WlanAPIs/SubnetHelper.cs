@@ -14,8 +14,8 @@ namespace WlanAPIs
     /// </summary>
     public class SubnetHelper
     {
-        private const string NetshSetStaticIpArgument = "interface ip set address \"{0}\" static 192.168.173.2 255.255.0.0";
-        private const string NetshEnableDhcpArgument = "interface ip set address \"{0}\" dhcp";
+        private const string NetshSetStaticIpArgument = "interface ip set address \"$inferfaceName\" static $ip $subnetMask";
+        private const string NetshEnableDhcpArgument = "interface ip set address \"$interfaceName\" dhcp";
 
         static public SubnetHelper CreateByNicGuid(Guid interfaceGuid)
         {
@@ -62,7 +62,7 @@ namespace WlanAPIs
             return IPAddress.None;
         }
 
-        public bool SetIp(string ipAddresses, string subnetMask)
+        public bool SetIp(string ipAddress, string subnetMask)
         {
             Debug.Assert(_networkInterface != null);
 
@@ -72,8 +72,11 @@ namespace WlanAPIs
                 _isStaticIPSet = true;
             }
 
-            Util.Info("SubnetHelper: Seting static IP to [{0}] [{1}]", ipAddresses, subnetMask);
-            string argument = string.Format(NetshSetStaticIpArgument, _networkInterface.Name);
+            Util.Info("SubnetHelper: Seting static IP to [{0}] [{1}]", ipAddress, subnetMask);
+            var argument = NetshSetStaticIpArgument;
+            argument = argument.Replace("$inferfaceName", _networkInterface.Name);
+            argument = argument.Replace("$ip", ipAddress);
+            argument = argument.Replace("$subnetMask", subnetMask);
             _isStaticIPSet = Util.RunNetshElevated(argument);
             return _isStaticIPSet;
         }
@@ -91,7 +94,7 @@ namespace WlanAPIs
             // netsh interface ip set address "Wi-Fi" dhcp
             Util.Info("SubnetHelper: Enabling DHCP");
 
-            var argument = string.Format(NetshEnableDhcpArgument, _networkInterface.Name);
+            var argument = NetshEnableDhcpArgument.Replace("$interfaceName", _networkInterface.Name);
             bool isDHCPEnabled = Util.RunNetshElevated(argument);
             _isStaticIPSet = !isDHCPEnabled;
             return isDHCPEnabled;

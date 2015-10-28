@@ -14,7 +14,6 @@ namespace WlanAPIs
         public const string WlanProfileName = "AthensSoftAP";
         public const string Athens_SoftAP_Authentication = "WPA2PSK";
         public const string Athens_SoftAP_Encryption = "AES";
-
         static readonly string ProfileTemplate =
             "<?xml version =\"1.0\" encoding=\"US-ASCII\"?>" +
             "<WLANProfile xmlns =\"http://www.microsoft.com/networking/WLAN/profile/v1\">" +
@@ -68,7 +67,7 @@ namespace WlanAPIs
         public static bool IsDhcpipAddress(string ipStr)
         {
             // tbd it's safer to check if auto IP.  i.e. 169.254
-            return !string.IsNullOrWhiteSpace(ipStr) && ipStr.StartsWith("192.168");
+            return !string.IsNullOrWhiteSpace(ipStr) && ipStr.StartsWith("192.168.173");
         }
 
         /// <summary>

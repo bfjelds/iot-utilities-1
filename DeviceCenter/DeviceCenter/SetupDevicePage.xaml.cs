@@ -30,7 +30,7 @@ namespace DeviceCenter
         {
             InitializeComponent();
 
-            App.TelemetryClient.TrackPageView(this.GetType().Name);
+            App.TelemetryClient.TrackPageView(this.GetType().Name);            
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -38,7 +38,7 @@ namespace DeviceCenter
             ReadLkgFile();
             await RefreshDriveList();
             this._usbhandler = new EventArrivedEventHandler(UsbAddedorRemoved);
-            DriveInfo.AddUSBDetectionHandler(_usbhandler);      
+            DriveInfo.AddUSBDetectionHandler(_usbhandler);
         }
 
         private async void ReadLkgFile()
@@ -126,7 +126,7 @@ namespace DeviceCenter
         }
 
         public async void UsbAddedorRemoved(object sender, EventArgs e)
-        {
+        {            
             await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () => 
             {
                 await RefreshDriveList();
@@ -293,6 +293,11 @@ namespace DeviceCenter
         private void checkBoxEula_Checked(object sender, RoutedEventArgs e)
         {
             buttonFlash.IsEnabled = UpdateStartState();
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            DriveInfo.RemoveUSBDetectionHandler();
         }
     }
 }

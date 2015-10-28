@@ -66,44 +66,69 @@ namespace DeviceCenter
         }
 
 
-        static ManagementEventWatcher _usbwatcher = null;
+        static ManagementEventWatcher _usbaddwatcher = null;
 
-        public static void AddUSBDetectionHandler(EventArrivedEventHandler usbDetectionHandler)
+        static ManagementEventWatcher _usbremovewatcher = null;
+
+        static public void InitializeWatcher()
         {
             string query = "SELECT * FROM __InstanceCreationEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
+            _usbaddwatcher = new ManagementEventWatcher(new EventQuery(query));
 
-            try
-            {
-                _usbwatcher = new ManagementEventWatcher(new EventQuery(query));
-                _usbwatcher.EventArrived += usbDetectionHandler;
-                _usbwatcher.Start();
+            query = "SELECT * FROM __InstanceDeletionEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
+            _usbremovewatcher = new ManagementEventWatcher(new EventQuery(query));
+        }
+
+        static public void DisposeWatcher()
+        {
+            if(_usbaddwatcher != null)
+            { 
+                _usbaddwatcher.Dispose();
             }
 
-            catch (Exception)
-            {
-                _usbwatcher?.Stop();
-            }
-
-            query = "SELECT * FROM __InstanceDeletionEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";            
-
-            try
-            {
-                _usbwatcher = new ManagementEventWatcher(new EventQuery(query));
-                _usbwatcher.EventArrived += usbDetectionHandler;
-                _usbwatcher.Start();
-            }
-
-            catch (Exception)
-            {
-                _usbwatcher?.Stop();
+            if (_usbremovewatcher != null)
+            {                
+                _usbremovewatcher.Dispose();
             }
         }
 
-
-        public static void AddInsertUSBHandler(EventArrivedEventHandler usbAdded)
+        static public void AddUSBDetectionHandler(EventArrivedEventHandler usbDetectionHandler)
         {
-            
-        }       
+            try
+            {
+                _usbaddwatcher.EventArrived += usbDetectionHandler;
+                _usbaddwatcher.Start();
+            }
+
+            catch (Exception)
+            {
+                _usbaddwatcher?.Stop();
+            }            
+
+            try
+            {
+                _usbremovewatcher.EventArrived += usbDetectionHandler;
+                _usbremovewatcher.Start();
+            }
+
+            catch (Exception)
+            {
+                _usbremovewatcher?.Stop();
+            }
+        }
+
+        static public void RemoveUSBDetectionHandler()
+        {
+            if(_usbaddwatcher != null)
+            { 
+                _usbaddwatcher?.Stop();                
+            }
+
+            if (_usbremovewatcher != null)
+            {
+                _usbremovewatcher?.Stop();                
+            }            
+        }
 
         static public List<DriveInfo> GetRemovableDriveList()
         {

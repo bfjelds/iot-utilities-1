@@ -153,13 +153,15 @@ namespace DeviceCenter.Helper
                     request.Headers.Add("Authorization", "Basic " + encodedAuth);
                     request.ContentLength = 0;
 
-                    HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync());
-                    result = response.StatusCode;
-                    if (result == HttpStatusCode.OK)
+                    using (HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync()))
                     {
-                        objStream = response.GetResponseStream();
-                        objReader = new StreamReader(objStream);
-                        string respData = objReader.ReadToEnd();
+                        result = response.StatusCode;
+                        if (result == HttpStatusCode.OK)
+                        {
+                            objStream = response.GetResponseStream();
+                            objReader = new StreamReader(objStream);
+                            string respData = objReader.ReadToEnd();
+                        }
                     }
 
                     return result;
@@ -207,13 +209,15 @@ namespace DeviceCenter.Helper
                     req.Headers.Add("Authorization", "Basic " + encodedAuth);
                     req.ContentLength = 0;
 
-                    HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync());
-                    result = response.StatusCode;
-                    if (result == HttpStatusCode.OK)
+                    using (HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync()))
                     {
-                        objStream = response.GetResponseStream();
-                        objReader = new StreamReader(objStream);
-                        string respData = objReader.ReadToEnd();
+                        result = response.StatusCode;
+                        if (result == HttpStatusCode.OK)
+                        {
+                            objStream = response.GetResponseStream();
+                            objReader = new StreamReader(objStream);
+                            string respData = objReader.ReadToEnd();
+                        }
                     }
 
                     return result;

@@ -163,14 +163,8 @@ namespace DeviceCenter
                 {
                     if (await PollInstallStateAsync())
                     {
-                        var installedPackages = await GetInstalledPackagesAsync();
-                        foreach (var app in installedPackages.Items)
-                        {
-                            if (app.Name == appName)
-                            {
-                                return await StartAppAsync(app.PackageRelativeId, app.PackageFullName);
-                            }
-                        }
+                        return await StartAppAsync(appName);
+                        
                     }
                 }
             }
@@ -263,15 +257,23 @@ namespace DeviceCenter
             return false;
         }
 
-        public async Task<bool> StartAppAsync(string appid, string package)
+        public async Task<bool> StartAppAsync(string appName)
         {
-            string url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(appid) 
-                + "&package=" + RestHelper.Encode64(package);
-
             HttpStatusCode result = HttpStatusCode.BadRequest;
             try
             {
-                result = await this._restHelper.PostRequestAsync(url);
+                var installedPackages = await GetInstalledPackagesAsync();
+
+                foreach (var app in installedPackages.Items)
+                {
+                    if (app.Name == appName)
+                    {
+                        string url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(app.PackageRelativeId)
+                                     + "&package=" + RestHelper.Encode64(app.PackageFullName);
+
+                        result = await this._restHelper.PostRequestAsync(url);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -320,10 +322,12 @@ namespace DeviceCenter
 
             try
             {
-                var response = await this._restHelper.GetOrPostRequestAsync(url, true);
-                if (response.StatusCode == HttpStatusCode.OK)
+                using (var response = await this._restHelper.GetOrPostRequestAsync(url, true))
                 {
-                    return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+                    }
                 }
             }
             catch (Exception ex)
@@ -340,10 +344,12 @@ namespace DeviceCenter
 
             try
             {
-                var response = await this._restHelper.GetOrPostRequestAsync(URL, true);
-                if (response.StatusCode == HttpStatusCode.OK)
+                using (var response = await this._restHelper.GetOrPostRequestAsync(URL, true))
                 {
-                    return RestHelper.ProcessJsonResponse(response, typeof(IPConfigurations)) as IPConfigurations;
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        return RestHelper.ProcessJsonResponse(response, typeof(IPConfigurations)) as IPConfigurations;
+                    }
                 }
             }
             catch (Exception ex)
@@ -360,10 +366,12 @@ namespace DeviceCenter
 
             try
             {
-                var response = await this._restHelper.GetOrPostRequestAsync(url, true);
-                if (response.StatusCode == HttpStatusCode.OK)
+                using (var response = await this._restHelper.GetOrPostRequestAsync(url, true))
                 {
-                    return RestHelper.ProcessJsonResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        return RestHelper.ProcessJsonResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
+                    }
                 }
             }
             catch(Exception wex)
@@ -387,8 +395,20 @@ namespace DeviceCenter
                 url = url + "&key=" + RestHelper.Encode64(ssidPassword);
             }
 
-            await this._restHelper.GetOrPostRequestAsync(url, false);
+            try
+            {
+                // "using" just to make sure the HttpWebResponse is disposed
+                using (var response = await this._restHelper.GetOrPostRequestAsync(url, false))
+                {
 
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            // gneves: Any particular reason to always return an empty string?
             return string.Empty;
         }
 

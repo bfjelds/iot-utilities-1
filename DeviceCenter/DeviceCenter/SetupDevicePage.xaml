@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      Title="Set up a new device" Loaded="Window_Loaded">
+      Title="Set up a new device" Loaded="Window_Loaded" Unloaded="Page_Unloaded">
     <Page.Resources>
         <Storyboard x:Key="OnLoadedInitialize">
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="PanelFlashing">

@@ -520,6 +520,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unknown Device Architecture.
+        /// </summary>
+        public static string ErrorUnknownArchitecture {
+            get {
+                return ResourceManager.GetString("ErrorUnknownArchitecture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finding Windows 10 IoT Core devices on your network.
         /// </summary>
         public static string FindDeviceMessage {
@@ -934,6 +943,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to If this app is not running in the foreground, you can press the button below to bring it to foreground..
+        /// </summary>
+        public static string SamplesAppRunningBackground {
+            get {
+                return ResourceManager.GetString("SamplesAppRunningBackground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &quot;Hello World&quot; of hardware..
         /// </summary>
         public static string SamplesBlinkyMessage1 {
@@ -993,6 +1011,15 @@ namespace DeviceCenter.Strings {
         public static string SamplesDownload {
             get {
                 return ResourceManager.GetString("SamplesDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show.
+        /// </summary>
+        public static string SamplesForegroundButton {
+            get {
+                return ResourceManager.GetString("SamplesForegroundButton", resourceCulture);
             }
         }
         
