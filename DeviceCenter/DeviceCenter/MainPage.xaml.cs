@@ -51,11 +51,6 @@
             _NavigationFrame.Navigate(new About());
         }
 
-        private void buttonTestOnly_Click(object sender, RoutedEventArgs e)
-        {
-            _NavigationFrame.Navigate(new PageTestOnly());
-        }
-
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
             _NavigationFrame.GoBack();
