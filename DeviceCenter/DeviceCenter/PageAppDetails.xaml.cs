@@ -83,7 +83,8 @@ namespace DeviceCenter
                 var errorCaption = Strings.Strings.AppNameDisplay;
 
                 // show the filename, use standard windows error
-                var errorMsg = Strings.Strings.ErrorUnknownArchitecture;
+                string minBuild = "10.0.10577";
+                var errorMsg = string.Format(Strings.Strings.ErrorUnknownArchitecture, minBuild);
 
                 MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
