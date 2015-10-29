@@ -520,7 +520,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unknown Device Architecture.
+        ///   Looks up a localized string similar to Unknown device architecture.  Please use Windows IoT build {0} or newer.
         /// </summary>
         public static string ErrorUnknownArchitecture {
             get {
