@@ -384,7 +384,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>copy $(SolutionDir)DeviceCenter\bin\$(Configuration)\DeviceDiscovery.dll  $(SolutionDir)DeviceCenter</PreBuildEvent>
+    <PreBuildEvent>copy $(SolutionDir)DeviceCenter\$(OutDir)\DeviceDiscovery.dll  $(SolutionDir)DeviceCenter</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
