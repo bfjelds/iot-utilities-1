@@ -161,8 +161,12 @@ namespace DeviceCenter
                 {
                     { "OldestDeviceId", _oldestBuildDevice.UniqueId.ToString() },
                     { "OldestBuildVersion", _oldestBuildDevice.OsVersion },
+                    { "OldestDeviceModel", _oldestBuildDevice.DeviceModel },
+                    { "OldestArchitecture", _oldestBuildDevice.Architecture },
                     { "NewestDeviceId", _newestBuildDevice.UniqueId.ToString() },
                     { "NewestBuildVersion", _newestBuildDevice.OsVersion },
+                    { "NewestDeviceModel", _newestBuildDevice.DeviceModel },
+                    { "NewestArchitecture", _newestBuildDevice.Architecture },
                     { "NumDevices", deviceCount.ToString() }
                 });
             }
@@ -333,6 +337,14 @@ namespace DeviceCenter
                     var confirmation = dlg.ShowDialog();
                     if (confirmation.HasValue && confirmation.Value)
                     {
+                        App.TelemetryClient.TrackEvent("WiFiButtonClick", new Dictionary<string, string>()
+                        {
+                            { "DeviceId", device.UniqueId.ToString() },
+                            { "DeviceArchitecture", device.Architecture },
+                            { "DeviceOSVersion", device.OsVersion },
+                            { "DeviceModel", device.DeviceModel }
+                        });
+
                         _wifiPage = new PageWifi(_navigationFrame, this._softwareAccessPoint, device);
 
                         _navigationFrame.Navigate(_wifiPage);
