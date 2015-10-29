@@ -33,17 +33,21 @@
         </Grid>
         <StackPanel Margin="0 20 0 0">
             <TextBlock Text="{x:Static props:Strings.SamplesRun}" FontSize="20" TextWrapping="Wrap"  Margin="4" VerticalAlignment="Top"/>
-            <StackPanel x:Name="PanelDeploy">
-                <Button x:Name="ButtonDeploy" Padding="30 6" HorizontalAlignment="Left" Margin="0 4" Content="{x:Static props:Strings.SamplesDeployAndRunButton}" Click="ButtonDeploy_Click" />
+            <TextBlock Margin="4" Text="{x:Static props:Strings.SamplesDeviceLabel}" />
+            <ComboBox x:Name="comboBoxDevices" Margin="4"  Width="200" HorizontalAlignment="Left" >
+            </ComboBox>
+            <StackPanel x:Name="PanelDeploy" Margin="4" Orientation="Horizontal">
+                <Button x:Name="ButtonDeploy" Padding="30 6" HorizontalAlignment="Left" Content="{x:Static props:Strings.SamplesDeployAndRunButton}" Click="ButtonDeploy_Click" />
+                <Button x:Name="ButtonCancel"  Content="{x:Static props:Strings.WifiBackButton}" Padding="30 5 30 5" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" Margin="10,0,0,0" Click="ButtonCancel_Click" />
             </StackPanel>
-            <StackPanel x:Name="PanelDeploying" Width="200" HorizontalAlignment="Left" Margin="0 4" >
+            <StackPanel x:Name="PanelDeploying" Width="200" HorizontalAlignment="Left" Margin="4" >
                 <Button x:Name="ButtonStopDeploy" Padding="30 6"  HorizontalAlignment="Left" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopDeploy_Click" />
                 <TextBlock Text="{x:Static props:Strings.SamplesDeploying}" Margin="0 4" TextWrapping="Wrap" />
                 <ProgressBar x:Name="progressWaiting" IsIndeterminate="True" />
             </StackPanel>
-            <StackPanel x:Name="PanelDeployed" Width="200" HorizontalAlignment="Left" Margin="0 4" Height="62" >
+            <StackPanel x:Name="PanelDeployed" Width="200" HorizontalAlignment="Left" Margin="4" Height="62" >
                 <TextBlock Text="{x:Static props:Strings.SamplesAppRunning}" Margin="0 4" TextWrapping="Wrap" />
-                <Button x:Name="ButtonStopApp" Padding="30 6" HorizontalAlignment="Left" Margin="0 4" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopApp_Click"></Button>
+                <Button x:Name="ButtonStopApp" Padding="30 6" HorizontalAlignment="Left" Margin="4" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopApp_Click"></Button>
             </StackPanel>
         </StackPanel>
     </DockPanel>

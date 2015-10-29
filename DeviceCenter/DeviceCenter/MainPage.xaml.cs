@@ -18,15 +18,8 @@
             InitializeComponent();
 
             Page welcomePage = new PageWelcome(_NavigationFrame);
-            ButtonBack.Visibility = Visibility.Hidden;
 
             _NavigationFrame.Navigate(welcomePage);
-            _NavigationFrame.Navigated += _NavigationFrame_Navigated;
-        }
-
-        private void _NavigationFrame_Navigated(object sender, NavigationEventArgs e)
-        {
-            ButtonBack.Visibility = _NavigationFrame.CanGoBack ? Visibility.Visible : Visibility.Hidden;
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -45,20 +38,14 @@
         {
             _NavigationFrame.Navigate(new SetupDevicePage());
         }
+        private void buttonSamples_Click(object sender, RoutedEventArgs e)
+        {
+            _NavigationFrame.Navigate(new SamplesPage(_NavigationFrame));
+        }        
 
         private void buttonAbout_Click(object sender, RoutedEventArgs e)
         {
             _NavigationFrame.Navigate(new About());
-        }
-
-        private void buttonTestOnly_Click(object sender, RoutedEventArgs e)
-        {
-            _NavigationFrame.Navigate(new PageTestOnly());
-        }
-
-        private void ButtonBack_Click(object sender, RoutedEventArgs e)
-        {
-            _NavigationFrame.GoBack();
         }
     }
 }

@@ -425,7 +425,7 @@ namespace DeviceCenter
                     { "DeviceModel", device.DeviceModel }
                 });
 
-                _navigationFrame.Navigate(new SamplesPage(_navigationFrame, device));
+                //_navigationFrame.Navigate(new SamplesPage(_navigationFrame, device));
             }
         }
 

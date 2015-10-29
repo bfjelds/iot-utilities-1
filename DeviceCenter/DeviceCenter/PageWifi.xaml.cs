@@ -373,5 +373,10 @@ namespace DeviceCenter
                     entry.AllowSecure(edit.Password.Length > 0);
             }
        }
+
+        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
+        {
+            _navigationFrame.GoBack();
+        }
     }
 }

@@ -1,8 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Net;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
 namespace DeviceCenter
 {
@@ -11,12 +15,9 @@ namespace DeviceCenter
     /// </summary>
     public partial class SamplesPage : Page
     {
-        private DiscoveredDevice device;
-
-        public SamplesPage(Frame navigation, DiscoveredDevice device)
+        public SamplesPage(Frame navigation)
         {
             this._navigation = navigation;
-            this.device = device;
 
             InitializeComponent();
 
@@ -33,7 +34,7 @@ namespace DeviceCenter
 
         private void ShowApp_Click(object sender, ButtonAppInfo.ButtonAppEventArgs e)
         {
-            this._navigation.Navigate(new PageAppDetails(e.Info, this.device));
+            this._navigation.Navigate(new PageAppDetails(_navigation, e.Info));
         }
 
         private Frame _navigation;
