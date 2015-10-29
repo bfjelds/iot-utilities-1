@@ -73,11 +73,13 @@ namespace DeviceCenter
             ShowConnect = Visibility.Visible;
             NeedPassword = Visibility.Collapsed;
             ShowExpanded = Visibility.Visible;
+            ReadyToConnect = true;
 
             OnPropertyChanged("ShowConnect");
             OnPropertyChanged("Active");
             OnPropertyChanged("NeedPassword");
             OnPropertyChanged("ShowExpanded");
+            OnPropertyChanged("ReadyToConnect");
         }
 
         public void Collapse()
@@ -97,6 +99,7 @@ namespace DeviceCenter
         {
             if (this._needPassword)
             {
+                // don't connect, show the password screen
                 this.NeedPassword = Visibility.Visible;
                 this.ShowConnect = Visibility.Collapsed;
                 this.EnableSecureConnect = false;
@@ -107,29 +110,53 @@ namespace DeviceCenter
             }
             else
             {
-                DoConnectAsync(string.Empty);
+                // do connect now
+                DoConnect(string.Empty);
             }
         }
 
-        public async void DoConnectAsync(string password)
+        public void DoConnect(string password)
         {
-            await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
+            this.ReadyToConnect = false;
+            OnPropertyChanged("ReadyToConnect");
+
+            DoConnectAsync(password);
+        }
+
+        private async void DoConnectAsync(string password)
+        {
+            try
+            {
+                await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine(string.Format("Error connecting, {0}", err.Message));
+                Debug.WriteLine(err.ToString());
+            }
+
             this._navigationFrame.GoBack();
         }
 
         public void AllowSecure(bool enabled)
         {
+            this.ReadyToConnect = enabled;
             this.EnableSecureConnect = enabled;
+
+            OnPropertyChanged("ReadyToConnect");
             OnPropertyChanged("EnableSecureConnect");
         }
 
         public bool EnableSecureConnect { get; private set; }
+        public bool ReadyToConnect { get; private set; }
 
         public void CancelSecure()
         {
             NeedPassword = Visibility.Collapsed;
             ShowConnect = Visibility.Visible;
+            ReadyToConnect = true;
 
+            OnPropertyChanged("ReadyToConnect");
             OnPropertyChanged("NeedPassword");
             OnPropertyChanged("ShowConnect");
         }
@@ -235,10 +262,13 @@ namespace DeviceCenter
 
             var adapters = await webbRequest.GetWirelessAdaptersAsync();
 
-            var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
-            foreach (var ssid in networks.Items)
+            if (adapters != null && adapters.Items != null)
             {
-                result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
+                foreach (var ssid in networks.Items)
+                {
+                    result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                }
             }
 
             progressWaiting.Visibility = Visibility.Collapsed;
@@ -296,7 +326,7 @@ namespace DeviceCenter
             {
                 var editor = FindPasswordEdit(e.Source);
                 if (editor != null)
-                    entry.DoConnectAsync(editor.Password);
+                    entry.DoConnect(editor.Password);
             }
         }
 
@@ -343,10 +373,5 @@ namespace DeviceCenter
                     entry.AllowSecure(edit.Password.Length > 0);
             }
        }
-
-        private void textboxWifiPassword_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            // todo handle escape and enter
-        }
     }
 }

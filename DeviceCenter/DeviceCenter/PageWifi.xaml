@@ -22,13 +22,17 @@
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Visibility="{Binding NeedPassword}">
                         <TextBlock Text="{x:Static props:Strings.NetworkCredentialsPasswordLabel}" Margin="4"/>
-                        <PasswordBox x:Name="textboxWifiPassword" Height="23" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" PasswordChanged="textboxWifiPassword_PasswordChanged" KeyDown="textboxWifiPassword_KeyDown"/>
+                        <PasswordBox x:Name="textboxWifiPassword" Height="23" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" PasswordChanged="textboxWifiPassword_PasswordChanged" />
                         <StackPanel Orientation="Horizontal">
-                            <Button Margin="0 6 6 6" Padding="30 6 30 6" Content="{x:Static props:Strings.WifiNextButton}" HorizontalAlignment="Left" IsEnabled="{Binding EnableSecureConnect}" Click="ButtonConnectSecure_Click" />
-                            <Button Margin="6" Padding="30 6 30 6" Content="{x:Static props:Strings.WifiBackButton}" Click="ButtonCancelSecure_Click" HorizontalAlignment="Left" />
+                            <Button IsDefault="True" Margin="0 6 6 6" Padding="30 6 30 6" Content="{x:Static props:Strings.WifiNextButton}" HorizontalAlignment="Left" IsEnabled="{Binding EnableSecureConnect}" Click="ButtonConnectSecure_Click" />
+                            <Button IsCancel="True" Margin="6" Padding="30 6 30 6" Content="{x:Static props:Strings.WifiBackButton}" Click="ButtonCancelSecure_Click" HorizontalAlignment="Left" />
                         </StackPanel>
                     </StackPanel>
-                    <Button Margin="200 6 6 6" Padding="12 6 12 6" Content="Connect" Click="ButtonConnect_Click" Visibility="{Binding ShowConnect}" HorizontalAlignment="Right" />
+                    <StackPanel Orientation="Vertical">
+                        
+                        
+                    </StackPanel>
+                    <Button IsDefault="True" Margin="200 6 6 6" Padding="12 6 12 6" Content="Connect" Click="ButtonConnect_Click" Visibility="{Binding ShowConnect}" HorizontalAlignment="Right" IsEnabled="{Binding ReadyToConnect}" />
                 </StackPanel>
             </ListViewItem>
         </DataTemplate>

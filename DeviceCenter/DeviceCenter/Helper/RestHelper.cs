@@ -117,7 +117,6 @@ namespace DeviceCenter.Helper
                         case HttpErrorResult.fail:
                             Debug.WriteLine(string.Format("Error in MakeRequest, url [{0}]", requestUrl));
                             Debug.WriteLine(error.ToString());
-                            Debug.Fail("Debug break");
                             throw error;
                         case HttpErrorResult.retry:
                             break;

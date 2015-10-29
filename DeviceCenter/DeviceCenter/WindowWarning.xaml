@@ -11,8 +11,8 @@
         <TextBlock VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="labelMessageHeader" Margin="10" FontSize="40" FontFamily="Segoe UI SemiLight" Text="Title" />
         <TextBlock VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="labelMessageText"  Margin="10,70,0,10" FontFamily="Segoe UI Light" TextWrapping="Wrap" Text="Message" Height="71" Width="463"/>
         <StackPanel  VerticalAlignment="Bottom"  x:Name="grdContinueCancel" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-            <Button x:Name="btnContinue" x:Uid="ViewDevicesButton" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" Content="{x:Static props:Strings.ContinueButton}" Click="btnContinue_Click" />
-            <Button x:Name="btnCancel" x:Uid="SetupDeviceButton" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" Content="{x:Static props:Strings.CancelButton}"  Click="btnCancel_Click" Margin="10,0,0,0" />
+            <Button x:Name="btnContinue" x:Uid="ViewDevicesButton" IsDefault="True" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" Content="{x:Static props:Strings.ContinueButton}" Click="btnContinue_Click" />
+            <Button x:Name="btnCancel" x:Uid="SetupDeviceButton" IsCancel="True" FontSize="14" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" Content="{x:Static props:Strings.CancelButton}"  Click="btnCancel_Click" Margin="10,0,0,0" />
         </StackPanel>
     </Grid>
 </Window>
