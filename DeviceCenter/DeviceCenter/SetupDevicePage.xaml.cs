@@ -28,12 +28,14 @@ namespace DeviceCenter
         private BuildInfo _cachedBuildInfo;
 
         private EventArrivedEventHandler _usbhandler = null;
+        private Frame navigationFrame;
 
-        public SetupDevicePage()
+        public SetupDevicePage(Frame navigationFrame)
         {
             InitializeComponent();
+            this.navigationFrame = navigationFrame;
 
-            App.TelemetryClient.TrackPageView(this.GetType().Name);            
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -231,6 +233,11 @@ namespace DeviceCenter
                     _dismProcess = null;
                 }
             }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                this.navigationFrame.Navigate(new PageDiskImageComplete(this.navigationFrame));
+            }));
         }
 
         private void buttonCancelDism_Click(object sender, RoutedEventArgs e)

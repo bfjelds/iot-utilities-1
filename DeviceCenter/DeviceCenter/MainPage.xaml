@@ -70,7 +70,6 @@
                     <local:ButtonSideMenu Text="{x:Static props:Strings.IntroSetUpNewDevice}" Icon="&#xE90F;" Click="buttonAddDevice_Click"/>
                     <local:ButtonSideMenu Text="{x:Static props:Strings.LeftBarSamples}" Icon="&#xE179;" Click="buttonSamples_Click" />
                     <local:ButtonSideMenu Text="{x:Static props:Strings.ButtonAbout}" Icon="&#xE11B;" Click="buttonAbout_Click"/>
-                    <local:ButtonSideMenu Text="PageTestOnly" Icon="&#xE7BE;" Click="buttonTestOnly_Click" />
                 </StackPanel>
                 <Frame Margin="10 0" x:Name="_NavigationFrame" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" />
             </DockPanel>

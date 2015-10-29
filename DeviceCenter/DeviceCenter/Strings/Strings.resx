@@ -135,8 +135,8 @@
   <data name="ConnectEthernetTitle" xml:space="preserve">
     <value>Ethernet</value>
   </data>
-  <data name="ConnectMessage1" xml:space="preserve">
-    <value>Insert your finished SD card into the device,</value>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>Insert your finished SD card into the device, then connect your board to the network using Wi-Fi or Ethernet</value>
   </data>
   <data name="ConnectMessage2" xml:space="preserve">
     <value>then connect your board to the network using Wi-Fi or Ethernet.</value>
@@ -151,7 +151,7 @@
     <value>Plug in your Wi-Fi adapter and boot up your device. Click "Find my device" and it will be automatically detected.</value>
   </data>
   <data name="ConnectWiFiMessage2" xml:space="preserve">
-    <value>View the list of supported Wi-Fi adapters</value>
+    <value>See a list of supported Wi-Fi adapters</value>
   </data>
   <data name="ConnectWiFiTitle" xml:space="preserve">
     <value>Wi-Fi</value>

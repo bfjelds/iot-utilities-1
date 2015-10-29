@@ -36,7 +36,7 @@
 
         private void buttonAddDevice_Click(object sender, RoutedEventArgs e)
         {
-            _NavigationFrame.Navigate(new SetupDevicePage());
+            _NavigationFrame.Navigate(new SetupDevicePage(this._NavigationFrame));
         }
         private void buttonSamples_Click(object sender, RoutedEventArgs e)
         {
@@ -50,7 +50,7 @@
 
         private void buttonTestOnly_Click(object sender, RoutedEventArgs e)
         {
-            _NavigationFrame.Navigate(new About());
+            _NavigationFrame.Navigate(new PageDiskImageComplete(_NavigationFrame));
         }
     }
 }

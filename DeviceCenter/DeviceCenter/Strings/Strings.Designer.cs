@@ -187,11 +187,11 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insert your finished SD card into the device,.
+        ///   Looks up a localized string similar to Insert your finished SD card into the device, then connect your board to the network using Wi-Fi or Ethernet.
         /// </summary>
-        public static string ConnectMessage1 {
+        public static string ConnectMessage {
             get {
-                return ResourceManager.GetString("ConnectMessage1", resourceCulture);
+                return ResourceManager.GetString("ConnectMessage", resourceCulture);
             }
         }
         
@@ -232,7 +232,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to View the list of supported Wi-Fi adapters.
+        ///   Looks up a localized string similar to See a list of supported Wi-Fi adapters.
         /// </summary>
         public static string ConnectWiFiMessage2 {
             get {

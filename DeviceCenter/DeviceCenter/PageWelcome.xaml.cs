@@ -32,7 +32,7 @@ namespace DeviceCenter
 
         private void SetupDeviceButton_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.Navigate(new SetupDevicePage());
+            _navigationFrame.Navigate(new SetupDevicePage(this._navigationFrame));
         }
 
         private void ViewDevices_Click(object sender, RoutedEventArgs e)
