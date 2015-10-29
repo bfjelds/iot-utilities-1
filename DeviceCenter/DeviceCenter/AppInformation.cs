@@ -67,8 +67,8 @@ namespace DeviceCenter
                         {
                             "x86", new ApplicationFiles()
                             {
-                                AppX = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.1.0_x86.appx"),
-                                Certificate = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.1.0_x86.cer"),
+                                AppX = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.2.0_x86.appx"),
+                                Certificate = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.2.0_x86.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
                                     MakePath("Dependencies\\X86\\Microsoft.NET.Native.Runtime.1.1.appx"),
@@ -79,8 +79,8 @@ namespace DeviceCenter
                         {
                             "ARM", new ApplicationFiles()
                             {
-                                AppX = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.1.0_ARM.appx"),
-                                Certificate = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.1.0_ARM.cer"),
+                                AppX = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.2.0_ARM.appx"),
+                                Certificate = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.2.0_ARM.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
                                     MakePath("Dependencies\\ARM\\Microsoft.NET.Native.Runtime.1.1.appx"),
