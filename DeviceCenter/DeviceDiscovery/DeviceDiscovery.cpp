@@ -75,7 +75,7 @@ namespace DeviceCenter
 			LPWSTR newDeviceTxtPropertiesNative = nullptr;
 
 			// Get the device Name 
-			String^ newDeviceName = args->Name->ToString();
+            String^ newDeviceName = args->Properties->Lookup("System.Devices.Dnssd.HostName")->ToString();
 			int newDeviceNameLength = wcslen(newDeviceName->Data()) + 1;
 			newDeviceNameNative = (LPWSTR)CoTaskMemAlloc(newDeviceNameLength * sizeof(wchar_t));
 			if (NULL != newDeviceNameNative)

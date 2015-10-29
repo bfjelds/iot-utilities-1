@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Controls;
+using System.Deployment.Application;
 
 namespace DeviceCenter
 {
@@ -11,7 +12,16 @@ namespace DeviceCenter
         public About()
         {
             InitializeComponent();
-            labelVersion.Text = DateTime.Now.ToShortDateString() + "  " + DateTime.Now.ToShortTimeString().ToLower();
+
+            // Check if this is a ClickOnce deployment
+            if(ApplicationDeployment.IsNetworkDeployed)
+            {
+                labelVersion.Text = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+            }
+            else
+            {
+                labelVersion.Text = "Private Build";
+            }
         }
     }
 }

@@ -16,6 +16,8 @@ namespace DeviceCenter
 
         public string AppName { get; private set; }
 
+        public string AppPort { get; private set; }
+
         public string Screenshot { get; private set; }
 
         public string Description { get; private set; }
@@ -55,6 +57,7 @@ namespace DeviceCenter
                 AppList.Add(new AppInformation()
                 {
                     AppName = "BlinkyHeadedWebService",
+                    AppPort = "8000",
                     PosterFile = "Assets/Blinky.png",
                     Screenshot = "Assets/BlinkyScreenshot.png",
                     Title = Strings.Strings.SamplesBlinkyTitle,
@@ -64,8 +67,8 @@ namespace DeviceCenter
                         {
                             "x86", new ApplicationFiles()
                             {
-                                AppX = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.1.0_x86.appx"),
-                                Certificate = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.1.0_x86.cer"),
+                                AppX = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.2.0_x86.appx"),
+                                Certificate = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.2.0_x86.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
                                     MakePath("Dependencies\\X86\\Microsoft.NET.Native.Runtime.1.1.appx"),
@@ -76,8 +79,8 @@ namespace DeviceCenter
                         {
                             "ARM", new ApplicationFiles()
                             {
-                                AppX = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.1.0_ARM.appx"),
-                                Certificate = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.1.0_ARM.cer"),
+                                AppX = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.2.0_ARM.appx"),
+                                Certificate = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.2.0_ARM.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
                                     MakePath("Dependencies\\ARM\\Microsoft.NET.Native.Runtime.1.1.appx"),
@@ -93,6 +96,7 @@ namespace DeviceCenter
                 AppList.Add(new AppInformation()
                 {
                     AppName = "InternetRadioHeaded",
+                    AppPort = "8001",
                     PosterFile = "Assets/Radio.png",
                     Screenshot = "Assets/RadioScreenshot.png",
                     Title = Strings.Strings.SamplesRadioTitle,

@@ -30,7 +30,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>48</ApplicationRevision>
+    <ApplicationRevision>51</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -95,6 +95,7 @@
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -147,9 +148,6 @@
     </Compile>
     <Compile Include="PageDeviceConfiguration.xaml.cs">
       <DependentUpon>PageDeviceConfiguration.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PageTestOnly.xaml.cs">
-      <DependentUpon>PageTestOnly.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageWelcome.xaml.cs">
       <DependentUpon>PageWelcome.xaml</DependentUpon>
@@ -213,10 +211,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageDeviceConfiguration.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PageTestOnly.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -322,18 +316,6 @@
     <Content Include="Assets\Apps\Dependencies\X86\Microsoft.VCLibs.x86.14.00.appx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Apps\Blinky\ARM\BlinkyHeadedWebService_1.0.1.0_ARM.appx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Apps\Blinky\ARM\BlinkyHeadedWebService_1.0.1.0_ARM.cer">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Apps\Blinky\X86\BlinkyHeadedWebService_1.0.1.0_x86.appx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Apps\Blinky\X86\BlinkyHeadedWebService_1.0.1.0_x86.cer">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\Apps\InternetRadio\ARM\InternetRadioHeaded_1.0.1.0_ARM.appx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -344,6 +326,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Apps\InternetRadio\X86\InternetRadioHeaded_1.0.1.0_x86.cer">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Apps\Blinky\ARM\BlinkyHeadedWebService_1.0.2.0_ARM.appx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Apps\Blinky\ARM\BlinkyHeadedWebService_1.0.2.0_ARM.cer">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Apps\Blinky\X86\BlinkyHeadedWebService_1.0.2.0_x86.appx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Apps\Blinky\X86\BlinkyHeadedWebService_1.0.2.0_x86.cer">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="DeviceCenterDevelopmentKey.snk" />
@@ -390,11 +384,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>copy $(TargetDir)DeviceDiscovery.dll  $(SolutionDir)DeviceCenter</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy $(SolutionDir)DeviceCenter\bin\$(Configuration)\DeviceDiscovery.dll  $(SolutionDir)DeviceCenter</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

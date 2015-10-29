@@ -8,6 +8,7 @@ using System.Windows;
 using Microsoft.ApplicationInsights;
 using System.Diagnostics;
 using Microsoft.Win32;
+using System.Deployment.Application;
 
 namespace DeviceCenter
 {
@@ -18,7 +19,6 @@ namespace DeviceCenter
     {
         public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
         public static Stopwatch GlobalStopwatch;
-        private static string machineId = "";
 
         public App()
         {
@@ -59,7 +59,8 @@ namespace DeviceCenter
         {
             TelemetryClient.TrackEvent("AppStart", new Dictionary<string, string>()
             {
-                { "MachineId", machineId }
+                { "MachineId", getMachineId() },
+                { "AppVersion", (ApplicationDeployment.IsNetworkDeployed) ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString() : "Private Build" }
             });
             GlobalStopwatch.Start();
             DriveInfo.InitializeWatcher();
@@ -69,7 +70,7 @@ namespace DeviceCenter
         {
             TelemetryClient.TrackEvent("AppExit", new Dictionary<string, string>()
             {
-                { "MachineId", machineId }
+                { "MachineId", getMachineId() }
             });
             TelemetryClient.TrackMetric("UpTimeMinutes", GlobalStopwatch.Elapsed.TotalMinutes);
             GlobalStopwatch.Stop();

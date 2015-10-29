@@ -18,6 +18,7 @@ namespace DeviceCenter
         public AppInformation AppItem { get; private set; }
         public Frame navigation;
         private readonly ObservableCollection<DiscoveredDevice> _devices = new ObservableCollection<DiscoveredDevice>();
+        private DiscoveredDevice _device;
         private NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
 
         public PageAppDetails(Frame navigation, AppInformation item)
@@ -44,22 +45,39 @@ namespace DeviceCenter
 
         private async void GetAppState()
         {
-            /*var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
-
-            if (await webbRequest.IsAppRunning(this.AppItem.AppName))
+            if (_device == null)
             {
-                PanelDeployed.Visibility = Visibility.Visible;
+                PanelDeploy.Visibility = Visibility.Collapsed;
+                PanelDeployed.Visibility = Visibility.Collapsed;
             }
             else
-            {*/
-                PanelDeploy.Visibility = Visibility.Visible;
-            //}
+            {
+                var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
+
+                try
+                {
+                    if (await webbRequest.IsAppRunning(this.AppItem.AppName))
+                    {
+                        PanelDeployed.Visibility = Visibility.Visible;
+                        PanelDeploy.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        PanelDeploy.Visibility = Visibility.Visible;
+                        PanelDeployed.Visibility = Visibility.Collapsed;
+                    }
+                }
+                catch (WebBRest.RestError)
+                {
+                    PanelDeploy.Visibility = Visibility.Collapsed;
+                    PanelDeployed.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         private async void ButtonDeploy_Click(object sender, RoutedEventArgs e)
         {
-            /*
-            if (_device.Architecture == null || _device.Architecture.Length == 0)
+            if (_device != null && _device.Architecture == null || _device.Architecture.Length == 0)
             {
                 // the app name as caption
                 var errorCaption = Strings.Strings.AppNameDisplay;
@@ -68,8 +86,6 @@ namespace DeviceCenter
                 var errorMsg = Strings.Strings.ErrorUnknownArchitecture;
 
                 MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
-                
             }
 
             PanelDeploy.Visibility = Visibility.Collapsed;
@@ -95,7 +111,10 @@ namespace DeviceCenter
                 PanelDeploying.Visibility = Visibility.Collapsed;
                 PanelDeployed.Visibility = Visibility.Visible;
                 PanelDeploy.Visibility = Visibility.Collapsed;
-            }*/
+
+                var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
+                System.Diagnostics.Process.Start("IExplore.exe", appUrl);
+            }
         }
 
         private void ButtonStopDeploy_Click(object sender, RoutedEventArgs e)
@@ -107,20 +126,29 @@ namespace DeviceCenter
 
         private async void ButtonStopApp_Click(object sender, RoutedEventArgs e)
         {
-            /*var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
-
-            if (await webbRequest.StopAppAsync(this.AppItem.AppName))
+            if (_device == null)
             {
                 PanelDeployed.Visibility = Visibility.Collapsed;
                 PanelDeploying.Visibility = Visibility.Collapsed;
-                PanelDeploy.Visibility = Visibility.Visible;
+                PanelDeploy.Visibility = Visibility.Collapsed;
             }
             else
             {
-                PanelDeploying.Visibility = Visibility.Collapsed;
-                PanelDeployed.Visibility = Visibility.Collapsed;
-                PanelDeploy.Visibility = Visibility.Visible;
-            }*/
+                var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
+
+                if (await webbRequest.StopAppAsync(this.AppItem.AppName))
+                {
+                    PanelDeployed.Visibility = Visibility.Collapsed;
+                    PanelDeploying.Visibility = Visibility.Collapsed;
+                    PanelDeploy.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    PanelDeploying.Visibility = Visibility.Collapsed;
+                    PanelDeployed.Visibility = Visibility.Collapsed;
+                    PanelDeploy.Visibility = Visibility.Visible;
+                }
+            }
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
@@ -181,6 +209,47 @@ namespace DeviceCenter
             {
                 _devices.Add(newDevice);
             }));
+        }
+
+        private async void ButtonBringAppForground_Click(object sender, RoutedEventArgs e)
+        {
+            if (_device == null)
+            {
+                PanelDeploying.Visibility = Visibility.Collapsed;
+                PanelDeployed.Visibility = Visibility.Collapsed;
+                PanelDeploy.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
+
+                if (!(await webbRequest.StartAppAsync(this.AppItem.AppName)))
+                {
+                    PanelDeploying.Visibility = Visibility.Collapsed;
+                    PanelDeployed.Visibility = Visibility.Collapsed;
+                    PanelDeploy.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
+                    System.Diagnostics.Process.Start("IExplore.exe", appUrl);
+                }
+            }
+        }
+
+        private void comboBoxDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _device = comboBoxDevices.SelectedItem as DiscoveredDevice;
+            if (_device == null)
+            {
+                PanelDeploying.Visibility = Visibility.Collapsed;
+                PanelDeployed.Visibility = Visibility.Collapsed;
+                PanelDeploy.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                GetAppState();
+            }
         }
     }
 }

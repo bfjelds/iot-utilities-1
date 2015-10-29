@@ -23,6 +23,13 @@ namespace DeviceCenter
 
         private readonly RestHelper _restHelper;
 
+        public class RestError : Exception
+        {
+            public RestError(string message, Exception innerException) : base(message, innerException)
+            {
+            }
+        }
+
         public WebBRest(IPAddress ipAddress, UserInfo userInfo)
         {
             this._restHelper = new RestHelper(ipAddress, userInfo);
@@ -163,14 +170,8 @@ namespace DeviceCenter
                 {
                     if (await PollInstallStateAsync())
                     {
-                        var installedPackages = await GetInstalledPackagesAsync();
-                        foreach (var app in installedPackages.Items)
-                        {
-                            if (app.Name == appName)
-                            {
-                                return await StartAppAsync(app.PackageRelativeId, app.PackageFullName);
-                            }
-                        }
+                        return await StartAppAsync(appName);
+                        
                     }
                 }
             }
@@ -240,6 +241,11 @@ namespace DeviceCenter
             {
                 using (var response = await this._restHelper.GetOrPostRequestAsync(url, true))
                 {
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        throw new UnauthorizedAccessException();
+                    }
+
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         IoTProcesses runningProcesses = RestHelper.ProcessJsonResponse(response, typeof(IoTProcesses)) as IoTProcesses;
@@ -257,21 +263,29 @@ namespace DeviceCenter
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                return false;
+                throw new RestError("Cannot enumerate running apps", ex);
             }
 
             return false;
         }
 
-        public async Task<bool> StartAppAsync(string appid, string package)
+        public async Task<bool> StartAppAsync(string appName)
         {
-            string url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(appid) 
-                + "&package=" + RestHelper.Encode64(package);
-
             HttpStatusCode result = HttpStatusCode.BadRequest;
             try
             {
-                result = await this._restHelper.PostRequestAsync(url);
+                var installedPackages = await GetInstalledPackagesAsync();
+
+                foreach (var app in installedPackages.Items)
+                {
+                    if (app.Name == appName)
+                    {
+                        string url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(app.PackageRelativeId)
+                                     + "&package=" + RestHelper.Encode64(app.PackageFullName);
+
+                        result = await this._restHelper.PostRequestAsync(url);
+                    }
+                }
             }
             catch (Exception ex)
             {

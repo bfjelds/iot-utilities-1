@@ -23,6 +23,9 @@ namespace DeviceCenter
         readonly LastKnownGood _lkg = new LastKnownGood();
 
         private double _flashStartTime = 0;
+        private LKGPlatform _cachedDeviceType;
+        private DriveInfo _cachedDriveInfo;
+        private BuildInfo _cachedBuildInfo;
 
         private EventArrivedEventHandler _usbhandler = null;
 
@@ -198,6 +201,10 @@ namespace DeviceCenter
                         { "Build",  (build != null) ? build.Build.ToString() : ""}
                     });
 
+                    // For flash speed metric telemetry
+                    _cachedBuildInfo = build;
+                    _cachedDeviceType = deviceType;
+                    _cachedDriveInfo = driveInfo;
                     _flashStartTime = App.GlobalStopwatch.ElapsedMilliseconds;
                 }
             }
@@ -210,7 +217,13 @@ namespace DeviceCenter
             lock(_dismLock)
             {
                 // Measure how long it took to flash the image
-                App.TelemetryClient.TrackMetric("FlashSDCardTimeMs", App.GlobalStopwatch.ElapsedMilliseconds - _flashStartTime);
+                App.TelemetryClient.TrackMetric("FlashSDCardTimeMs", App.GlobalStopwatch.ElapsedMilliseconds - _flashStartTime, new Dictionary<string, string>()
+                {
+                    { "DeviceType", (_cachedDeviceType != null) ? _cachedDeviceType.ToString() : "" },
+                    { "Build",  (_cachedBuildInfo != null) ? _cachedBuildInfo.Build.ToString() : ""},
+                    { "DriveSize", (_cachedDriveInfo != null) ? _cachedDriveInfo.SizeString : ""},
+                    { "DriveModel", (_cachedDriveInfo != null) ? _cachedDriveInfo.Model : "" }
+                });
 
                 if (_dismProcess != null)
                 {
