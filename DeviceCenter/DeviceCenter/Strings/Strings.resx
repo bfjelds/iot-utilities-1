@@ -520,4 +520,25 @@
   <data name="SamplesForegroundButton" xml:space="preserve">
     <value>Show</value>
   </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© 2015 Microsoft Corporation</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>Privacy Statement</value>
+  </data>
+  <data name="AboutPrivateBuild" xml:space="preserve">
+    <value>Private Build</value>
+  </data>
+  <data name="AboutServicesAgreement" xml:space="preserve">
+    <value>Microsoft Services Agreement</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Windows 10 IoT Dashboard</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>About this app</value>
+  </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>About...</value>
+  </data>
 </root>

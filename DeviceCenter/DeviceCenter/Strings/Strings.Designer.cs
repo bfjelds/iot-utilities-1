@@ -61,11 +61,74 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to © 2015 Microsoft Corporation.
+        /// </summary>
+        public static string AboutCopyright {
+            get {
+                return ResourceManager.GetString("AboutCopyright", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Privacy Statement.
+        /// </summary>
+        public static string AboutPrivacy {
+            get {
+                return ResourceManager.GetString("AboutPrivacy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Private Build.
+        /// </summary>
+        public static string AboutPrivateBuild {
+            get {
+                return ResourceManager.GetString("AboutPrivateBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microsoft Services Agreement.
+        /// </summary>
+        public static string AboutServicesAgreement {
+            get {
+                return ResourceManager.GetString("AboutServicesAgreement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows 10 IoT Dashboard.
+        /// </summary>
+        public static string AboutSubtitle {
+            get {
+                return ResourceManager.GetString("AboutSubtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About this app.
+        /// </summary>
+        public static string AboutTitle {
+            get {
+                return ResourceManager.GetString("AboutTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Device Center.
         /// </summary>
         public static string AppNameDisplay {
             get {
                 return ResourceManager.GetString("AppNameDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About....
+        /// </summary>
+        public static string ButtonAbout {
+            get {
+                return ResourceManager.GetString("ButtonAbout", resourceCulture);
             }
         }
         

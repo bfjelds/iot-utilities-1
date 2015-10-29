@@ -4,13 +4,25 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DeviceCenter"
+      xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="About">
 
-    <Grid>
-        <TextBlock Text="About" FontSize="42.667" TextWrapping="Wrap" VerticalAlignment="Top" />
-        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="labelVersionHeader" Margin="10,62,143,0" FontSize="20" FontFamily="Segoe UI SemiLight" Text="Publish Number:" />
-        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Stretch" x:Name="labelVersion"  Margin="163,62,10,0" FontFamily="Segoe UI Light" FontSize="20" TextWrapping="Wrap" Text="VersionInfo" Height="27"/>
-    </Grid>
+    <StackPanel>
+        <TextBlock Text="{x:Static props:Strings.AboutTitle}" FontSize="24" />
+        <TextBlock Text="{x:Static props:Strings.AboutSubtitle}" Margin="0 10 0 0"/>
+        <TextBlock x:Name="labelVersion"  Text="--" />
+        <TextBlock Text="{x:Static props:Strings.AboutCopyright}" Margin="0 20" />
+        <TextBlock Margin="0 10">
+            <Hyperlink NavigateUri="https://www.microsoft.com/en-us/privacystatement/default.aspx" RequestNavigate="Hyperlink_RequestNavigate">
+                <TextBlock Text="{x:Static props:Strings.AboutPrivacy}" />
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock>
+            <Hyperlink NavigateUri="https://www.microsoft.com/en-us/servicesagreement/" RequestNavigate="Hyperlink_RequestNavigate">
+                <TextBlock Text="{x:Static props:Strings.AboutServicesAgreement}" />
+            </Hyperlink>
+        </TextBlock>
+    </StackPanel>
 </Page>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Controls;
 using System.Deployment.Application;
+using System.Diagnostics;
 
 namespace DeviceCenter
 {
@@ -20,8 +21,14 @@ namespace DeviceCenter
             }
             else
             {
-                labelVersion.Text = "Private Build";
+                labelVersion.Text = Strings.Strings.AboutPrivateBuild;
             }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
     }
 }

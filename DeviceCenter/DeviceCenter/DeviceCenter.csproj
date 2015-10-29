@@ -149,6 +149,9 @@
     <Compile Include="PageDeviceConfiguration.xaml.cs">
       <DependentUpon>PageDeviceConfiguration.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PageDiskImageComplete.xaml.cs">
+      <DependentUpon>PageDiskImageComplete.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PageWelcome.xaml.cs">
       <DependentUpon>PageWelcome.xaml</DependentUpon>
     </Compile>
@@ -211,6 +214,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageDeviceConfiguration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PageDiskImageComplete.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
