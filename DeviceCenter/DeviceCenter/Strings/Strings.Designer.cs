@@ -583,6 +583,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rebooting the Device Now....
+        /// </summary>
+        public static string DeviceRebootingMessage {
+            get {
+                return ResourceManager.GetString("DeviceRebootingMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown device architecture.  Please use Windows IoT build {0} or newer.
         /// </summary>
         public static string ErrorUnknownArchitecture {

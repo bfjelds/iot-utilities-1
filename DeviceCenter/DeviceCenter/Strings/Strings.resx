@@ -554,4 +554,7 @@
   <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
     <value>Installation Failed</value>
   </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>Rebooting the Device Now...</value>
+  </data>
 </root>
