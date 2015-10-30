@@ -93,6 +93,7 @@ namespace DeviceCenter
                 return;
             }
 
+            _internalBuild = true;
             var entries = new List<LKGPlatform>();
             ComboBoxDeviceType.IsEnabled = false;
             ComboBoxIotBuild.IsEnabled = false;
