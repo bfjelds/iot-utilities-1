@@ -23,40 +23,33 @@
     <Grid VerticalAlignment="Top">
         <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
             <StackPanel>
-                <TextBlock x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.IntroSetUpNewDevice}" HorizontalAlignment="Left"/>
-                <TextBlock x:Uid="Subtitle" FontSize="21.333" FontFamily="Segoe UI Semilight" VerticalAlignment="Bottom" Text="{x:Static props:Strings.NewDeviceSubTitle}" HorizontalAlignment="Left" Margin="0,20,0,0" TextWrapping="Wrap"/>
-                <TextBlock x:Uid="SelectDevice" VerticalAlignment="Bottom" Text="{x:Static props:Strings.NewDeviceSelectDeviceTypeLabel}" Margin="0,10,0,6" HorizontalAlignment="Left" FontSize="16" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,4,0,0">
+                <TextBlock x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.IntroSetUpNewDevice}" />
+                <TextBlock x:Uid="Subtitle" FontSize="21.333" FontFamily="Segoe UI Semilight" VerticalAlignment="Bottom" Text="{x:Static props:Strings.NewDeviceSubTitle}" Margin="0,20,0,0" TextWrapping="Wrap"/>
+                <TextBlock x:Uid="SelectDevice" Text="{x:Static props:Strings.NewDeviceSelectDeviceTypeLabel}" Margin="0,10,0,6" FontSize="16" />
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                     <ComboBox x:Name="ComboBoxDeviceType" Width="200" SelectionChanged="ComboBoxDeviceType_SelectionChanged">
                     </ComboBox>
-                    <ComboBox x:Name="ComboBoxIotBuild" HorizontalAlignment="Left" Width="100" Margin="10,0,0,0" SelectionChanged="ComboBoxIotBuild_SelectionChanged">
+                    <ComboBox x:Name="ComboBoxIotBuild" Width="100" Margin="10,0,0,0" SelectionChanged="ComboBoxIotBuild_SelectionChanged">
                     </ComboBox>
                 </StackPanel>
-                <TextBlock x:Uid="InsertSDCard" VerticalAlignment="Top" Text="{x:Static props:Strings.NewDeviceInsertSDCardMessage}" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="0,10,0,0"/>
-                <TextBlock x:Uid="AcceptableSDCards" VerticalAlignment="Top" Text="{x:Static props:Strings.ViewAcceptableSDCards}" Margin="0,10,0,0" HorizontalAlignment="Left" TextDecorations="Underline" Cursor="Hand">
-                    <TextBlock.Foreground>
-                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
-                    </TextBlock.Foreground>
+                <TextBlock x:Uid="InsertSDCard" Text="{x:Static props:Strings.NewDeviceInsertSDCardMessage}" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="0,10,0,0"/>
+                <TextBlock Margin="0,10,0,0">
+                    <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/win10/SupportedInterfaces.htm#WiFi-Dongles" RequestNavigate="Hyperlink_RequestNavigate">
+                        <TextBlock Text="{x:Static props:Strings.ViewAcceptableSDCards}" /> 
+                    </Hyperlink>
                 </TextBlock>
                 <TextBlock x:Uid="SelectSDCardInfo" FontSize="16" Text="{x:Static props:Strings.NewDeviceDriveLabel}" HorizontalAlignment="Left" Margin="0,10,0,0"/>
                 <ComboBox x:Name="RemoveableDevicesComboBox" Width="300" HorizontalAlignment="Left" Margin="0,4,0,0" SelectionChanged="RemoveableDevicesComboBox_SelectionChanged"/>
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Left">
                     <CheckBox x:Name="checkBoxEula" Content="{x:Static props:Strings.NewDeviceAcceptLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Checked="checkBoxEula_Checked" Unchecked="checkBoxEula_Checked" />
-                    <TextBlock x:Uid="SelectSDCardInfo" Text="{x:Static props:Strings.NewDeviceTermsAndCondition}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" Cursor="Hand" TextDecorations="Underline">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
-                        </TextBlock.Foreground>
+                    <TextBlock Text="{x:Static props:Strings.NewDeviceTermsAndCondition}" Margin="5,0,0,0" Cursor="Hand" >
+                        <Hyperlink NavigateUri="http://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx" RequestNavigate="Hyperlink_RequestNavigate">
+                            <TextBlock Text="{x:Static props:Strings.NewDeviceTermsAndCondition}" />
+                        </Hyperlink>
                     </TextBlock>
                 </StackPanel>
                 <TextBlock x:Name="StatusMessageBox" x:Uid="SelectSDCardInfo" Margin="20,0,0,10" VerticalAlignment="Bottom"/>
-                <Button x:Name="buttonFlash" x:Uid="FlashButton" Grid.Row="4" Padding="30 5 30 5" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Flash SD Card" Click="FlashSDCard_Click">
-                    <Button.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
-                    </Button.BorderBrush>
-                    <Button.Foreground>
-                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}" Opacity="0.8"/>
-                    </Button.Foreground>
-                </Button>
+                <Button x:Name="buttonFlash" x:Uid="FlashButton" Grid.Row="4" Padding="30 5 30 5" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Flash SD Card" Click="FlashSDCard_Click" />
                 <StackPanel x:Name="PanelFlashing" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,10,0,0">
                     <TextBlock Text="{x:Static props:Strings.NewDeviceFlashing}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                     <ProgressBar Height="5" Width="200" VerticalAlignment="Top" Margin="0,6,0,0"/>

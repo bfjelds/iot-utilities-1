@@ -65,7 +65,7 @@
     <DockPanel>
         <Grid>
             <DockPanel Margin="0">
-                <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical" Background="#FFF0F0F0" Width="300">
                     <local:ButtonSideMenu Text="{x:Static props:Strings.FindMyDeviceButton}" Icon="&#xE964;" Click="buttonMyDevices_Click"/>
                     <local:ButtonSideMenu Text="{x:Static props:Strings.IntroSetUpNewDevice}" Icon="&#xE90F;" Click="buttonAddDevice_Click"/>
                     <local:ButtonSideMenu Text="{x:Static props:Strings.LeftBarSamples}" Icon="&#xE179;" Click="buttonSamples_Click" />

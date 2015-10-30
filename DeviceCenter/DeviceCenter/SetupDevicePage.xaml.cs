@@ -319,5 +319,10 @@ namespace DeviceCenter
         {
             DriveInfo.RemoveUSBDetectionHandler();
         }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+
+        }
     }
 }
