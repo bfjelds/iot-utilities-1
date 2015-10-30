@@ -541,6 +541,7 @@
   </data>
   <data name="ButtonAbout" xml:space="preserve">
     <value>About...</value>
+  </data>
   <data name="NewDeviceFlashingDownload" xml:space="preserve">
     <value>Downloading the installer</value>
   </data>
