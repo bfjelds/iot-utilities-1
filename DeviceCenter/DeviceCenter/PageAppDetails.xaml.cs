@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Windows;
@@ -113,8 +114,8 @@ namespace DeviceCenter
                 PanelDeployed.Visibility = Visibility.Visible;
                 PanelDeploy.Visibility = Visibility.Collapsed;
 
-                var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
-                System.Diagnostics.Process.Start("IExplore.exe", appUrl);
+                var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;                
+                Process.Start(new ProcessStartInfo(appUrl));
             }
         }
 
@@ -233,7 +234,7 @@ namespace DeviceCenter
                 else
                 {
                     var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
-                    System.Diagnostics.Process.Start("IExplore.exe", appUrl);
+                    Process.Start(new ProcessStartInfo(appUrl));
                 }
             }
         }
@@ -251,6 +252,12 @@ namespace DeviceCenter
             {
                 GetAppState();
             }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
     }
 }
