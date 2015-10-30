@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -11,6 +12,35 @@ namespace DeviceCenter
 {
     public class DiscoveredDevice
     {
+        /// <summary>
+        /// Icons reflecting signal strength of 802.11 networks around Device Center
+        /// </summary>
+        const string WiFiSignalStrengthIcons = "";
+        
+        /// <summary>
+        /// Icon bound to xaml
+        /// </summary>
+        public string WiFiSignalStrengthIconDisplay
+        {
+            get
+            {
+                // SignalStrength goes from 0 to 99. 
+                switch ((SignalStrength + 1) / 25)
+                {
+                    case 1 : return WiFiSignalStrengthIcons.Substring(1, 1);
+                    case 2: return WiFiSignalStrengthIcons.Substring(2, 1);
+                    case 3: return WiFiSignalStrengthIcons.Substring(3, 1);
+                    case 4: return WiFiSignalStrengthIcons.Substring(4, 1);
+                    default: return WiFiSignalStrengthIcons.Substring(0, 1);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// Signal strength of this networ
+        /// </summary>
+        public uint SignalStrength { get; set; }
+
         public enum NetworkType { Ethernet, Adhoc };
 
         public DiscoveredDevice()
@@ -30,6 +60,9 @@ namespace DeviceCenter
             this.Authentication = null;
 
             this.WifiInstance = wifi;
+            this.SignalStrength = wifi.wlanSignalQuality;
+
+            Debug.WriteLine("DiscoveredDevice(): SSID: {0} strength; {1}", wifi.SsidString, wifi.wlanSignalQuality);
         }
 
         public override string ToString()

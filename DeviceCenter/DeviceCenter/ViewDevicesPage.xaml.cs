@@ -33,7 +33,7 @@ namespace DeviceCenter
         private readonly Frame _navigationFrame;
         private PageWifi _wifiPage;
         private bool _connectedToAdhoc = false;
-        NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
+        readonly NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
 
         ~ViewDevicesPage()
         {

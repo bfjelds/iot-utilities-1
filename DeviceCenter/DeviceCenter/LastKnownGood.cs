@@ -108,7 +108,7 @@ namespace DeviceCenter
             if (!File.Exists(LkgFileName))
             {
                 Debug.WriteLine("LkgInsider: LKG file not found");
-                return;
+                throw new FileNotFoundException();
             }
 
             //  LKG file looks like the following:
