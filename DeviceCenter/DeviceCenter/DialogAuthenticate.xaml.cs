@@ -5,6 +5,7 @@
     using System.Windows;
     using System.Security.Cryptography;
     using LoginInfoDictionary = System.Collections.Generic.Dictionary<string, UserInfo>;
+    using System.Windows.Controls.Primitives;
 
     /// <summary>
     /// WebB login info for specified DeviceName
@@ -101,6 +102,10 @@
             InitializeComponent();
 
             DataContext = info;
+
+            this.editPassword.Focus();
+
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -150,6 +155,14 @@
         private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             UpdateState();
+        }
+
+        private void TextBox_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key == System.Windows.Input.Key.Enter && buttonOk.IsEnabled)
+            {
+                buttonOk.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            }
         }
     }
 }
