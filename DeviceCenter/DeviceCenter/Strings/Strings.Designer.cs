@@ -115,7 +115,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Device Center.
+        ///   Looks up a localized string similar to Windows 10 IoT Dashboard.
         /// </summary>
         public static string AppNameDisplay {
             get {
