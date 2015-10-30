@@ -44,6 +44,7 @@ namespace DeviceCenter
     {
         public const string MbmName = "Minnowboard MAX";
         public const string RaspberryPi2Name = "Raspberry Pi 2";
+        public const string DragonboardName = "Qualcomm Dragonboard";
 
         /// <summary>
         /// E.g. "MBM", "RPi2", etc.
@@ -59,6 +60,8 @@ namespace DeviceCenter
                     return MbmName;
                 case "RPi2":
                     return RaspberryPi2Name;
+                case "QCOM":
+                    return DragonboardName;
             }
 
             System.Diagnostics.Debug.Fail("Unsupported platforms should not show in this list");

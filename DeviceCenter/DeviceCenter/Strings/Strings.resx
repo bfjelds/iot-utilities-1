@@ -226,7 +226,7 @@
     <value>Finding Windows 10 IoT Core devices on your network</value>
   </data>
   <data name="FindMyDeviceButton" xml:space="preserve">
-    <value>My devices</value>
+    <value>Find my device</value>
   </data>
   <data name="FinishButton" xml:space="preserve">
     <value>Finish</value>
@@ -242,7 +242,7 @@
     <comment>code will fill in the {0}</comment>
   </data>
   <data name="IntroMessage" xml:space="preserve">
-    <value>Already have a Windows IoT Core device on your network?</value>
+    <value>To set up a device, all you need to do is download and install Windows 10 IoT Core to your device.</value>
   </data>
   <data name="IntroSetUpNewDevice" xml:space="preserve">
     <value>Set up a new device</value>
@@ -328,14 +328,14 @@
     <value>View the list of recommended SD cards</value>
   </data>
   <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
-    <value>Select your device type</value>
+    <value>Device type</value>
     <comment>the combo values should come from the online xml file</comment>
   </data>
   <data name="NewDeviceSubTitle" xml:space="preserve">
     <value>First, let's get Windows 10 IoT Core on your device.</value>
   </data>
   <data name="NewDeviceTermsAndCondition" xml:space="preserve">
-    <value>software license terms</value>
+    <value>I accept the software license terms</value>
     <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
   </data>
   <data name="NewDeviceTitle" xml:space="preserve">
@@ -430,10 +430,10 @@
     <value>Set up a new device</value>
   </data>
   <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
-    <value>The DragonBoard 410c comes with its own set of installation tools. After you install Windows and connect this board to the internet, you will find it in "My Devices".</value>
+    <value>This board requires a different process for setting up. After you install Windows on this board and connect it to the Internet, you will find it on your device list.</value>
   </data>
   <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
-    <value>Installing Windows IoT Core on the DragonBoard 410c</value>
+    <value>Installing Windows IoT Core on the Dragonboard</value>
   </data>
   <data name="SamplesAppRunning" xml:space="preserve">
     <value>This app is running on your device.</value>
@@ -553,5 +553,26 @@
   </data>
   <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
     <value>Installation Failed</value>
+  </data>
+  <data name="DeviceListFilter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="DeviceQualcommDragonboard" xml:space="preserve">
+    <value>Qualcomm Dragonboard</value>
+  </data>
+  <data name="DevicesConfigureDevice" xml:space="preserve">
+    <value>Configure device</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>Download complete</value>
+  </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>{0} MB Downloading - {1}%</value>
+  </data>
+  <data name="FilterAllDevices" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="FilterNewDevices" xml:space="preserve">
+    <value>New devices</value>
   </data>
 </root>

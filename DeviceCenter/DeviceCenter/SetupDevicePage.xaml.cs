@@ -86,6 +86,7 @@ namespace DeviceCenter
                 ComboBoxIotBuild.Visibility = Visibility.Hidden;
                 ComboBoxDeviceType.Items.Add(LKGPlatform.MbmName);
                 ComboBoxDeviceType.Items.Add(LKGPlatform.RaspberryPi2Name);
+                ComboBoxDeviceType.Items.Add(LKGPlatform.DragonboardName);
                 ComboBoxDeviceType.SelectedIndex = 1;
                 ComboBoxDeviceType.IsEnabled = true;
                 ComboBoxIotBuild.IsEnabled = true;
@@ -112,6 +113,9 @@ namespace DeviceCenter
                                 entries.Add(currentPlatform);
                                 break;
                             case "RPi2":
+                                entries.Add(currentPlatform);
+                                break;
+                            case "QCOM":
                                 entries.Add(currentPlatform);
                                 break;
                         }
@@ -521,21 +525,27 @@ namespace DeviceCenter
 
         private void ComboBoxDeviceType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_internalBuild)
+            LKGPlatform item = ComboBoxDeviceType.SelectedItem as LKGPlatform;
+            if (item != null)
             {
-                ComboBoxIotBuild.Items.Clear();
-
-                LKGPlatform item = ComboBoxDeviceType.SelectedItem as LKGPlatform;
-                if (item != null)
+                if (_internalBuild)
                 {
+                    ComboBoxIotBuild.Items.Clear();
+
                     foreach (var cur in item.LkgBuilds)
                         ComboBoxIotBuild.Items.Add(cur);
 
                     if (ComboBoxIotBuild.Items.Count > 0)
                         ComboBoxIotBuild.SelectedIndex = 0;
                 }
+
+                PanelManualImage.Visibility = (item.Platform == "QCOM") ? Visibility.Visible : Visibility.Collapsed;
+                PanelAutomaticImage.Visibility = (item.Platform != "QCOM") ? Visibility.Visible : Visibility.Collapsed;
+
+                buttonFlash.IsEnabled = UpdateStartState();
             }
-            buttonFlash.IsEnabled = UpdateStartState();
+            else
+                buttonFlash.IsEnabled = false;
         }
 
         private bool UpdateStartState()

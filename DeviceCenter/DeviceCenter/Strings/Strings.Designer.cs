@@ -430,6 +430,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filter.
+        /// </summary>
+        public static string DeviceListFilter {
+            get {
+                return ResourceManager.GetString("DeviceListFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Learn more.
         /// </summary>
         public static string DeviceListLearnMore {
@@ -583,11 +592,65 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Qualcomm Dragonboard.
+        /// </summary>
+        public static string DeviceQualcommDragonboard {
+            get {
+                return ResourceManager.GetString("DeviceQualcommDragonboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure device.
+        /// </summary>
+        public static string DevicesConfigureDevice {
+            get {
+                return ResourceManager.GetString("DevicesConfigureDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download complete.
+        /// </summary>
+        public static string DownloadComplete {
+            get {
+                return ResourceManager.GetString("DownloadComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} MB Downloading - {1}%.
+        /// </summary>
+        public static string DownloadProgress {
+            get {
+                return ResourceManager.GetString("DownloadProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown device architecture.  Please use Windows IoT build {0} or newer.
         /// </summary>
         public static string ErrorUnknownArchitecture {
             get {
                 return ResourceManager.GetString("ErrorUnknownArchitecture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string FilterAllDevices {
+            get {
+                return ResourceManager.GetString("FilterAllDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New devices.
+        /// </summary>
+        public static string FilterNewDevices {
+            get {
+                return ResourceManager.GetString("FilterNewDevices", resourceCulture);
             }
         }
         
@@ -601,7 +664,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to My devices.
+        ///   Looks up a localized string similar to Find my device.
         /// </summary>
         public static string FindMyDeviceButton {
             get {
@@ -646,7 +709,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Already have a Windows IoT Core device on your network?.
+        ///   Looks up a localized string similar to To set up a device, all you need to do is download and install Windows 10 IoT Core to your device..
         /// </summary>
         public static string IntroMessage {
             get {
@@ -862,7 +925,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The DragonBoard 410c comes with its own set of installation tools. After you install Windows and connect this board to the internet, you will find it in &quot;My Devices&quot;..
+        ///   Looks up a localized string similar to This board requires a different process for setting up. After you install Windows on this board and connect it to the Internet, you will find it on your device list..
         /// </summary>
         public static string NewDeviceDragonBoardMessage1 {
             get {
@@ -871,7 +934,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installing Windows IoT Core on the DragonBoard 410c.
+        ///   Looks up a localized string similar to Installing Windows IoT Core on the Dragonboard.
         /// </summary>
         public static string NewDeviceDragonBoardMessage2 {
             get {
@@ -979,7 +1042,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select your device type.
+        ///   Looks up a localized string similar to Device type.
         /// </summary>
         public static string NewDeviceSelectDeviceTypeLabel {
             get {
@@ -997,7 +1060,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to software license terms.
+        ///   Looks up a localized string similar to I accept the software license terms.
         /// </summary>
         public static string NewDeviceTermsAndCondition {
             get {

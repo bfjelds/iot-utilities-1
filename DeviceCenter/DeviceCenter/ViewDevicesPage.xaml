@@ -21,14 +21,20 @@
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel >
             <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left"/>
-            <Button DockPanel.Dock="Top" x:Name="buttonRefresh" x:Uid="FlashButton" Grid.Row="4" Padding="30 5 30 5" Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Refresh" Click="ButtonRefresh_Click">
-                <Button.BorderBrush>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightLightColorKey}}"/>
-                </Button.BorderBrush>
-                <Button.Foreground>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}" Opacity="0.8"/>
-                </Button.Foreground>
-            </Button>
+            <Button DockPanel.Dock="Top" x:Name="buttonRefresh" x:Uid="FlashButton" Grid.Row="4" Padding="30 5 30 5" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Refresh" Background="#FF3277B8" Foreground="White" Click="ButtonRefresh_Click" />
+            <StackPanel DockPanel.Dock="Top" Margin="0 8" Orientation="Horizontal">
+                <TextBlock Text="{x:Static props:Strings.DeviceListFilter}" VerticalAlignment="Center" />
+                <ComboBox Width="150" Margin="10 0" SelectedIndex="0">
+                    <ComboBoxItem Content="{x:Static props:Strings.FilterAllDevices}" />
+                    <ComboBoxItem Content="{x:Static props:Strings.FilterNewDevices}" />
+                </ComboBox>
+            </StackPanel>
+            <TextBlock DockPanel.Dock="Bottom">
+                <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/GetStarted.htm">
+                    <TextBlock Text="{x:Static props:Strings.DeviceListLearnMore}" />
+                </Hyperlink>
+            </TextBlock>
+            <TextBlock Margin="0 10"  DockPanel.Dock="Bottom" Text="{x:Static props:Strings.DeviceListCantFindDevice}" />
             <ListView DockPanel.Dock="Top" x:Name="ListViewDevices" Unloaded="ListViewDevices_Unloaded" Margin="0 10 0 10" BorderBrush="{x:Null}" BorderThickness="0" >
                 <ListView.View>
                     <GridView ColumnHeaderTemplate="{StaticResource CleanHeaderTemplate}">
@@ -42,7 +48,10 @@
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColConnection}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock FontSize="22" Text="{Binding WiFiSignalStrengthIconDisplay}" Foreground="Blue" Cursor="Hand" FontFamily="Segoe MDL2 Assets" MouseDown="ButtonConnect_Click" Visibility="{Binding ConnectVisible}" />
+                                    <StackPanel Orientation="Horizontal" Visibility="{Binding ConnectVisible}" >
+                                        <TextBlock FontSize="22" Text="{Binding WiFiSignalStrengthIconDisplay}" Foreground="Blue" Cursor="Hand" FontFamily="Segoe MDL2 Assets" MouseDown="ButtonConnect_Click" />
+                                        <TextBlock Text="{x:Static props:Strings.DevicesConfigureDevice}" Foreground="Blue" Cursor="Hand" MouseDown="ButtonConnect_Click" />
+                                    </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
