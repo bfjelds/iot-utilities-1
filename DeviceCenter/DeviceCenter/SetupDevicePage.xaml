@@ -3,23 +3,11 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:DeviceCenter"
+      xmlns:local="clr-namespace:DeviceCenter" 
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
       Title="Set up a new device" Loaded="Window_Loaded" Unloaded="Page_Unloaded">
-    <Page.Resources>
-        <Storyboard x:Key="OnLoadedInitialize">
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="PanelFlashing">
-                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
-            </ObjectAnimationUsingKeyFrames>
-        </Storyboard>
-    </Page.Resources>
-    <Page.Triggers>
-        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-            <BeginStoryboard x:Name="OnLoadedInitialize_BeginStoryboard" Storyboard="{StaticResource OnLoadedInitialize}"/>
-        </EventTrigger>
-    </Page.Triggers>
-
+   
     <Grid VerticalAlignment="Top">
         <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
             <StackPanel>
@@ -50,9 +38,9 @@
                 </StackPanel>
                 <TextBlock x:Name="StatusMessageBox" x:Uid="SelectSDCardInfo" Margin="20,0,0,10" VerticalAlignment="Bottom"/>
                 <Button x:Name="buttonFlash" x:Uid="FlashButton" Grid.Row="4" Padding="30 5 30 5" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Flash SD Card" Click="FlashSDCard_Click" />
-                <StackPanel x:Name="PanelFlashing" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,10,0,0">
-                    <TextBlock Text="{x:Static props:Strings.NewDeviceFlashing}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                    <ProgressBar Height="5" Width="200" VerticalAlignment="Top" Margin="0,6,0,0"/>
+                <StackPanel x:Name="PanelFlashing" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Visibility="Hidden">
+                    <TextBlock x:Name="FlashingStateTextBox" Text="{x:Static props:Strings.NewDeviceFlashing}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <ProgressBar x:Name="FlashingProgress" Minimum="0" Maximum="100" Value="0" Height="5" Width="200" VerticalAlignment="Top" Margin="0,6,0,0"/>
                     <Button x:Name="buttonCancelDism" Content="{x:Static props:Strings.CancelButton}" Padding="30 5 30 5"  HorizontalAlignment="Left" Margin="0,10,0,0" Click="buttonCancelDism_Click" />
                 </StackPanel>
             </StackPanel>
