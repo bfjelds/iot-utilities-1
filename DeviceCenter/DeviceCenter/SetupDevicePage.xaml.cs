@@ -411,7 +411,7 @@ namespace DeviceCenter
                 if (confirmation.HasValue && confirmation.Value == false)
                 {
                     buttonFlash.IsEnabled = true;
-                    PanelFlashing.Visibility = Visibility.Hidden;
+                    ResetProgressUI();
                 }
                 if (confirmation.HasValue && confirmation.Value)
                 {
