@@ -97,7 +97,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows 10 IoT Dashboard.
+        ///   Looks up a localized string similar to Windows 10 IoT Core Dashboard.
         /// </summary>
         public static string AboutSubtitle {
             get {
@@ -115,7 +115,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows 10 IoT Dashboard.
+        ///   Looks up a localized string similar to IoT Dashboard.
         /// </summary>
         public static string AppNameDisplay {
             get {
@@ -124,7 +124,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to About....
+        ///   Looks up a localized string similar to About.
         /// </summary>
         public static string ButtonAbout {
             get {
@@ -529,7 +529,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Old Password.
+        ///   Looks up a localized string similar to Old password.
         /// </summary>
         public static string DeviceNamePwdPassword1 {
             get {
@@ -538,7 +538,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New Password.
+        ///   Looks up a localized string similar to New password.
         /// </summary>
         public static string DeviceNamePwdPassword2 {
             get {
@@ -547,7 +547,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Confirm Password.
+        ///   Looks up a localized string similar to Confirm password.
         /// </summary>
         public static string DeviceNamePwdPassword3 {
             get {
@@ -592,7 +592,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Qualcomm Dragonboard.
+        ///   Looks up a localized string similar to Qualcomm DragonBoard 410c.
         /// </summary>
         public static string DeviceQualcommDragonboard {
             get {
@@ -601,7 +601,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rebooting the Device Now....
+        ///   Looks up a localized string similar to Rebooting the device now....
         /// </summary>
         public static string DeviceRebootingMessage {
             get {
@@ -628,7 +628,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} MB Downloading - {1}%.
+        ///   Looks up a localized string similar to {0} MB downloading - {1}%.
         /// </summary>
         public static string DownloadProgress {
             get {
@@ -637,7 +637,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unknown device architecture.  Please use Windows IoT build {0} or newer.
+        ///   Looks up a localized string similar to Unknown device architecture.  Please use Windows 10 IoT Core build {0} or newer.
         /// </summary>
         public static string ErrorUnknownArchitecture {
             get {
@@ -745,7 +745,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To set up a device, all you need to do is download and install Windows IoT Core to your device.
+        ///   Looks up a localized string similar to To set up a device, all you need to do is download and install Windows 10 IoT Core to your device.
         /// </summary>
         public static string IntroSubTitle2 {
             get {
@@ -790,7 +790,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to My Devices.
+        ///   Looks up a localized string similar to My devices.
         /// </summary>
         public static string LeftBarMyDevices {
             get {
@@ -826,7 +826,16 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The remote device did not respond to request for Access Point list..
+        ///   Looks up a localized string similar to The old password is incorrect.
+        /// </summary>
+        public static string MessageBadPassword {
+            get {
+                return ResourceManager.GetString("MessageBadPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The remote device did not respond to request for access point list..
         /// </summary>
         public static string MessageUnableToGetWifi {
             get {
@@ -925,7 +934,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} MB Downloading - {1}%.
+        ///   Looks up a localized string similar to {0} MB downloading - {1}%.
         /// </summary>
         public static string NewDeviceDownloadingProgress {
             get {
@@ -943,7 +952,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installing Windows IoT Core on the Dragonboard.
+        ///   Looks up a localized string similar to Installing Windows 10 IoT Core on the DragonBoard 410c.
         /// </summary>
         public static string NewDeviceDragonBoardMessage2 {
             get {
@@ -997,7 +1006,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installation Failed.
+        ///   Looks up a localized string similar to Installation failed.
         /// </summary>
         public static string NewDeviceFlashingExtractMSIFailedCaption {
             get {
@@ -1213,7 +1222,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Turn your Windows IoT Core device into an internet radio that can be controlled from anywhere in your home..
+        ///   Looks up a localized string similar to Turn your Windows 10 IoT Core device into an internet radio that can be controlled from anywhere in your home..
         /// </summary>
         public static string SamplesRadioMessage1 {
             get {
@@ -1281,6 +1290,15 @@ namespace DeviceCenter.Strings {
         public static string SamplesTutorialOnline {
             get {
                 return ResourceManager.GetString("SamplesTutorialOnline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         
