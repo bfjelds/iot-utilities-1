@@ -29,8 +29,8 @@
                     <ComboBoxItem Content="{x:Static props:Strings.FilterNewDevices}" />
                 </ComboBox>
             </StackPanel>
-            <TextBlock DockPanel.Dock="Bottom">
-                <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/GetStarted.htm">
+            <TextBlock Margin="0 0 0 10" DockPanel.Dock="Bottom">
+                <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/GetStarted.htm" RequestNavigate="Hyperlink_RequestNavigate">
                     <TextBlock Text="{x:Static props:Strings.DeviceListLearnMore}" />
                 </Hyperlink>
             </TextBlock>
@@ -45,12 +45,12 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="{x:Static props:Strings.DeviceListColConnection}">
+                        <GridViewColumn Header="{x:Static props:Strings.DeviceListColConnection}" Width="150">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Visibility="{Binding ConnectVisible}" >
-                                        <TextBlock FontSize="22" Text="{Binding WiFiSignalStrengthIconDisplay}" Foreground="Blue" Cursor="Hand" FontFamily="Segoe MDL2 Assets" MouseDown="ButtonConnect_Click" />
-                                        <TextBlock Text="{x:Static props:Strings.DevicesConfigureDevice}" Foreground="Blue" Cursor="Hand" MouseDown="ButtonConnect_Click" />
+                                        <TextBlock FontSize="22" Text="{Binding WiFiSignalStrengthIconDisplay}" Foreground="Blue" Cursor="Hand" FontFamily="Segoe MDL2 Assets" MouseDown="ButtonConnect_Click" VerticalAlignment="Center"  />
+                                        <TextBlock Text="{x:Static props:Strings.DevicesConfigureDevice}" Foreground="Blue" Cursor="Hand" MouseDown="ButtonConnect_Click" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>

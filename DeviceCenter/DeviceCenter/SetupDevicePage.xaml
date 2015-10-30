@@ -23,7 +23,7 @@
                 <StackPanel x:Name="PanelManualImage" Orientation="Vertical">
                     <TextBlock TextWrapping="Wrap" Text="{x:Static props:Strings.NewDeviceDragonBoardMessage1}" Margin="0 8" />
                     <TextBlock Margin="0 8" >
-                        <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/win10/SetupPCDB410c.htm">
+                        <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/win10/SetupPCDB410c.htm" RequestNavigate="Hyperlink_RequestNavigate">
                             <TextBlock Text="{x:Static props:Strings.NewDeviceDragonBoardMessage2}" />
                         </Hyperlink>
                     </TextBlock>

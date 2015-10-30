@@ -20,6 +20,8 @@ namespace DeviceCenter
             this._navigationFrame = navigationFrame;
             this.Device = device;
 
+            linkPortal.NavigateUri = this.Device.Manage;
+
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
@@ -58,5 +60,11 @@ namespace DeviceCenter
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
+
+        private void Hyperlink_SetPassword(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            _navigationFrame.Navigate(new PageDevicePassword(this._navigationFrame, this.Device));
+            e.Handled = true;
+        }        
     }
 }

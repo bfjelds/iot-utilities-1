@@ -17,7 +17,7 @@
                 <TextBlock Text="{x:Static props:Strings.DeviceDetailsUserNameLabel}" IsEnabled="False" Margin="0,20,0,6" HorizontalAlignment="Left"/>
                 <TextBox Height="23" Width="200" HorizontalAlignment="Left" IsEnabled="False" Text="{x:Static props:Strings.DeviceDetailsUserNameAdmin}" />
                 <TextBlock Margin="0,20,0,6">
-                    <Hyperlink NavigateUri="SetPassword">
+                    <Hyperlink NavigateUri="SetPassword" RequestNavigate="Hyperlink_SetPassword">
                         <TextBlock Text="{x:Static props:Strings.DeviceDetailsChangePwd}" />
                     </Hyperlink>
                 </TextBlock>
@@ -28,7 +28,7 @@
                 <TextBlock Margin="0 20" FontSize="20" Text="{x:Static props:Strings.DeviceDetailsDevicePortal}" />
                 <TextBlock Text="{x:Static props:Strings.DeviceDetailsDevicePortalMessage1}" TextWrapping="Wrap" />
                 <TextBlock Margin="0 10">
-                    <Hyperlink NavigateUri="webb" RequestNavigate="Hyperlink_RequestNavigate">
+                    <Hyperlink x:Name="linkPortal" RequestNavigate="Hyperlink_RequestNavigate">
                         <TextBlock Text="{x:Static props:Strings.SuccessAction1}" />
                     </Hyperlink>
                 </TextBlock>

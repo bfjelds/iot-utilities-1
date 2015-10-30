@@ -416,6 +416,12 @@ namespace DeviceCenter
             _navigationFrame.Navigate(new ViewDevicesPage(_navigationFrame));
         }
 
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
+
         private void ButtonAppInstall_Click(object sender, MouseButtonEventArgs e)
         {
             var frameworkElement = sender as FrameworkElement;
