@@ -331,7 +331,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Admin.
+        ///   Looks up a localized string similar to Administrator.
         /// </summary>
         public static string DeviceDetailsUserNameAdmin {
             get {

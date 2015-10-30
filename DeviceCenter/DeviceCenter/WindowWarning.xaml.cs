@@ -30,13 +30,13 @@ namespace DeviceCenter
             NativeMethods.HideSystemMenu(this);
         }
 
-        private void btnContinue_Click(object sender, RoutedEventArgs e)
+        private void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
             this.Close();
         }
 
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
             this.Close();

@@ -403,7 +403,7 @@
     <value>Settings</value>
   </data>
   <data name="DeviceDetailsUserNameAdmin" xml:space="preserve">
-    <value>Admin</value>
+    <value>Administrator</value>
   </data>
   <data name="DeviceDetailsUserNameLabel" xml:space="preserve">
     <value>User name</value>

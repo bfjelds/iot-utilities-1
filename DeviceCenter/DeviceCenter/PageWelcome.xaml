@@ -6,9 +6,8 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      d:DesignHeight="628.5" d:DesignWidth="1006.5"
+      d:DesignWidth="800"
       Title="{x:Static props:Strings.AppNameDisplay}" FontFamily="IOT MDL2 Assets">
-
     <Grid>
         <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto">
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
@@ -16,7 +15,7 @@
                 <TextBlock FontFamily="./Assets/#IOT MDL2 Assets" Text="  " FontSize="32" Margin="0,20,0,0"/>
                 <TextBlock Text="{x:Static props:Strings.IntroSubTitle}" FontSize="16" TextWrapping="Wrap" Margin="0,20,0,0"/>
                 <TextBlock Text="{x:Static props:Strings.IntroMessage}" FontSize="16" TextWrapping="Wrap" Margin="0,20,0,0"/>
-                <Button FontSize="20" Padding="30 5 30 5" HorizontalAlignment="Left" Content="{x:Static props:Strings.NewDeviceTitle}" Click="SetupDeviceButton_Click" Foreground="White" Background="#FF3277B8" Margin="0,20,0,0"></Button>
+                <Button FontSize="20" Padding="30 5 30 5" HorizontalAlignment="Left" Content="{x:Static props:Strings.NewDeviceTitle}" Click="SetupDeviceButton_Click" Background="#FF3277B8" Foreground="White" Margin="0,20,0,0"></Button>
             </StackPanel>
         </ScrollViewer>
     </Grid>

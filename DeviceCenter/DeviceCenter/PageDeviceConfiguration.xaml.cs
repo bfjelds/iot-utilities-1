@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -45,29 +46,17 @@ namespace DeviceCenter
                 MessageBox.Show("Rebooting the Device Now...");
                 var z = await webbRequest.RestartAsync();
             }
-            if (!String.IsNullOrWhiteSpace(textBoxCurrentPassword.Password)
-                && !String.IsNullOrWhiteSpace(textBoxPassword1.Password))
-            {
-                var y = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
-            }
         }
              
-        private void textBoxPassword2_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (textBoxPassword1.Password == textBoxPassword2.Password)
-            {
-                PasswordCheckLabel.Text = "";
-                ButtonOk.IsEnabled = true;
-            }
-            else
-            {
-                PasswordCheckLabel.Text = Strings.Strings.DeviceNamePwdPasswordDontMatch;
-            }
-        }
-       
         private void textBoxDeviceName_TextChanged(object sender, TextChangedEventArgs e)
         {
             ButtonOk.IsEnabled = true;
-        }       
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
     }
 }
