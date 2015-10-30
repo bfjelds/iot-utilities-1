@@ -43,7 +43,7 @@ namespace DeviceCenter
                 var x = await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text);
 
                 // TO DO: make it a dialog before restart
-                MessageBox.Show("Rebooting the Device Now...");
+                MessageBox.Show(Strings.Strings.DeviceRebootingMessage);
                 var z = await webbRequest.RestartAsync();
             }
         }

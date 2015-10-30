@@ -601,6 +601,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rebooting the Device Now....
+        /// </summary>
+        public static string DeviceRebootingMessage {
+            get {
+                return ResourceManager.GetString("DeviceRebootingMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure device.
         /// </summary>
         public static string DevicesConfigureDevice {

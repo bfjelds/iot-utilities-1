@@ -575,4 +575,7 @@
   <data name="FilterNewDevices" xml:space="preserve">
     <value>New devices</value>
   </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>Rebooting the Device Now...</value>
+  </data>
 </root>

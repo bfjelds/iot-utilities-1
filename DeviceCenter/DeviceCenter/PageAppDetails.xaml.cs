@@ -114,8 +114,8 @@ namespace DeviceCenter
                 PanelDeployed.Visibility = Visibility.Visible;
                 PanelDeploy.Visibility = Visibility.Collapsed;
 
-                var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
-                System.Diagnostics.Process.Start("IExplore.exe", appUrl);
+                var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;                
+                Process.Start(new ProcessStartInfo(appUrl));
             }
         }
 
@@ -234,7 +234,7 @@ namespace DeviceCenter
                 else
                 {
                     var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
-                    System.Diagnostics.Process.Start("IExplore.exe", appUrl);
+                    Process.Start(new ProcessStartInfo(appUrl));
                 }
             }
         }

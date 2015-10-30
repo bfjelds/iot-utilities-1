@@ -382,7 +382,7 @@ namespace DeviceCenter
 
                 var deviceUrl = "http://" + device.IpAddress + ":8080"; //Append the port number as well for the URL to work
 
-                Process.Start("IExplore.exe", deviceUrl);
+                Process.Start(new ProcessStartInfo(deviceUrl));
             }
         }
 

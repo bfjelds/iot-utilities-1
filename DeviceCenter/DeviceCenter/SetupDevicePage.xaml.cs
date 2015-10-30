@@ -37,8 +37,7 @@ namespace DeviceCenter
 
 #region Constants
         private readonly Uri _rpi2DownloadLink = new Uri("http://go.microsoft.com/fwlink/?LinkId=619755");
-        private readonly Uri _mbmDownloadLink = new Uri("http://go.microsoft.com/fwlink/?LinkId=619756");
-        private readonly string _isoFileName = "windows_10_iot_core.iso";
+        private readonly Uri _mbmDownloadLink = new Uri("http://go.microsoft.com/fwlink/?LinkId=619756");        
         private readonly string _rpi2MSIName = "Windows_10_IoT_Core_RPi2.msi";
         private readonly string _mbmMSIName = "Windows_10_IoT_Core_Mbm.msi";
         private readonly string _mbmFFUSubPath = @"Microsoft IoT\FFU\MinnowBoardMax\Flash.ffu";
@@ -302,7 +301,7 @@ namespace DeviceCenter
                 // invoke the script
                 Collection<PSObject> PSOutput = PowerShellInstance.Invoke();
 
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                 {
                     FlashingProgress.Value = 33;
                 }));
@@ -349,7 +348,7 @@ namespace DeviceCenter
                     //Its ok if the directory is not present
                 }
 
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                 {
                     FlashingProgress.Value = 66;
                 }));
@@ -451,7 +450,7 @@ namespace DeviceCenter
 
         void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 double bytesIn = double.Parse(e.BytesReceived.ToString());
                 double totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
@@ -466,7 +465,7 @@ namespace DeviceCenter
         private void ResetProgressUI()
         {
             _currentFlashingState = FlashingStates.Completed;
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(async () =>
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
                 buttonFlash.IsEnabled = true;
                 FlashingProgress.Value = 0;
@@ -603,7 +602,8 @@ namespace DeviceCenter
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
     }
 }
