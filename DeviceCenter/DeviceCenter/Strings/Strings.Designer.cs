@@ -601,7 +601,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to My Devices.
+        ///   Looks up a localized string similar to My devices.
         /// </summary>
         public static string FindMyDeviceButton {
             get {

@@ -42,7 +42,7 @@
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColConnection}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock FontSize="20" Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonConnect_Click" Visibility="{Binding ConnectVisible}" />
+                                    <TextBlock FontSize="22" Text="{Binding WiFiSignalStrengthIconDisplay}" Foreground="Blue" Cursor="Hand" FontFamily="Segoe MDL2 Assets" MouseDown="ButtonConnect_Click" Visibility="{Binding ConnectVisible}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
