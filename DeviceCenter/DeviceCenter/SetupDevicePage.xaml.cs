@@ -70,6 +70,9 @@ namespace DeviceCenter
             await RefreshDriveList();
             this._usbhandler = new EventArrivedEventHandler(UsbAddedorRemoved);
             DriveInfo.AddUSBDetectionHandler(_usbhandler);
+
+            PanelManualImage.Visibility = Visibility.Collapsed;
+            PanelAutomaticImage.Visibility = Visibility.Visible;
         }
 
         private async void ReadLkgFile()
@@ -83,13 +86,14 @@ namespace DeviceCenter
                 // If unable to read files
                 _internalBuild = false;
                 ComboBoxIotBuild.Visibility = Visibility.Hidden;
-                ComboBoxDeviceType.Items.Add(LKGPlatform.MbmName);
-                ComboBoxDeviceType.Items.Add(LKGPlatform.RaspberryPi2Name);
-                ComboBoxDeviceType.Items.Add(LKGPlatform.DragonboardName);
+                ComboBoxDeviceType.Items.Add(LKGPlatform.CreateMbm());
+                ComboBoxDeviceType.Items.Add(LKGPlatform.CreateRpi2());
+                ComboBoxDeviceType.Items.Add(LKGPlatform.CreateQCom());
                 ComboBoxDeviceType.SelectedIndex = 1;
                 ComboBoxDeviceType.IsEnabled = true;
                 ComboBoxIotBuild.IsEnabled = true;
                 buttonFlash.IsEnabled = UpdateStartState();
+
                 return;
             }
 

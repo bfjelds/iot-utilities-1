@@ -42,6 +42,32 @@ namespace DeviceCenter
     [DataContract]
     public class LKGPlatform
     {
+        public LKGPlatform()
+        {
+            this.LkgBuilds = new List<BuildInfo>();
+        }
+
+        public static LKGPlatform CreateMbm()
+        {
+            LKGPlatform result = new LKGPlatform();
+            result.Platform = "MBM";
+            return result;
+        }
+
+        public static LKGPlatform CreateRpi2()
+        {
+            LKGPlatform result = new LKGPlatform();
+            result.Platform = "RPi2";
+            return result;
+        }
+
+        public static LKGPlatform CreateQCom()
+        {
+            LKGPlatform result = new LKGPlatform();
+            result.Platform = "QCOM";
+            return result;
+        }
+
         public const string MbmName = "Minnowboard MAX";
         public const string RaspberryPi2Name = "Raspberry Pi 2";
         public const string DragonboardName = "Qualcomm Dragonboard";
@@ -72,7 +98,7 @@ namespace DeviceCenter
         /// List of LKG builds or none.
         /// </summary>
         [DataMember]
-        public List<BuildInfo> LkgBuilds;
+        public List<BuildInfo> LkgBuilds { get; set; }
     }
 
     /// <summary>
