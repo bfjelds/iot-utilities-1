@@ -226,7 +226,7 @@
     <value>Finding Windows 10 IoT Core devices on your network</value>
   </data>
   <data name="FindMyDeviceButton" xml:space="preserve">
-    <value>Find my device</value>
+    <value>My devices</value>
   </data>
   <data name="FinishButton" xml:space="preserve">
     <value>Finish</value>
