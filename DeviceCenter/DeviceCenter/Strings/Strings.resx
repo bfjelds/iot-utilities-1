@@ -541,5 +541,16 @@
   </data>
   <data name="ButtonAbout" xml:space="preserve">
     <value>About...</value>
+  <data name="NewDeviceFlashingDownload" xml:space="preserve">
+    <value>Downloading the installer</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSI" xml:space="preserve">
+    <value>Unpacking the installer</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailed" xml:space="preserve">
+    <value>Failed to unpack the Windows 10 IoT Core installation package. </value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
+    <value>Installation Failed</value>
   </data>
 </root>

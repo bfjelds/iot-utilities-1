@@ -198,7 +198,7 @@ namespace DeviceCenter
             process.StartInfo.Verb = "runas";
             process.StartInfo.FileName = dismExe;
             process.StartInfo.Arguments =
-                $"/Apply-Image /ApplyDrive:{driveInfo.PhysicalDriveId} /SkipPlatformCheck /ImageFile:{ffuImage}";
+                $"/Apply-Image /ApplyDrive:{driveInfo.PhysicalDriveId} /SkipPlatformCheck /ImageFile:\"{ffuImage}\"";
             System.Diagnostics.Debug.WriteLine("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 
             // TBD make this async and cancellable.

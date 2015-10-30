@@ -898,6 +898,42 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downloading the installer.
+        /// </summary>
+        public static string NewDeviceFlashingDownload {
+            get {
+                return ResourceManager.GetString("NewDeviceFlashingDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpacking the installer.
+        /// </summary>
+        public static string NewDeviceFlashingExtractMSI {
+            get {
+                return ResourceManager.GetString("NewDeviceFlashingExtractMSI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to unpack the Windows 10 IoT Core installation package. .
+        /// </summary>
+        public static string NewDeviceFlashingExtractMSIFailed {
+            get {
+                return ResourceManager.GetString("NewDeviceFlashingExtractMSIFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installation Failed.
+        /// </summary>
+        public static string NewDeviceFlashingExtractMSIFailedCaption {
+            get {
+                return ResourceManager.GetString("NewDeviceFlashingExtractMSIFailedCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This will take a few minutes to complete..
         /// </summary>
         public static string NewDeviceFlashingProgress1 {
