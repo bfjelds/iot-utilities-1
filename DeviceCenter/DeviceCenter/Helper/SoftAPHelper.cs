@@ -159,27 +159,28 @@ namespace DeviceCenter.Helper
             try
             {
                 _wlanClient = new WlanClient();
+
+                var interfaces = _wlanClient?.Interfaces;
+
+                if (interfaces != null && interfaces.Count != 0)
+                {
+                    Util.Info($"Found {interfaces.Count} wlan interfaces");
+                    // TBD - to support multiple wlan interfaces
+                    _wlanInterface = interfaces[0];
+                    Util.Info(_wlanInterface.ToString());
+                    Util.Info("Connected to " + _wlanInterface.CurrentConnection.ToString());
+                    _wlanClient.OnAcmNotification += OnACMNotification;
+                    _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
+                }
+                else
+                {
+                    Util.Info("No Wlan interface found");
+                }
             }
             catch (WLanException)
             {
                 _wlanClient = null;
                 _wlanInterface = null;
-            }
-
-            var interfaces = _wlanClient?.Interfaces;
-
-            if (interfaces != null && interfaces.Count != 0)
-            {
-                Util.Info($"Found {interfaces.Count} wlan interfaces");
-                // TBD - to support multiple wlan interfaces
-                _wlanInterface = interfaces[0];
-                Util.Info(_wlanInterface.ToString());
-                Util.Info("Connected to " + _wlanInterface.CurrentConnection.ToString());
-                _wlanClient.OnAcmNotification += OnACMNotification;
-                _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
-            }
-            else
-            {
                 Util.Info("No Wlan interface found");
             }
         }
