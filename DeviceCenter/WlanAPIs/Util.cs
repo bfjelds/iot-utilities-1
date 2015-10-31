@@ -117,14 +117,14 @@ namespace WlanAPIs
         public static void Info(string message, params object[] paras)
         {
             var msg = string.Format(message, paras);
-            Console.WriteLine(msg);
+            // Console.WriteLine(msg);
             Debug.WriteLine("Info: " + msg);
         }
 
         public static void Error(string message, params object[] paras)
         {
             var msg = string.Format(message, paras);
-            Console.WriteLine(msg);
+            // Console.WriteLine(msg);
             Debug.WriteLine("Error: " + msg);
         }
 

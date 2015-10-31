@@ -172,7 +172,6 @@ namespace DeviceCenter.Helper
                         case HttpErrorResult.fail:
                             Debug.WriteLine(string.Format("Error in MakeRequest, url [{0}]", requestUrl.AbsoluteUri));
                             Debug.WriteLine(error.ToString());
-                            Debug.Fail("Debug break");
                             throw error;
                         case HttpErrorResult.retry:
                             break;
@@ -228,7 +227,6 @@ namespace DeviceCenter.Helper
                         case HttpErrorResult.fail:
                             Debug.WriteLine(string.Format("Error in MakeRequest, url [{0}]", requestUrl.AbsolutePath));
                             Debug.WriteLine(error.ToString());
-                            Debug.Fail("Debug break");
                             throw error;
                         case HttpErrorResult.retry:
                             break;
