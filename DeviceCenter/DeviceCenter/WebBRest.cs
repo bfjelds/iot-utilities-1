@@ -61,11 +61,15 @@ namespace DeviceCenter
 
             try
             {
-                await _restHelper.PostRequestAsync(url, oldPassword);
+                HttpStatusCode result = await _restHelper.PostRequestAsync(url, oldPassword);
 
-                // resaves the password
-                _restHelper.DeviceAuthentication.Password = newPassword;
-                DialogAuthenticate.SavePassword(_restHelper.DeviceAuthentication);
+                if (result == HttpStatusCode.OK)
+                {
+                    // resaves the password
+                    _restHelper.DeviceAuthentication.Password = newPassword;
+                    DialogAuthenticate.SavePassword(_restHelper.DeviceAuthentication);
+                    return true;
+                }
             }
             catch (Exception ex)
             {
@@ -74,7 +78,7 @@ namespace DeviceCenter
                 return false;
             }
 
-            return true;
+            return false;
         }
 
         public async Task<bool> RestartAsync()

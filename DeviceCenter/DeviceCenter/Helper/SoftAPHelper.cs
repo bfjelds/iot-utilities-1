@@ -56,7 +56,7 @@ namespace DeviceCenter.Helper
 
                 if (!ssid.StartsWith(SoftApNamePrefix) || uniqueWlanNetworks.Contains(ssid)) continue;
 
-                Debug.WriteLine($"{ssid} {network.wlanSignalQuality}");
+                Util.Info(network.ToString());
 
                 // dup keys is not allowed
                 var key = network.wlanSignalQuality * 10 + index;
@@ -122,7 +122,7 @@ namespace DeviceCenter.Helper
 
             if(_subnetHelper != null && !_subnetHelper.EnableDhcp())
             {
-                Debug.WriteLine("User selects not to enable DHCP");
+                Util.Error("User selects not to enable DHCP");
             }
 
             try
@@ -159,21 +159,29 @@ namespace DeviceCenter.Helper
             try
             {
                 _wlanClient = new WlanClient();
+
+                var interfaces = _wlanClient?.Interfaces;
+
+                if (interfaces != null && interfaces.Count != 0)
+                {
+                    Util.Info($"Found {interfaces.Count} wlan interfaces");
+                    // TBD - to support multiple wlan interfaces
+                    _wlanInterface = interfaces[0];
+                    Util.Info(_wlanInterface.ToString());
+                    Util.Info("Connected to " + _wlanInterface.CurrentConnection.ToString());
+                    _wlanClient.OnAcmNotification += OnACMNotification;
+                    _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
+                }
+                else
+                {
+                    Util.Info("No Wlan interface found");
+                }
             }
             catch (WLanException)
             {
                 _wlanClient = null;
                 _wlanInterface = null;
-            }
-
-            var interfaces = _wlanClient?.Interfaces;
-
-            if (interfaces != null && interfaces.Count != 0)
-            {
-                // TBD - to support multiple wlan interfaces
-                _wlanInterface = interfaces[0];
-                _wlanClient.OnAcmNotification += OnACMNotification;
-                _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
+                Util.Info("No Wlan interface found");
             }
         }
 

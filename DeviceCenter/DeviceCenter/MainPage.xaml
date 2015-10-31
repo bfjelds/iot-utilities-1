@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DeviceCenter"
         xmlns:props="clr-namespace:DeviceCenter.Strings"
         mc:Ignorable="d"
-        Title="{x:Static props:Strings.AppNameDisplay}" Height="671.597" Width="1009.748" MinWidth="400" MinHeight="400">
+        Title="{x:Static props:Strings.AppNameDisplay}" Height="700" Width="1200" MinWidth="400" MinHeight="400">
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">

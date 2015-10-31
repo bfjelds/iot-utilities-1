@@ -75,6 +75,16 @@ namespace WlanAPIs
             [In, Out] IntPtr pReserved);
 
         [DllImport("wlanapi.dll")]
+        public static extern uint WlanQueryInterface(
+            [In] IntPtr clientHandle,
+            [In, MarshalAs(UnmanagedType.LPStruct)] Guid interfaceGuid,
+            [In] uint opCode,
+            [In, Out] IntPtr pReserved,
+            [Out] out int dataSize,
+            [Out] out IntPtr ppData,
+            [Out] out uint wlanOpcodeValueType);
+
+        [DllImport("wlanapi.dll")]
         public static extern uint WlanCloseHandle(
             [In] IntPtr clientHandle,
             [In, Out] IntPtr pReserved);
@@ -247,6 +257,11 @@ namespace WlanAPIs
             readonly uint reserved;
 
             public string SsidString => Encoding.ASCII.GetString(dot11Ssid.Ssid, 0, (int)dot11Ssid.SsidLength);
+
+            public override string ToString()
+            {
+                return $"[{SsidString}] [connectable? - {networkConnectable}] [Quality - {wlanSignalQuality}] [Auth - {dot11DefaultAuthAlgorithm}] [Ciph - {dot11DefaultCipherAlgorithm}]";
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -283,6 +298,37 @@ namespace WlanAPIs
             DiscoveryUnsecure,
             Auto,
             Invalid
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct WlanConnectionAttributes
+        {
+            public WlanInterfaceState isState;
+            public WlanConnectionMode wlanConnectionMode;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+            public string profileName;
+            public WlanAssociationAttributes wlanAssociationAttributes;
+
+            public override string ToString()
+            {
+                return $"[{wlanAssociationAttributes.SsidString}] [state - {isState}] [mode - {wlanConnectionMode}] [{profileName}]";
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WlanAssociationAttributes
+        {
+            public Dot11Ssid dot11Ssid;
+            public Dot11BssType dot11BssType;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] dot11Bssid;
+            public uint dot11PhyType;
+            public uint dot11PhyIndex;
+            public uint wlanSignalQuality;
+            public uint rxRate;
+            public uint txRate;
+
+            public string SsidString => Encoding.ASCII.GetString(dot11Ssid.Ssid, 0, (int)dot11Ssid.SsidLength);
         }
         #endregion
     }

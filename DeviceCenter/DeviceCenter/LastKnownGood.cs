@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace DeviceCenter
 {
@@ -70,7 +71,7 @@ namespace DeviceCenter
 
         public const string MbmName = "Minnowboard MAX";
         public const string RaspberryPi2Name = "Raspberry Pi 2";
-        public const string DragonboardName = "Qualcomm Dragonboard";
+        public const string DragonboardName = "Qualcomm DragonBoard 410c";
 
         /// <summary>
         /// E.g. "MBM", "RPi2", etc.
@@ -108,8 +109,8 @@ namespace DeviceCenter
     {
         [DataMember]
         public List<LKGPlatform> AllPlatforms;
-    }    
-    
+    }
+
     /// <summary>
     /// Parse the LKG info file.
     /// </summary>
@@ -119,7 +120,7 @@ namespace DeviceCenter
         /// LKG info file.  tbd point to the final file.
         /// </summary>
         static string LkgFileName = "\\\\webnas\\AthensDrop\\LKG\\iot_lkg.txt";
-        
+
         // tbd - remove this.
         // static readonly string LkgFileName = "c:\\temp\\iot_lkg.txt";
 
@@ -127,69 +128,80 @@ namespace DeviceCenter
         /// Deserialized contents.
         /// </summary>
         public LKGAllPlatforms LkgAllPlatforms { get; private set; }
-        
+
         /// <summary>
         /// Deserialize info in json.        
         /// </summary>
-        public void ReadFile()
+        public async Task<bool> ReadFileAsync()
         {
-            if (!File.Exists(LkgFileName))
+            bool fileExists = false;
+
+            await Task.Factory.StartNew(() =>
+            {
+                fileExists = File.Exists(LkgFileName);
+
+                //  LKG file looks like the following:
+                //
+                //  {
+                //      "AllPlatforms":
+                //      [
+                //          { 
+                //              "Platform":"MBM",
+                //              "LkgBuilds":
+                //              [
+                //                  {"Build":1,"Path":"path1"},
+                //                  {"Build":2,"Path":"path2"},
+                //                  {"Build":3,"Path":"path3"}
+                //              ]            
+                //          },            
+                //          {
+                //              "Platform":"RPi2",
+                //              "LkgBuilds":
+                //              [
+                //                  {"Build":4,"Path":"path4"},
+                //                  {"Build":5,"Path":"path5"},
+                //                  {"Build":6,"Path":"path6"}
+                //              ]            
+                //          },
+                //          {
+                //              "Platform":"QCOM",
+                //              "LkgBuilds":
+                //              [
+                //                  {"Build":7,"Path":"path7"},
+                //                  {"Build":8,"Path":"path8"},
+                //                  {"Build":9,"Path":"path9"}
+                //              ]            
+                //          }
+                //      ]
+                //  }
+
+                if (fileExists)
+                {
+                    try
+                    {
+                        string fileContent;
+                        using (var sr = File.OpenText(LkgFileName))
+                        {
+                            fileContent = sr.ReadToEnd();
+                        }
+
+                        var jsonSerializer = new DataContractJsonSerializer(typeof(LKGAllPlatforms));
+
+                        LkgAllPlatforms = (LKGAllPlatforms)jsonSerializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(fileContent)));
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                    }
+                }
+            });
+
+            if (!fileExists)
             {
                 Debug.WriteLine("LkgInsider: LKG file not found");
-                throw new FileNotFoundException();
             }
 
-            //  LKG file looks like the following:
-            //
-            //  {
-            //      "AllPlatforms":
-            //      [
-            //          { 
-            //              "Platform":"MBM",
-            //              "LkgBuilds":
-            //              [
-            //                  {"Build":1,"Path":"path1"},
-            //                  {"Build":2,"Path":"path2"},
-            //                  {"Build":3,"Path":"path3"}
-            //              ]            
-            //          },            
-            //          {
-            //              "Platform":"RPi2",
-            //              "LkgBuilds":
-            //              [
-            //                  {"Build":4,"Path":"path4"},
-            //                  {"Build":5,"Path":"path5"},
-            //                  {"Build":6,"Path":"path6"}
-            //              ]            
-            //          },
-            //          {
-            //              "Platform":"QCOM",
-            //              "LkgBuilds":
-            //              [
-            //                  {"Build":7,"Path":"path7"},
-            //                  {"Build":8,"Path":"path8"},
-            //                  {"Build":9,"Path":"path9"}
-            //              ]            
-            //          }
-            //      ]
-            //  }
-
-            try
-            {
-                string fileContent;
-                using (var sr = File.OpenText(LkgFileName))
-                {
-                    fileContent = sr.ReadToEnd();
-                }
-
-                var jsonSerializer = new DataContractJsonSerializer(typeof(LKGAllPlatforms));
-
-                LkgAllPlatforms = (LKGAllPlatforms)jsonSerializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(fileContent)));
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
+            return fileExists;
         }
     }
 }
