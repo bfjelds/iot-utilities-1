@@ -122,7 +122,7 @@ namespace DeviceCenter.Helper
 
             if(_subnetHelper != null && !_subnetHelper.EnableDhcp())
             {
-                Debug.Fail("User selects not to enable DHCP");
+                Debug.WriteLine("User selects not to enable DHCP");
             }
 
             try

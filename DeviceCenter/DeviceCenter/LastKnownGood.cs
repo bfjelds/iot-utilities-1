@@ -89,8 +89,7 @@ namespace DeviceCenter
                 case "QCOM":
                     return DragonboardName;
             }
-
-            System.Diagnostics.Debug.Fail("Unsupported platforms should not show in this list");
+            
             return null;
         }
 

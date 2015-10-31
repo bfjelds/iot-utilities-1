@@ -153,7 +153,6 @@ namespace WlanAPIs
                         {
                             // never get here
                             _isConnectAttemptSuccess = false;
-                            Debug.Fail("debug");
                             _connectDoneEvent.Set();
                         }
                     }
