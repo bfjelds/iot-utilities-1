@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace WlanAPIs
 {
@@ -90,6 +91,42 @@ namespace WlanAPIs
                     IntPtr.Zero),
                 "Disconnect"
                 );
+        }
+
+        public override string ToString()
+        {
+            return $"Wlan interface [{_nativeInterfaceInfo.interfaceDescription}] - [{_nativeInterfaceInfo.isState}]";
+        }
+
+        public WlanInterop.WlanConnectionAttributes CurrentConnection
+        {
+            get
+            {
+                const uint WlanIntfOpcode_CurrentConnection = 7;
+                int valueSize;
+                IntPtr valuePtr;
+                uint opcodeValueType;
+
+                Util.ThrowIfFail(
+                    WlanInterop.WlanQueryInterface(
+                        _client.NativeHandle, 
+                        _nativeInterfaceInfo.interfaceGuid,
+                        WlanIntfOpcode_CurrentConnection, 
+                        IntPtr.Zero, 
+                        out valueSize, 
+                        out valuePtr, 
+                        out opcodeValueType), 
+                    "CurrentConnection");
+                try
+                {
+                    return (WlanInterop.WlanConnectionAttributes)Marshal.PtrToStructure(valuePtr, 
+                        typeof(WlanInterop.WlanConnectionAttributes));
+                }
+                finally
+                {
+                    WlanInterop.WlanFreeMemory(valuePtr);
+                }
+            }
         }
 
         protected void Connect(WlanInterop.WlanConnectionParameters connectionParams)
