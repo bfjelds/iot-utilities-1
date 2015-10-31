@@ -130,7 +130,13 @@ namespace DeviceCenter.Helper
             return null; // should never get here
         }
 
-        public async Task<HttpStatusCode> PostRequestAsync(string restPath)
+        /// <summary>
+        /// Post async request to WebB.
+        /// </summary>
+        /// <param name="restPath">path to REST api</param>
+        /// <param name="passwordToUse">password to use for the REST api if specified, used when changing old password.</param>
+        /// <returns></returns>
+        public async Task<HttpStatusCode> PostRequestAsync(string restPath, string passwordToUse)
         {
             Stream objStream = null;
             StreamReader objReader = null;
@@ -139,8 +145,12 @@ namespace DeviceCenter.Helper
             Uri requestUrl = new Uri(string.Format(UrlFormat, this.IPAddress.ToString(), restPath), UriKind.Absolute);
             Debug.WriteLine(requestUrl.AbsoluteUri);
 
-            bool running = true;
-            while (running)
+            // true when it's not using the password the app remembers.  this is used by set password page with oldpassword information.
+            var isOneOffPassword = !string.IsNullOrEmpty(passwordToUse);
+
+            var password = isOneOffPassword ? passwordToUse : this.DeviceAuthentication.Password;
+
+            while (true)
             {
                 try
                 {
@@ -148,7 +158,7 @@ namespace DeviceCenter.Helper
 
                     request.Method = "POST";
                     request.ContentType = "application/x-www-form-urlencoded";
-                    string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(this.DeviceAuthentication.UserName + ":" + this.DeviceAuthentication.Password));
+                    string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(this.DeviceAuthentication.UserName + ":" + password));
                     request.Headers.Add("Authorization", "Basic " + encodedAuth);
                     request.ContentLength = 0;
 
@@ -167,17 +177,30 @@ namespace DeviceCenter.Helper
                 }
                 catch (WebException error)
                 {
+                    if (isOneOffPassword)
+                    {
+                        throw;
+                    }
+
                     switch (HandleError(error))
                     {
                         case HttpErrorResult.fail:
-                            Debug.WriteLine(string.Format("Error in MakeRequest, url [{0}]", requestUrl.AbsoluteUri));
+                            Debug.WriteLine($"Error in MakeRequest, url [{requestUrl.AbsoluteUri}]");
                             Debug.WriteLine(error.ToString());
-                            throw error;
+                            throw;
                         case HttpErrorResult.retry:
                             break;
                         case HttpErrorResult.cancel:
                             // todo: can caller handle this?
-                            return (error.Response as HttpWebResponse).StatusCode;
+                            var httpWebResponse = error.Response as HttpWebResponse;
+                            if (httpWebResponse != null)
+                            {
+                                return httpWebResponse.StatusCode;
+                            }
+                            else
+                            {
+                                throw;
+                            }
                     }
                 }
             }

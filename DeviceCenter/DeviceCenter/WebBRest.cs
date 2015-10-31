@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using DeviceCenter.DataContract;
 using DeviceCenter.Helper;
 
@@ -42,7 +43,7 @@ namespace DeviceCenter
 
             try
             {
-                await _restHelper.PostRequestAsync(url);
+                await _restHelper.PostRequestAsync(url, string.Empty);
             }
             catch (Exception ex)
             {
@@ -60,7 +61,7 @@ namespace DeviceCenter
 
             try
             {
-                await _restHelper.PostRequestAsync(url);
+                await _restHelper.PostRequestAsync(url, oldPassword);
 
                 // resaves the password
                 _restHelper.DeviceAuthentication.Password = newPassword;
@@ -69,6 +70,7 @@ namespace DeviceCenter
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                // MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return false;
             }
 
@@ -81,7 +83,7 @@ namespace DeviceCenter
 
             try
             {
-                await _restHelper.PostRequestAsync(url);
+                await _restHelper.PostRequestAsync(url, string.Empty);
             }
             catch (Exception ex)
             {
@@ -283,7 +285,7 @@ namespace DeviceCenter
                         string url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(app.PackageRelativeId)
                                      + "&package=" + RestHelper.Encode64(app.PackageFullName);
 
-                        result = await this._restHelper.PostRequestAsync(url);
+                        result = await this._restHelper.PostRequestAsync(url, string.Empty);
                     }
                 }
             }
