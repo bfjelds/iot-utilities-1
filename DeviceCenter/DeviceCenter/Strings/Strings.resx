@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppNameDisplay" xml:space="preserve">
-    <value>Windows 10 IoT Dashboard</value>
+    <value>IoT Dashboard</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Cancel</value>
@@ -205,10 +205,10 @@
     <value>Setting the device name and password helps secure your device</value>
   </data>
   <data name="DeviceNamePwdPassword1" xml:space="preserve">
-    <value>Old Password</value>
+    <value>Old password</value>
   </data>
   <data name="DeviceNamePwdPassword2" xml:space="preserve">
-    <value>New Password</value>
+    <value>New password</value>
   </data>
   <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
     <value>Passwords don't match</value>
@@ -251,7 +251,7 @@
     <value>Rapidly prototype and build your Windows IoT solutions on a variety of devices running Windows 10 IoT Core. Windows 10 gives you powerful tools that let you develop fast and deploy to your device.</value>
   </data>
   <data name="IntroSubTitle2" xml:space="preserve">
-    <value>To set up a device, all you need to do is download and install Windows IoT Core to your device</value>
+    <value>To set up a device, all you need to do is download and install Windows 10 IoT Core to your device</value>
   </data>
   <data name="IntroTitle" xml:space="preserve">
     <value>Discover the internet of your things</value>
@@ -303,7 +303,7 @@
     <value>Windows 10 IoT Core</value>
   </data>
   <data name="NewDeviceDownloadingProgress" xml:space="preserve">
-    <value>{0} MB Downloading - {1}%</value>
+    <value>{0} MB downloading - {1}%</value>
     <comment>{0} is the number of MB downloaded. {1} is the percent of the download</comment>
   </data>
   <data name="NewDeviceDriveLabel" xml:space="preserve">
@@ -421,7 +421,7 @@
     <value>Done</value>
   </data>
   <data name="LeftBarMyDevices" xml:space="preserve">
-    <value>My Devices</value>
+    <value>My devices</value>
   </data>
   <data name="LeftBarSamples" xml:space="preserve">
     <value>Try some samples</value>
@@ -433,7 +433,7 @@
     <value>This board requires a different process for setting up. After you install Windows on this board and connect it to the Internet, you will find it on your device list.</value>
   </data>
   <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
-    <value>Installing Windows IoT Core on the Dragonboard</value>
+    <value>Installing Windows 10 IoT Core on the DragonBoard 410c</value>
   </data>
   <data name="SamplesAppRunning" xml:space="preserve">
     <value>This app is running on your device.</value>
@@ -466,7 +466,7 @@
     <value>Look at other projects and tutorials</value>
   </data>
   <data name="SamplesRadioMessage1" xml:space="preserve">
-    <value>Turn your Windows IoT Core device into an internet radio that can be controlled from anywhere in your home.</value>
+    <value>Turn your Windows 10 IoT Core device into an internet radio that can be controlled from anywhere in your home.</value>
   </data>
   <data name="SamplesRadioTitle" xml:space="preserve">
     <value>Internet radio</value>
@@ -503,16 +503,16 @@
     <comment>Save password</comment>
   </data>
   <data name="DeviceNamePwdPassword3" xml:space="preserve">
-    <value>Confirm Password</value>
+    <value>Confirm password</value>
   </data>
   <data name="MessageUnableToGetWifi" xml:space="preserve">
-    <value>The remote device did not respond to request for Access Point list.</value>
+    <value>The remote device did not respond to request for access point list.</value>
   </data>
   <data name="DeviceListColOSVersion" xml:space="preserve">
     <value>OS Version</value>
   </data>
   <data name="ErrorUnknownArchitecture" xml:space="preserve">
-    <value>Unknown device architecture.  Please use Windows IoT build {0} or newer</value>
+    <value>Unknown device architecture.  Please use Windows 10 IoT Core build {0} or newer</value>
     <comment>{0} is the RTM version of TH2</comment>
   </data>
   <data name="SamplesAppRunningBackground" xml:space="preserve">
@@ -534,13 +534,13 @@
     <value>Microsoft Services Agreement</value>
   </data>
   <data name="AboutSubtitle" xml:space="preserve">
-    <value>Windows 10 IoT Dashboard</value>
+    <value>Windows 10 IoT Core Dashboard</value>
   </data>
   <data name="AboutTitle" xml:space="preserve">
     <value>About this app</value>
   </data>
   <data name="ButtonAbout" xml:space="preserve">
-    <value>About...</value>
+    <value>About</value>
   </data>
   <data name="NewDeviceFlashingDownload" xml:space="preserve">
     <value>Downloading the installer</value>
@@ -552,13 +552,13 @@
     <value>Failed to unpack the Windows 10 IoT Core installation package. </value>
   </data>
   <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
-    <value>Installation Failed</value>
+    <value>Installation failed</value>
   </data>
   <data name="DeviceListFilter" xml:space="preserve">
     <value>Filter</value>
   </data>
   <data name="DeviceQualcommDragonboard" xml:space="preserve">
-    <value>Qualcomm Dragonboard</value>
+    <value>Qualcomm DragonBoard 410c</value>
   </data>
   <data name="DevicesConfigureDevice" xml:space="preserve">
     <value>Configure device</value>
@@ -567,7 +567,8 @@
     <value>Download complete</value>
   </data>
   <data name="DownloadProgress" xml:space="preserve">
-    <value>{0} MB Downloading - {1}%</value>
+    <value>{0} MB downloading - {1}%</value>
+    <comment>Shows progress, 0 is megabytes sent, 1 is percent progress</comment>
   </data>
   <data name="FilterAllDevices" xml:space="preserve">
     <value>All</value>
@@ -576,6 +577,12 @@
     <value>New devices</value>
   </data>
   <data name="DeviceRebootingMessage" xml:space="preserve">
-    <value>Rebooting the Device Now...</value>
+    <value>Rebooting the device now...</value>
+  </data>
+  <data name="MessageBadPassword" xml:space="preserve">
+    <value>The old password is incorrect</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
 </root>
