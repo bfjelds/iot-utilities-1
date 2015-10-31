@@ -74,7 +74,11 @@ namespace DeviceCenter
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                // MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show(
+                    Strings.Strings.MessageBadPassword,
+                    Strings.Strings.AppNameDisplay, 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Exclamation);
                 return false;
             }
 
