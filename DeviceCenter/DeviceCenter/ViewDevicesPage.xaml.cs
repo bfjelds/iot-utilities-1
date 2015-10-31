@@ -25,12 +25,13 @@ namespace DeviceCenter
         private readonly DispatcherTimer _telemetryTimer = new DispatcherTimer();
         private DiscoveredDevice _newestBuildDevice, _oldestBuildDevice;
         private readonly ObservableCollection<DiscoveredDevice> _devices = new ObservableCollection<DiscoveredDevice>();
+        private static bool filterNew = false;
 
         private readonly SoftApHelper _softwareAccessPoint;
         private readonly DispatcherTimer _wifiRefreshTimer = new DispatcherTimer();
         private readonly ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork> _adhocNetworks = new ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork>();
 
-        private readonly Frame _navigationFrame;
+        private Frame _navigationFrame;
         private PageWifi _wifiPage;
         private bool _connectedToAdhoc = false;
         readonly NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
@@ -49,7 +50,7 @@ namespace DeviceCenter
         {
             InitializeComponent();
             _addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
-            _navigationFrame = navigationFrame;
+            this._navigationFrame = navigationFrame;
 
             _newestBuildDevice = null;
             _oldestBuildDevice = null;
@@ -71,7 +72,7 @@ namespace DeviceCenter
 
             _softwareAccessPoint = SoftApHelper.Instance;
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
-			
+
             //Sort the listview
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("DeviceName", ListSortDirection.Ascending));
@@ -176,6 +177,9 @@ namespace DeviceCenter
 
         private void AddDeviceCallback(string deviceName, string ipV4Address, string ipV6Address, string txtParameters)
         {
+            if (filterNew)
+                return;
+
             //Debug.WriteLine(deviceName);
 
             if (String.IsNullOrEmpty(deviceName)
@@ -411,9 +415,21 @@ namespace DeviceCenter
             }
         }
 
+        private void Refresh()
+        {
+            _devices.Clear();
+            _adhocNetworks.Clear();
+
+            NativeMethods.StopDiscovery();
+            NativeMethods.RegisterCallback(_addCallbackdel);
+            NativeMethods.StartDiscovery();
+
+            RefreshWifiAsync();
+        }
+
         private void ButtonRefresh_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.Navigate(new ViewDevicesPage(_navigationFrame));
+            Refresh();
         }
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
@@ -422,30 +438,25 @@ namespace DeviceCenter
             e.Handled = true;
         }
 
-        private void ButtonAppInstall_Click(object sender, MouseButtonEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var frameworkElement = sender as FrameworkElement;
+            ComboBoxItem item = comboBoxFilter.SelectedItem as ComboBoxItem;
 
-            DiscoveredDevice device = null;
+            bool newValue = false;
 
-            if (frameworkElement != null)
+            if (item != null)
             {
-                device = frameworkElement.DataContext as DiscoveredDevice;
+                string filterText = item.Tag as string;
+                if (filterText == "New")
+                    newValue = true;
             }
 
-            if (device != null)
+            if (newValue != filterNew)
             {
-                App.TelemetryClient.TrackEvent("AppInstallButtonClick", new Dictionary<string, string>()
-                {
-                    { "DeviceId", device.UniqueId.ToString() },
-                    { "DeviceArchitecture", device.Architecture },
-                    { "DeviceOSVersion", device.OsVersion },
-                    { "DeviceModel", device.DeviceModel }
-                });
+                filterNew = newValue;
 
-                //_navigationFrame.Navigate(new SamplesPage(_navigationFrame, device));
+                Refresh();
             }
         }
-
     }
 }

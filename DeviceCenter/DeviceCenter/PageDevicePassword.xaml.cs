@@ -35,6 +35,7 @@ namespace DeviceCenter
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            LabelDeviceName.Text = this.Device.DeviceName;
             ButtonOk.IsEnabled = false;
         }
 

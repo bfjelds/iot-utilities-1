@@ -75,25 +75,40 @@ namespace DeviceCenter
             PanelAutomaticImage.Visibility = Visibility.Visible;
         }
 
+        private void SetUpDefaults()
+        {
+            // If unable to read files
+            _internalBuild = false;
+            ComboBoxIotBuild.Visibility = Visibility.Hidden;
+
+            // TODO: check online for content
+            /*ComboBoxDeviceType.Items.Add(LKGPlatform.CreateMbm());
+            ComboBoxDeviceType.Items.Add(LKGPlatform.CreateRpi2());
+            ComboBoxDeviceType.Items.Add(LKGPlatform.CreateQCom());
+            ComboBoxDeviceType.SelectedIndex = 1;
+            ComboBoxDeviceType.IsEnabled = true;
+            ComboBoxIotBuild.IsEnabled = true;*/
+
+            ComboBoxDeviceType.Items.Add("LKG not found \\\\webnas\\AthensDrop");
+            ComboBoxDeviceType.SelectedIndex = 0;
+            ComboBoxDeviceType.IsEnabled = false;
+
+             buttonFlash.IsEnabled = UpdateStartState();
+        }
+
         private async void ReadLkgFile()
         {
             try
             {
-                _lkg.ReadFile();
+                if (!await _lkg.ReadFileAsync())
+                {
+                    SetUpDefaults();
+                    return;
+                }
             }
             catch (Exception)
             {
-                // If unable to read files
-                _internalBuild = false;
-                ComboBoxIotBuild.Visibility = Visibility.Hidden;
-                ComboBoxDeviceType.Items.Add(LKGPlatform.CreateMbm());
-                ComboBoxDeviceType.Items.Add(LKGPlatform.CreateRpi2());
-                ComboBoxDeviceType.Items.Add(LKGPlatform.CreateQCom());
-                ComboBoxDeviceType.SelectedIndex = 1;
-                ComboBoxDeviceType.IsEnabled = true;
-                ComboBoxIotBuild.IsEnabled = true;
-                buttonFlash.IsEnabled = UpdateStartState();
-
+                SetUpDefaults();
                 return;
             }
 
