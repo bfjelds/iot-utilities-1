@@ -131,7 +131,7 @@ namespace DeviceCenter
             }
             catch (Exception err)
             {
-                Debug.WriteLine(string.Format("Error connecting, {0}", err.Message));
+                Debug.WriteLine($"Error connecting, {err.Message}");
                 Debug.WriteLine(err.ToString());
             }
 

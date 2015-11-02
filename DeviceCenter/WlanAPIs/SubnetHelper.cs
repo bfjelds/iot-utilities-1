@@ -3,7 +3,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 
@@ -68,8 +67,8 @@ namespace WlanAPIs
 
             lock (_dhcpLockObj)
             {
-                if (_isStaticIPSet) return true;
-                _isStaticIPSet = true;
+                if (_isStaticIpSet) return true;
+                _isStaticIpSet = true;
             }
 
             Util.Info("SubnetHelper: Seting static IP to [{0}] [{1}]", ipAddress, subnetMask);
@@ -77,8 +76,8 @@ namespace WlanAPIs
             argument = argument.Replace("$inferfaceName", _networkInterface.Name);
             argument = argument.Replace("$ip", ipAddress);
             argument = argument.Replace("$subnetMask", subnetMask);
-            _isStaticIPSet = Util.RunNetshElevated(argument);
-            return _isStaticIPSet;
+            _isStaticIpSet = Util.RunNetshElevated(argument);
+            return _isStaticIpSet;
         }
 
         public bool EnableDhcp()
@@ -87,17 +86,17 @@ namespace WlanAPIs
 
             lock (_dhcpLockObj)
             {
-                if (!_isStaticIPSet) return true;
-                _isStaticIPSet = false;
+                if (!_isStaticIpSet) return true;
+                _isStaticIpSet = false;
             }
 
             // netsh interface ip set address "Wi-Fi" dhcp
             Util.Info("SubnetHelper: Enabling DHCP");
 
             var argument = NetshEnableDhcpArgument.Replace("$interfaceName", _networkInterface.Name);
-            bool isDHCPEnabled = Util.RunNetshElevated(argument);
-            _isStaticIPSet = !isDHCPEnabled;
-            return isDHCPEnabled;
+            var isDhcpEnabled = Util.RunNetshElevated(argument);
+            _isStaticIpSet = !isDhcpEnabled;
+            return isDhcpEnabled;
         }
 
         public void DebugPrint()
@@ -111,7 +110,7 @@ namespace WlanAPIs
         }
 
         private NetworkInterface _networkInterface;
-        private bool _isStaticIPSet;
-        private Object _dhcpLockObj = new Object();
+        private bool _isStaticIpSet;
+        private readonly object _dhcpLockObj = new object();
     }
 }

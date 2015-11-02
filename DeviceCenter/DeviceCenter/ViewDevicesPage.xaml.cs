@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -25,13 +24,13 @@ namespace DeviceCenter
         private readonly DispatcherTimer _telemetryTimer = new DispatcherTimer();
         private DiscoveredDevice _newestBuildDevice, _oldestBuildDevice;
         private readonly ObservableCollection<DiscoveredDevice> _devices = new ObservableCollection<DiscoveredDevice>();
-        private static bool filterNew = false;
+        private static bool _filterNew = false;
 
         private readonly SoftApHelper _softwareAccessPoint;
         private readonly DispatcherTimer _wifiRefreshTimer = new DispatcherTimer();
         private readonly ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork> _adhocNetworks = new ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork>();
 
-        private Frame _navigationFrame;
+        private readonly Frame _navigationFrame;
         private PageWifi _wifiPage;
         private bool _connectedToAdhoc = false;
         readonly NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
@@ -62,7 +61,6 @@ namespace DeviceCenter
             NativeMethods.StopDiscovery();
 
             //Register the callback
-            
             NativeMethods.RegisterCallback(_addCallbackdel);
 
             //Start device discovery using DNS-SD
@@ -105,6 +103,7 @@ namespace DeviceCenter
             try
             {
                 IList<WlanInterop.WlanAvailableNetwork> list = null;
+
                 try
                 {
                     list = _softwareAccessPoint.GetAvailableNetworkList();
@@ -151,7 +150,7 @@ namespace DeviceCenter
             // Only send a telemetry event if we've found build information
             if (_oldestBuildDevice != null && _newestBuildDevice != null)
             {
-                int deviceCount = _devices.Count;
+                var deviceCount = _devices.Count;
 
                 Debug.WriteLine("Sending telemetry event... ");
                 Debug.WriteLine("Max OS Version: " + _newestBuildDevice.OsVersion);
@@ -177,7 +176,7 @@ namespace DeviceCenter
 
         private void AddDeviceCallback(string deviceName, string ipV4Address, string ipV6Address, string txtParameters)
         {
-            if (filterNew)
+            if (_filterNew)
                 return;
 
             //Debug.WriteLine(deviceName);
@@ -197,8 +196,8 @@ namespace DeviceCenter
             //The txt parameter are in following format
             // txtParameters = "guid=79F50796-F59B-D97A-A00F-63D798C6C144,model=Virtual,architecture=x86,osversion=10.0.10557,"
             // Split them with ',' and '=' and get the odd values 
-            string[] deviceDetails = txtParameters.Split(',', '=');
-            int index = 0;
+            var deviceDetails = txtParameters.Split(',', '=');
+            var index = 0;
             while(index < deviceDetails.Length)
             {
                 switch(deviceDetails[index])
@@ -451,9 +450,9 @@ namespace DeviceCenter
                     newValue = true;
             }
 
-            if (newValue != filterNew)
+            if (newValue != _filterNew)
             {
-                filterNew = newValue;
+                _filterNew = newValue;
 
                 Refresh();
             }

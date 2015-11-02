@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -127,7 +125,7 @@ namespace DeviceCenter.Helper
 
             try
             {
-                if (_isConnectedToSoftAP && _wlanInterface != null)
+                if (_isConnectedToSoftAp && _wlanInterface != null)
                 {
                     _wlanInterface.Disconnect();
                 }
@@ -146,13 +144,7 @@ namespace DeviceCenter.Helper
             }
         }
 
-        public IPAddress IPV4
-        {
-            get
-            {
-                return _subnetHelper.GetIpv4();
-            }
-        }
+        public IPAddress Ipv4 => _subnetHelper.GetIpv4();
 
         private SoftApHelper()
         {
@@ -169,7 +161,7 @@ namespace DeviceCenter.Helper
                     _wlanInterface = interfaces[0];
                     Util.Info(_wlanInterface.ToString());
                     Util.Info("Connected to " + _wlanInterface.CurrentConnection.ToString());
-                    _wlanClient.OnAcmNotification += OnACMNotification;
+                    _wlanClient.OnAcmNotification += OnAcmNotification;
                     _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
                 }
                 else
@@ -185,18 +177,8 @@ namespace DeviceCenter.Helper
             }
         }
 
-        public static SoftApHelper Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new SoftApHelper();
-                }
+        public static SoftApHelper Instance => _instance ?? (_instance = new SoftApHelper());
 
-                return _instance;
-            }
-        }
         #endregion
 
         #region private
@@ -211,14 +193,14 @@ namespace DeviceCenter.Helper
                             password
                             );
 
-				_isConnectedToSoftAP = _wlanClient.WaitConnectComplete();
+				_isConnectedToSoftAp = _wlanClient.WaitConnectComplete();
             }
             catch (WLanException)
             {
-                _isConnectedToSoftAP = false;
+                _isConnectedToSoftAp = false;
             }
 
-            return _isConnectedToSoftAP;
+            return _isConnectedToSoftAp;
         }
 
         private bool CheckIpAndSubnet()
@@ -227,7 +209,7 @@ namespace DeviceCenter.Helper
             Util.Info("Curernt IP [{0}]", ipv4);
 
 
-            bool isDhcp = Util.IsDhcpipAddress(ipv4.ToString());
+            var isDhcp = Util.IsDhcpipAddress(ipv4.ToString());
             Util.Info("Is DHCP IP [{0}]", isDhcp ? "yes" : "no");
 
             if (!isDhcp)
@@ -257,16 +239,16 @@ namespace DeviceCenter.Helper
             return false;
         }
 
-        private void OnACMNotification(string profileName, int notificationCode, WlanInterop.WlanReasonCode reasonCode)
+        private void OnAcmNotification(string profileName, int notificationCode, WlanInterop.WlanReasonCode reasonCode)
         {
             switch ((WlanInterop.WlanNotificationCodeAcm)notificationCode)
             {
                 case WlanInterop.WlanNotificationCodeAcm.Disconnected:
                     {
                         Util.Info("Disconnected from [{0}]", profileName);
-                        if (_isConnectedToSoftAP && profileName == Util.WlanProfileName)
+                        if (_isConnectedToSoftAp && profileName == Util.WlanProfileName)
                         {
-                            _isConnectedToSoftAP = false;
+                            _isConnectedToSoftAp = false;
                             OnSoftApDisconnected?.Invoke();
                         }
                     }
@@ -276,11 +258,11 @@ namespace DeviceCenter.Helper
 
         private readonly WlanClient _wlanClient;
         private readonly WlanInterface _wlanInterface;
-        private bool _isConnectedToSoftAP;
-        private SubnetHelper _subnetHelper;
+        private bool _isConnectedToSoftAp;
+        private readonly SubnetHelper _subnetHelper;
         private static SoftApHelper _instance;
         private bool _isDisconnecting;
-        private Object _disconnectLockObj = new Object();
+        private readonly object _disconnectLockObj = new object();
         #endregion
     }
 }

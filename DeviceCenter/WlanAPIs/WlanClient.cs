@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -42,7 +41,7 @@ namespace WlanAPIs
                 );
 
             // enum interfaces
-            IntPtr nativeInterfaceList = IntPtr.Zero;
+            IntPtr nativeInterfaceList;
             Util.ThrowIfFail(
                 WlanInterop.WlanEnumInterfaces(NativeHandle, IntPtr.Zero, out nativeInterfaceList),
                 "WlanEnumInterfaces"
@@ -67,12 +66,12 @@ namespace WlanAPIs
 
         private List<WlanInterface> ParseNativeWlanInterfaceList(IntPtr nativeInterfaceList)
         {
-            List<WlanInterface> wlanInterfaces = new List<WlanInterface>();
+            var wlanInterfaces = new List<WlanInterface>();
             var header = (WlanInterop.WlanInterfaceInfoList)Marshal.PtrToStructure(
                 nativeInterfaceList,
                 typeof(WlanInterop.WlanInterfaceInfoList));
 
-            Int64 listIterator = nativeInterfaceList.ToInt64() + Marshal.SizeOf(header);
+            var listIterator = nativeInterfaceList.ToInt64() + Marshal.SizeOf(header);
 
             var currentIfaceGuids = new List<Guid>();
             for (var i = 0; i < header.numberOfItems; ++i)
@@ -172,7 +171,7 @@ namespace WlanAPIs
         }
 
         internal IntPtr NativeHandle;
-        private WlanInterop.WlanNotificationCallbackDelegate _wlanNotificationCallback;
+        private readonly WlanInterop.WlanNotificationCallbackDelegate _wlanNotificationCallback;
         private readonly AutoResetEvent _connectDoneEvent = new AutoResetEvent(false);
         internal bool _isConnectAttemptSuccess;
     }

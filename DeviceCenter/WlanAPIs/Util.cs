@@ -2,7 +2,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +11,8 @@ namespace WlanAPIs
     public class Util
     {
         public const string WlanProfileName = "AthensSoftAP";
-        public const string Athens_SoftAP_Authentication = "WPA2PSK";
-        public const string Athens_SoftAP_Encryption = "AES";
+        public const string AthensSoftApAuthentication = "WPA2PSK";
+        public const string AthensSoftApEncryption = "AES";
         static readonly string ProfileTemplate =
             "<?xml version =\"1.0\" encoding=\"US-ASCII\"?>" +
             "<WLANProfile xmlns =\"http://www.microsoft.com/networking/WLAN/profile/v1\">" +
@@ -44,8 +43,8 @@ namespace WlanAPIs
         {
             var profileStr = ProfileTemplate;
             profileStr = profileStr.Replace("$ssid", ssid);
-            profileStr = profileStr.Replace("$authentication", Athens_SoftAP_Authentication);
-            profileStr = profileStr.Replace("$encryption", Athens_SoftAP_Encryption);
+            profileStr = profileStr.Replace("$authentication", AthensSoftApAuthentication);
+            profileStr = profileStr.Replace("$encryption", AthensSoftApEncryption);
 
             var securityStr = SecuritySectionTemplate;
             securityStr = securityStr.Replace("$key", "password");

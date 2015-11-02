@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.ApplicationInsights;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.Deployment.Application;
@@ -40,18 +35,26 @@ namespace DeviceCenter
             try
             {
                 // Try querying 64-bit registry for key
-                RegistryKey localRegKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64);
+                var localRegKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64);
+                
+                // tbd check for null
                 id = (string)localRegKey.OpenSubKey(@"SOFTWARE\Microsoft\SQMClient").GetValue("MachineId");
 
                 // If can't find key in 64-bit registry, query 32-bit registry
                 if(id == null)
                 {
                     localRegKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+
+                    // tbd check for null
                     id = (string)localRegKey.OpenSubKey(@"SOFTWARE\Microsoft\SQMClient").GetValue("MachineId");
                 }
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
 
+            // tbd check for null
             return id.Replace("{", "").Replace("}", "");
         }
 

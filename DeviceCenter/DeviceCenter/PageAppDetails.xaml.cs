@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -78,13 +77,13 @@ namespace DeviceCenter
 
         private async void ButtonDeploy_Click(object sender, RoutedEventArgs e)
         {
-            if (_device != null && _device.Architecture == null || _device.Architecture.Length == 0)
+            if (_device != null && string.IsNullOrEmpty(_device.Architecture))
             {
                 // the app name as caption
                 var errorCaption = Strings.Strings.AppNameDisplay;
 
                 // show the filename, use standard windows error
-                string minBuild = "10.0.10577";
+                var minBuild = "10.0.10577";
                 var errorMsg = string.Format(Strings.Strings.ErrorUnknownArchitecture, minBuild);
 
                 MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -94,6 +93,7 @@ namespace DeviceCenter
             PanelDeploying.Visibility = Visibility.Visible;
             PanelDeployed.Visibility = Visibility.Collapsed;
 
+            // tbd check for null _device
             var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);                      
 
             var sourceFiles = this.AppItem.PlatformFiles[_device.Architecture];
@@ -165,16 +165,16 @@ namespace DeviceCenter
                 return;
             }
 
-            string deviceModel = "";
-            string osVersion = "";
-            string deviceGuid = "";
-            string arch = "";
+            var deviceModel = "";
+            var osVersion = "";
+            var deviceGuid = "";
+            var arch = "";
 
             //The txt parameter are in following format
             // txtParameters = "guid=79F50796-F59B-D97A-A00F-63D798C6C144,model=Virtual,architecture=x86,osversion=10.0.10557,"
             // Split them with ',' and '=' and get the odd values 
-            string[] deviceDetails = txtParameters.Split(',', '=');
-            int index = 0;
+            var deviceDetails = txtParameters.Split(',', '=');
+            var index = 0;
             while (index < deviceDetails.Length)
             {
                 switch (deviceDetails[index])

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Net;
-using System.Windows;
+﻿using System.Diagnostics;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Navigation;
-using System.Windows.Threading;
 
 namespace DeviceCenter
 {
@@ -37,7 +31,7 @@ namespace DeviceCenter
             this._navigation.Navigate(new PageAppDetails(_navigation, e.Info));
         }
 
-        private Frame _navigation;
+        private readonly Frame _navigation;
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

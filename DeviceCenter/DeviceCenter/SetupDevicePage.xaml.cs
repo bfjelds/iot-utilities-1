@@ -9,11 +9,8 @@ using System.IO;
 using System.ComponentModel;
 using System.Windows.Threading;
 using System.Net;
-using System.Resources;
-using System.Reflection;
 using System.Management.Automation;
 using System.Collections.ObjectModel;
-using System.Threading;
 
 namespace DeviceCenter
 {
@@ -38,23 +35,23 @@ namespace DeviceCenter
 #region Constants
         private readonly Uri _rpi2DownloadLink = new Uri("http://go.microsoft.com/fwlink/?LinkId=619755");
         private readonly Uri _mbmDownloadLink = new Uri("http://go.microsoft.com/fwlink/?LinkId=619756");        
-        private readonly string _rpi2MSIName = "Windows_10_IoT_Core_RPi2.msi";
-        private readonly string _mbmMSIName = "Windows_10_IoT_Core_Mbm.msi";
-        private readonly string _mbmFFUSubPath = @"Microsoft IoT\FFU\MinnowBoardMax\Flash.ffu";
-        private readonly string _rpi2FFUSubPath = @"Microsoft IoT\FFU\RaspberryPi2\Flash.ffu";
+        private readonly string _rpi2MsiName = "Windows_10_IoT_Core_RPi2.msi";
+        private readonly string _mbmMsiName = "Windows_10_IoT_Core_Mbm.msi";
+        private readonly string _mbmFfuSubPath = @"Microsoft IoT\FFU\MinnowBoardMax\Flash.ffu";
+        private readonly string _rpi2FfuSubPath = @"Microsoft IoT\FFU\RaspberryPi2\Flash.ffu";
         readonly LastKnownGood _lkg = new LastKnownGood();
 #endregion
 
         private double _flashStartTime = 0;
-        private LKGPlatform _cachedDeviceType;
+        private LkgPlatform _cachedDeviceType;
         private DriveInfo _cachedDriveInfo;
         private BuildInfo _cachedBuildInfo;
         private EventArrivedEventHandler _usbhandler = null;
-        private Frame navigationFrame;
+        private readonly Frame navigationFrame;
         private string _isoFilePath;
         private FlashingStates _currentFlashingState;
         private bool _internalBuild = false;
-        WebClient _webClient = new WebClient();
+        readonly WebClient _webClient = new WebClient();
 
         public SetupDevicePage(Frame navigationFrame)
         {
@@ -113,7 +110,7 @@ namespace DeviceCenter
             }
 
             _internalBuild = true;
-            var entries = new List<LKGPlatform>();
+            var entries = new List<LkgPlatform>();
             ComboBoxDeviceType.IsEnabled = false;
             ComboBoxIotBuild.IsEnabled = false;
 
@@ -236,14 +233,14 @@ namespace DeviceCenter
             if (ComboBoxDeviceType.SelectedIndex == 1)
             {
                 downloadUri = _rpi2DownloadLink;
-                msiName = _rpi2MSIName;
-                ffuSubPath = _rpi2FFUSubPath;
+                msiName = _rpi2MsiName;
+                ffuSubPath = _rpi2FfuSubPath;
             }
             else
             {
                 downloadUri = _mbmDownloadLink;
-                msiName = _mbmMSIName;
-                ffuSubPath = _mbmFFUSubPath;
+                msiName = _mbmMsiName;
+                ffuSubPath = _mbmFfuSubPath;
             }
 
             _isoFilePath = Path.Combine(Path.GetTempPath(), "windows_10_iot_core.iso");
@@ -254,7 +251,7 @@ namespace DeviceCenter
             {
                 if (eventargs.Cancelled)
                 {
-                    ResetProgressUI();
+                    ResetProgressUi();
                     return;
                 }
             };
@@ -270,7 +267,7 @@ namespace DeviceCenter
                 {
                     var errorCaption = Strings.Strings.AppNameDisplay;
                     MessageBox.Show(exception.Message, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    ResetProgressUI();
+                    ResetProgressUi();
                 }
                 else
                 {
@@ -311,14 +308,14 @@ namespace DeviceCenter
 
         public string  Extract(string msiName, string ffuPath)
         {
-            using (PowerShell PowerShellInstance = PowerShell.Create())
+            using (PowerShell powerShellInstance = PowerShell.Create())
             {
                 // use "AddScript" to add the contents of a script file to the end of the execution pipeline.
                 // use "AddCommand" to add individual commands/cmdlets to the end of the execution pipeline.
-                PowerShellInstance.AddScript("$mountResult = Mount-DiskImage " + _isoFilePath + " -PassThru | Get-Volume; $mountResult.DriveLetter; ");
+                powerShellInstance.AddScript("$mountResult = Mount-DiskImage " + _isoFilePath + " -PassThru | Get-Volume; $mountResult.DriveLetter; ");
 
                 // invoke the script
-                Collection<PSObject> PSOutput = PowerShellInstance.Invoke();
+                Collection<PSObject> psOutput = powerShellInstance.Invoke();
 
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                 {
@@ -327,7 +324,7 @@ namespace DeviceCenter
 
                 // loop through each output object item
                 string driveLetter = "";
-                foreach (PSObject outputItem in PSOutput)
+                foreach (PSObject outputItem in psOutput)
                 {
                     if (null != outputItem)
                     {
@@ -337,13 +334,13 @@ namespace DeviceCenter
                 }
 
                 string msiPath;
-                if (!String.IsNullOrEmpty(driveLetter))
+                if (!string.IsNullOrEmpty(driveLetter))
                 {
                     msiPath = driveLetter + Path.VolumeSeparatorChar + Path.DirectorySeparatorChar + msiName;
                 }
                 else
                 {
-                    DisMountVHD();
+                    DisMountVhd();
                     return string.Empty;
                 }
 
@@ -352,12 +349,12 @@ namespace DeviceCenter
                 // Delete everything in the extractionPath
                 try
                 {
-                    System.IO.DirectoryInfo extractionPathInfo = new DirectoryInfo(extractionPath);
-                    foreach (FileInfo file in extractionPathInfo.GetFiles())
+                    var extractionPathInfo = new DirectoryInfo(extractionPath);
+                    foreach (var file in extractionPathInfo.GetFiles())
                     {
                         file.Delete();
                     }
-                    foreach (DirectoryInfo dir in extractionPathInfo.GetDirectories())
+                    foreach (var dir in extractionPathInfo.GetDirectories())
                     {
                         dir.Delete(true);
                     }
@@ -372,34 +369,38 @@ namespace DeviceCenter
                     FlashingProgress.Value = 66;
                 }));
 
-                Process msiProcess = new Process();
+                var msiProcess = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = "msiexec",
+                        Arguments =
+                            $@"/a {msiPath} /qn TARGETDIR={extractionPath} REINSTALLMODE=amus"
+                    }
+                };
+                
                 // msiProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                msiProcess.StartInfo.FileName = "msiexec";
-                msiProcess.StartInfo.Arguments = string.Format(@"/a {0} /qn TARGETDIR={1} REINSTALLMODE=amus", msiPath, extractionPath);
                 msiProcess.Start();
                 msiProcess.WaitForExit();
-                DisMountVHD();
-                if (msiProcess.ExitCode != 0)
-                {
-                    return string.Empty;
-                }
-                return Path.Combine(extractionPath, ffuPath);
+                DisMountVhd();
+
+                return msiProcess.ExitCode != 0 ? string.Empty : Path.Combine(extractionPath, ffuPath);
             }
         }
-        void DisMountVHD()
+        void DisMountVhd()
         {
-            using (PowerShell PowerShellInstance = PowerShell.Create())
+            using (var powerShellInstance = PowerShell.Create())
             {
                 // Dismount the ISO
-                PowerShellInstance.AddScript("$mountResult = Dismount-DiskImage " + _isoFilePath);
-                Collection<PSObject> PSOutput = PowerShellInstance.Invoke();
+                powerShellInstance.AddScript("$mountResult = Dismount-DiskImage " + _isoFilePath);
+                var psOutput = powerShellInstance.Invoke();
             }
         }
 
         void FlashFFU(BuildInfo bldInfo)
         {
             FlashFFU(bldInfo.Path);
-            var deviceType = ComboBoxDeviceType.SelectedItem as LKGPlatform;
+            var deviceType = ComboBoxDeviceType.SelectedItem as LkgPlatform;
 
             App.TelemetryClient.TrackEvent("FlashSDCard", new Dictionary<string, string>()
             {
@@ -409,7 +410,10 @@ namespace DeviceCenter
 
             // For flash speed metric telemetry
             _cachedBuildInfo = bldInfo;
-            _cachedDeviceType = deviceType;
+            lock (_dismLock)
+            {
+                _cachedDeviceType = deviceType;
+            }
             _cachedDriveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo; ;
             _flashStartTime = App.GlobalStopwatch.ElapsedMilliseconds;
         }
@@ -434,7 +438,7 @@ namespace DeviceCenter
                 if (confirmation.HasValue && confirmation.Value == false)
                 {
                     buttonFlash.IsEnabled = true;
-                    ResetProgressUI();
+                    ResetProgressUi();
                 }
                 if (confirmation.HasValue && confirmation.Value)
                 {
@@ -481,7 +485,7 @@ namespace DeviceCenter
 
         private readonly object _dismLock = new object();
 
-        private void ResetProgressUI()
+        private void ResetProgressUi()
         {
             _currentFlashingState = FlashingStates.Completed;
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
@@ -511,7 +515,7 @@ namespace DeviceCenter
                     _dismProcess = null;
                 }
 
-                ResetProgressUI();
+                ResetProgressUi();
             }
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
@@ -543,7 +547,7 @@ namespace DeviceCenter
 
         private void ComboBoxDeviceType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            LKGPlatform item = ComboBoxDeviceType.SelectedItem as LKGPlatform;
+            var item = ComboBoxDeviceType.SelectedItem as LkgPlatform;
             if (item != null)
             {
                 if (_internalBuild)
@@ -589,12 +593,12 @@ namespace DeviceCenter
             if (RemoveableDevicesComboBox.SelectedItem == null)
                 return false;
 
-            DriveInfo driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
+            var driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
 
             if (driveInfo == null)
                 return false;
 
-            bool? isChecked = checkBoxEula.IsChecked;
+            var isChecked = checkBoxEula.IsChecked;
 
             return isChecked.HasValue && isChecked.Value;
         }

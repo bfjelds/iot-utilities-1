@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -17,8 +15,8 @@ namespace DeviceCenter.Helper
 
         public static string Encode64(string toEncodeString)
         {
-            byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncodeString.Trim());
-            string string64 = System.Convert.ToBase64String(toEncodeAsBytes);
+            byte[] toEncodeAsBytes = Encoding.ASCII.GetBytes(toEncodeString.Trim());
+            var string64 = Convert.ToBase64String(toEncodeAsBytes);
 
             // Ref: http://www.werockyourweb.com/url-escape-characters/
             string64 = string64.Replace(" ", "20%");
@@ -52,82 +50,91 @@ namespace DeviceCenter.Helper
         }
 
         public UserInfo DeviceAuthentication { get; private set; }
-        public IPAddress IPAddress { get; private set; }
+
+        public IPAddress IpAddress { get; private set; }
 
         public RestHelper(IPAddress ipAddress, UserInfo deviceAuthentication)
         {
             this.DeviceAuthentication = deviceAuthentication;
-            this.IPAddress = ipAddress;
+            this.IpAddress = ipAddress;
         }
 
-        private enum HttpErrorResult { fail, retry, cancel };
+        private enum HttpErrorResult { Fail, Retry, Cancel };
+
         private HttpErrorResult HandleError(WebException exception)
         {
-            HttpWebResponse errorResponse = exception.Response as HttpWebResponse;
+            var errorResponse = exception.Response as HttpWebResponse;
 
-            if (errorResponse != null)
+            if (errorResponse?.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (errorResponse.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    DialogAuthenticate dlg = new DialogAuthenticate(this.DeviceAuthentication);
-                    bool? dlgResult = dlg.ShowDialog();
+                var dlg = new DialogAuthenticate(this.DeviceAuthentication);
+                var dlgResult = dlg.ShowDialog();
 
-                    if (dlgResult.HasValue && dlgResult.Value)
-                        return HttpErrorResult.retry;
+                if (dlgResult.HasValue && dlgResult.Value)
+                    return HttpErrorResult.Retry;
 
-                    return HttpErrorResult.cancel;
-                }
+                return HttpErrorResult.Cancel;
             }
 
-            return HttpErrorResult.fail;
+            return HttpErrorResult.Fail;
         }
 
         public Uri CreateUri(string restPath)
         {
-            return new Uri(string.Format(UrlFormat, this.IPAddress.ToString(), restPath), UriKind.Absolute);
+            return new Uri(string.Format(UrlFormat, this.IpAddress.ToString(), restPath), UriKind.Absolute);
         }
 
         public async Task<HttpWebResponse> GetOrPostRequestAsync(string restPath, bool isGet)
         {
-            Uri requestUrl = new Uri(string.Format(UrlFormat, this.IPAddress.ToString(), restPath), UriKind.Absolute);
+            var requestUrl = new Uri(string.Format(UrlFormat, this.IpAddress.ToString(), restPath), UriKind.Absolute);
             Debug.WriteLine(requestUrl.AbsoluteUri);
 
-            bool running = true;
-            while (running)
+            while (true)
             {
                 try
                 {
-                    HttpWebRequest request = WebRequest.Create(requestUrl) as HttpWebRequest;
-                    request.Method = isGet ? "Get" : "POST";
-                    request.ContentLength = 0;
-                    request.KeepAlive = false;
-                    string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(DeviceAuthentication.UserName + ":" + DeviceAuthentication.Password));
-                    request.Headers.Add("Authorization", "Basic " + encodedAuth);
+                    var request = WebRequest.Create(requestUrl) as HttpWebRequest;
+                    if (request != null)
+                    {
+                        request.Method = isGet ? "Get" : "POST";
+                        request.ContentLength = 0;
+                        request.KeepAlive = false;
+                        var encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(DeviceAuthentication.UserName + ":" + DeviceAuthentication.Password));
+                        request.Headers.Add("Authorization", "Basic " + encodedAuth);
 
-                    Debug.WriteLine(string.Format("RestHelper: MakeRequest: url [{0}]", requestUrl));
-                    HttpWebResponse response = await request.GetResponseAsync() as HttpWebResponse;
+                        Debug.WriteLine($"RestHelper: MakeRequest: url [{requestUrl}]");
+                        var response = await request.GetResponseAsync() as HttpWebResponse;
 
-                    Debug.WriteLine(string.Format("RestHelper: MakeRequest: response code [{0}]", response.StatusCode));
-                    return response;
+                        if (response != null)
+                        {
+                            Debug.WriteLine($"RestHelper: MakeRequest: response code [{response.StatusCode}]");
+                            return response;
+                        }
+                        else
+                        {
+                            // tbd what to do?
+                            return null;
+                        }
+                    }
                 }
                 catch (WebException error)
                 {
                     switch (HandleError(error))
                     {
-                        case HttpErrorResult.fail:
-                            Debug.WriteLine(string.Format("Error in MakeRequest, url [{0}]", requestUrl));
+                        case HttpErrorResult.Fail:
+                            Debug.WriteLine($"Error in MakeRequest, url [{requestUrl}]");
                             Debug.WriteLine(error.ToString());
-                            throw error;
-                        case HttpErrorResult.retry:
+                            throw;
+
+                        case HttpErrorResult.Retry:
                             break;
-                        case HttpErrorResult.cancel:
+
+                        case HttpErrorResult.Cancel:
                             // todo: can caller handle this?
                             return error.Response as HttpWebResponse;
                     }
                 }
             }
-
-            return null; // should never get here
         }
 
         /// <summary>
@@ -138,11 +145,7 @@ namespace DeviceCenter.Helper
         /// <returns></returns>
         public async Task<HttpStatusCode> PostRequestAsync(string restPath, string passwordToUse)
         {
-            Stream objStream = null;
-            StreamReader objReader = null;
-            HttpStatusCode result = HttpStatusCode.BadRequest;
-
-            Uri requestUrl = new Uri(string.Format(UrlFormat, this.IPAddress.ToString(), restPath), UriKind.Absolute);
+            var requestUrl = new Uri(string.Format(UrlFormat, this.IpAddress.ToString(), restPath), UriKind.Absolute);
             Debug.WriteLine(requestUrl.AbsoluteUri);
 
             // true when it's not using the password the app remembers.  this is used by set password page with oldpassword information.
@@ -154,22 +157,28 @@ namespace DeviceCenter.Helper
             {
                 try
                 {
-                    HttpWebRequest request = WebRequest.Create(requestUrl) as HttpWebRequest;
+                    var request = WebRequest.Create(requestUrl) as HttpWebRequest;
 
+                    // Tbd check for NULL.
                     request.Method = "POST";
+
                     request.ContentType = "application/x-www-form-urlencoded";
                     string encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(this.DeviceAuthentication.UserName + ":" + password));
                     request.Headers.Add("Authorization", "Basic " + encodedAuth);
                     request.ContentLength = 0;
 
-                    using (HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync()))
+                    var result = HttpStatusCode.BadRequest;
+                    using (var response = (HttpWebResponse)(await request.GetResponseAsync()))
                     {
                         result = response.StatusCode;
                         if (result == HttpStatusCode.OK)
                         {
-                            objStream = response.GetResponseStream();
-                            objReader = new StreamReader(objStream);
-                            string respData = objReader.ReadToEnd();
+                            var objStream = response.GetResponseStream();
+                            
+                            // tbd check for null objStream
+                            var objReader = new StreamReader(objStream);
+
+                            var respData = objReader.ReadToEnd();
                         }
                     }
 
@@ -184,13 +193,15 @@ namespace DeviceCenter.Helper
 
                     switch (HandleError(error))
                     {
-                        case HttpErrorResult.fail:
+                        case HttpErrorResult.Fail:
                             Debug.WriteLine($"Error in MakeRequest, url [{requestUrl.AbsoluteUri}]");
                             Debug.WriteLine(error.ToString());
                             throw;
-                        case HttpErrorResult.retry:
+
+                        case HttpErrorResult.Retry:
                             break;
-                        case HttpErrorResult.cancel:
+
+                        case HttpErrorResult.Cancel:
                             // todo: can caller handle this?
                             var httpWebResponse = error.Response as HttpWebResponse;
                             if (httpWebResponse != null)
@@ -204,21 +215,14 @@ namespace DeviceCenter.Helper
                     }
                 }
             }
-
-            return result;
         }
 
         public async Task<HttpStatusCode> DeleteRequestAsync(string restPath)
         {
-            Stream objStream = null;
-            StreamReader objReader = null;
-            HttpStatusCode result = HttpStatusCode.BadRequest;
-
-            Uri requestUrl = new Uri(string.Format(UrlFormat, this.IPAddress.ToString(), restPath), UriKind.Absolute);
+            var requestUrl = new Uri(string.Format(UrlFormat, this.IpAddress.ToString(), restPath), UriKind.Absolute);
             Debug.WriteLine(requestUrl.AbsolutePath);
 
-            bool running = true;
-            while (running)
+            while (true)
             {
                 try
                 {
@@ -230,13 +234,17 @@ namespace DeviceCenter.Helper
                     req.Headers.Add("Authorization", "Basic " + encodedAuth);
                     req.ContentLength = 0;
 
-                    using (HttpWebResponse response = (HttpWebResponse)(await req.GetResponseAsync()))
+                    var result = HttpStatusCode.BadRequest;
+                    using (var response = (HttpWebResponse)(await req.GetResponseAsync()))
                     {
                         result = response.StatusCode;
                         if (result == HttpStatusCode.OK)
                         {
-                            objStream = response.GetResponseStream();
-                            objReader = new StreamReader(objStream);
+                            var objStream = response.GetResponseStream();
+
+                            // tbd check for null.
+
+                            var objReader = new StreamReader(objStream);
                             string respData = objReader.ReadToEnd();
                         }
                     }
@@ -247,34 +255,40 @@ namespace DeviceCenter.Helper
                 {
                     switch (HandleError(error))
                     {
-                        case HttpErrorResult.fail:
-                            Debug.WriteLine(string.Format("Error in MakeRequest, url [{0}]", requestUrl.AbsolutePath));
+                        case HttpErrorResult.Fail:
+                            Debug.WriteLine($"Error in MakeRequest, url [{requestUrl.AbsolutePath}]");
                             Debug.WriteLine(error.ToString());
-                            throw error;
-                        case HttpErrorResult.retry:
+                            throw;
+
+                        case HttpErrorResult.Retry:
                             break;
-                        case HttpErrorResult.cancel:
+
+                        case HttpErrorResult.Cancel:
                             // todo: can caller handle this?
+                            
+                            // tbd check for null error.Response
                             return (error.Response as HttpWebResponse).StatusCode;
                     }
                 }
             }
-
-            return result;
         }
 
         public static object ProcessJsonResponse(HttpWebResponse response, Type dataContractType)
         {
-            string responseContent = string.Empty;
+            var responseContent = string.Empty;
             try
             {
                 var objStream = response.GetResponseStream();
+                
+                // tbd check for NULL objStream
                 var sr = new StreamReader(objStream);
+
                 responseContent = sr.ReadToEnd();
-                byte[] byteArray = Encoding.UTF8.GetBytes(responseContent);
-                MemoryStream stream = new MemoryStream(byteArray);
+                var byteArray = Encoding.UTF8.GetBytes(responseContent);
+                var stream = new MemoryStream(byteArray);
                 var serializer = new DataContractJsonSerializer(dataContractType);
-                object jsonObj = serializer.ReadObject(stream);
+                var jsonObj = serializer.ReadObject(stream);
+
                 if (jsonObj != null)
                 {
                     Debug.WriteLine(jsonObj.ToString());
@@ -284,7 +298,7 @@ namespace DeviceCenter.Helper
             }
             catch (SerializationException ex)
             {
-                Debug.WriteLine(string.Format("Error in ProcessResponse, response [{0}]", responseContent));
+                Debug.WriteLine($"Error in ProcessResponse, response [{responseContent}]");
                 Debug.WriteLine(ex.ToString());
 
                 return Activator.CreateInstance(dataContractType); // return a blank instance

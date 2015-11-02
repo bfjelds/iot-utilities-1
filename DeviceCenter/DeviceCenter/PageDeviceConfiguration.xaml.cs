@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -40,7 +39,7 @@ namespace DeviceCenter
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
             var webbRequest = new WebBRest(this.Device.IpAddress, this.Device.Authentication);
-            if (!String.IsNullOrWhiteSpace(textBoxDeviceName.Text))
+            if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
             {
                 var x = await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text);
 

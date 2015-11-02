@@ -246,10 +246,10 @@ namespace DeviceCenter
 
         public async Task<bool> IsAppRunning(string appName)
         {
-            string url = PerfMgrUrl + "processes";
+            const string URL = PerfMgrUrl + "processes";
             try
             {
-                using (var response = await this._restHelper.GetOrPostRequestAsync(url, true))
+                using (var response = await this._restHelper.GetOrPostRequestAsync(URL, true))
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
@@ -258,13 +258,10 @@ namespace DeviceCenter
 
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        IoTProcesses runningProcesses = RestHelper.ProcessJsonResponse(response, typeof(IoTProcesses)) as IoTProcesses;
-                        foreach (IoTProcess runningProcess in runningProcesses.Items)
+                        var runningProcesses = RestHelper.ProcessJsonResponse(response, typeof(IoTProcesses)) as IoTProcesses;
+                        if (runningProcesses != null && runningProcesses.Items.Any(runningProcess => runningProcess.AppName == appName))
                         {
-                            if (runningProcess.AppName == appName)
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
                 }
@@ -281,7 +278,7 @@ namespace DeviceCenter
 
         public async Task<bool> StartAppAsync(string appName)
         {
-            HttpStatusCode result = HttpStatusCode.BadRequest;
+            var result = HttpStatusCode.BadRequest;
             try
             {
                 var installedPackages = await GetInstalledPackagesAsync();
@@ -290,7 +287,7 @@ namespace DeviceCenter
                 {
                     if (app.Name == appName)
                     {
-                        string url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(app.PackageRelativeId)
+                        var url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(app.PackageRelativeId)
                                      + "&package=" + RestHelper.Encode64(app.PackageFullName);
 
                         result = await this._restHelper.PostRequestAsync(url, string.Empty);
@@ -308,8 +305,8 @@ namespace DeviceCenter
 
         public async Task<bool> StopAppAsync(string appName)
         {
-            string url = String.Empty;
-            bool isFound = false;
+            var url = String.Empty;
+            var isFound = false;
 
             var installedPackages = await GetInstalledPackagesAsync();
             foreach (var app in installedPackages.Items)
@@ -340,11 +337,11 @@ namespace DeviceCenter
 
         public async Task<WirelessAdapters> GetWirelessAdaptersAsync()
         {
-            var url = "/api/wifi/interfaces";
+            const string URL = "/api/wifi/interfaces";
 
             try
             {
-                using (var response = await this._restHelper.GetOrPostRequestAsync(url, true))
+                using (var response = await this._restHelper.GetOrPostRequestAsync(URL, true))
                 {
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
@@ -407,7 +404,7 @@ namespace DeviceCenter
 
         public async Task<string> ConnectToNetworkAsync(string adapterName, string ssid, string ssidPassword)
         {
-            string url = "/api/wifi/network?";
+            var url = "/api/wifi/network?";
             url = url + "interface=" + adapterName.Trim("{}".ToCharArray());
             url = url + "&ssid=" + RestHelper.Encode64(ssid);
             url = url + "&op=" + "connect";
@@ -430,7 +427,7 @@ namespace DeviceCenter
                 Debug.WriteLine(ex);
             }
 
-            // gneves: Any particular reason to always return an empty string?
+            // tbd gneves: Any particular reason to always return an empty string?
             return string.Empty;
         }
 

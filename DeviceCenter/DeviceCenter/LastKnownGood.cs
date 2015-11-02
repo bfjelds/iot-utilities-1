@@ -41,31 +41,28 @@ namespace DeviceCenter
     /// Each platform may have multiple LKGs.
     /// </summary>
     [DataContract]
-    public class LKGPlatform
+    public class LkgPlatform
     {
-        public LKGPlatform()
+        public LkgPlatform()
         {
             this.LkgBuilds = new List<BuildInfo>();
         }
 
-        public static LKGPlatform CreateMbm()
+        public static LkgPlatform CreateMbm()
         {
-            LKGPlatform result = new LKGPlatform();
-            result.Platform = "MBM";
+            var result = new LkgPlatform {Platform = "MBM"};
             return result;
         }
 
-        public static LKGPlatform CreateRpi2()
+        public static LkgPlatform CreateRpi2()
         {
-            LKGPlatform result = new LKGPlatform();
-            result.Platform = "RPi2";
+            var result = new LkgPlatform {Platform = "RPi2"};
             return result;
         }
 
-        public static LKGPlatform CreateQCom()
+        public static LkgPlatform CreateQCom()
         {
-            LKGPlatform result = new LKGPlatform();
-            result.Platform = "QCOM";
+            var result = new LkgPlatform {Platform = "QCOM"};
             return result;
         }
 
@@ -91,7 +88,7 @@ namespace DeviceCenter
                     return DragonboardName;
             }
             
-            return null;
+            return string.Empty;
         }
 
         /// <summary>
@@ -105,10 +102,10 @@ namespace DeviceCenter
     /// LKG (last known good) info.
     /// </summary>
     [DataContract]
-    public class LKGAllPlatforms
+    public class LkgAllPlatforms
     {
         [DataMember]
-        public List<LKGPlatform> AllPlatforms;
+        public List<LkgPlatform> AllPlatforms;
     }
 
     /// <summary>
@@ -127,14 +124,14 @@ namespace DeviceCenter
         /// <summary>
         /// Deserialized contents.
         /// </summary>
-        public LKGAllPlatforms LkgAllPlatforms { get; private set; }
+        public LkgAllPlatforms LkgAllPlatforms { get; private set; }
 
         /// <summary>
         /// Deserialize info in json.        
         /// </summary>
         public async Task<bool> ReadFileAsync()
         {
-            bool fileExists = false;
+            var fileExists = false;
 
             await Task.Factory.StartNew(() =>
             {
@@ -185,9 +182,9 @@ namespace DeviceCenter
                             fileContent = sr.ReadToEnd();
                         }
 
-                        var jsonSerializer = new DataContractJsonSerializer(typeof(LKGAllPlatforms));
+                        var jsonSerializer = new DataContractJsonSerializer(typeof(LkgAllPlatforms));
 
-                        LkgAllPlatforms = (LKGAllPlatforms)jsonSerializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(fileContent)));
+                        LkgAllPlatforms = (LkgAllPlatforms)jsonSerializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(fileContent)));
                     }
                     catch (Exception ex)
                     {

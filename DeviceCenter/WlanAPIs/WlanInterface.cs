@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace WlanAPIs
 {
@@ -102,7 +101,7 @@ namespace WlanAPIs
         {
             get
             {
-                const uint WlanIntfOpcode_CurrentConnection = 7;
+                const uint WLAN_INTF_OPCODE_CURRENT_CONNECTION = 7;
                 int valueSize;
                 IntPtr valuePtr;
                 uint opcodeValueType;
@@ -111,7 +110,7 @@ namespace WlanAPIs
                     WlanInterop.WlanQueryInterface(
                         _client.NativeHandle, 
                         _nativeInterfaceInfo.interfaceGuid,
-                        WlanIntfOpcode_CurrentConnection, 
+                        WLAN_INTF_OPCODE_CURRENT_CONNECTION, 
                         IntPtr.Zero, 
                         out valueSize, 
                         out valuePtr, 
@@ -140,13 +139,13 @@ namespace WlanAPIs
         private static List<WlanInterop.WlanAvailableNetwork> ParseNativeWlanAvaliableNetwork(IntPtr nativeNetworkList)
         {
             var networkList = new List<WlanInterop.WlanAvailableNetwork>();
-            var avaliableNLHeader = (WlanInterop.WlanAvailableNetworkList)Marshal.PtrToStructure(
+            var avaliableNlHeader = (WlanInterop.WlanAvailableNetworkList)Marshal.PtrToStructure(
                                 nativeNetworkList,
                                 typeof(WlanInterop.WlanAvailableNetworkList));
 
             var availNetListIt = nativeNetworkList.ToInt64() + Marshal.SizeOf(typeof(WlanInterop.WlanAvailableNetworkList));
 
-            for (int i = 0; i < avaliableNLHeader.numberOfItems; ++i)
+            for (int i = 0; i < avaliableNlHeader.numberOfItems; ++i)
             {
                 var network = (WlanInterop.WlanAvailableNetwork)Marshal.PtrToStructure(
                     new IntPtr(availNetListIt),

@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DeviceCenter
 {
@@ -110,12 +99,12 @@ namespace DeviceCenter
         {
             Selected = true;
 
-            Panel myParent = this.Parent as Panel;
+            var myParent = this.Parent as Panel;
             if (myParent != null)
             {
                 foreach (var cur in myParent.Children)
                 {
-                    ButtonSideMenu currentButton = cur as ButtonSideMenu;
+                    var currentButton = cur as ButtonSideMenu;
                     if (currentButton != null && currentButton != this)
                     {
                         currentButton.Selected = false;
@@ -123,20 +112,15 @@ namespace DeviceCenter
                 }
             }
 
-            if (Click != null)
-            {
-                Click.Invoke(this, new RoutedEventArgs());
-            }
+            Click?.Invoke(this, new RoutedEventArgs());
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonUp(e);
-            if (_mouseDown)
-            {
-                DoClick();
-                _mouseDown = false;
-            }
+            if (!_mouseDown) return;
+            DoClick();
+            _mouseDown = false;
         }
     }
 }

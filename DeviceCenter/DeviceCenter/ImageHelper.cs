@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Management;
 using System.Diagnostics;
 using System.IO;
@@ -72,7 +70,7 @@ namespace DeviceCenter
 
         static public void InitializeWatcher()
         {
-            string query = "SELECT * FROM __InstanceCreationEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
+            var query = "SELECT * FROM __InstanceCreationEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
             _usbaddwatcher = new ManagementEventWatcher(new EventQuery(query));
 
             query = "SELECT * FROM __InstanceDeletionEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
@@ -81,15 +79,9 @@ namespace DeviceCenter
 
         static public void DisposeWatcher()
         {
-            if(_usbaddwatcher != null)
-            { 
-                _usbaddwatcher.Dispose();
-            }
+            _usbaddwatcher?.Dispose();
 
-            if (_usbremovewatcher != null)
-            {                
-                _usbremovewatcher.Dispose();
-            }
+            _usbremovewatcher?.Dispose();
         }
 
         static public void AddUSBDetectionHandler(EventArrivedEventHandler usbDetectionHandler)
@@ -119,15 +111,9 @@ namespace DeviceCenter
 
         static public void RemoveUSBDetectionHandler()
         {
-            if(_usbaddwatcher != null)
-            { 
-                _usbaddwatcher?.Stop();                
-            }
+            _usbaddwatcher?.Stop();
 
-            if (_usbremovewatcher != null)
-            {
-                _usbremovewatcher?.Stop();                
-            }            
+            _usbremovewatcher?.Stop();
         }
 
         static public List<DriveInfo> GetRemovableDriveList()
@@ -193,12 +179,18 @@ namespace DeviceCenter
                 throw new FileNotFoundException(null, ffuImage);
             }
 
-            Process process = new Process();
-            process.StartInfo.UseShellExecute = true;
-            process.StartInfo.Verb = "runas";
-            process.StartInfo.FileName = dismExe;
-            process.StartInfo.Arguments =
-                $"/Apply-Image /ApplyDrive:{driveInfo.PhysicalDriveId} /SkipPlatformCheck /ImageFile:\"{ffuImage}\"";
+            var process = new Process
+            {
+                StartInfo =
+                {
+                    UseShellExecute = true,
+                    Verb = "runas",
+                    FileName = dismExe,
+                    Arguments =
+                        $"/Apply-Image /ApplyDrive:{driveInfo.PhysicalDriveId} /SkipPlatformCheck /ImageFile:\"{ffuImage}\""
+                }
+            };
+
             System.Diagnostics.Debug.WriteLine("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 
             // TBD make this async and cancellable.
