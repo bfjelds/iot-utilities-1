@@ -4,7 +4,7 @@
 #define DEVICEDISCOVERY_API __declspec(dllimport)
 #endif
 
-typedef void(CALLBACK *PFN_AddDeviceCallback)(LPWSTR, LPWSTR, LPWSTR, LPWSTR);
+typedef void(CALLBACK *PFN_AddDeviceCallback)(LPWSTR, LPWSTR, LPWSTR);
 
 namespace DeviceCenter
 {

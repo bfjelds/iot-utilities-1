@@ -41,7 +41,6 @@ namespace DeviceCenter
         public delegate void AddDeviceCallbackDelegate(
           [MarshalAs(UnmanagedType.LPWStr)]string deviceName,
           [MarshalAs(UnmanagedType.LPWStr)]string ipV4Address,
-          [MarshalAs(UnmanagedType.LPWStr)]string ipV6Address,
           [MarshalAs(UnmanagedType.LPWStr)]string txtParameters);
 
         [DllImport("DeviceDiscovery.dll", ExactSpelling = true, SetLastError = true, CallingConvention = CallingConvention.Cdecl)]

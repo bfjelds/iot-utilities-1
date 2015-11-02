@@ -174,7 +174,7 @@ namespace DeviceCenter
             _telemetryTimer.Stop();
         }
 
-        private void AddDeviceCallback(string deviceName, string ipV4Address, string ipV6Address, string txtParameters)
+        private void AddDeviceCallback(string deviceName, string ipV4Address, string txtParameters)
         {
             if (_filterNew)
                 return;
