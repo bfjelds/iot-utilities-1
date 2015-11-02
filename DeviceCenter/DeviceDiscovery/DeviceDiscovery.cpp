@@ -71,7 +71,7 @@ namespace DeviceCenter
 		{
 			LPWSTR newDeviceNameNative = nullptr;
 			LPWSTR newDeviceIPV4AddressNative = nullptr;
-			LPWSTR newDeviceIPV6AddressNative = nullptr;
+			LPWSTR newDeviceTxtPropertiesNative = nullptr;
 
 			// Get the device Name 
             String^ newDeviceName = args->Properties->Lookup("System.Devices.Dnssd.HostName")->ToString();
