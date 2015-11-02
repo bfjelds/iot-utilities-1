@@ -108,6 +108,16 @@ namespace DeviceCenter.Helper
                         if (response != null)
                         {
                             Debug.WriteLine($"RestHelper: MakeRequest: response code [{response.StatusCode}]");
+
+                            // WebB let you try to authenticate three times, after that it will redirect you
+                            // to the URL bellow. If we don't check this it will seem like the REST call was a success
+                            // and we will fail in the JSON parsing, leaving no feedback for the user.
+                            if(response.ResponseUri.AbsolutePath.ToUpper().Equals("/AUTHORIZATIONREQUIRED.HTM"))
+                            {
+                                // Keep trying to authenticate
+                                continue;
+                            }
+
                             return response;
                         }
                         else
