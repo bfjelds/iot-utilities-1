@@ -114,6 +114,9 @@ namespace DeviceCenter.Helper
                             // and we will fail in the JSON parsing, leaving no feedback for the user.
                             if(response.ResponseUri.AbsolutePath.ToUpper().Equals("/AUTHORIZATIONREQUIRED.HTM"))
                             {
+                                // Free connection resources
+                                response.Dispose();
+
                                 // Keep trying to authenticate
                                 continue;
                             }
