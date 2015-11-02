@@ -202,7 +202,6 @@ namespace DeviceCenter.Helper
                             break;
 
                         case HttpErrorResult.Cancel:
-                            // todo: can caller handle this?
                             var httpWebResponse = error.Response as HttpWebResponse;
                             if (httpWebResponse != null)
                             {
@@ -264,10 +263,15 @@ namespace DeviceCenter.Helper
                             break;
 
                         case HttpErrorResult.Cancel:
-                            // todo: can caller handle this?
-                            
-                            // tbd check for null error.Response
-                            return (error.Response as HttpWebResponse).StatusCode;
+                            var httpWebResponse = error.Response as HttpWebResponse;
+                            if (httpWebResponse != null)
+                            {
+                                return httpWebResponse.StatusCode;
+                            }
+                            else
+                            {
+                                throw;
+                            }
                     }
                 }
             }
