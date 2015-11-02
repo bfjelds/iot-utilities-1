@@ -45,10 +45,16 @@ namespace DeviceCenter
         {
             var webbRequest = new WebBRest(this.Device.IpAddress, this.Device.Authentication);
 
-            if (!String.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) && 
-                !String.IsNullOrWhiteSpace(textBoxPassword1.Password))
+            if (!string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) && 
+                !string.IsNullOrWhiteSpace(textBoxPassword1.Password))
             {
-                var y = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
+                var result = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
+
+                // bring it back to setup screen if password setting is successful.
+                if (result == true)
+                {
+                    _navigationFrame.GoBack();
+                }
             }
         }
 

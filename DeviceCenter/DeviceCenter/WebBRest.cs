@@ -68,6 +68,11 @@ namespace DeviceCenter
                     // resaves the password
                     _restHelper.DeviceAuthentication.Password = newPassword;
                     DialogAuthenticate.SavePassword(_restHelper.DeviceAuthentication);
+                    MessageBox.Show(
+                        "Password changed successfully",
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.None);
                     return true;
                 }
             }
