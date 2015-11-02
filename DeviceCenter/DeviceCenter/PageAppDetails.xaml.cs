@@ -158,7 +158,7 @@ namespace DeviceCenter
             navigation.GoBack();
         }
 
-        private void AddDeviceCallback(string deviceName, string ipV4Address, string ipV6Address, string txtParameters)
+        private void AddDeviceCallback(string deviceName, string ipV4Address, string txtParameters)
         {
             if (String.IsNullOrEmpty(deviceName) || String.IsNullOrEmpty(ipV4Address))
             {
