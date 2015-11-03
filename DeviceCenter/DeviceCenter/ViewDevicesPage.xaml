@@ -36,7 +36,7 @@
                 </Hyperlink>
             </TextBlock>
             <TextBlock Margin="0 10"  DockPanel.Dock="Bottom" Text="{x:Static props:Strings.DeviceListCantFindDevice}" />
-            <ListView DockPanel.Dock="Top" x:Name="ListViewDevices" Unloaded="ListViewDevices_Unloaded" Margin="0 10 0 10" BorderBrush="{x:Null}" BorderThickness="0" SelectionChanged="ListViewDevices_SelectionChanged" >
+            <ListView DockPanel.Dock="Top" x:Name="ListViewDevices" Unloaded="ListViewDevices_Unloaded" Margin="0 10 0 10" BorderBrush="{x:Null}" BorderThickness="0">
                 <ListView.View>
                     <GridView ColumnHeaderTemplate="{StaticResource CleanHeaderTemplate}">
                         <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceDetailDeviceNameLabel}">
@@ -56,9 +56,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceListColType}" DisplayMemberBinding="{Binding DeviceModel}"/>
                         <GridViewColumn Width="100" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IpAddress}" />
-                        <GridViewColumn Width="100" Header="{x:Static props:Strings.DeviceListColOSVersion}" DisplayMemberBinding="{Binding OsVersion}" />
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColSettings}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>

@@ -500,11 +500,6 @@ namespace DeviceCenter
             e.Handled = true;
         }
 
-        private void ListViewDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBoxItem item = comboBoxFilter.SelectedItem as ComboBoxItem;
