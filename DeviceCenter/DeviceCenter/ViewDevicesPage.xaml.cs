@@ -54,6 +54,9 @@ namespace DeviceCenter
             _newestBuildDevice = null;
             _oldestBuildDevice = null;
 
+            ListViewDevices.ItemsSource = _devices;
+            _softwareAccessPoint = SoftApHelper.Instance;
+
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             _telemetryTimer.Tick += TelemetryTimer_Tick;
 
@@ -66,9 +69,6 @@ namespace DeviceCenter
             //Start device discovery using DNS-SD
             NativeMethods.StartDiscovery();
 
-            ListViewDevices.ItemsSource = _devices;
-
-            _softwareAccessPoint = SoftApHelper.Instance;
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
 
             //Sort the listview
