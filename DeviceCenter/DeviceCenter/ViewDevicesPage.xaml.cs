@@ -60,18 +60,7 @@ namespace DeviceCenter
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             _telemetryTimer.Tick += TelemetryTimer_Tick;
 
-            //Stop Discovery if it was already started
-            NativeMethods.StopDiscovery();
-
-            //Register the callback
-            NativeMethods.RegisterCallback(_addCallbackdel);
-
-            //Start device discovery using DNS-SD
-            NativeMethods.StartDiscovery();
-
-            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(2);
-            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
-            _broadCastWatcherStartTimer.Start();
+            StartDiscovery();
 
             ListViewDevices.ItemsSource = _devices;
 
@@ -93,6 +82,27 @@ namespace DeviceCenter
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
+        private void StartDiscovery()
+        {
+            // Stop everything first 
+            _broadCastWatcherStartTimer.Stop();
+            _broadCastWatcherStopTimer.Stop();
+            _broadCastWatcher.RemoveListeners();
+            NativeMethods.StopDiscovery();
+
+            // Start mDNS based discovery 
+
+            // 1. Register the callback
+            NativeMethods.RegisterCallback(_addCallbackdel);
+
+            // 2. Start device discovery using DNS-SD
+            NativeMethods.StartDiscovery();
+
+            // Wait for 2 second and start Broadcast discovery 
+            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(2);
+            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
+            _broadCastWatcherStartTimer.Start();
+        }
         private void SoftwareAccessPoint_OnSoftAPDisconnected()
         {
             _connectedToAdhoc = false;
@@ -473,9 +483,7 @@ namespace DeviceCenter
             _devices.Clear();
             _adhocNetworks.Clear();
 
-            NativeMethods.StopDiscovery();
-            NativeMethods.RegisterCallback(_addCallbackdel);
-            NativeMethods.StartDiscovery();
+            StartDiscovery();
 
             RefreshWifiAsync();
         }
