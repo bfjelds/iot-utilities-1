@@ -588,4 +588,16 @@
   <data name="ErrorNullDevice" xml:space="preserve">
     <value>Error in getting target device. Please try again.</value>
   </data>
+  <data name="MessageBadWifiPassword" xml:space="preserve">
+    <value>The network security key isn't correct</value>
+    <comment>When wrong passkey is used for wifi setting</comment>
+  </data>
+  <data name="SuccessPasswordChanged" xml:space="preserve">
+    <value>Device password changed successfully</value>
+    <comment>After successful change of the device's password</comment>
+  </data>
+  <data name="SuccessWifiConfigured" xml:space="preserve">
+    <value>The device Wi-Fi is configured</value>
+    <comment>Successful Wifi configuration </comment>
+  </data>
 </root>
