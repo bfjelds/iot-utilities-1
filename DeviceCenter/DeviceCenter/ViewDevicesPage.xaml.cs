@@ -54,6 +54,10 @@ namespace DeviceCenter
             _addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
             this._navigationFrame = navigationFrame;
 
+            ListViewDevices.ItemsSource = _devices;
+
+            _softwareAccessPoint = SoftApHelper.Instance;
+
             _newestBuildDevice = null;
             _oldestBuildDevice = null;
 
@@ -62,9 +66,6 @@ namespace DeviceCenter
 
             StartDiscovery();
 
-            ListViewDevices.ItemsSource = _devices;
-
-            _softwareAccessPoint = SoftApHelper.Instance;
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
 
             //Sort the listview

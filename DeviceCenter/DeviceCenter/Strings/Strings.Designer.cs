@@ -637,6 +637,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error in getting target device. Please try again..
+        /// </summary>
+        public static string ErrorNullDevice {
+            get {
+                return ResourceManager.GetString("ErrorNullDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown device architecture.  Please use Windows 10 IoT Core build {0} or newer.
         /// </summary>
         public static string ErrorUnknownArchitecture {
@@ -831,6 +840,15 @@ namespace DeviceCenter.Strings {
         public static string MessageBadPassword {
             get {
                 return ResourceManager.GetString("MessageBadPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The network security key isn&apos;t correct.
+        /// </summary>
+        public static string MessageBadWifiPassword {
+            get {
+                return ResourceManager.GetString("MessageBadWifiPassword", resourceCulture);
             }
         }
         
@@ -1357,6 +1375,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Device password changed successfully.
+        /// </summary>
+        public static string SuccessPasswordChanged {
+            get {
+                return ResourceManager.GetString("SuccessPasswordChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You&apos;re ready to start developing..
         /// </summary>
         public static string SuccessSubTitle {
@@ -1371,6 +1398,15 @@ namespace DeviceCenter.Strings {
         public static string SuccessTitle {
             get {
                 return ResourceManager.GetString("SuccessTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The device Wi-Fi is configured.
+        /// </summary>
+        public static string SuccessWifiConfigured {
+            get {
+                return ResourceManager.GetString("SuccessWifiConfigured", resourceCulture);
             }
         }
         

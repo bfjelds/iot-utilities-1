@@ -6,11 +6,12 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
+      FontSize="12"
       Title="{x:Static props:Strings.FindMyDeviceButton}" d:DesignHeight="500" d:DesignWidth="814.32">
     <Page.Resources>
         <DataTemplate x:Key="CleanHeaderTemplate">
             <Grid>
-                <TextBlock FontWeight="Bold" FontSize="8" Padding="4 0 20 0">
+                <TextBlock FontWeight="Bold" FontSize="10" Padding="4 0 20 0">
                     <TextBlock.Text>
                         <Binding/>
                     </TextBlock.Text>
@@ -55,22 +56,24 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IpAddress}" />
+                        <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceListColType}" DisplayMemberBinding="{Binding DeviceModel}"/>
+                        <GridViewColumn Width="100" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IpAddress}" />
                         <GridViewColumn Width="100" Header="{x:Static props:Strings.DeviceListColOSVersion}" DisplayMemberBinding="{Binding OsVersion}" />
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColSettings}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock FontSize="20" Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
+                                    <TextBlock FontSize="16" Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColOpenInDevicePortal}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock FontSize="20" Text="" Foreground="Blue" Cursor="Hand"  FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonPortal_Click" Visibility="{Binding ManageVisible}" />
+                                    <TextBlock FontSize="16" Text="" Foreground="Blue" Cursor="Hand"  FontFamily="./Assets/#IOT MDL2 Assets" MouseDown="ButtonPortal_Click" Visibility="{Binding ManageVisible}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
+                        <GridViewColumn Width="100" Header="{x:Static props:Strings.DeviceListOS}" DisplayMemberBinding="{Binding OsVersion}" />
                     </GridView>
                 </ListView.View>
             </ListView>
