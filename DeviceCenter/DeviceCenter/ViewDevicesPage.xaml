@@ -6,11 +6,12 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
+      FontSize="14"
       Title="{x:Static props:Strings.FindMyDeviceButton}" d:DesignHeight="500" d:DesignWidth="814.32">
     <Page.Resources>
         <DataTemplate x:Key="CleanHeaderTemplate">
             <Grid>
-                <TextBlock FontWeight="Bold" FontSize="8" Padding="4 0 20 0">
+                <TextBlock FontWeight="Bold" FontSize="10" Padding="4 0 20 0">
                     <TextBlock.Text>
                         <Binding/>
                     </TextBlock.Text>
@@ -38,7 +39,7 @@
             <ListView DockPanel.Dock="Top" x:Name="ListViewDevices" Unloaded="ListViewDevices_Unloaded" Margin="0 10 0 10" BorderBrush="{x:Null}" BorderThickness="0" >
                 <ListView.View>
                     <GridView ColumnHeaderTemplate="{StaticResource CleanHeaderTemplate}">
-                        <GridViewColumn Header="{x:Static props:Strings.DeviceDetailDeviceNameLabel}">
+                        <GridViewColumn Header="{x:Static props:Strings.DeviceListColName}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Padding="2 8 2 8" Text="{Binding DeviceName}" />
@@ -57,7 +58,6 @@
                         </GridViewColumn>
                         <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceListColType}" DisplayMemberBinding="{Binding DeviceModel}"/>
                         <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IpAddress}" />
-                        <GridViewColumn Width="100" Header="{x:Static props:Strings.DeviceListColOSVersion}" DisplayMemberBinding="{Binding OsVersion}" />
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColSettings}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -72,6 +72,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
+                        <GridViewColumn Width="100" Header="{x:Static props:Strings.DeviceListOS}" DisplayMemberBinding="{Binding OsVersion}" />
                     </GridView>
                 </ListView.View>
             </ListView>
