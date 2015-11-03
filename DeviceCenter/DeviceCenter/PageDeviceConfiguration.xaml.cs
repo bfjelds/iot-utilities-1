@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -14,21 +15,26 @@ namespace DeviceCenter
 
         public PageDeviceConfiguration(Frame navigationFrame, DiscoveredDevice device)
         {
-            InitializeComponent();
-
             this._navigationFrame = navigationFrame;
             this.Device = device;
 
-            linkPortal.NavigateUri = this.Device.Manage;
+            InitializeComponent();
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnInitialized(EventArgs e)
         {
+            base.OnInitialized(e);
+
             LabelDeviceName.Text = this.Device.DeviceName;
             textBoxDeviceName.Text = this.Device.DeviceName;
             ButtonOk.IsEnabled = false;
+            linkPortal.NavigateUri = this.Device.Manage;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
