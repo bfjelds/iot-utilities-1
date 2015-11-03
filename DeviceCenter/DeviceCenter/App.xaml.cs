@@ -36,17 +36,21 @@ namespace DeviceCenter
             {
                 // Try querying 64-bit registry for key
                 var localRegKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64);
-                
-                // tbd check for null
-                id = (string)localRegKey.OpenSubKey(@"SOFTWARE\Microsoft\SQMClient").GetValue("MachineId");
 
-                // If can't find key in 64-bit registry, query 32-bit registry
-                if(id == null)
+                if (localRegKey != null)
                 {
-                    localRegKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
-
-                    // tbd check for null
                     id = (string)localRegKey.OpenSubKey(@"SOFTWARE\Microsoft\SQMClient").GetValue("MachineId");
+
+                    // If can't find key in 64-bit registry, query 32-bit registry
+                    if (id == null)
+                    {
+                        localRegKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+
+                        if (localRegKey != null)
+                        {
+                            id = (string)localRegKey.OpenSubKey(@"SOFTWARE\Microsoft\SQMClient").GetValue("MachineId");
+                        }
+                    }
                 }
             }
             catch (Exception)
@@ -54,8 +58,12 @@ namespace DeviceCenter
                 // ignored
             }
 
-            // tbd check for null
-            return id.Replace("{", "").Replace("}", "");
+            if (id != null)
+            {
+                return id.Replace("{", "").Replace("}", "");
+            }
+
+            return null;
         }
 
         protected override void OnStartup(StartupEventArgs e)
