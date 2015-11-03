@@ -3,9 +3,12 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using DeviceCenter.Helper;
 
@@ -13,20 +16,20 @@ namespace DeviceCenter
 {
     public class WifiEntry : INotifyPropertyChanged
     {
-        private readonly AvailableNetwork network;
+        private readonly AvailableNetwork _network;
         private const string WifiIcons = "";
-        private readonly Frame navigationFrame;
-        private readonly bool needPassword;
-        private readonly WebBRest webbRequest;
-        private readonly string adapterGuid;
+        private readonly Frame _navigationFrame;
+        private readonly bool _needPassword;
+        private readonly WebBRest _webbRequest;
+        private readonly string _adapterGuid;
 
         public WifiEntry(Frame navigationFrame, string adapterGuid, AvailableNetwork ssid, WebBRest webbRequest, Visibility showConnecting = Visibility.Hidden)
         {
-            this.navigationFrame = navigationFrame;
-            this.network = ssid;
-            this.webbRequest = webbRequest;
-            this.ShowConnecting = showConnecting;
-            this.adapterGuid = adapterGuid;
+            this._navigationFrame = navigationFrame;
+            this._network = ssid;
+            this._webbRequest = webbRequest;
+            ShowConnecting = showConnecting;
+            this._adapterGuid = adapterGuid;
 
             this.Active = false;
             this.ShowConnect = Visibility.Collapsed;
@@ -34,10 +37,10 @@ namespace DeviceCenter
             this.ShowExpanded = Visibility.Collapsed;
             this.SavePassword = false;
 
-            this.needPassword = this.network.SecurityEnabled;
-            this.Name = this.network.SSID;
-            this.Secure = (this.needPassword) ? Strings.Strings.LabelSecureWifi : Strings.Strings.LabelInsecureWifi;
-            this.SignalStrength = this.network.SignalQuality / 20;
+            this._needPassword = this._network.SecurityEnabled;
+            this.Name = this._network.SSID;
+            this.Secure = (this._needPassword) ? Strings.Strings.LabelSecureWifi : Strings.Strings.LabelInsecureWifi;
+            this.SignalStrength = this._network.SignalQuality / 20;
         }
 
         public string Name { get; private set; }
@@ -94,7 +97,7 @@ namespace DeviceCenter
 
         public void StartConnect()
         {
-            if (this.needPassword)
+            if (this._needPassword)
             {
                 // don't connect, show the password screen
                 this.NeedPassword = Visibility.Visible;
@@ -124,7 +127,7 @@ namespace DeviceCenter
         {
             try
             {
-                await webbRequest.ConnectToNetworkAsync(adapterGuid, this.network.SSID, password);
+                await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
             }
             catch (Exception err)
             {
@@ -132,7 +135,7 @@ namespace DeviceCenter
                 Debug.WriteLine(err.ToString());
             }
 
-            this.navigationFrame.GoBack();
+            this._navigationFrame.GoBack();
         }
 
         public void AllowSecure(bool enabled)
@@ -181,18 +184,18 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageWifi : Page
     {
-        private readonly Frame navigationFrame;
-        private readonly DiscoveredDevice device;
-        private readonly SoftApHelper wifiManager;
-        private readonly DispatcherTimer delayStart;
+        private readonly Frame _navigationFrame;
+        private readonly DiscoveredDevice _device;
+        private readonly SoftApHelper _wifiManager;
+        private readonly DispatcherTimer _delayStart;
 
         public PageWifi(Frame navigationFrame, SoftApHelper wifiManager, DiscoveredDevice device)
         {
             InitializeComponent();
 
-            this.device = device;
-            this.navigationFrame = navigationFrame;
-            this.wifiManager = wifiManager;
+            this._device = device;
+            this._navigationFrame = navigationFrame;
+            this._wifiManager = wifiManager;
 
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
             progressWaiting.Visibility = Visibility.Visible;
@@ -200,41 +203,41 @@ namespace DeviceCenter
             App.TelemetryClient.TrackPageView(this.GetType().Name);
             LabelDeviceName.Text = device.DeviceName;
 
-            delayStart = new DispatcherTimer()
+            _delayStart = new DispatcherTimer()
             {
                 Interval = TimeSpan.FromSeconds(5),
                 IsEnabled = true
             };
-            delayStart.Tick += delayStartTimer_Tick;
+            _delayStart.Tick += delayStartTimer_Tick;
         }
 
         private bool _connected = false;
 
         private void ReturnAsError(string message)
         {
-            wifiManager.Disconnect();
+            _wifiManager.Disconnect();
 
             MessageBox.Show(message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
-            navigationFrame.GoBack();
+            _navigationFrame.GoBack();
         }
 
         private async void delayStartTimer_Tick(object sender, EventArgs e)
         {
-            delayStart.Stop();
+            _delayStart.Stop();
 
-            var connected = await wifiManager.ConnectAsync(device.WifiInstance, "password");
+            var connected = await _wifiManager.ConnectAsync(_device.WifiInstance, "password");
             if (connected)
             {
                 this._connected = true;
 
-                var authentication = DialogAuthenticate.GetSavedPassword(this.device.WifiInstance.SsidString);
+                var authentication = DialogAuthenticate.GetSavedPassword(this._device.WifiInstance.SsidString);
 
                 try
                 {
                     await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
                     {
-                        ListViewWifi.ItemsSource = await QueryWifiAsync(device);
+                        ListViewWifi.ItemsSource = await QueryWifiAsync(_device);
                     }));
                 }
                 catch (Exception error)
@@ -252,34 +255,23 @@ namespace DeviceCenter
         private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync(DiscoveredDevice device)
         {
             var result = new ObservableCollection<WifiEntry>();
+            var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
 
-            try
+            var ip = System.Net.IPAddress.Parse("192.168.173.1"); // default on wifi
+            var webbRequest = new WebBRest(ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
+
+            var adapters = await webbRequest.GetWirelessAdaptersAsync();
+
+            if (adapters != null && adapters.Items != null)
             {
-                var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
-
-                var ip = System.Net.IPAddress.Parse("192.168.173.1"); // default on wifi
-                var webbRequest = new WebBRest(ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
-
-                var adapters = await webbRequest.GetWirelessAdaptersAsync();
-
-                if (adapters != null && adapters.Items != null)
+                var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
+                foreach (var ssid in networks.Items)
                 {
-                    var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
-                    foreach (var ssid in networks.Items)
-                    {
-                        result.Add(new WifiEntry(navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
-                    }
-                }
-
-                progressWaiting.Visibility = Visibility.Collapsed;
-            }
-            catch (Exception err)
-            {
-                if (err.Message != null)
-                {
-
+                    result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
                 }
             }
+
+            progressWaiting.Visibility = Visibility.Collapsed;
 
             return result;
         }
@@ -295,7 +287,7 @@ namespace DeviceCenter
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
             if (this._connected)
-                wifiManager.Disconnect();
+                _wifiManager.Disconnect();
         }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
@@ -384,7 +376,7 @@ namespace DeviceCenter
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            navigationFrame.GoBack();
+            _navigationFrame.GoBack();
         }
     }
 }
