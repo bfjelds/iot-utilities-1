@@ -71,7 +71,6 @@ namespace DeviceCenter
 		{
 			LPWSTR newDeviceNameNative = nullptr;
 			LPWSTR newDeviceIPV4AddressNative = nullptr;
-			LPWSTR newDeviceIPV6AddressNative = nullptr;
 			LPWSTR newDeviceTxtPropertiesNative = nullptr;
 
 			// Get the device Name 
@@ -104,19 +103,10 @@ namespace DeviceCenter
 						}
 					}
 
-					String^ newDeviceIPV6Address = ipAddresses->Value[1];
-					int newDeviceIPV6AddressLength = wcslen(newDeviceIPV6Address->Data()) + 1;
-					newDeviceIPV6AddressNative = (LPWSTR)CoTaskMemAlloc(newDeviceIPV6AddressLength * sizeof(wchar_t));
-					if (NULL != newDeviceIPV6AddressNative)
-					{
-						if (FAILED(StringCchCopy(newDeviceIPV6AddressNative, newDeviceIPV6AddressLength, newDeviceIPV6Address->Data())))
-						{
-							return;
-						}
-					}
 				}
 				catch(Exception^ exp)
 				{
+					// No IPV4 address, return
 					return; 
 				}
 			}
@@ -141,7 +131,7 @@ namespace DeviceCenter
 				}
 			}
 
-			g_AddCallback(newDeviceNameNative, newDeviceIPV4AddressNative, newDeviceIPV6AddressNative, newDeviceTxtPropertiesNative);
+			g_AddCallback(newDeviceNameNative, newDeviceIPV4AddressNative, newDeviceTxtPropertiesNative);
 		}
 	}
 

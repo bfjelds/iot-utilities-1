@@ -77,45 +77,54 @@ namespace DeviceCenter
 
         private async void ButtonDeploy_Click(object sender, RoutedEventArgs e)
         {
-            if (_device != null && string.IsNullOrEmpty(_device.Architecture))
+            if (_device == null)
             {
-                // the app name as caption
                 var errorCaption = Strings.Strings.AppNameDisplay;
-
-                // show the filename, use standard windows error
-                var minBuild = "10.0.10577";
-                var errorMsg = string.Format(Strings.Strings.ErrorUnknownArchitecture, minBuild);
+                var errorMsg = Strings.Strings.ErrorNullDevice;
 
                 MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-
-            PanelDeploy.Visibility = Visibility.Collapsed;
-            PanelDeploying.Visibility = Visibility.Visible;
-            PanelDeployed.Visibility = Visibility.Collapsed;
-
-            // tbd check for null _device
-            var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);                      
-
-            var sourceFiles = this.AppItem.PlatformFiles[_device.Architecture];
-
-            var files = new List<FileInfo> {sourceFiles.AppX, sourceFiles.Certificate};
-
-            files.AddRange(sourceFiles.Dependencies);
-
-            if (!await webbRequest.InstallAppxAsync(this.AppItem.AppName, files))
-            {
-                PanelDeploying.Visibility = Visibility.Collapsed;
-                PanelDeployed.Visibility = Visibility.Collapsed;
-                PanelDeploy.Visibility = Visibility.Visible;
-            }
             else
             {
-                PanelDeploying.Visibility = Visibility.Collapsed;
-                PanelDeployed.Visibility = Visibility.Visible;
-                PanelDeploy.Visibility = Visibility.Collapsed;
+                if (string.IsNullOrEmpty(_device.Architecture))
+                {
+                    // the app name as caption
+                    var errorCaption = Strings.Strings.AppNameDisplay;
 
-                var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;                
-                Process.Start(new ProcessStartInfo(appUrl));
+                    // show the filename, use standard windows error
+                    var minBuild = "10.0.10577";
+                    var errorMsg = string.Format(Strings.Strings.ErrorUnknownArchitecture, minBuild);
+
+                    MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+
+                PanelDeploy.Visibility = Visibility.Collapsed;
+                PanelDeploying.Visibility = Visibility.Visible;
+                PanelDeployed.Visibility = Visibility.Collapsed;
+
+                var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
+
+                var sourceFiles = this.AppItem.PlatformFiles[_device.Architecture];
+
+                var files = new List<FileInfo> { sourceFiles.AppX, sourceFiles.Certificate };
+
+                files.AddRange(sourceFiles.Dependencies);
+
+                if (!await webbRequest.InstallAppxAsync(this.AppItem.AppName, files))
+                {
+                    PanelDeploying.Visibility = Visibility.Collapsed;
+                    PanelDeployed.Visibility = Visibility.Collapsed;
+                    PanelDeploy.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    PanelDeploying.Visibility = Visibility.Collapsed;
+                    PanelDeployed.Visibility = Visibility.Visible;
+                    PanelDeploy.Visibility = Visibility.Collapsed;
+
+                    var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
+                    Process.Start(new ProcessStartInfo(appUrl));
+                }
             }
         }
 
@@ -158,7 +167,7 @@ namespace DeviceCenter
             navigation.GoBack();
         }
 
-        private void AddDeviceCallback(string deviceName, string ipV4Address, string ipV6Address, string txtParameters)
+        private void AddDeviceCallback(string deviceName, string ipV4Address, string txtParameters)
         {
             if (String.IsNullOrEmpty(deviceName) || String.IsNullOrEmpty(ipV4Address))
             {

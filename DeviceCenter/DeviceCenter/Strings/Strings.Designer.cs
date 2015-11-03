@@ -637,6 +637,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error in getting target device. Please try again..
+        /// </summary>
+        public static string ErrorNullDevice {
+            get {
+                return ResourceManager.GetString("ErrorNullDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown device architecture.  Please use Windows 10 IoT Core build {0} or newer.
         /// </summary>
         public static string ErrorUnknownArchitecture {
