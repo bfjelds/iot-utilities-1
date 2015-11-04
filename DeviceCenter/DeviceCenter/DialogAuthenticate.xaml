@@ -21,8 +21,8 @@
                     <ColumnDefinition Width="234*"/>
                     <ColumnDefinition Width="235*"/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="ButtonOk" IsDefault="True" Content="{x:Static props:Strings.ContinueButton}" Padding="4" Background="#3277BF" Foreground="White" Click="ButtonOk_Click" Margin="0,0,10,0" />
-                <Button x:Name="ButtonCancel" IsCancel="True" Content="{x:Static props:Strings.CancelButton}" Padding="4" Margin="10,0,0,0" Click="ButtonCancel_Click" Background="#FF787878" Foreground="White" Grid.Column="1"/>
+                <Button x:Name="buttonOk" IsDefault="True" Content="{x:Static props:Strings.OkButton}" Padding="4" Background="#3277BF" Foreground="White" Click="buttonOk_Click" Margin="0,0,10,0" />
+                <Button x:Name="buttonCancel" IsCancel="True" Content="{x:Static props:Strings.CancelButton}" Padding="4" Margin="10,0,0,0" Click="buttonCancel_Click" Background="#FF787878" Foreground="White" Grid.Column="1"/>
             </Grid>
         </StackPanel>
     </Grid>
