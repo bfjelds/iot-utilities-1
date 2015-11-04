@@ -34,6 +34,11 @@ namespace DeviceCenter
         private PageWifi _wifiPage;
         private bool _connectedToAdhoc = false;
         readonly NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
+        private BroadcastWatcher _broadCastWatcher = new BroadcastWatcher();
+        private readonly DispatcherTimer _broadCastWatcherStartTimer = new DispatcherTimer();
+        private readonly DispatcherTimer _broadCastWatcherStopTimer = new DispatcherTimer();
+        private readonly int pollDelayBroadcast = 2;
+        private readonly int pollDelayWifi = 5;
 
         ~ViewDevicesPage()
         {
@@ -56,9 +61,6 @@ namespace DeviceCenter
             this._addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
             this._softwareAccessPoint = SoftApHelper.Instance;
 
-            //Stop Discovery if it was already started
-            NativeMethods.StopDiscovery();
-
             App.TelemetryClient.TrackPageView(this.GetType().Name);
 
             InitializeComponent();
@@ -74,15 +76,41 @@ namespace DeviceCenter
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
             NativeMethods.RegisterCallback(_addCallbackdel);
 
-            //Start device discovery using DNS-SD
-            NativeMethods.StartDiscovery();
+            // initialize polling timers 
+            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(pollDelayBroadcast);
+            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
+
+            _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(pollDelayWifi);
+            _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
+
+            StartDiscovery();
 
             // Set up polling
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             _telemetryTimer.Tick += TelemetryTimer_Tick;
+        }
 
-            _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(10);
-            _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
+        private void StartDiscovery()
+        {
+            // Stop everything first 
+            _broadCastWatcherStartTimer.Stop();
+            _broadCastWatcherStopTimer.Stop();
+            _wifiRefreshTimer.Stop();
+
+            _broadCastWatcher.RemoveListeners();
+
+            NativeMethods.StopDiscovery();
+
+            // Start mDNS based discovery 
+
+            // 1. Register the callback
+            NativeMethods.RegisterCallback(_addCallbackdel);
+
+            // 2. Start device discovery using DNS-SD
+            NativeMethods.StartDiscovery();
+
+            _broadCastWatcherStartTimer.Start();
+            _wifiRefreshTimer.Start();
 
             // Start refresh
             RefreshWifiAsync();
@@ -185,58 +213,83 @@ namespace DeviceCenter
 
             //Debug.WriteLine(deviceName);
 
-            if (String.IsNullOrEmpty(deviceName)
-                || String.IsNullOrEmpty(ipV4Address)
-                || String.IsNullOrEmpty(txtParameters))
+            if (String.IsNullOrEmpty(deviceName) || String.IsNullOrEmpty(ipV4Address))
             {
                 return;
             }
 
+            string parsedDeviceName = "";
             string deviceModel = "";
             string osVersion = "";
-            string deviceGuid = "";
+            Guid deviceGuid = Guid.Empty;
             string arch = "";
+            IPAddress ipAddress = IPAddress.Parse(ipV4Address);
 
-            //The txt parameter are in following format
-            // txtParameters = "guid=79F50796-F59B-D97A-A00F-63D798C6C144,model=Virtual,architecture=x86,osversion=10.0.10557,"
-            // Split them with ',' and '=' and get the odd values 
-            var deviceDetails = txtParameters.Split(',', '=');
-            var index = 0;
-            while(index < deviceDetails.Length)
+            // mDNS Discovered devices are in format "devicename.local". Remove the suffix
+            if(deviceName.IndexOf('.') > 0)
             {
-                switch(deviceDetails[index])
-                {
-                    case "guid":
-                        deviceGuid = deviceDetails[index + 1];
-                        break;
-                    case "model":
-                        deviceModel = deviceDetails[index + 1];
-                        break;
-                    case "osversion":
-                        osVersion = deviceDetails[index + 1];
-                        break;
-                    case "architecture":
-                        arch = deviceDetails[index + 1];
-                        break;
-                }
-                index += 2;
+                parsedDeviceName = deviceName.Substring(0, deviceName.IndexOf('.'));
             }
-            
+            else
+            {
+                parsedDeviceName = deviceName;
+            }
+
+            if (!String.IsNullOrEmpty(txtParameters))
+            {
+                //The txt parameter are in following format
+                // txtParameters = "guid=79F50796-F59B-D97A-A00F-63D798C6C144,model=Virtual,architecture=x86,osversion=10.0.10557,"
+                // Split them with ',' and '=' and get the odd values 
+                var deviceDetails = txtParameters.Split(',', '=');
+                var index = 0;
+                while (index < deviceDetails.Length)
+                {
+                    switch (deviceDetails[index])
+                    {
+                        case "guid":
+                            deviceGuid = new Guid(deviceDetails[index + 1]);
+                            break;
+                        case "model":
+                            deviceModel = deviceDetails[index + 1];
+                            break;
+                        case "osversion":
+                            osVersion = deviceDetails[index + 1];
+                            break;
+                        case "architecture":
+                            arch = deviceDetails[index + 1];
+                            break;
+                    }
+                    index += 2;
+                }
+            }
+
             var newDevice = new DiscoveredDevice()
             {
-                DeviceName = deviceName.Substring(0, deviceName.IndexOf('.')),
+                DeviceName = parsedDeviceName,
                 DeviceModel = deviceModel,
                 Architecture = arch,
                 OsVersion = osVersion,
-                IpAddress = IPAddress.Parse(ipV4Address),
-                UniqueId =  String.IsNullOrEmpty(deviceGuid) ? Guid.Empty : new Guid(deviceDetails[1]),
+                IpAddress = ipAddress,
+                UniqueId = deviceGuid,
                 Manage = new Uri($"http://administrator@{ipV4Address}/"),
                 Authentication = DialogAuthenticate.GetSavedPassword(deviceName)
             };
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
-                _devices.Add(newDevice);
+                bool found = false;
+                foreach(DiscoveredDevice d in _devices)
+                {
+                    if ((d.IpAddress != null) && d.IpAddress.Equals(newDevice.IpAddress))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    _devices.Add(newDevice);
+                }
             }));
 
             // Figure out which device has the latest build and the oldest build
@@ -274,6 +327,28 @@ namespace DeviceCenter
             // Refresh delay until telemetry is sent
             _telemetryTimer.Start();
 
+        }
+
+        private void StartBroadCastListener(object sender, EventArgs e)
+        {
+            // Stop listening after 5 seconds
+            _broadCastWatcherStopTimer.Interval = TimeSpan.FromSeconds(5);
+            _broadCastWatcherStopTimer.Tick += StopBroadCastListener;
+            _broadCastWatcher.OnPing += new BroadcastWatcher.PingHandler(BroadcastWatcher_Ping);
+            _broadCastWatcher.AddListeners();
+            _broadCastWatcherStopTimer.Start();
+            _broadCastWatcherStartTimer.Stop();
+        }
+
+        private void BroadcastWatcher_Ping(string Name, string IP, string Mac)
+        {
+            AddDeviceCallback(Name, IP, "");
+        }
+
+        private void StopBroadCastListener(object sender, EventArgs e)
+        {
+            _broadCastWatcher.RemoveListeners();
+            _broadCastWatcherStopTimer.Stop();
         }
 
         private int compareOsVersions(string osVersion1, string osVersion2)
@@ -425,9 +500,7 @@ namespace DeviceCenter
             _devices.Clear();
             _adhocNetworks.Clear();
 
-            NativeMethods.StopDiscovery();
-            NativeMethods.RegisterCallback(_addCallbackdel);
-            NativeMethods.StartDiscovery();
+            StartDiscovery();
 
             RefreshWifiAsync();
         }

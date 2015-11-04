@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DeviceCenter"
         xmlns:props="clr-namespace:DeviceCenter.Strings"
         mc:Ignorable="d"
-        Title="{x:Static props:Strings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Width="396.428" Height="192.496" ShowInTaskbar="False">
+        Title="{x:Static props:Strings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Width="497.683" Height="210.299" ShowInTaskbar="False">
     <DockPanel Background="WhiteSmoke">
         <TextBlock DockPanel.Dock="Top" x:Name="labelMessageHeader" Margin="10" FontSize="20" FontFamily="Segoe UI SemiLight" Text="Title" />
         <Grid DockPanel.Dock="Bottom"  Margin="10">
