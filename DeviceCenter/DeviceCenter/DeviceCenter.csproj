@@ -146,6 +146,7 @@
     </Compile>
     <Compile Include="DiscoveredDevice.cs" />
     <Compile Include="Helper\BroadcastWatcher.cs" />
+    <Compile Include="Helper\DiscoveryHelper.cs" />
     <Compile Include="Helper\RestHelper.cs" />
     <Compile Include="Helper\SoftAPHelper.cs" />
     <Compile Include="ImageHelper.cs" />
