@@ -37,6 +37,8 @@ namespace DeviceCenter
         private BroadcastWatcher _broadCastWatcher = new BroadcastWatcher();
         private readonly DispatcherTimer _broadCastWatcherStartTimer = new DispatcherTimer();
         private readonly DispatcherTimer _broadCastWatcherStopTimer = new DispatcherTimer();
+        private readonly int pollDelayBroadcast = 2;
+        private readonly int pollDelayWifi = 5;
 
         ~ViewDevicesPage()
         {
@@ -50,37 +52,42 @@ namespace DeviceCenter
 
         public ViewDevicesPage(Frame navigationFrame)
         {
-            InitializeComponent();
-            _addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
+            // initialize parameters
             this._navigationFrame = navigationFrame;
+            this._newestBuildDevice = null;
+            this._oldestBuildDevice = null;
 
+            // initialize helpers
+            this._addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
+            this._softwareAccessPoint = SoftApHelper.Instance;
+
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
+
+            InitializeComponent();
+
+            // set up binding
             ListViewDevices.ItemsSource = _devices;
-
-            _softwareAccessPoint = SoftApHelper.Instance;
-
-            _newestBuildDevice = null;
-            _oldestBuildDevice = null;
-
-            _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
-            _telemetryTimer.Tick += TelemetryTimer_Tick;
-
-            StartDiscovery();
-
-            _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
 
             //Sort the listview
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("DeviceName", ListSortDirection.Ascending));
 
-            _softwareAccessPoint = SoftApHelper.Instance;
+            //Register the callbacks
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
+            NativeMethods.RegisterCallback(_addCallbackdel);
 
-            _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(10);
+            // initialize polling timers 
+            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(pollDelayBroadcast);
+            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
+
+            _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(pollDelayWifi);
             _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
 
-            RefreshWifiAsync();
+            StartDiscovery();
 
-            App.TelemetryClient.TrackPageView(this.GetType().Name);
+            // Set up polling
+            _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
+            _telemetryTimer.Tick += TelemetryTimer_Tick;
         }
 
         private void StartDiscovery()
@@ -88,7 +95,10 @@ namespace DeviceCenter
             // Stop everything first 
             _broadCastWatcherStartTimer.Stop();
             _broadCastWatcherStopTimer.Stop();
+            _wifiRefreshTimer.Stop();
+
             _broadCastWatcher.RemoveListeners();
+
             NativeMethods.StopDiscovery();
 
             // Start mDNS based discovery 
@@ -99,11 +109,13 @@ namespace DeviceCenter
             // 2. Start device discovery using DNS-SD
             NativeMethods.StartDiscovery();
 
-            // Wait for 2 second and start Broadcast discovery 
-            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(2);
-            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
             _broadCastWatcherStartTimer.Start();
+            _wifiRefreshTimer.Start();
+
+            // Start refresh
+            RefreshWifiAsync();
         }
+
         private void SoftwareAccessPoint_OnSoftAPDisconnected()
         {
             _connectedToAdhoc = false;
@@ -111,12 +123,14 @@ namespace DeviceCenter
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            _wifiRefreshTimer.Stop();
+            if (_wifiRefreshTimer != null)
+                _wifiRefreshTimer.Stop();
         }
 
         private void RefreshWifiAsync()
         {
-            _wifiRefreshTimer.Stop();
+            if (_wifiRefreshTimer == null || _softwareAccessPoint == null)
+                return;
 
             try
             {
@@ -128,7 +142,7 @@ namespace DeviceCenter
                 }
                 catch (WLanException)
                 {
-                    // probably not connected to wifi
+                    // ignore error, return empty list
                 }
 
                 if (list == null)
