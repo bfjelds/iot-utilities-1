@@ -23,7 +23,7 @@
                 <StackPanel x:Name="PanelManualImage" Orientation="Vertical">
                     <TextBlock TextWrapping="Wrap" Text="{x:Static props:Strings.NewDeviceDragonBoardMessage1}" Margin="0 8" />
                     <TextBlock Margin="0 8" >
-                        <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/win10/SetupPCDB410c.htm" RequestNavigate="Hyperlink_RequestNavigate">
+                        <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkID=698294" RequestNavigate="Hyperlink_RequestNavigate">
                             <TextBlock Text="{x:Static props:Strings.NewDeviceDragonBoardMessage2}" />
                         </Hyperlink>
                     </TextBlock>
@@ -32,7 +32,7 @@
                     <TextBlock x:Uid="InsertSDCard" Text="{x:Static props:Strings.NewDeviceInsertSDCardMessage}" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="0,10,0,0"/>
                     <TextBlock Text="{x:Static props:Strings.NewDeviceInsertSDCardMessage2}" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="0,10,0,0"/>
                     <TextBlock Margin="0,10,0,0">
-                    <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/win10/SupportedInterfaces.htm#WiFi-Dongles" RequestNavigate="Hyperlink_RequestNavigate">
+                    <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkID=698289" RequestNavigate="Hyperlink_RequestNavigate">
                         <TextBlock Text="{x:Static props:Strings.ViewAcceptableSDCards}" /> 
                     </Hyperlink>
                 </TextBlock>

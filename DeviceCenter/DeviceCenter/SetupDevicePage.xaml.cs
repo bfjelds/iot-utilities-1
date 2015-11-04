@@ -431,7 +431,8 @@ namespace DeviceCenter
                 var dlg = new WindowWarning()
                 {
                     Header = Strings.Strings.ConnectAlertTitle,
-                    Message = Strings.Strings.NewDeviceAlertMessage + "\n" + Strings.Strings.NewDeviceAlertMessage2
+                    Message = Strings.Strings.NewDeviceAlertMessage + "\n" + Strings.Strings.NewDeviceAlertMessage2,
+                    Owner = Window.GetWindow(this)
                 };
 
                 var confirmation = dlg.ShowDialog();

@@ -17,12 +17,12 @@
         </ScrollViewer>
         <TextBlock DockPanel.Dock="Top" Text="{x:Static props:Strings.SamplesLearnMore}" TextWrapping="Wrap" Margin="0,10,0,0" />
         <TextBlock x:Name="buttonStartCoding" DockPanel.Dock="Top"  FontSize="14" TextWrapping="Wrap" Margin="0,10,0,0" >
-            <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/win10/samples/Blinky.htm" RequestNavigate="Hyperlink_RequestNavigate">
+            <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkID=698291" RequestNavigate="Hyperlink_RequestNavigate">
                 <TextBlock Text="{x:Static props:Strings.SamplesStartCoding}"/>
             </Hyperlink>
         </TextBlock>
         <TextBlock x:Name="buttonTutorials" DockPanel.Dock="Top" TextWrapping="Wrap" Margin="0,10,0,0">
-            <Hyperlink  NavigateUri="http://ms-iot.github.io/content/en-US/win10/StartCoding.htm" RequestNavigate="Hyperlink_RequestNavigate">
+            <Hyperlink  NavigateUri="http://go.microsoft.com/fwlink/?LinkID=698290" RequestNavigate="Hyperlink_RequestNavigate">
                 <TextBlock Text="{x:Static props:Strings.SamplesOtherProjects}" />
             </Hyperlink>
         </TextBlock>

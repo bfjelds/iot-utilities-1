@@ -43,7 +43,7 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            var webbRequest = new WebBRest(this.Device.IpAddress, this.Device.Authentication);
+            var webbRequest = new WebBRest(Window.GetWindow(this), this.Device.IpAddress, this.Device.Authentication);
 
             if (!string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) && 
                 !string.IsNullOrWhiteSpace(textBoxPassword1.Password))
@@ -53,6 +53,11 @@ namespace DeviceCenter
                 // bring it back to setup screen if password setting is successful.
                 if (result == true)
                 {
+                    MessageBox.Show(
+                        "Password changed successfully",
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.None);
                     _navigationFrame.GoBack();
                 }
             }

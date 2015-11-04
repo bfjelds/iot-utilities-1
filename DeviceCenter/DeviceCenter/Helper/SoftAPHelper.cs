@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -14,9 +15,11 @@ namespace DeviceCenter.Helper
         public const string SoftApHostIp = "192.168.173.1";
         public const string SoftApClientIp = "192.168.173.2";
         public const string SoftApSubnetAddr = "255.255.255.0";
+        public const string SoftApPassword = "password";
         public const string SoftApNamePrefix = "AJ_";
         public const int PingRetryNumber = 10;
         public const int PingDelay = 500;
+        public const int PollDelay = 5;
         #endregion
 
         #region public
@@ -98,7 +101,7 @@ namespace DeviceCenter.Helper
             );
         }
 
-        public void Disconnect()
+        public void DisconnectIfNeeded()
         {
             // tbd this code need refactor to cleanly handle when Wi-Fi doesn't exist in the system.
 
@@ -215,7 +218,7 @@ namespace DeviceCenter.Helper
             if (!isDhcp)
             {
                 Util.Info("Switch to IP address {0}", SoftApClientIp);
-                return _subnetHelper.SetIp(SoftApClientIp, SoftApSubnetAddr);
+                return _subnetHelper.DisableDhcp(SoftApClientIp, SoftApSubnetAddr);
             }
 
             return true;

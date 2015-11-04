@@ -205,7 +205,7 @@ namespace DeviceCenter
 
             _delayStart = new DispatcherTimer()
             {
-                Interval = TimeSpan.FromSeconds(5),
+                Interval = TimeSpan.FromSeconds(SoftApHelper.PollDelay),
                 IsEnabled = true
             };
             _delayStart.Tick += delayStartTimer_Tick;
@@ -215,7 +215,7 @@ namespace DeviceCenter
 
         private void ReturnAsError(string message)
         {
-            _wifiManager.Disconnect();
+            _wifiManager.DisconnectIfNeeded();
 
             MessageBox.Show(message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
@@ -226,7 +226,7 @@ namespace DeviceCenter
         {
             _delayStart.Stop();
 
-            var connected = await _wifiManager.ConnectAsync(_device.WifiInstance, "password");
+            var connected = await _wifiManager.ConnectAsync(_device.WifiInstance, SoftApHelper.SoftApPassword);
             if (connected)
             {
                 this._connected = true;
@@ -238,12 +238,13 @@ namespace DeviceCenter
                     await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
                     {
                         ListViewWifi.ItemsSource = await QueryWifiAsync(_device);
+
+                        progressWaiting.Visibility = Visibility.Collapsed;
                     }));
                 }
                 catch (Exception error)
                 {
                     ReturnAsError(error.Message);
-
                 }
             }
             else
@@ -257,37 +258,30 @@ namespace DeviceCenter
             var result = new ObservableCollection<WifiEntry>();
             var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
 
-            var ip = System.Net.IPAddress.Parse("192.168.173.1"); // default on wifi
-            var webbRequest = new WebBRest(ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
+            var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
+            var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
 
             var adapters = await webbRequest.GetWirelessAdaptersAsync();
 
             if (adapters != null && adapters.Items != null)
             {
                 var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
-                foreach (var ssid in networks.Items)
+                if (networks != null)
                 {
-                    result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                    foreach (var ssid in networks.Items)
+                    {
+                        result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                    }
                 }
             }
 
-            progressWaiting.Visibility = Visibility.Collapsed;
-
             return result;
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void ListViewDevices_Loaded(object sender, RoutedEventArgs e)
-        {
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
             if (this._connected)
-                _wifiManager.Disconnect();
+                _wifiManager.DisconnectIfNeeded();
         }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)

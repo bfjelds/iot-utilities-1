@@ -32,49 +32,55 @@ namespace DeviceCenter
         private readonly Frame _navigationFrame;
         private PageWifi _wifiPage;
         private bool _connectedToAdhoc = false;
+        private readonly int pollDelayBroadcast = 2;
+        private readonly int pollDelayWifi = 5;
 
         ~ViewDevicesPage()
         {
             _wifiRefreshTimer.Stop();
             if (_connectedToAdhoc)
             {
-                _softwareAccessPoint.Disconnect();
+                _softwareAccessPoint.DisconnectIfNeeded();
             }
         }
 
         public ViewDevicesPage(Frame navigationFrame)
         {
+            // initialize parameters
+            this._navigationFrame = navigationFrame;
+            this._newestBuildDevice = null;
+            this._oldestBuildDevice = null;
+
+            this._softwareAccessPoint = SoftApHelper.Instance;
+
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
+
             InitializeComponent();
 
-            this._navigationFrame = navigationFrame;
-
+            // set up binding
             ListViewDevices.ItemsSource = _discoveryHelper.DiscoveredDevices;
-
-            _softwareAccessPoint = SoftApHelper.Instance;
-
-            _newestBuildDevice = null;
-            _oldestBuildDevice = null;
-
-            _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
-            _telemetryTimer.Tick += TelemetryTimer_Tick;
-
             _discoveryHelper.StartDiscovery();
-
-            _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
 
             //Sort the listview
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("DeviceName", ListSortDirection.Ascending));
 
-            _softwareAccessPoint = SoftApHelper.Instance;
+            //Register the callbacks
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
+            NativeMethods.RegisterCallback(_addCallbackdel);
 
-            _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(10);
+            // initialize polling timers 
+            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(pollDelayBroadcast);
+            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
+
+            _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(pollDelayWifi);
             _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
 
-            RefreshWifiAsync();
+            StartDiscovery();
 
-            App.TelemetryClient.TrackPageView(this.GetType().Name);
+            // Set up polling
+            _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
+            _telemetryTimer.Tick += TelemetryTimer_Tick;
         }
 
         private void SoftwareAccessPoint_OnSoftAPDisconnected()
@@ -84,12 +90,14 @@ namespace DeviceCenter
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            _wifiRefreshTimer.Stop();
+            if (_wifiRefreshTimer != null)
+                _wifiRefreshTimer.Stop();
         }
 
         private void RefreshWifiAsync()
         {
-            _wifiRefreshTimer.Stop();
+            if (_wifiRefreshTimer == null || _softwareAccessPoint == null)
+                return;
 
             try
             {
@@ -101,7 +109,7 @@ namespace DeviceCenter
                 }
                 catch (WLanException)
                 {
-                    // probably not connected to wifi
+                    // ignore error, return empty list
                 }
 
                 if (list == null)
@@ -229,10 +237,12 @@ namespace DeviceCenter
                     var dlg = new WindowWarning()
                     {
                         Header = Strings.Strings.ConnectAlertTitle,
-                        Message = Strings.Strings.ConnectAlertMessage
+                        Message = Strings.Strings.ConnectAlertMessage,
+                        Owner = Window.GetWindow(this)
                     };
 
                     var confirmation = dlg.ShowDialog();
+
                     if (confirmation.HasValue && confirmation.Value)
                     {
                         App.TelemetryClient.TrackEvent("WiFiButtonClick", new Dictionary<string, string>()

@@ -183,4 +183,5 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 # Binary files
+# DeviceDiscovery.dll is built in the solution. It's added to project for ClickOnce.  It doesn't need to be included in repository.
 /DeviceCenter/**/DeviceDiscovery.dll

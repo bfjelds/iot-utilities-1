@@ -22,6 +22,8 @@ namespace DeviceCenter
         private const string AppTaskUrl = "/api/taskmanager/";
         private const string PerfMgrUrl = "/api/resourcemanager/";
 
+        private const int QueryInterval = 3000;
+
         private readonly RestHelper _restHelper;
 
         public class RestError : Exception
@@ -31,9 +33,9 @@ namespace DeviceCenter
             }
         }
 
-        public WebBRest(IPAddress ipAddress, UserInfo userInfo)
+        public WebBRest(Window parent, IPAddress ipAddress, UserInfo userInfo)
         {
-            this._restHelper = new RestHelper(ipAddress, userInfo);
+            this._restHelper = new RestHelper(parent, ipAddress, userInfo);
         }
 
         public async Task<bool> SetDeviceNameAsync(string newDeviceName)
@@ -43,14 +45,22 @@ namespace DeviceCenter
 
             try
             {
-                await _restHelper.PostRequestAsync(url, string.Empty);
+                var result = await _restHelper.PostRequestAsync(url, string.Empty);
+
+                if (result == HttpStatusCode.OK)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 return false;
             }
-            return true;
         }
 
         public async Task<bool> SetPasswordAsync(string oldPassword, string newPassword)
@@ -68,11 +78,6 @@ namespace DeviceCenter
                     // resaves the password
                     _restHelper.DeviceAuthentication.Password = newPassword;
                     DialogAuthenticate.SavePassword(_restHelper.DeviceAuthentication);
-                    MessageBox.Show(
-                        "Password changed successfully",
-                        Strings.Strings.AppNameDisplay,
-                        MessageBoxButton.OK,
-                        MessageBoxImage.None);
                     return true;
                 }
             }
@@ -96,15 +101,22 @@ namespace DeviceCenter
 
             try
             {
-                await _restHelper.PostRequestAsync(url, string.Empty);
+                var result = await _restHelper.PostRequestAsync(url, string.Empty);
+
+                if (result == HttpStatusCode.OK)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 return false;
             }
-
-            return true;
         }
 
         public async Task<bool> InstallAppxAsync(string appName, IEnumerable<FileInfo> files)
@@ -186,13 +198,13 @@ namespace DeviceCenter
                     if (await PollInstallStateAsync())
                     {
                         return await StartAppAsync(appName);
-                        
                     }
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                return false;
             }
 
             return false;
@@ -212,7 +224,7 @@ namespace DeviceCenter
                         result = response.StatusCode;
                         if (response.StatusCode == HttpStatusCode.NoContent)
                         {
-                            await Task.Delay(3000);
+                            await Task.Delay(QueryInterval);
                         }
                     }
                 }
@@ -246,7 +258,7 @@ namespace DeviceCenter
                 Debug.WriteLine(wex);
             }
 
-            return new InstalledPackages();
+            return null;
         }
 
         public async Task<bool> IsAppRunning(string appName)
@@ -288,6 +300,12 @@ namespace DeviceCenter
             {
                 var installedPackages = await GetInstalledPackagesAsync();
 
+                if (installedPackages == null)
+                {
+                    // REST API error when getting installed packages
+                    return false;
+                }
+
                 foreach (var app in installedPackages.Items)
                 {
                     if (app.Name == appName)
@@ -311,23 +329,33 @@ namespace DeviceCenter
         public async Task<bool> StopAppAsync(string appName)
         {
             var url = String.Empty;
-            var isFound = false;
-
-            var installedPackages = await GetInstalledPackagesAsync();
-            foreach (var app in installedPackages.Items)
-            {
-                if (app.Name != appName) continue;
-                isFound = true;
-                url = AppTaskUrl + "app?package=" + RestHelper.Encode64(app.PackageFullName);
-            }
-            if (!isFound)
-            {
-                throw new ArgumentException("Application name is not valid!");
-            }
-
             var result = HttpStatusCode.BadRequest;
+
             try
             {
+                var installedPackages = await GetInstalledPackagesAsync();
+
+                if (installedPackages == null)
+                {
+                    // REST API error when getting installed packages
+                    return false;
+                }
+
+                foreach (var app in installedPackages.Items)
+                {
+                    if (app.Name == appName)
+                    {
+                        url = AppTaskUrl + "app?package=" + RestHelper.Encode64(app.PackageFullName);
+                        break;
+                    }
+                    
+                }
+                if (String.IsNullOrEmpty(url))
+                {
+                    // App is not found in installed packages list
+                    return false;
+                }
+
                 result = await this._restHelper.DeleteRequestAsync(url);
             }
             catch (Exception ex)
@@ -407,7 +435,7 @@ namespace DeviceCenter
             return new AvailableNetworks();
         }
 
-        public async Task<string> ConnectToNetworkAsync(string adapterName, string ssid, string ssidPassword)
+        public async Task<bool> ConnectToNetworkAsync(string adapterName, string ssid, string ssidPassword)
         {
             var url = "/api/wifi/network?";
             url = url + "interface=" + adapterName.Trim("{}".ToCharArray());
@@ -424,7 +452,10 @@ namespace DeviceCenter
                 // "using" just to make sure the HttpWebResponse is disposed
                 using (var response = await this._restHelper.GetOrPostRequestAsync(url, false))
                 {
-
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        return true;
+                    }
                 }
             }
             catch(Exception ex)
@@ -432,8 +463,7 @@ namespace DeviceCenter
                 Debug.WriteLine(ex);
             }
 
-            // tbd gneves: Any particular reason to always return an empty string?
-            return string.Empty;
+            return false;
         }
 
         #endregion
