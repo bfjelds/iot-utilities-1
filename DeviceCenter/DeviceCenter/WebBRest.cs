@@ -435,7 +435,7 @@ namespace DeviceCenter
             return new AvailableNetworks();
         }
 
-        public async Task<string> ConnectToNetworkAsync(string adapterName, string ssid, string ssidPassword)
+        public async Task<bool> ConnectToNetworkAsync(string adapterName, string ssid, string ssidPassword)
         {
             var url = "/api/wifi/network?";
             url = url + "interface=" + adapterName.Trim("{}".ToCharArray());
@@ -452,7 +452,10 @@ namespace DeviceCenter
                 // "using" just to make sure the HttpWebResponse is disposed
                 using (var response = await this._restHelper.GetOrPostRequestAsync(url, false))
                 {
-
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        return true;
+                    }
                 }
             }
             catch(Exception ex)
@@ -460,8 +463,7 @@ namespace DeviceCenter
                 Debug.WriteLine(ex);
             }
 
-            // tbd gneves: Any particular reason to always return an empty string?
-            return string.Empty;
+            return false;
         }
 
         #endregion

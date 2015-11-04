@@ -256,7 +256,7 @@ namespace WlanAPIs
             public uint flags;
             readonly uint reserved;
 
-            public string SsidString => Encoding.ASCII.GetString(dot11Ssid.Ssid, 0, (int)dot11Ssid.SsidLength);
+            public string SsidString => Util.SsidToString(dot11Ssid);
 
             public override string ToString()
             {
@@ -328,7 +328,7 @@ namespace WlanAPIs
             public uint rxRate;
             public uint txRate;
 
-            public string SsidString => Encoding.ASCII.GetString(dot11Ssid.Ssid, 0, (int)dot11Ssid.SsidLength);
+            public string SsidString => Util.SsidToString(dot11Ssid);
         }
         #endregion
     }
