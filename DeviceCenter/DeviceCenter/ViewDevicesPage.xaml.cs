@@ -266,7 +266,7 @@ namespace DeviceCenter
                 bool found = false;
                 foreach(DiscoveredDevice d in _devices)
                 {
-                    if (d.IpAddress.Equals(newDevice.IpAddress))
+                    if ((d.IpAddress != null) && d.IpAddress.Equals(newDevice.IpAddress))
                     {
                         found = true;
                         break;
