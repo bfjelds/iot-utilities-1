@@ -153,12 +153,6 @@ namespace DeviceCenter
                     PanelDeploying.Visibility = Visibility.Collapsed;
                     PanelDeploy.Visibility = Visibility.Visible;
                 }
-                else
-                {
-                    PanelDeploying.Visibility = Visibility.Collapsed;
-                    PanelDeployed.Visibility = Visibility.Collapsed;
-                    PanelDeploy.Visibility = Visibility.Visible;
-                }
             }
         }
 
