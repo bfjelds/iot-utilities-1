@@ -103,28 +103,37 @@ namespace WlanAPIs
             {
                 const uint WLAN_INTF_OPCODE_CURRENT_CONNECTION = 7;
                 int valueSize;
-                IntPtr valuePtr;
+                IntPtr valuePtr = IntPtr.Zero;
                 uint opcodeValueType;
 
-                Util.ThrowIfFail(
-                    WlanInterop.WlanQueryInterface(
-                        _client.NativeHandle, 
-                        _nativeInterfaceInfo.interfaceGuid,
-                        WLAN_INTF_OPCODE_CURRENT_CONNECTION, 
-                        IntPtr.Zero, 
-                        out valueSize, 
-                        out valuePtr, 
-                        out opcodeValueType), 
-                    "CurrentConnection");
+                WlanInterop.WlanConnectionAttributes wlanConnection;
+
                 try
                 {
-                    return (WlanInterop.WlanConnectionAttributes)Marshal.PtrToStructure(valuePtr, 
+                    Util.ThrowIfFail(
+                        WlanInterop.WlanQueryInterface(
+                            _client.NativeHandle,
+                            _nativeInterfaceInfo.interfaceGuid,
+                            WLAN_INTF_OPCODE_CURRENT_CONNECTION,
+                            IntPtr.Zero,
+                            out valueSize,
+                            out valuePtr,
+                            out opcodeValueType),
+                        "CurrentConnection");
+
+                    wlanConnection = (WlanInterop.WlanConnectionAttributes)Marshal.PtrToStructure(valuePtr,
                         typeof(WlanInterop.WlanConnectionAttributes));
+                }
+                catch (WLanException)
+                {
+                    wlanConnection = new WlanInterop.WlanConnectionAttributes();
                 }
                 finally
                 {
                     WlanInterop.WlanFreeMemory(valuePtr);
                 }
+
+                return wlanConnection;
             }
         }
 
