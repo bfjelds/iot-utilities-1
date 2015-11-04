@@ -58,17 +58,13 @@
         private const string DefaultUser = "Administrator";
         private const string DefaultPassword = "p@ssw0rd";
 
-        // tbd - away from static?
         static LoginInfoDictionary _savedPasswords = new Dictionary<string, UserInfo>();
-        static bool _firstLoaded = false;
 
         public static UserInfo GetSavedPassword(string deviceName)
         {
-            // tbd - a hack. should be properly loaded 
-            if (_firstLoaded != true)
+            if (_savedPasswords == null)
             {
                 _savedPasswords = AppData.LoadWebBUserInfo();
-                _firstLoaded = true;
             }
 
             UserInfo result;

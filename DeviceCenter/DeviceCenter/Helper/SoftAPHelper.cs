@@ -19,7 +19,7 @@ namespace DeviceCenter.Helper
         public const string SoftApNamePrefix = "AJ_";
         public const int PingRetryNumber = 10;
         public const int PingDelay = 500;
-        public readonly TimeSpan PollDelay = TimeSpan.FromSeconds(5);
+        public const int PollDelay = 5;
         #endregion
 
         #region public
