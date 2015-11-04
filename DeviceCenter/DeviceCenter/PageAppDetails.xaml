@@ -34,7 +34,7 @@
         <StackPanel Margin="0 20 0 0">
             <TextBlock Text="{x:Static props:Strings.SamplesRun}" FontSize="20" TextWrapping="Wrap"  Margin="4" VerticalAlignment="Top"/>
             <TextBlock Margin="4" Text="{x:Static props:Strings.SamplesDeviceLabel}" />
-            <ComboBox x:Name="comboBoxDevices" Margin="4"  Width="300" HorizontalAlignment="Left" SelectionChanged="comboBoxDevices_SelectionChanged" >
+            <ComboBox x:Name="comboBoxDevices" Margin="4"  Width="300" HorizontalAlignment="Left" SelectedIndex="0" SelectionChanged="comboBoxDevices_SelectionChanged" >
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
