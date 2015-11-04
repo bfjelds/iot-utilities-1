@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClCompile Include="DeviceDiscovery.cpp" />
     <ClCompile Include="dllmain.cpp">
+      <CompileAsWinRT>false</CompileAsWinRT>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>

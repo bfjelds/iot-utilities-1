@@ -6,6 +6,12 @@
 
 typedef void(CALLBACK *PFN_AddDeviceCallback)(LPWSTR, LPWSTR, LPWSTR);
 
+struct CoTask_deleter {
+	void operator()(void* expired) {
+		CoTaskMemFree(expired);
+	}
+};
+
 namespace DeviceCenter
 {
 	// This class is exported from the DeviceDiscovery.dll
