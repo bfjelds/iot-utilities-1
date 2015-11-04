@@ -153,5 +153,15 @@ namespace WlanAPIs
 
             return true;
         }
+
+        public static string SsidToString(WlanInterop.Dot11Ssid dot11Ssid)
+        {
+            if (dot11Ssid.Ssid == null)
+            {
+                return string.Empty;
+            }
+
+            return Encoding.ASCII.GetString(dot11Ssid.Ssid, 0, (int)dot11Ssid.SsidLength);
+        }
     }
 }
