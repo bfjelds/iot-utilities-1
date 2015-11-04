@@ -39,24 +39,26 @@
             <ListView DockPanel.Dock="Top" x:Name="ListViewDevices" Unloaded="ListViewDevices_Unloaded" Margin="0 10 0 10" BorderBrush="{x:Null}" BorderThickness="0" >
                 <ListView.View>
                     <GridView ColumnHeaderTemplate="{StaticResource CleanHeaderTemplate}">
-                        <GridViewColumn Header="{x:Static props:Strings.DeviceListColName}">
+                        <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceListColName}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Padding="2 8 2 8" Text="{Binding DeviceName}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="{x:Static props:Strings.DeviceListColConnection}" Width="150">
+                        <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceListColType}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Visibility="{Binding ConnectVisible}" >
-                                        <TextBlock FontSize="22" Text="{Binding WiFiSignalStrengthIconDisplay}" Foreground="Blue" Cursor="Hand" FontFamily="Segoe MDL2 Assets" MouseDown="ButtonConnect_Click" VerticalAlignment="Center"  />
-                                        <TextBlock Margin="4 0 0 0" Text="{x:Static props:Strings.DevicesConfigureDevice}" Foreground="Blue" Cursor="Hand" MouseDown="ButtonConnect_Click" VerticalAlignment="Center" />
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding DeviceModel}" Visibility="{Binding ManageVisible}" />
+                                        <StackPanel Orientation="Horizontal" Visibility="{Binding ConnectVisible}" >
+                                            <TextBlock FontSize="22" Text="{Binding WiFiSignalStrengthIconDisplay}" Foreground="Blue" Cursor="Hand" FontFamily="Segoe MDL2 Assets" MouseDown="ButtonConnect_Click" VerticalAlignment="Center"  />
+                                            <TextBlock Margin="4 0 0 0" Text="{x:Static props:Strings.DevicesConfigureDevice}" Foreground="Blue" Cursor="Hand" MouseDown="ButtonConnect_Click" VerticalAlignment="Center" />
+                                        </StackPanel>
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceListColType}" DisplayMemberBinding="{Binding DeviceModel}"/>
                         <GridViewColumn Width="100" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IpAddress}" />
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColSettings}">
                             <GridViewColumn.CellTemplate>
