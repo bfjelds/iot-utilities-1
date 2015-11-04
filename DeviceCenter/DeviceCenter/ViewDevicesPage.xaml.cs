@@ -383,15 +383,8 @@ namespace DeviceCenter
 
         private void DeviceManage_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                var link = (Hyperlink)e.OriginalSource;
-                Process.Start(link.NavigateUri.AbsoluteUri);
-            }
-            catch (System.ComponentModel.Win32Exception)
-            {
-                // TODO: handle errors
-            }
+            var link = (Hyperlink)e.OriginalSource;
+            Process.Start(link.NavigateUri.AbsoluteUri);
         }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)

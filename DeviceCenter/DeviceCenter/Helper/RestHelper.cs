@@ -16,38 +16,7 @@ namespace DeviceCenter.Helper
 
         public static string Encode64(string toEncodeString)
         {
-            byte[] toEncodeAsBytes = Encoding.ASCII.GetBytes(toEncodeString.Trim());
-            var string64 = Convert.ToBase64String(toEncodeAsBytes);
-
-            // Ref: http://www.werockyourweb.com/url-escape-characters/
-            string64 = string64.Replace(" ", "20%");
-            string64 = string64.Replace("$", "24%");
-            string64 = string64.Replace("&", "26%");
-            string64 = string64.Replace("`", "60%");
-            string64 = string64.Replace(":", "%3A");
-            string64 = string64.Replace("<", "%3C");
-            string64 = string64.Replace(">", "%3E");
-            string64 = string64.Replace("[", "%5B");
-            string64 = string64.Replace("]", "%5D");
-            string64 = string64.Replace("{", "%7B");
-            string64 = string64.Replace("}", "%7D");
-            string64 = string64.Replace("\"", "22%");
-            string64 = string64.Replace("+", "%2B");
-            string64 = string64.Replace("#", "23%");
-            string64 = string64.Replace("%", "25%");
-            string64 = string64.Replace("@", "40%");
-            string64 = string64.Replace("/", "%2F");
-            string64 = string64.Replace(";", "%3B");
-            string64 = string64.Replace("=", "%3D");
-            string64 = string64.Replace("?", "%3F");
-            string64 = string64.Replace("\\", "%5C");
-            string64 = string64.Replace("^", "%5E");
-            string64 = string64.Replace("|", "%7C");
-            string64 = string64.Replace("~", "%7E");
-            string64 = string64.Replace("'", "27%");
-            string64 = string64.Replace(",", "%2C");
-
-            return string64;
+            return Uri.EscapeUriString(Convert.ToBase64String(Encoding.ASCII.GetBytes(toEncodeString.Trim())));
         }
 
         public UserInfo DeviceAuthentication { get; private set; }
