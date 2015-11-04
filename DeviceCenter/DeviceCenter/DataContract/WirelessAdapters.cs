@@ -35,10 +35,13 @@ namespace DeviceCenter.DataContract
     {
         [DataMember(Name = "Description")]
         public string Description { get; set; }
+
         [DataMember(Name = "GUID")]
         public string GUID { get; set; }
+
         [DataMember(Name = "Index")]
         public int Index { get; set; }
+
         [DataMember(Name = "ProfilesList")]
         public Profile[] ProfilesList { get; set; }
     }
@@ -48,8 +51,10 @@ namespace DeviceCenter.DataContract
     {
         [DataMember(Name = "GroupPolicyProfile")]
         public bool GroupPolicyProfile { get; set; }
+
         [DataMember(Name = "Name")]
         public string Name { get; set; }
+
         [DataMember(Name = "PerUserProfile")]
         public bool PerUserProfile { get; set; }
     }

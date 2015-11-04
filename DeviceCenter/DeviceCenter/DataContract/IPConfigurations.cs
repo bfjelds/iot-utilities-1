@@ -35,14 +35,19 @@ namespace DeviceCenter.DataContract
     {
         [DataMember(Name = "Description")]
         public string Description { get; set; }
+
         [DataMember(Name = "HardwareAddress")]
         public string HardwareAddress { get; set; }
+
         [DataMember(Name = "Index")]
         public int Index { get; set; }
+
         [DataMember(Name = "Name")]
         public string Name { get; set; }
+
         [DataMember(Name = "Type")]
         public string Type { get; set; }
+
         [DataMember(Name = "IpAddresses")]
         public IpAddress[] IPAddresses { get; set; }
     }
