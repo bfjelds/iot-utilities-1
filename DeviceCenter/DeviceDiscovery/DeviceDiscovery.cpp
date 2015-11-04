@@ -69,17 +69,17 @@ namespace DeviceCenter
 		OutputDebugStringW(args->Name->ToString()->Data());
 		if (NULL != g_AddCallback)
 		{
-			LPWSTR newDeviceNameNative = nullptr;
-			LPWSTR newDeviceIPV4AddressNative = nullptr;
-			LPWSTR newDeviceTxtPropertiesNative = nullptr;
+			unique_ptr<WCHAR, CoTask_deleter> newDeviceNameNative;
+			unique_ptr<WCHAR, CoTask_deleter> newDeviceIPV4AddressNative;
+			unique_ptr<WCHAR, CoTask_deleter> newDeviceTxtPropertiesNative;
 
 			// Get the device Name 
             String^ newDeviceName = args->Properties->Lookup("System.Devices.Dnssd.HostName")->ToString();
-			int newDeviceNameLength = wcslen(newDeviceName->Data()) + 1;
-			newDeviceNameNative = (LPWSTR)CoTaskMemAlloc(newDeviceNameLength * sizeof(wchar_t));
+			int newDeviceNameLength = newDeviceName->Length() + 1;
+			newDeviceNameNative.reset((WCHAR*)CoTaskMemAlloc(newDeviceNameLength * sizeof(wchar_t)));
 			if (NULL != newDeviceNameNative)
 			{
-				if (FAILED(StringCchCopy(newDeviceNameNative, newDeviceNameLength, newDeviceName->Data())))
+				if (FAILED(StringCchCopy(newDeviceNameNative.get(), newDeviceNameLength, newDeviceName->Data())))
 				{
 					return; 
 				}
@@ -93,11 +93,11 @@ namespace DeviceCenter
 				try
 				{
 					String^ newDeviceIPV4Address = ipAddresses->Value[0];
-					int newDeviceIPV4AddressLength = wcslen(newDeviceIPV4Address->Data()) + 1;
-					newDeviceIPV4AddressNative = (LPWSTR)CoTaskMemAlloc(newDeviceIPV4AddressLength * sizeof(wchar_t));
+					int newDeviceIPV4AddressLength = newDeviceIPV4Address->Length() + 1;
+					newDeviceIPV4AddressNative.reset((WCHAR*)CoTaskMemAlloc(newDeviceIPV4AddressLength * sizeof(wchar_t)));
 					if (NULL != newDeviceIPV4AddressNative)
 					{
-						if (FAILED(StringCchCopy(newDeviceIPV4AddressNative, newDeviceIPV4AddressLength, newDeviceIPV4Address->Data())))
+						if (FAILED(StringCchCopy(newDeviceIPV4AddressNative.get(), newDeviceIPV4AddressLength, newDeviceIPV4Address->Data())))
 						{
 							return;
 						}
@@ -121,17 +121,17 @@ namespace DeviceCenter
 				newDeviceTxtProperties += L",";
 			}
 
-			int newDeviceTxtPropertiesLength = wcslen(newDeviceTxtProperties->Data()) + 1;
-			newDeviceTxtPropertiesNative = (LPWSTR)CoTaskMemAlloc(newDeviceTxtPropertiesLength * sizeof(wchar_t));
+			int newDeviceTxtPropertiesLength = newDeviceTxtProperties->Length() + 1;
+			newDeviceTxtPropertiesNative.reset((LPWSTR)CoTaskMemAlloc(newDeviceTxtPropertiesLength * sizeof(wchar_t)));
 			if (NULL != newDeviceTxtPropertiesNative)
 			{
-				if (FAILED(StringCchCopy(newDeviceTxtPropertiesNative, newDeviceTxtPropertiesLength, newDeviceTxtProperties->Data())))
+				if (FAILED(StringCchCopy(newDeviceTxtPropertiesNative.get(), newDeviceTxtPropertiesLength, newDeviceTxtProperties->Data())))
 				{
 					return;
 				}
 			}
 
-			g_AddCallback(newDeviceNameNative, newDeviceIPV4AddressNative, newDeviceTxtPropertiesNative);
+			g_AddCallback(newDeviceNameNative.release(), newDeviceIPV4AddressNative.release(), newDeviceTxtPropertiesNative.release());
 		}
 	}
 
