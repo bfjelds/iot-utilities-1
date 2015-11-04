@@ -45,14 +45,22 @@ namespace DeviceCenter
 
             try
             {
-                await _restHelper.PostRequestAsync(url, string.Empty);
+                var result = await _restHelper.PostRequestAsync(url, string.Empty);
+
+                if (result == HttpStatusCode.OK)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 return false;
             }
-            return true;
         }
 
         public async Task<bool> SetPasswordAsync(string oldPassword, string newPassword)
@@ -70,11 +78,6 @@ namespace DeviceCenter
                     // resaves the password
                     _restHelper.DeviceAuthentication.Password = newPassword;
                     DialogAuthenticate.SavePassword(_restHelper.DeviceAuthentication);
-                    MessageBox.Show(
-                        "Password changed successfully",
-                        Strings.Strings.AppNameDisplay,
-                        MessageBoxButton.OK,
-                        MessageBoxImage.None);
                     return true;
                 }
             }
@@ -98,15 +101,22 @@ namespace DeviceCenter
 
             try
             {
-                await _restHelper.PostRequestAsync(url, string.Empty);
+                var result = await _restHelper.PostRequestAsync(url, string.Empty);
+
+                if (result == HttpStatusCode.OK)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 return false;
             }
-
-            return true;
         }
 
         public async Task<bool> InstallAppxAsync(string appName, IEnumerable<FileInfo> files)
@@ -343,7 +353,7 @@ namespace DeviceCenter
                 if (String.IsNullOrEmpty(url))
                 {
                     // App is not found in installed packages list
-                    throw new ArgumentException("Application name is not valid!");
+                    return false;
                 }
 
                 result = await this._restHelper.DeleteRequestAsync(url);

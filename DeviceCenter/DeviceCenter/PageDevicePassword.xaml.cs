@@ -53,6 +53,11 @@ namespace DeviceCenter
                 // bring it back to setup screen if password setting is successful.
                 if (result == true)
                 {
+                    MessageBox.Show(
+                        "Password changed successfully",
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.None);
                     _navigationFrame.GoBack();
                 }
             }
