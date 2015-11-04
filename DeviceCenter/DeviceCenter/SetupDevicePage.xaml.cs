@@ -354,7 +354,7 @@ namespace DeviceCenter
                 }
                 catch (DirectoryNotFoundException)
                 {
-                    //Its ok if the directory is not present
+                    // It is ok if directory is not present.
                 }
 
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
