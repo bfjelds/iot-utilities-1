@@ -30,7 +30,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>55</ApplicationRevision>
+    <ApplicationRevision>56</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -78,6 +78,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>DeviceCenterDevelopmentKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>MainIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.ApplicationInsights, Version=1.2.0.5639, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
