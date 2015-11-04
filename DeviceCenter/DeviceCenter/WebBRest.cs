@@ -22,6 +22,8 @@ namespace DeviceCenter
         private const string AppTaskUrl = "/api/taskmanager/";
         private const string PerfMgrUrl = "/api/resourcemanager/";
 
+        private const int QueryInterval = 3000;
+
         private readonly RestHelper _restHelper;
 
         public class RestError : Exception
@@ -186,13 +188,13 @@ namespace DeviceCenter
                     if (await PollInstallStateAsync())
                     {
                         return await StartAppAsync(appName);
-                        
                     }
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                return false;
             }
 
             return false;
@@ -212,7 +214,7 @@ namespace DeviceCenter
                         result = response.StatusCode;
                         if (response.StatusCode == HttpStatusCode.NoContent)
                         {
-                            await Task.Delay(3000);
+                            await Task.Delay(QueryInterval);
                         }
                     }
                 }
@@ -246,7 +248,7 @@ namespace DeviceCenter
                 Debug.WriteLine(wex);
             }
 
-            return new InstalledPackages();
+            return null;
         }
 
         public async Task<bool> IsAppRunning(string appName)
@@ -288,6 +290,12 @@ namespace DeviceCenter
             {
                 var installedPackages = await GetInstalledPackagesAsync();
 
+                if (installedPackages == null)
+                {
+                    // REST API error when getting installed packages
+                    return false;
+                }
+
                 foreach (var app in installedPackages.Items)
                 {
                     if (app.Name == appName)
@@ -311,23 +319,33 @@ namespace DeviceCenter
         public async Task<bool> StopAppAsync(string appName)
         {
             var url = String.Empty;
-            var isFound = false;
-
-            var installedPackages = await GetInstalledPackagesAsync();
-            foreach (var app in installedPackages.Items)
-            {
-                if (app.Name != appName) continue;
-                isFound = true;
-                url = AppTaskUrl + "app?package=" + RestHelper.Encode64(app.PackageFullName);
-            }
-            if (!isFound)
-            {
-                throw new ArgumentException("Application name is not valid!");
-            }
-
             var result = HttpStatusCode.BadRequest;
+
             try
             {
+                var installedPackages = await GetInstalledPackagesAsync();
+
+                if (installedPackages == null)
+                {
+                    // REST API error when getting installed packages
+                    return false;
+                }
+
+                foreach (var app in installedPackages.Items)
+                {
+                    if (app.Name == appName)
+                    {
+                        url = AppTaskUrl + "app?package=" + RestHelper.Encode64(app.PackageFullName);
+                        break;
+                    }
+                    
+                }
+                if (String.IsNullOrEmpty(url))
+                {
+                    // App is not found in installed packages list
+                    throw new ArgumentException("Application name is not valid!");
+                }
+
                 result = await this._restHelper.DeleteRequestAsync(url);
             }
             catch (Exception ex)
