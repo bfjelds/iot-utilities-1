@@ -74,15 +74,16 @@ namespace WlanAPIs
             var listIterator = nativeInterfaceList.ToInt64() + Marshal.SizeOf(header);
 
             var currentIfaceGuids = new List<Guid>();
+
             for (var i = 0; i < header.numberOfItems; ++i)
             {
-                var info = (WlanInterop.WlanInterfaceInfo)Marshal.PtrToStructure(
+                var nativeInterfaceInfo = (WlanInterop.WlanInterfaceInfo)Marshal.PtrToStructure(
                     new IntPtr(listIterator),
                     typeof(WlanInterop.WlanInterfaceInfo)
                     );
 
-                listIterator += Marshal.SizeOf(info);
-                wlanInterfaces.Add(new WlanInterface(this, info));
+                listIterator += Marshal.SizeOf(nativeInterfaceInfo);
+                wlanInterfaces.Add(new WlanInterface(this, nativeInterfaceInfo));
             }
 
             return wlanInterfaces;
@@ -91,6 +92,7 @@ namespace WlanAPIs
         private WlanInterop.WlanConnectionNotificationData? ParseWlanConnectionNotification(ref WlanInterop.WlanNotificationData notifyData)
         {
             var expectedSize = Marshal.SizeOf(typeof(WlanInterop.WlanConnectionNotificationData));
+
             if (notifyData.dataSize < expectedSize)
             {
                 return null;
@@ -106,16 +108,14 @@ namespace WlanAPIs
         private void OnWlanNotification(ref WlanInterop.WlanNotificationData notifyData, IntPtr context)
         {
             var connNotifyData = ParseWlanConnectionNotification(ref notifyData);
-            var source = Enum.GetName(typeof(WlanInterop.WlanNotificationSource), notifyData.notificationSource);
-            var notification = Enum.GetName(typeof(WlanInterop.WlanNotificationCodeAcm), notifyData.notificationCode);
             var reason = string.Empty;
             var reasonCode = uint.MaxValue;
             var profileName = string.Empty;
+
             if (connNotifyData != null)
             {
                 reasonCode = (uint)connNotifyData.Value.wlanReasonCode;
                 reason = Enum.GetName(typeof(WlanInterop.WlanReasonCode), connNotifyData.Value.wlanReasonCode);
-                var dot11Ssid = connNotifyData.Value.dot11Ssid;
                 profileName = connNotifyData.Value.profileName;
             }
 
@@ -123,6 +123,9 @@ namespace WlanAPIs
             {
                 if(!string.IsNullOrEmpty(profileName))
                 {
+                    var source = Enum.GetName(typeof(WlanInterop.WlanNotificationSource), notifyData.notificationSource);
+                    var notification = Enum.GetName(typeof(WlanInterop.WlanNotificationCodeAcm), notifyData.notificationCode);
+
                     Util.Info("*** {0} notification [{1}] [{2}] [{3}]({4},{5})",
                         source,
                         profileName,
@@ -158,7 +161,7 @@ namespace WlanAPIs
                     break;
                 case WlanInterop.WlanNotificationCodeAcm.ConnectionAttemptFail:
                     {
-                        // _isConnectAttemptSuccess = false;
+                        _isConnectAttemptSuccess = false;
                     }
                     break;
             }

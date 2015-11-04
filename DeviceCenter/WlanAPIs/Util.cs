@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,7 +66,6 @@ namespace WlanAPIs
         /// <returns></returns>
         public static bool IsDhcpipAddress(string ipStr)
         {
-            // tbd it's safer to check if auto IP.  i.e. 169.254
             return !string.IsNullOrWhiteSpace(ipStr) && ipStr.StartsWith("192.168.173");
         }
 
@@ -132,8 +132,8 @@ namespace WlanAPIs
             var procInfo = new ProcessStartInfo
             {
                 UseShellExecute = true,
-                WorkingDirectory = @"C:\Windows\System32",
-                FileName = @"C:\Windows\System32\netsh.exe",
+                WorkingDirectory = System.Environment.SystemDirectory,
+                FileName = Path.Combine(System.Environment.SystemDirectory, @"netsh.exe"),
                 Arguments = arguments,
                 Verb = "runas",
                 WindowStyle = ProcessWindowStyle.Hidden

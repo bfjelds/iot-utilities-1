@@ -43,7 +43,7 @@ namespace DeviceCenter
             _wifiRefreshTimer.Stop();
             if (_connectedToAdhoc)
             {
-                _softwareAccessPoint.Disconnect();
+                _softwareAccessPoint.DisconnectIfNeeded();
             }
             NativeMethods.StopDiscovery();
         }

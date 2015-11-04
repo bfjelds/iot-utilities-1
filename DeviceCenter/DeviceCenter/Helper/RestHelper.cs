@@ -94,7 +94,7 @@ namespace DeviceCenter.Helper
         {
             var requestUrl = new Uri(string.Format(UrlFormat, this.IpAddress.ToString(), restPath), UriKind.Absolute);
             Debug.WriteLine(requestUrl.AbsoluteUri);
-
+            
             while (true)
             {
                 try
@@ -102,7 +102,7 @@ namespace DeviceCenter.Helper
                     var request = WebRequest.Create(requestUrl) as HttpWebRequest;
                     if (request != null)
                     {
-                        request.Method = isGet ? "Get" : "POST";
+                        request.Method = isGet ? "GET" : "POST";
                         request.ContentLength = 0;
                         request.KeepAlive = false;
                         var encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(DeviceAuthentication.UserName + ":" + DeviceAuthentication.Password));
