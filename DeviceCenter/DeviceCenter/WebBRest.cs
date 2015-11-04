@@ -31,9 +31,9 @@ namespace DeviceCenter
             }
         }
 
-        public WebBRest(IPAddress ipAddress, UserInfo userInfo)
+        public WebBRest(Window parent, IPAddress ipAddress, UserInfo userInfo)
         {
-            this._restHelper = new RestHelper(ipAddress, userInfo);
+            this._restHelper = new RestHelper(parent, ipAddress, userInfo);
         }
 
         public async Task<bool> SetDeviceNameAsync(string newDeviceName)

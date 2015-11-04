@@ -258,7 +258,7 @@ namespace DeviceCenter
             var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
 
             var ip = System.Net.IPAddress.Parse("192.168.173.1"); // default on wifi
-            var webbRequest = new WebBRest(ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
+            var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
 
             var adapters = await webbRequest.GetWirelessAdaptersAsync();
 
@@ -274,14 +274,6 @@ namespace DeviceCenter
             progressWaiting.Visibility = Visibility.Collapsed;
 
             return result;
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void ListViewDevices_Loaded(object sender, RoutedEventArgs e)
-        {
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)

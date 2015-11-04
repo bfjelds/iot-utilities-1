@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DeviceCenter.Helper
 {
@@ -53,10 +54,13 @@ namespace DeviceCenter.Helper
 
         public IPAddress IpAddress { get; private set; }
 
-        public RestHelper(IPAddress ipAddress, UserInfo deviceAuthentication)
+        private Window _parent;
+
+        public RestHelper(Window parent, IPAddress ipAddress, UserInfo deviceAuthentication)
         {
             this.DeviceAuthentication = deviceAuthentication;
             this.IpAddress = ipAddress;
+            this._parent = parent;
         }
 
         private enum HttpErrorResult { Fail, Retry, Cancel };
@@ -68,6 +72,8 @@ namespace DeviceCenter.Helper
             if (errorResponse?.StatusCode == HttpStatusCode.Unauthorized)
             {
                 var dlg = new DialogAuthenticate(this.DeviceAuthentication);
+                dlg.Owner = this._parent;
+
                 var dlgResult = dlg.ShowDialog();
 
                 if (dlgResult.HasValue && dlgResult.Value)

@@ -6,8 +6,7 @@
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       xmlns:local="clr-namespace:DeviceCenter"
       mc:Ignorable="d" 
-      Title="Wi-Fi"
-      Loaded="Page_Loaded">
+      Title="Wi-Fi">
     <Page.Resources>
         <DataTemplate x:Key="NetworkRouter">
             <ListViewItem IsHitTestVisible="{Binding Active}" Margin="0">
@@ -41,7 +40,7 @@
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,20,0,10" HorizontalAlignment="Left">
                 <Button x:Name="ButtonCancel" IsCancel="True"  Content="{x:Static props:Strings.WifiBackButton}" Padding="30 5 30 5" Background="#FF787878" Foreground="White" Click="ButtonCancel_Click" />
             </StackPanel>
-            <ListView x:Name="ListViewWifi" DockPanel.Dock="Bottom" Margin="0" BorderThickness="0" SelectionMode="Single" ItemTemplate="{StaticResource NetworkRouter}"  Loaded="ListViewDevices_Loaded" Unloaded="ListViewDevices_Unloaded">
+            <ListView x:Name="ListViewWifi" DockPanel.Dock="Bottom" Margin="0" BorderThickness="0" SelectionMode="Single" ItemTemplate="{StaticResource NetworkRouter}" Unloaded="ListViewDevices_Unloaded">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Vertical"/>
