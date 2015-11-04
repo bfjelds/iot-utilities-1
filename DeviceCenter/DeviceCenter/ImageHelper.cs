@@ -193,8 +193,7 @@ namespace DeviceCenter
             };
 
             System.Diagnostics.Debug.WriteLine("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
-
-            // TBD make this async and cancellable.
+            
             process.Start();
 
             return process;

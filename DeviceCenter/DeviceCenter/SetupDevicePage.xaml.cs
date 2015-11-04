@@ -78,19 +78,13 @@ namespace DeviceCenter
             _internalBuild = false;
             ComboBoxIotBuild.Visibility = Visibility.Hidden;
 
-            // TODO: check online for content
-            /*ComboBoxDeviceType.Items.Add(LKGPlatform.CreateMbm());
-            ComboBoxDeviceType.Items.Add(LKGPlatform.CreateRpi2());
-            ComboBoxDeviceType.Items.Add(LKGPlatform.CreateQCom());
-            ComboBoxDeviceType.SelectedIndex = 1;
-            ComboBoxDeviceType.IsEnabled = true;
-            ComboBoxIotBuild.IsEnabled = true;*/
+            // TODO: populate here for ISO on Internet.  TFS#5299920.
 
             ComboBoxDeviceType.Items.Add("LKG not found \\\\webnas\\AthensDrop");
             ComboBoxDeviceType.SelectedIndex = 0;
             ComboBoxDeviceType.IsEnabled = false;
 
-             buttonFlash.IsEnabled = UpdateStartState();
+            buttonFlash.IsEnabled = UpdateStartState();
         }
 
         private async void ReadLkgFile()
@@ -142,8 +136,7 @@ namespace DeviceCenter
                 ComboBoxDeviceType.Items.Add(currentEntry);
 
             if (ComboBoxDeviceType.Items.Count == 0)
-            {
-                // TBD - this list should be hardcoded to MBM and RPi2.  
+            {   
                 ComboBoxDeviceType.Items.Add("LKG not found \\\\webnas\\AthensDrop");
             }
             else
@@ -441,6 +434,7 @@ namespace DeviceCenter
                     buttonFlash.IsEnabled = true;
                     ResetProgressUi();
                 }
+
                 if (confirmation.HasValue && confirmation.Value)
                 {
                     try
