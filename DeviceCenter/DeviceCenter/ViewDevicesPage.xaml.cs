@@ -335,10 +335,12 @@ namespace DeviceCenter
                     var dlg = new WindowWarning()
                     {
                         Header = Strings.Strings.ConnectAlertTitle,
-                        Message = Strings.Strings.ConnectAlertMessage
+                        Message = Strings.Strings.ConnectAlertMessage,
+                        Owner = Window.GetWindow(this)
                     };
 
                     var confirmation = dlg.ShowDialog();
+
                     if (confirmation.HasValue && confirmation.Value)
                     {
                         App.TelemetryClient.TrackEvent("WiFiButtonClick", new Dictionary<string, string>()

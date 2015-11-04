@@ -6,13 +6,17 @@
         xmlns:local="clr-namespace:DeviceCenter"
         xmlns:props="clr-namespace:DeviceCenter.Strings"
         mc:Ignorable="d"
-        Title="{x:Static props:Strings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Width="494.667" Height="229.667" ShowInTaskbar="False">
+        Title="{x:Static props:Strings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Width="396.428" Height="192.496" ShowInTaskbar="False">
     <DockPanel Background="WhiteSmoke">
         <TextBlock DockPanel.Dock="Top" x:Name="labelMessageHeader" Margin="10" FontSize="20" FontFamily="Segoe UI SemiLight" Text="Title" />
-        <StackPanel  DockPanel.Dock="Bottom" x:Name="grdContinueCancel" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-            <Button x:Name="ButtonOk" IsDefault="True" Content="{x:Static props:Strings.ContinueButton}" Padding="0" Background="#3277BF" Foreground="White" Margin="2" Click="ButtonOk_Click" Width="238" Height="28" />
-            <Button x:Name="ButtonCancel" IsCancel="True" Content="{x:Static props:Strings.CancelButton}" Padding="0" Margin="2" Click="ButtonCancel_Click" Background="#FF787878" Foreground="White" Width="238" Height="28"/>
-        </StackPanel>
-        <TextBlock Margin="10,6.457,10,13.543" x:Name="labelMessageText" TextWrapping="Wrap" Text="Message" />
+        <Grid DockPanel.Dock="Bottom"  Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="234*"/>
+                <ColumnDefinition Width="235*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="ButtonOk" IsDefault="True" Content="{x:Static props:Strings.ContinueButton}" Padding="4" Background="#3277BF" Foreground="White" Click="ButtonOk_Click" Margin="0,0,10,0" />
+            <Button x:Name="ButtonCancel" IsCancel="True" Content="{x:Static props:Strings.CancelButton}" Padding="4" Margin="10,0,0,0" Click="ButtonCancel_Click" Background="#FF787878" Foreground="White" Grid.Column="1"/>
+        </Grid>
+        <TextBlock Margin="10" x:Name="labelMessageText" TextWrapping="Wrap" Text="Message" />
     </DockPanel>
 </Window>

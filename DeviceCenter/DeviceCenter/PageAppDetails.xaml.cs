@@ -52,7 +52,7 @@ namespace DeviceCenter
             }
             else
             {
-                var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
+                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
                 try
                 {
@@ -102,7 +102,7 @@ namespace DeviceCenter
                 PanelDeploying.Visibility = Visibility.Visible;
                 PanelDeployed.Visibility = Visibility.Collapsed;
 
-                var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
+                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
                 var sourceFiles = this.AppItem.PlatformFiles[_device.Architecture];
 
@@ -145,7 +145,7 @@ namespace DeviceCenter
             }
             else
             {
-                var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
+                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
                 if (await webbRequest.StopAppAsync(this.AppItem.AppName))
                 {
@@ -232,7 +232,7 @@ namespace DeviceCenter
             }
             else
             {
-                var webbRequest = new WebBRest(this._device.IpAddress, this._device.Authentication);
+                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
                 if (!(await webbRequest.StartAppAsync(this.AppItem.AppName)))
                 {

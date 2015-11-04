@@ -44,7 +44,7 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            var webbRequest = new WebBRest(this.Device.IpAddress, this.Device.Authentication);
+            var webbRequest = new WebBRest(Window.GetWindow(this), this.Device.IpAddress, this.Device.Authentication);
             if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
             {
                 var x = await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text);
