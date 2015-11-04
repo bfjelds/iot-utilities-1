@@ -21,10 +21,9 @@ namespace DeviceCenter
     /// </summary>
     public partial class ViewDevicesPage : Page
     {
+        private DiscoveryHelper _discoveryHelper = new DiscoveryHelper();
         private readonly DispatcherTimer _telemetryTimer = new DispatcherTimer();
         private DiscoveredDevice _newestBuildDevice, _oldestBuildDevice;
-        private readonly ObservableCollection<DiscoveredDevice> _devices = new ObservableCollection<DiscoveredDevice>();
-        private static bool _filterNew = false;
 
         private readonly SoftApHelper _softwareAccessPoint;
         private readonly DispatcherTimer _wifiRefreshTimer = new DispatcherTimer();
@@ -33,11 +32,6 @@ namespace DeviceCenter
         private readonly Frame _navigationFrame;
         private PageWifi _wifiPage;
         private bool _connectedToAdhoc = false;
-        readonly NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
-        private BroadcastWatcher _broadCastWatcher = new BroadcastWatcher();
-        private readonly DispatcherTimer _broadCastWatcherStartTimer = new DispatcherTimer();
-        private readonly DispatcherTimer _broadCastWatcherStopTimer = new DispatcherTimer();
-        private readonly int pollDelayBroadcast = 2;
         private readonly int pollDelayWifi = 5;
 
         ~ViewDevicesPage()
@@ -47,7 +41,6 @@ namespace DeviceCenter
             {
                 _softwareAccessPoint.DisconnectIfNeeded();
             }
-            NativeMethods.StopDiscovery();
         }
 
         public ViewDevicesPage(Frame navigationFrame)
@@ -58,7 +51,6 @@ namespace DeviceCenter
             this._oldestBuildDevice = null;
 
             // initialize helpers
-            this._addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
             this._softwareAccessPoint = SoftApHelper.Instance;
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
@@ -66,7 +58,8 @@ namespace DeviceCenter
             InitializeComponent();
 
             // set up binding
-            ListViewDevices.ItemsSource = _devices;
+            ListViewDevices.ItemsSource = _discoveryHelper.DiscoveredDevices;
+            _discoveryHelper.StartDiscovery();
 
             //Sort the listview
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
@@ -74,46 +67,13 @@ namespace DeviceCenter
 
             //Register the callbacks
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
-            NativeMethods.RegisterCallback(_addCallbackdel);
-
-            // initialize polling timers 
-            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(pollDelayBroadcast);
-            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
 
             _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(pollDelayWifi);
             _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
 
-            StartDiscovery();
-
             // Set up polling
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             _telemetryTimer.Tick += TelemetryTimer_Tick;
-        }
-
-        private void StartDiscovery()
-        {
-            // Stop everything first 
-            _broadCastWatcherStartTimer.Stop();
-            _broadCastWatcherStopTimer.Stop();
-            _wifiRefreshTimer.Stop();
-
-            _broadCastWatcher.RemoveListeners();
-
-            NativeMethods.StopDiscovery();
-
-            // Start mDNS based discovery 
-
-            // 1. Register the callback
-            NativeMethods.RegisterCallback(_addCallbackdel);
-
-            // 2. Start device discovery using DNS-SD
-            NativeMethods.StartDiscovery();
-
-            _broadCastWatcherStartTimer.Start();
-            _wifiRefreshTimer.Start();
-
-            // Start refresh
-            RefreshWifiAsync();
         }
 
         private void SoftwareAccessPoint_OnSoftAPDisconnected()
@@ -159,7 +119,7 @@ namespace DeviceCenter
 
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                         {
-                            _devices.Add(newDevice);
+                            _discoveryHelper.DiscoveredDevices.Add(newDevice);
                         }));
 
                         return accessPoint;
@@ -182,7 +142,7 @@ namespace DeviceCenter
             // Only send a telemetry event if we've found build information
             if (_oldestBuildDevice != null && _newestBuildDevice != null)
             {
-                var deviceCount = _devices.Count;
+                var deviceCount = _discoveryHelper.DiscoveredDevices.Count;
 
                 Debug.WriteLine("Sending telemetry event... ");
                 Debug.WriteLine("Max OS Version: " + _newestBuildDevice.OsVersion);
@@ -206,150 +166,7 @@ namespace DeviceCenter
             _telemetryTimer.Stop();
         }
 
-        private void AddDeviceCallback(string deviceName, string ipV4Address, string txtParameters)
-        {
-            if (_filterNew)
-                return;
 
-            //Debug.WriteLine(deviceName);
-
-            if (String.IsNullOrEmpty(deviceName) || String.IsNullOrEmpty(ipV4Address))
-            {
-                return;
-            }
-
-            string parsedDeviceName = "";
-            string deviceModel = "";
-            string osVersion = "";
-            Guid deviceGuid = Guid.Empty;
-            string arch = "";
-            IPAddress ipAddress = IPAddress.Parse(ipV4Address);
-
-            // mDNS Discovered devices are in format "devicename.local". Remove the suffix
-            if(deviceName.IndexOf('.') > 0)
-            {
-                parsedDeviceName = deviceName.Substring(0, deviceName.IndexOf('.'));
-            }
-            else
-            {
-                parsedDeviceName = deviceName;
-            }
-
-            if (!String.IsNullOrEmpty(txtParameters))
-            {
-                //The txt parameter are in following format
-                // txtParameters = "guid=79F50796-F59B-D97A-A00F-63D798C6C144,model=Virtual,architecture=x86,osversion=10.0.10557,"
-                // Split them with ',' and '=' and get the odd values 
-                var deviceDetails = txtParameters.Split(',', '=');
-                var index = 0;
-                while (index < deviceDetails.Length)
-                {
-                    switch (deviceDetails[index])
-                    {
-                        case "guid":
-                            deviceGuid = new Guid(deviceDetails[index + 1]);
-                            break;
-                        case "model":
-                            deviceModel = deviceDetails[index + 1];
-                            break;
-                        case "osversion":
-                            osVersion = deviceDetails[index + 1];
-                            break;
-                        case "architecture":
-                            arch = deviceDetails[index + 1];
-                            break;
-                    }
-                    index += 2;
-                }
-            }
-
-            var newDevice = new DiscoveredDevice()
-            {
-                DeviceName = parsedDeviceName,
-                DeviceModel = deviceModel,
-                Architecture = arch,
-                OsVersion = osVersion,
-                IpAddress = ipAddress,
-                UniqueId = deviceGuid,
-                Manage = new Uri($"http://administrator@{ipV4Address}/"),
-                Authentication = DialogAuthenticate.GetSavedPassword(deviceName)
-            };
-
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-            {
-                bool found = false;
-                foreach(DiscoveredDevice d in _devices)
-                {
-                    if ((d.IpAddress != null) && d.IpAddress.Equals(newDevice.IpAddress))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    _devices.Add(newDevice);
-                }
-            }));
-
-            // Figure out which device has the latest build and the oldest build
-            if (!string.IsNullOrWhiteSpace(newDevice.OsVersion))
-            {
-                // Set initial value if null
-                if (_newestBuildDevice == null && _oldestBuildDevice == null)
-                {
-                    _newestBuildDevice = _oldestBuildDevice = newDevice;
-                }
-
-                // Compare OS Versions
-                try
-                {
-                    if (_newestBuildDevice != null)
-                    {
-                        var compareResult = compareOsVersions(newDevice.OsVersion, _newestBuildDevice.OsVersion);
-
-                        if (compareResult > 0)
-                        {
-                            _newestBuildDevice = newDevice;
-                        }
-                        else if (compareResult < 0)
-                        {
-                            _oldestBuildDevice = newDevice;
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.Message);
-                }
-            }
-
-            // Refresh delay until telemetry is sent
-            _telemetryTimer.Start();
-
-        }
-
-        private void StartBroadCastListener(object sender, EventArgs e)
-        {
-            // Stop listening after 5 seconds
-            _broadCastWatcherStopTimer.Interval = TimeSpan.FromSeconds(5);
-            _broadCastWatcherStopTimer.Tick += StopBroadCastListener;
-            _broadCastWatcher.OnPing += new BroadcastWatcher.PingHandler(BroadcastWatcher_Ping);
-            _broadCastWatcher.AddListeners();
-            _broadCastWatcherStopTimer.Start();
-            _broadCastWatcherStartTimer.Stop();
-        }
-
-        private void BroadcastWatcher_Ping(string Name, string IP, string Mac)
-        {
-            AddDeviceCallback(Name, IP, "");
-        }
-
-        private void StopBroadCastListener(object sender, EventArgs e)
-        {
-            _broadCastWatcher.RemoveListeners();
-            _broadCastWatcherStopTimer.Stop();
-        }
 
         private int compareOsVersions(string osVersion1, string osVersion2)
         {
@@ -490,10 +307,10 @@ namespace DeviceCenter
 
         private void Refresh()
         {
-            _devices.Clear();
+            _discoveryHelper.DiscoveredDevices.Clear();
             _adhocNetworks.Clear();
 
-            StartDiscovery();
+            _discoveryHelper.StartDiscovery();
 
             RefreshWifiAsync();
         }
@@ -522,11 +339,17 @@ namespace DeviceCenter
                     newValue = true;
             }
 
-            if (newValue != _filterNew)
+            if (ListViewDevices != null)
             {
-                _filterNew = newValue;
-
-                Refresh();
+                ICollectionView view = CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
+                if (null != view)
+                {
+                    view.Filter = (d) =>
+                    {
+                        DiscoveredDevice device = d as DiscoveredDevice;
+                        return newValue ? device.ConnectVisible == Visibility.Visible : device.ManageVisible == Visibility.Visible;
+                    };
+                }
             }
         }
     }

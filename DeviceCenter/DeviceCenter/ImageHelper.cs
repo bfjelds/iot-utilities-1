@@ -64,56 +64,56 @@ namespace DeviceCenter
         }
 
 
-        static ManagementEventWatcher _usbaddwatcher = null;
+        static ManagementEventWatcher _usbAddWatcher = null;
 
-        static ManagementEventWatcher _usbremovewatcher = null;
+        static ManagementEventWatcher _usbRemoveWatcher = null;
 
         static public void InitializeWatcher()
         {
             var query = "SELECT * FROM __InstanceCreationEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
-            _usbaddwatcher = new ManagementEventWatcher(new EventQuery(query));
+            _usbAddWatcher = new ManagementEventWatcher(new EventQuery(query));
 
             query = "SELECT * FROM __InstanceDeletionEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
-            _usbremovewatcher = new ManagementEventWatcher(new EventQuery(query));
+            _usbRemoveWatcher = new ManagementEventWatcher(new EventQuery(query));
         }
 
         static public void DisposeWatcher()
         {
-            _usbaddwatcher?.Dispose();
+            _usbAddWatcher?.Dispose();
 
-            _usbremovewatcher?.Dispose();
+            _usbRemoveWatcher?.Dispose();
         }
 
         static public void AddUSBDetectionHandler(EventArrivedEventHandler usbDetectionHandler)
         {
             try
             {
-                _usbaddwatcher.EventArrived += usbDetectionHandler;
-                _usbaddwatcher.Start();
+                _usbAddWatcher.EventArrived += usbDetectionHandler;
+                _usbAddWatcher.Start();
             }
 
             catch (Exception)
             {
-                _usbaddwatcher?.Stop();
+                _usbAddWatcher?.Stop();
             }            
 
             try
             {
-                _usbremovewatcher.EventArrived += usbDetectionHandler;
-                _usbremovewatcher.Start();
+                _usbRemoveWatcher.EventArrived += usbDetectionHandler;
+                _usbRemoveWatcher.Start();
             }
 
             catch (Exception)
             {
-                _usbremovewatcher?.Stop();
+                _usbRemoveWatcher?.Stop();
             }
         }
 
         static public void RemoveUSBDetectionHandler()
         {
-            _usbaddwatcher?.Stop();
+            _usbAddWatcher?.Stop();
 
-            _usbremovewatcher?.Stop();
+            _usbRemoveWatcher?.Stop();
         }
 
         static public List<DriveInfo> GetRemovableDriveList()
@@ -152,14 +152,15 @@ namespace DeviceCenter
                     }
                     catch (Exception)
                     {
-                        // tbd ignored?
+                        // do nothing, return empty list
                     }
                 }
             }
             catch (Exception)
             {
-                // tbd ignored?
+                // do nothing, return empty list
             }
+
             return res;
         }
 
@@ -192,8 +193,7 @@ namespace DeviceCenter
             };
 
             System.Diagnostics.Debug.WriteLine("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
-
-            // TBD make this async and cancellable.
+            
             process.Start();
 
             return process;
