@@ -32,7 +32,6 @@ namespace DeviceCenter
         private readonly Frame _navigationFrame;
         private PageWifi _wifiPage;
         private bool _connectedToAdhoc = false;
-        private readonly int pollDelayBroadcast = 2;
         private readonly int pollDelayWifi = 5;
 
         ~ViewDevicesPage()
@@ -68,16 +67,9 @@ namespace DeviceCenter
 
             //Register the callbacks
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
-            NativeMethods.RegisterCallback(_addCallbackdel);
-
-            // initialize polling timers 
-            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(pollDelayBroadcast);
-            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
 
             _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(pollDelayWifi);
             _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
-
-            StartDiscovery();
 
             // Set up polling
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);

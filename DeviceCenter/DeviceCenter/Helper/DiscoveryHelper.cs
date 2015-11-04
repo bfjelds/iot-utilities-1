@@ -17,6 +17,8 @@ namespace DeviceCenter.Helper
         private BroadcastWatcher _broadCastWatcher = new BroadcastWatcher();
         private readonly DispatcherTimer _broadCastWatcherStartTimer = new DispatcherTimer();
         private readonly DispatcherTimer _broadCastWatcherStopTimer = new DispatcherTimer();
+        private readonly int pollDelayBroadcast = 2;
+        private readonly int pollBroadcastListenInterval = 5;
 
         public DiscoveryHelper()
         {
@@ -51,7 +53,7 @@ namespace DeviceCenter.Helper
             NativeMethods.StartDiscovery();
 
             // Wait for 2 second and start Broadcast discovery 
-            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(2);
+            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(pollDelayBroadcast);
             _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
             _broadCastWatcherStartTimer.Start();
         }
@@ -145,7 +147,7 @@ namespace DeviceCenter.Helper
         private void StartBroadCastListener(object sender, EventArgs e)
         {
             // Stop listening after 5 seconds
-            _broadCastWatcherStopTimer.Interval = TimeSpan.FromSeconds(5);
+            _broadCastWatcherStopTimer.Interval = TimeSpan.FromSeconds(pollBroadcastListenInterval);
             _broadCastWatcherStopTimer.Tick += StopBroadCastListener;
             _broadCastWatcher.OnPing += new BroadcastWatcher.PingHandler(BroadcastWatcher_Ping);
             _broadCastWatcher.AddListeners();
