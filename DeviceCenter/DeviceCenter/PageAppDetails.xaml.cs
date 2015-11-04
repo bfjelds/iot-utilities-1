@@ -18,7 +18,7 @@ namespace DeviceCenter
     {
         public AppInformation AppItem { get; private set; }
         public Frame navigation;
-        DiscoveredDevice _device = null;
+        private DiscoveredDevice _device = null;
         private DiscoveryHelper _discoveryHelper = new DiscoveryHelper();
 
         public PageAppDetails(Frame navigation, AppInformation item)

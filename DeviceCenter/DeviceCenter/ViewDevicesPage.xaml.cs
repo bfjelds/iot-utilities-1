@@ -51,6 +51,7 @@ namespace DeviceCenter
             this._newestBuildDevice = null;
             this._oldestBuildDevice = null;
 
+            // initialize helpers
             this._softwareAccessPoint = SoftApHelper.Instance;
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
