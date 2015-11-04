@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeviceCenter.Helper;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -17,20 +18,14 @@ namespace DeviceCenter
     {
         public AppInformation AppItem { get; private set; }
         public Frame navigation;
-        private readonly ObservableCollection<DiscoveredDevice> _devices = new ObservableCollection<DiscoveredDevice>();
-        private DiscoveredDevice _device;
-        private NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
+        private DiscoveredDevice _device = null;
+        private DiscoveryHelper _discoveryHelper = new DiscoveryHelper();
 
         public PageAppDetails(Frame navigation, AppInformation item)
         {
             InitializeComponent();
-
-            _addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
-            NativeMethods.RegisterCallback(_addCallbackdel);
-
-            //Start device discovery using DNS-SD
-            NativeMethods.StartDiscovery();
-            comboBoxDevices.ItemsSource = _devices;
+            comboBoxDevices.ItemsSource = _discoveryHelper.DiscoveredDevices;
+            _discoveryHelper.StartDiscovery();
 
             this.AppItem = item;
             this.DataContext = this.AppItem;
@@ -86,17 +81,7 @@ namespace DeviceCenter
             }
             else
             {
-                if (string.IsNullOrEmpty(_device.Architecture))
-                {
-                    // the app name as caption
-                    var errorCaption = Strings.Strings.AppNameDisplay;
-
-                    // show the filename, use standard windows error
-                    var minBuild = "10.0.10577";
-                    var errorMsg = string.Format(Strings.Strings.ErrorUnknownArchitecture, minBuild);
-
-                    MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }
+                string arch = string.IsNullOrEmpty(_device.Architecture) ? "ARM" : _device.Architecture;
 
                 PanelDeploy.Visibility = Visibility.Collapsed;
                 PanelDeploying.Visibility = Visibility.Visible;
@@ -104,7 +89,7 @@ namespace DeviceCenter
 
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
-                var sourceFiles = this.AppItem.PlatformFiles[_device.Architecture];
+                var sourceFiles = this.AppItem.PlatformFiles[arch];
 
                 var files = new List<FileInfo> { sourceFiles.AppX, sourceFiles.Certificate };
 
@@ -153,73 +138,12 @@ namespace DeviceCenter
                     PanelDeploying.Visibility = Visibility.Collapsed;
                     PanelDeploy.Visibility = Visibility.Visible;
                 }
-                else
-                {
-                    PanelDeploying.Visibility = Visibility.Collapsed;
-                    PanelDeployed.Visibility = Visibility.Collapsed;
-                    PanelDeploy.Visibility = Visibility.Visible;
-                }
             }
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             navigation.GoBack();
-        }
-
-        private void AddDeviceCallback(string deviceName, string ipV4Address, string txtParameters)
-        {
-            if (String.IsNullOrEmpty(deviceName) || String.IsNullOrEmpty(ipV4Address))
-            {
-                return;
-            }
-
-            var deviceModel = "";
-            var osVersion = "";
-            var deviceGuid = "";
-            var arch = "";
-
-            //The txt parameter are in following format
-            // txtParameters = "guid=79F50796-F59B-D97A-A00F-63D798C6C144,model=Virtual,architecture=x86,osversion=10.0.10557,"
-            // Split them with ',' and '=' and get the odd values 
-            var deviceDetails = txtParameters.Split(',', '=');
-            var index = 0;
-            while (index < deviceDetails.Length)
-            {
-                switch (deviceDetails[index])
-                {
-                    case "guid":
-                        deviceGuid = deviceDetails[index + 1];
-                        break;
-                    case "model":
-                        deviceModel = deviceDetails[index + 1];
-                        break;
-                    case "osversion":
-                        osVersion = deviceDetails[index + 1];
-                        break;
-                    case "architecture":
-                        arch = deviceDetails[index + 1];
-                        break;
-                }
-                index += 2;
-            }
-
-            var newDevice = new DiscoveredDevice()
-            {
-                DeviceName = deviceName.Substring(0, deviceName.IndexOf('.')),
-                DeviceModel = deviceModel,
-                Architecture = arch,
-                OsVersion = osVersion,
-                IpAddress = IPAddress.Parse(ipV4Address),
-                UniqueId = String.IsNullOrEmpty(deviceGuid) ? Guid.Empty : new Guid(deviceDetails[1]),
-                Manage = new Uri($"http://administrator@{ipV4Address}/"),
-                Authentication = DialogAuthenticate.GetSavedPassword(deviceName)
-            };
-
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-            {
-                _devices.Add(newDevice);
-            }));
         }
 
         private async void ButtonBringAppForground_Click(object sender, RoutedEventArgs e)

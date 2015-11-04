@@ -47,17 +47,17 @@ namespace DeviceCenter
             var webbRequest = new WebBRest(Window.GetWindow(this), this.Device.IpAddress, this.Device.Authentication);
             if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
             {
-                var x = await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text);
-
-                // TO DO: make it a dialog before restart
-                MessageBox.Show(Strings.Strings.DeviceRebootingMessage);
-                var z = await webbRequest.RestartAsync();
+                if (await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text))
+                {
+                    MessageBox.Show(Strings.Strings.DeviceRebootingMessage);
+                    await webbRequest.RestartAsync();
+                }
             }
         }
              
         private void textBoxDeviceName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ButtonOk.IsEnabled = true;
+            ButtonOk.IsEnabled = textBoxDeviceName.Text.Length > 0 && textBoxDeviceName.Text != this.Device.DeviceName;
         }
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)

@@ -118,9 +118,6 @@ namespace DeviceCenter
         /// </summary>
         static string LkgFileName = "\\\\webnas\\AthensDrop\\LKG\\iot_lkg.txt";
 
-        // tbd - remove this.
-        // static readonly string LkgFileName = "c:\\temp\\iot_lkg.txt";
-
         /// <summary>
         /// Deserialized contents.
         /// </summary>
