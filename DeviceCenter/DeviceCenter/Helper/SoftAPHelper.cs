@@ -98,7 +98,7 @@ namespace DeviceCenter.Helper
             );
         }
 
-        public void Disconnect()
+        public void DisconnectIfNeeded()
         {
             // tbd this code need refactor to cleanly handle when Wi-Fi doesn't exist in the system.
 
@@ -215,7 +215,7 @@ namespace DeviceCenter.Helper
             if (!isDhcp)
             {
                 Util.Info("Switch to IP address {0}", SoftApClientIp);
-                return _subnetHelper.SetIp(SoftApClientIp, SoftApSubnetAddr);
+                return _subnetHelper.DisableDhcp(SoftApClientIp, SoftApSubnetAddr);
             }
 
             return true;
