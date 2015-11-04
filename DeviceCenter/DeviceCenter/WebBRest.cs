@@ -372,22 +372,15 @@ namespace DeviceCenter
         {
             const string URL = "/api/wifi/interfaces";
 
-            try
+            using (var response = await this._restHelper.GetOrPostRequestAsync(URL, true))
             {
-                using (var response = await this._restHelper.GetOrPostRequestAsync(URL, true))
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
-                    }
+                    return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
                 }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
 
-            return new WirelessAdapters();
+            return null;
         }
 
         public async Task<IPConfigurations> GetIpConfigurationsAsync()
@@ -437,33 +430,26 @@ namespace DeviceCenter
 
         public async Task<bool> ConnectToNetworkAsync(string adapterName, string ssid, string ssidPassword)
         {
-            var url = "/api/wifi/network?";
-            url = url + "interface=" + adapterName.Trim("{}".ToCharArray());
-            url = url + "&ssid=" + RestHelper.Encode64(ssid);
-            url = url + "&op=" + "connect";
-            url = url + "&createprofile=" + "yes";
+            Dictionary<string, string> connectArguments = new Dictionary<string, string>()
+            {
+                { "interface", adapterName.Trim("{}".ToCharArray()) },
+                { "ssid", RestHelper.Encode64(ssid) },
+                { "op", "connect" },
+                { "createprofile", "yes" }
+            };
+
             if (!string.IsNullOrEmpty(ssidPassword))
             {
-                url = url + "&key=" + RestHelper.Encode64(ssidPassword);
+                connectArguments.Add("key", RestHelper.Encode64(ssidPassword));
             }
 
-            try
-            {
-                // "using" just to make sure the HttpWebResponse is disposed
-                using (var response = await this._restHelper.GetOrPostRequestAsync(url, false))
-                {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
+            Uri path = this._restHelper.CreateUri("/api/wifi/network", connectArguments);
 
-            return false;
+            // "using" just to make sure the HttpWebResponse is disposed
+            using (var response = await this._restHelper.GetOrPostRequestAsync(path, false))
+            {
+                return response.StatusCode == HttpStatusCode.OK;
+            }
         }
 
         #endregion

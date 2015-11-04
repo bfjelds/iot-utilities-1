@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -59,11 +60,36 @@ namespace DeviceCenter.Helper
             return new Uri(string.Format(UrlFormat, this.IpAddress.ToString(), restPath), UriKind.Absolute);
         }
 
+        public Uri CreateUri(string restPath, Dictionary<string, string> arguments)
+        {
+            bool first = true;
+            StringBuilder argumentString = new StringBuilder();
+
+            foreach (var cur in arguments)
+            {
+                if (first)
+                    first = false;
+                else
+                    argumentString.Append("&");
+
+                argumentString.Append(cur.Key);
+                argumentString.Append("=");
+                argumentString.Append(cur.Value);
+            }
+
+            return new Uri(string.Format(UrlFormat, this.IpAddress.ToString(), restPath) + "?" + argumentString.ToString(), UriKind.Absolute);
+        }
+
         public async Task<HttpWebResponse> GetOrPostRequestAsync(string restPath, bool isGet)
         {
             var requestUrl = new Uri(string.Format(UrlFormat, this.IpAddress.ToString(), restPath), UriKind.Absolute);
             Debug.WriteLine(requestUrl.AbsoluteUri);
-            
+
+            return await GetOrPostRequestAsync(requestUrl, isGet);
+        }
+
+        public async Task<HttpWebResponse> GetOrPostRequestAsync(Uri requestUrl, bool isGet)
+        {
             while (true)
             {
                 try
