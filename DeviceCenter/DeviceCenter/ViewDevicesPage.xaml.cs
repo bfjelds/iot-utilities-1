@@ -47,44 +47,45 @@ namespace DeviceCenter
 
         public ViewDevicesPage(Frame navigationFrame)
         {
-            InitializeComponent();
-            _addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
+            // initialize parameters
             this._navigationFrame = navigationFrame;
+            this._newestBuildDevice = null;
+            this._oldestBuildDevice = null;
 
-            ListViewDevices.ItemsSource = _devices;
-
-            _softwareAccessPoint = SoftApHelper.Instance;
-
-            _newestBuildDevice = null;
-            _oldestBuildDevice = null;
-
-            _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
-            _telemetryTimer.Tick += TelemetryTimer_Tick;
+            // initialize helpers
+            this._addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
+            this._softwareAccessPoint = SoftApHelper.Instance;
 
             //Stop Discovery if it was already started
             NativeMethods.StopDiscovery();
 
-            //Register the callback
-            NativeMethods.RegisterCallback(_addCallbackdel);
+            App.TelemetryClient.TrackPageView(this.GetType().Name);
 
-            //Start device discovery using DNS-SD
-            NativeMethods.StartDiscovery();
+            InitializeComponent();
 
-            _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
+            // set up binding
+            ListViewDevices.ItemsSource = _devices;
 
             //Sort the listview
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
             view.SortDescriptions.Add(new SortDescription("DeviceName", ListSortDirection.Ascending));
 
-            _softwareAccessPoint = SoftApHelper.Instance;
+            //Register the callbacks
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
+            NativeMethods.RegisterCallback(_addCallbackdel);
+
+            //Start device discovery using DNS-SD
+            NativeMethods.StartDiscovery();
+
+            // Set up polling
+            _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
+            _telemetryTimer.Tick += TelemetryTimer_Tick;
 
             _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(10);
             _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
 
+            // Start refresh
             RefreshWifiAsync();
-
-            App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void SoftwareAccessPoint_OnSoftAPDisconnected()
@@ -94,12 +95,14 @@ namespace DeviceCenter
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            _wifiRefreshTimer.Stop();
+            if (_wifiRefreshTimer != null)
+                _wifiRefreshTimer.Stop();
         }
 
         private void RefreshWifiAsync()
         {
-            _wifiRefreshTimer.Stop();
+            if (_wifiRefreshTimer == null || _softwareAccessPoint == null)
+                return;
 
             try
             {
@@ -111,7 +114,7 @@ namespace DeviceCenter
                 }
                 catch (WLanException)
                 {
-                    // probably not connected to wifi
+                    // ignore error, return empty list
                 }
 
                 if (list == null)
