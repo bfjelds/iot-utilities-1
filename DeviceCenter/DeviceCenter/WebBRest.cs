@@ -16,6 +16,7 @@ namespace DeviceCenter
     public class WebBRest
     {
         private const string DeviceApiUrl = "/api/iot/device/";
+        private const string OsInfo = "/api/os/info";
         private const string ControlApiUrl = "/api/control/";
         private const string NetworkingApiUrl = "/api/networking/";
         private const string AppxApiUrl = "/api/appx/packagemanager/";
@@ -36,6 +37,31 @@ namespace DeviceCenter
         public WebBRest(Window parent, IPAddress ipAddress, UserInfo userInfo)
         {
             this._restHelper = new RestHelper(parent, ipAddress, userInfo);
+        }
+
+        public Task<OsInfo> GetDeviceInfoAsync()
+        {
+            return Task<OsInfo>.Run(async () => 
+            {
+                string url = OsInfo;
+
+                try
+                {
+                    using (var response = await _restHelper.GetOrPostRequestAsync(url, true))
+                    {
+                        var data = RestHelper.ProcessJsonResponse(response, typeof(OsInfo)) as OsInfo;
+
+                        // data might be null, caller should check
+                        return data;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+
+                    return null;
+                }
+            });
         }
 
         public async Task<bool> SetDeviceNameAsync(string newDeviceName)
