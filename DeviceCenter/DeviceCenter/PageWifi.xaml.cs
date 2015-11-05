@@ -288,39 +288,32 @@ namespace DeviceCenter
 
         private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync(DiscoveredDevice device)
         {
-            try
+            var result = new ObservableCollection<WifiEntry>();
+            var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
+
+            var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
+            var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
+
+            var adapters = await webbRequest.GetWirelessAdaptersAsync();
+
+            if (adapters != null && adapters.Items != null)
             {
-                var result = new ObservableCollection<WifiEntry>();
-                var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
-
-                var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
-                var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
-
-                var adapters = await webbRequest.GetWirelessAdaptersAsync();
-
-                if (adapters != null && adapters.Items != null)
+                var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
+                if (networks != null)
                 {
-                    var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
-                    if (networks != null)
+                    foreach (var ssid in networks.Items)
                     {
-                        foreach (var ssid in networks.Items)
-                        {
-                            result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
-                        }
+                        result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
                     }
                 }
-                else
-                {
-                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
-                    _navigationFrame.GoBack();
-                }
-
-                return result;
             }
-            catch (Exception)
+            else
             {
-                return null;
+                MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
+                _navigationFrame.GoBack();
             }
+
+            return result;
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)

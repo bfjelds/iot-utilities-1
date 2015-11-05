@@ -27,10 +27,6 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>\\scratch2\scratch\stjong\DeviceCenter\</UpdateUrl>
-    <SupportUrl>https://dev.windows.com/en-us/iot</SupportUrl>
-    <ProductName>Windows 10 IoT Core Dashboard</ProductName>
-    <PublisherName>Microsoft Corp</PublisherName>
-    <SuiteName>IoT</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
