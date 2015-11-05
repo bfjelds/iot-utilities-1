@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,9 +65,11 @@ namespace WlanAPIs
         /// </summary>
         /// <param name="ipStr"></param>
         /// <returns></returns>
-        public static bool IsDhcpipAddress(string ipStr)
+        public static bool IsDhcpipAddress(IPAddress ip)
         {
-            return !string.IsNullOrWhiteSpace(ipStr) && ipStr.StartsWith("192.168.173");
+            bool isDhcp = (ip != IPAddress.None && !ip.ToString().StartsWith("192.168.173"));
+            Info("[{0}] is DHCP address [{1}]", ip, isDhcp);
+            return isDhcp;
         }
 
         /// <summary>
@@ -162,6 +165,32 @@ namespace WlanAPIs
             }
 
             return Encoding.ASCII.GetString(dot11Ssid.Ssid, 0, (int)dot11Ssid.SsidLength);
+        }
+
+        public static IPAddress GetIpv4(NetworkInterface networkInterface)
+        {
+            var ipv4 = IPAddress.None;
+
+            if (networkInterface == null)
+            {
+                ipv4 = IPAddress.None;
+            }
+            else
+            {
+                if (networkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
+                {
+                    foreach (var ip in networkInterface.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        {
+                            ipv4 = ip.Address;
+                        }
+                    }
+                }
+            }
+
+            Util.Info("Curernt IP [{0}]", ipv4);
+            return ipv4;
         }
     }
 }

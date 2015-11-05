@@ -89,7 +89,7 @@ namespace DeviceCenter.Helper
 
                     Util.Info("--------- Checking IP and subnet ----------");
 
-                    if (CheckIpAndSubnet() == false)
+                    if (_subnetHelper.DisableDhcpIfNeeded(SoftApClientIp, SoftApSubnetAddr) == false)
                     {
                         Util.Error("Failed to Check Ip And Subnet");
                         return false;
@@ -103,11 +103,10 @@ namespace DeviceCenter.Helper
 
         public void DisconnectIfNeeded()
         {
-            // tbd this code need refactor to cleanly handle when Wi-Fi doesn't exist in the system.
-
             if (_wlanInterface == null)
             {
-                Util.Error("Disconnect: No Wlan interface");
+                Util.Info("Disconnect: No Wlan interface");
+                return;
             }
 
             lock(_disconnectLockObj)
@@ -121,14 +120,19 @@ namespace DeviceCenter.Helper
                 _isDisconnecting = true;
             }
 
-            if(_subnetHelper != null && !_subnetHelper.EnableDhcp())
+            if(_subnetHelper != null && !_subnetHelper.EnableDhcpIfNeeded())
             {
                 Util.Error("User selects not to enable DHCP");
+
+                // track this event in telemetry
+                App.TelemetryClient.TrackEvent("NotEnableDHCPByUser", new Dictionary<string, string>()
+                {
+                });
             }
 
             try
             {
-                if (_isConnectedToSoftAp && _wlanInterface != null)
+                if (_isConnectedToSoftAp)
                 {
                     _wlanInterface.Disconnect();
                 }
@@ -146,8 +150,6 @@ namespace DeviceCenter.Helper
                 _isDisconnecting = false;
             }
         }
-
-        public IPAddress Ipv4 => _subnetHelper.GetIpv4();
 
         private SoftApHelper()
         {
@@ -204,24 +206,6 @@ namespace DeviceCenter.Helper
             }
 
             return _isConnectedToSoftAp;
-        }
-
-        private bool CheckIpAndSubnet()
-        {
-            var ipv4 = _subnetHelper.GetIpv4();
-            Util.Info("Curernt IP [{0}]", ipv4);
-
-
-            var isDhcp = Util.IsDhcpipAddress(ipv4.ToString());
-            Util.Info("Is DHCP IP [{0}]", isDhcp ? "yes" : "no");
-
-            if (!isDhcp)
-            {
-                Util.Info("Switch to IP address {0}", SoftApClientIp);
-                return _subnetHelper.DisableDhcp(SoftApClientIp, SoftApSubnetAddr);
-            }
-
-            return true;
         }
 
         private async Task<bool> TestConnection()

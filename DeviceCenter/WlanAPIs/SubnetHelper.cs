@@ -24,88 +24,72 @@ namespace WlanAPIs
             }
 
             var newInstance = new SubnetHelper();
-
-            // netsh interface ip show addresses
-            // netsh interface ip show addresses "Wi-Fi"
-            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (var interf in interfaces.Where(interf => Guid.Parse(interf.Id) == interfaceGuid))
-            {
-                Util.Info("Find name [{0}] for guid [{1}]", interf.Name, interfaceGuid.ToString());
-                newInstance._networkInterface = interf;
-            }
-
-            if (newInstance._networkInterface == null)
-            {
-                Util.Error("Can't Find name for guid [{0}]", interfaceGuid.ToString());
-                return null;
-            }
+            newInstance._networkInterfaceGuid = interfaceGuid;
 
             return newInstance;
         }
 
-        public IPAddress GetIpv4()
+        public bool DisableDhcpIfNeeded(string ipAddress, string subnetMask)
         {
-            Debug.Assert(_networkInterface != null);
-            if (_networkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
+            var networkInterface = GetNetworkInterface();
+            var ipv4 = Util.GetIpv4(networkInterface);
+
+            if (ipv4 == IPAddress.None || !Util.IsDhcpipAddress(ipv4))
             {
-                foreach (var ip in _networkInterface.GetIPProperties().UnicastAddresses)
-                {
-                    if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                    {
-                        return ip.Address;
-                    }
-                }
+                return true;
             }
 
-            return IPAddress.None;
+            // netsh interface ip set address "Wi-Fi" 192.168.173.2 255.255.255.0
+            Util.Info("SubnetHelper: Seting static IP to [{0}] [{1}]", ipAddress, subnetMask);
+            var argument = NetshSetStaticIpArgument;
+            argument = argument.Replace("$inferfaceName", networkInterface.Name);
+            argument = argument.Replace("$ip", ipAddress);
+            argument = argument.Replace("$subnetMask", subnetMask);
+            return Util.RunNetshElevated(argument);
         }
 
-        public bool DisableDhcp(string ipAddress, string subnetMask)
+        public bool EnableDhcpIfNeeded()
         {
-            Debug.Assert(_networkInterface != null);
-
-            lock (_dhcpLockObj)
+            var networkInterface = GetNetworkInterface();
+            var ipv4 = Util.GetIpv4(networkInterface);
+            
+            if (ipv4 == IPAddress.None || Util.IsDhcpipAddress(ipv4))
             {
-                if (_isStaticIpSet) return true;
-
-                Util.Info("SubnetHelper: Seting static IP to [{0}] [{1}]", ipAddress, subnetMask);
-                var argument = NetshSetStaticIpArgument;
-                argument = argument.Replace("$inferfaceName", _networkInterface.Name);
-                argument = argument.Replace("$ip", ipAddress);
-                argument = argument.Replace("$subnetMask", subnetMask);
-                _isStaticIpSet = Util.RunNetshElevated(argument);
+                return true;
             }
 
-            return _isStaticIpSet;
+            // netsh interface ip set address "Wi-Fi" dhcp
+            Util.Info("SubnetHelper: Enabling DHCP");
+
+            var argument = NetshEnableDhcpArgument.Replace("$interfaceName", networkInterface.Name);
+            return Util.RunNetshElevated(argument);
         }
 
-        public bool EnableDhcp()
+        private NetworkInterface GetNetworkInterface()
         {
-            Debug.Assert(_networkInterface != null);
+            // netsh interface ip show addresses
+            // netsh interface ip show addresses "Wi-Fi"
+            NetworkInterface networkInterface = null;
 
-            bool isDhcpEnabled = true;
-
-            lock (_dhcpLockObj)
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (var interf in interfaces.Where(interf => Guid.Parse(interf.Id) == _networkInterfaceGuid))
             {
-                if (!_isStaticIpSet) return true;
-
-                // netsh interface ip set address "Wi-Fi" dhcp
-                Util.Info("SubnetHelper: Enabling DHCP");
-
-                var argument = NetshEnableDhcpArgument.Replace("$interfaceName", _networkInterface.Name);
-                isDhcpEnabled = Util.RunNetshElevated(argument);
-                _isStaticIpSet = !isDhcpEnabled;
+                Util.Info("Find name [{0}] for guid [{1}]", interf.Name, _networkInterfaceGuid.ToString());
+                networkInterface = interf;
             }
 
-            return isDhcpEnabled;
+            if (networkInterface == null)
+            {
+                Util.Error("Can't Find name for guid [{0}]", _networkInterfaceGuid.ToString());
+            }
+
+            return networkInterface;
         }
 
         private SubnetHelper()
         {
         }
 
-        private NetworkInterface _networkInterface;
-        private bool _isStaticIpSet;
-        private readonly object _dhcpLockObj = new object();
+        private Guid _networkInterfaceGuid;
     }
 }
