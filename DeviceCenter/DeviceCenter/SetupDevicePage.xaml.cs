@@ -205,7 +205,7 @@ namespace DeviceCenter
                 return;
 
             // Extract the FFU and flash it on the SD card
-            FlashFFU();
+            FlashDownloadedFFU();
         }
 
         private async Task<bool>  DownloadISO()
@@ -280,15 +280,18 @@ namespace DeviceCenter
 
         }
 
-        private async void FlashFFU()
+        private async void FlashDownloadedFFU()
         {
+            var deviceType = ComboBoxDeviceType.SelectedItem as LkgPlatform;
+            var driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
+
             FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingExtractMSI;
             _currentFlashingState = FlashingStates.Extracting;
             FlashingProgress.Value = 0;
             string ffuPath = string.Empty;
             await Task.Run((Action)(() =>
             {
-                ffuPath = _deviceSetupHelper.ExtractFFUFromISO(_isoFilePath, platform);
+                ffuPath = _deviceSetupHelper.ExtractFFUFromISO(_isoFilePath, deviceType);
             }));
 
             if (String.IsNullOrEmpty(ffuPath))
@@ -327,6 +330,7 @@ namespace DeviceCenter
                     HandleFlashFFUException(ex);
                     return;
                 }
+            }
         }
 
         private void HandleFlashFFUException(Exception ex)
