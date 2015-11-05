@@ -159,15 +159,6 @@ namespace DeviceCenter.Helper
                     using (var response = (HttpWebResponse)(await request.GetResponseAsync()))
                     {
                         result = response.StatusCode;
-                        if (result == HttpStatusCode.OK)
-                        {
-                            var objStream = response.GetResponseStream();
-                            
-                            // tbd check for null objStream
-                            var objReader = new StreamReader(objStream);
-
-                            var respData = objReader.ReadToEnd();
-                        }
                     }
 
                     return result;
@@ -225,15 +216,6 @@ namespace DeviceCenter.Helper
                     using (var response = (HttpWebResponse)(await req.GetResponseAsync()))
                     {
                         result = response.StatusCode;
-                        if (result == HttpStatusCode.OK)
-                        {
-                            var objStream = response.GetResponseStream();
-
-                            // tbd check for null.
-
-                            var objReader = new StreamReader(objStream);
-                            string respData = objReader.ReadToEnd();
-                        }
                     }
 
                     return result;
