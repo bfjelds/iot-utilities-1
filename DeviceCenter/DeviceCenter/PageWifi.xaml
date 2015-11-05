@@ -25,8 +25,8 @@
                             <Button IsDefault="True" Margin="0 6 6 6" Padding="20 6 20 6" Content="{x:Static props:Strings.WifiNextButton}" HorizontalAlignment="Left" IsEnabled="{Binding EnableSecureConnect}" Click="ButtonConnectSecure_Click" />
                         </StackPanel>
                     </StackPanel>
+                    <ProgressBar IsIndeterminate="True" Visibility="{Binding WaitingToConnect}" Margin="0 0 0 4" />
                     <Button IsDefault="True" Margin="200 6 6 6" Padding="20 6 20 6" Content="Connect" Click="ButtonConnect_Click" Visibility="{Binding ShowConnect}" HorizontalAlignment="Right" IsEnabled="{Binding ReadyToConnect}" />
-                    <ProgressBar IsIndeterminate="True" Visibility="{Binding WaitingToConnect}" Margin="0 0 0 20" />
                 </StackPanel>
             </ListViewItem>
         </DataTemplate>

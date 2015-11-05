@@ -146,6 +146,7 @@ namespace DeviceCenter
 
                     if (success)
                     {
+                        Collapse();
                         MessageBox.Show(Strings.Strings.SuccessWifiConfigured + "\n" + Strings.Strings.DeviceRebootingMessage);
 
                         await _webbRequest.RestartAsync();
