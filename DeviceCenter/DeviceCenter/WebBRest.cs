@@ -16,6 +16,7 @@ namespace DeviceCenter
     public class WebBRest
     {
         private const string DeviceApiUrl = "/api/iot/device/";
+        private const string OsInfo = "/api/os/info";
         private const string ControlApiUrl = "/api/control/";
         private const string NetworkingApiUrl = "/api/networking/";
         private const string AppxApiUrl = "/api/appx/packagemanager/";
@@ -38,10 +39,35 @@ namespace DeviceCenter
             this._restHelper = new RestHelper(parent, ipAddress, userInfo);
         }
 
+        public Task<OsInfo> GetDeviceInfoAsync()
+        {
+            return Task<OsInfo>.Run(async () => 
+            {
+                string url = OsInfo;
+
+                try
+                {
+                    using (var response = await _restHelper.GetOrPostRequestAsync(url, true))
+                    {
+                        var data = RestHelper.ProcessJsonResponse(response, typeof(OsInfo)) as OsInfo;
+
+                        // data might be null, caller should check
+                        return data;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+
+                    return null;
+                }
+            });
+        }
+
         public async Task<bool> SetDeviceNameAsync(string newDeviceName)
         {
             string url = DeviceApiUrl + "name?newdevicename=";
-            url += RestHelper.Encode64(newDeviceName);
+            url += RestHelper.EscapeUriString(newDeviceName);
 
             try
             {
@@ -66,8 +92,8 @@ namespace DeviceCenter
         public async Task<bool> SetPasswordAsync(string oldPassword, string newPassword)
         {
             var url = DeviceApiUrl + "password?";
-            url = url + "oldpassword=" + RestHelper.Encode64(oldPassword);
-            url = url + "&newpassword=" + RestHelper.Encode64(newPassword);
+            url = url + "oldpassword=" + RestHelper.EscapeUriString(oldPassword);
+            url = url + "&newpassword=" + RestHelper.EscapeUriString(newPassword);
 
             try
             {
@@ -287,7 +313,6 @@ namespace DeviceCenter
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                throw new RestError("Cannot enumerate running apps", ex);
             }
 
             return false;
@@ -310,8 +335,8 @@ namespace DeviceCenter
                 {
                     if (app.Name == appName)
                     {
-                        var url = AppTaskUrl + "app?appid=" + RestHelper.Encode64(app.PackageRelativeId)
-                                     + "&package=" + RestHelper.Encode64(app.PackageFullName);
+                        var url = AppTaskUrl + "app?appid=" + RestHelper.EscapeUriString(app.PackageRelativeId)
+                                     + "&package=" + RestHelper.EscapeUriString(app.PackageFullName);
 
                         result = await this._restHelper.PostRequestAsync(url, string.Empty);
                     }
@@ -345,7 +370,7 @@ namespace DeviceCenter
                 {
                     if (app.Name == appName)
                     {
-                        url = AppTaskUrl + "app?package=" + RestHelper.Encode64(app.PackageFullName);
+                        url = AppTaskUrl + "app?package=" + RestHelper.EscapeUriString(app.PackageFullName);
                         break;
                     }
                     
@@ -439,12 +464,12 @@ namespace DeviceCenter
         {
             var url = "/api/wifi/network?";
             url = url + "interface=" + adapterName.Trim("{}".ToCharArray());
-            url = url + "&ssid=" + RestHelper.Encode64(ssid);
+            url = url + "&ssid=" + RestHelper.EscapeUriString(ssid);
             url = url + "&op=" + "connect";
             url = url + "&createprofile=" + "yes";
             if (!string.IsNullOrEmpty(ssidPassword))
             {
-                url = url + "&key=" + RestHelper.Encode64(ssidPassword);
+                url = url + "&key=" + RestHelper.EscapeUriString(ssidPassword);
             }
 
             try

@@ -33,7 +33,7 @@ namespace DeviceCenter
         }
     
         /// <summary>
-        /// Signal strength of this networ
+        /// Signal strength of this network
         /// </summary>
         public uint SignalStrength { get; set; }
 

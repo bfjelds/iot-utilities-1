@@ -111,8 +111,7 @@ namespace DeviceCenter
                 ComboBoxDeviceType.Items.Add(currentEntry);
 
             if (ComboBoxDeviceType.Items.Count == 0)
-            {
-                // TBD - this list should be hardcoded to MBM and RPi2.  
+            {   
                 ComboBoxDeviceType.Items.Add("LKG not found \\\\webnas\\AthensDrop");
             }
             else
@@ -328,9 +327,6 @@ namespace DeviceCenter
                     HandleFlashFFUException(ex);
                     return;
                 }
-            }
-            _currentFlashingState = FlashingStates.Completed;
-            return;
         }
 
         private void HandleFlashFFUException(Exception ex)
