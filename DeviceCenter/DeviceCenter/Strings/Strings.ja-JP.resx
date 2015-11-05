@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppNameDisplay" xml:space="preserve">
-    <value>デバイス センター </value>
+    <value>IoT ダッシュボード</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>キャンセル</value>
@@ -135,8 +135,8 @@
   <data name="ConnectEthernetTitle" xml:space="preserve">
     <value>イーサネット</value>
   </data>
-  <data name="ConnectMessage1" xml:space="preserve">
-    <value>準備が完了した SD カードをデバイスに挿入します。</value>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>設定が完了した SD カードをデバイスに挿入したら、Wi-Fi またはイーサネットを使ってボードをネットワークに接続してください。</value>
   </data>
   <data name="ConnectMessage2" xml:space="preserve">
     <value>次に、Wi-Fi またはイーサネットを使ってボードをネットワークに接続します。</value>
@@ -205,10 +205,10 @@
     <value>デバイス名とパスワードを設定することで、デバイスのセキュリティが向上します</value>
   </data>
   <data name="DeviceNamePwdPassword1" xml:space="preserve">
-    <value>パスワード</value>
+    <value>古いパスワード</value>
   </data>
   <data name="DeviceNamePwdPassword2" xml:space="preserve">
-    <value>もう一度同じパスワードを入力してください</value>
+    <value>新しいパスワード</value>
   </data>
   <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
     <value>パスワードが一致しません</value>
@@ -226,7 +226,7 @@
     <value>ネットワークで Windows 10 IoT Core デバイスを検索します</value>
   </data>
   <data name="FindMyDeviceButton" xml:space="preserve">
-    <value>自分のデバイスを検索する</value>
+    <value>自分のデバイス</value>
   </data>
   <data name="FinishButton" xml:space="preserve">
     <value>完了</value>
@@ -242,7 +242,7 @@
     <comment>code will fill in the {0}</comment>
   </data>
   <data name="IntroMessage" xml:space="preserve">
-    <value>ネットワークに接続されている Windows IoT Core デバイスをお持ちですか?</value>
+    <value>デバイスの設定に必要なのは、お使いのデバイスに Windows 10 IoT Core をダウンロードしてインストールすることだけです。</value>
   </data>
   <data name="IntroSetUpNewDevice" xml:space="preserve">
     <value>新しいデバイスのセットアップ</value>
@@ -251,7 +251,7 @@
     <value>Windows 10 IoT Core を実行しているさまざまなデバイスで、迅速に Windows IoT ソリューションのプロトタイプを作成し、ソリューションを構築します。Windows 10 は、ソリューションをすばやく開発してデバイスに展開するための強力なツールとなります。</value>
   </data>
   <data name="IntroSubTitle2" xml:space="preserve">
-    <value>デバイスの設定に必要なのは、お使いのデバイスに Windows IoT Core をダウンロードしてインストールすることだけです。</value>
+    <value>デバイスの設定に必要なのは、お使いのデバイスに Windows 10 IoT Core をダウンロードしてインストールすることだけです。</value>
   </data>
   <data name="IntroTitle" xml:space="preserve">
     <value>モノのインターネットを検出します</value>
@@ -328,14 +328,14 @@
     <value>推奨される SD カードの一覧を表示</value>
   </data>
   <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
-    <value>デバイスの種類を選択します</value>
+    <value>デバイスの種類</value>
     <comment>the combo values should come from the online xml file</comment>
   </data>
   <data name="NewDeviceSubTitle" xml:space="preserve">
     <value>最初に、デバイスに Windows 10 IoT Core をインストールします。</value>
   </data>
   <data name="NewDeviceTermsAndCondition" xml:space="preserve">
-    <value>ソフトウェア ライセンス条項</value>
+    <value>ソフトウェア ライセンス条項に同意する</value>
     <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
   </data>
   <data name="NewDeviceTitle" xml:space="preserve">
@@ -430,10 +430,10 @@
     <value>新しいデバイスのセットアップ</value>
   </data>
   <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
-    <value>DragonBoard 410c には独自のインストール ツールが含まれています。Windows をインストールしてこのボードをインターネットに接続したら、[自分のデバイス] にこのボードが表示されます。</value>
+    <value>このボードの設定には別のプロセスが必要です。このボードに Windows をインストールしてインターネットに接続したら、デバイス リストでプロセスを確認することができます。</value>
   </data>
   <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
-    <value>DragonBoard 410c に Windows IoT Core をインストールしています</value>
+    <value>DragonBoard 410c に Windows 10 IoT Core をインストールしています</value>
   </data>
   <data name="SamplesAppRunning" xml:space="preserve">
     <value>デバイスでこのアプリを実行中です。</value>
@@ -466,7 +466,7 @@
     <value>他のプロジェクトとチュートリアルを見る</value>
   </data>
   <data name="SamplesRadioMessage1" xml:space="preserve">
-    <value>Windows IoT Core デバイスを、自宅内のどこからでも操作できるインターネット ラジオにします。</value>
+    <value>Windows 10 IoT Core デバイスを、自宅内のどこからでも操作できるインターネット ラジオにします。</value>
   </data>
   <data name="SamplesRun" xml:space="preserve">
     <value>デバイスでこのアプリを実行</value>
@@ -494,5 +494,107 @@
   </data>
   <data name="WifiRepeatForFutureDevices" xml:space="preserve">
     <value>今後すべてのデバイスにこれを適用</value>
+  </data>
+  <data name="RememberMyCredentials" xml:space="preserve">
+    <value>資格情報を記憶する</value>
+    <comment>Save password</comment>
+  </data>
+  <data name="DeviceNamePwdPassword3" xml:space="preserve">
+    <value>パスワードの確認入力</value>
+  </data>
+  <data name="MessageUnableToGetWifi" xml:space="preserve">
+    <value>リモート デバイスはアクセス ポイント リストの要求に応答しませんでした。</value>
+  </data>
+  <data name="DeviceListColOSVersion" xml:space="preserve">
+    <value>OS バージョン</value>
+  </data>
+  <data name="ErrorUnknownArchitecture" xml:space="preserve">
+    <value>不明なデバイス アーキテクチャです。Windows 10 IoT Core ビルド {0} 以上をお使いください。</value>
+    <comment>{0} is the RTM version of TH2</comment>
+  </data>
+  <data name="SamplesAppRunningBackground" xml:space="preserve">
+    <value>このアプリがフォアグラウンドで実行されていない場合は、下のボタンをクリックしてフォアグラウンドに移動することができます。</value>
+  </data>
+  <data name="SamplesForegroundButton" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© 2015 Microsoft Corporation</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>プライバシーに関する声明</value>
+  </data>
+  <data name="AboutPrivateBuild" xml:space="preserve">
+    <value>プライベート ビルド</value>
+  </data>
+  <data name="AboutServicesAgreement" xml:space="preserve">
+    <value>Microsoft サービス規約</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Windows 10 IoT Core ダッシュボード</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>バージョン情報</value>
+  </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>詳細情報</value>
+  </data>
+  <data name="NewDeviceFlashingDownload" xml:space="preserve">
+    <value>インストーラーをダウンロードしています</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSI" xml:space="preserve">
+    <value>インストーラーを展開しています</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailed" xml:space="preserve">
+    <value>Windows 10 IoT Core インストール パッケージを展開できませんでした。</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
+    <value>インストールに失敗しました</value>
+  </data>
+  <data name="DeviceListFilter" xml:space="preserve">
+    <value>フィルター</value>
+  </data>
+  <data name="DeviceQualcommDragonboard" xml:space="preserve">
+    <value>Qualcomm DragonBoard 410c</value>
+  </data>
+  <data name="DevicesConfigureDevice" xml:space="preserve">
+    <value>デバイスの構成</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>ダウンロードが完了しました</value>
+  </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>{0} MB をダウンロード中 - {1}%</value>
+    <comment>Shows progress, 0 is megabytes sent, 1 is percent progress</comment>
+  </data>
+  <data name="FilterAllDevices" xml:space="preserve">
+    <value>すべて</value>
+  </data>
+  <data name="FilterNewDevices" xml:space="preserve">
+    <value>新しいデバイス</value>
+  </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>デバイスを再起動しています...</value>
+  </data>
+  <data name="MessageBadPassword" xml:space="preserve">
+    <value>古いパスワードが正しくありません</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ErrorNullDevice" xml:space="preserve">
+    <value>対象のデバイスの取得中にエラーが発生しました。もう一度お試しください。</value>
+  </data>
+  <data name="MessageBadWifiPassword" xml:space="preserve">
+    <value>ネットワーク セキュリティ キーが正しくありません</value>
+    <comment>When wrong passkey is used for wifi setting</comment>
+  </data>
+  <data name="SuccessPasswordChanged" xml:space="preserve">
+    <value>デバイスのパスワードが変更されました</value>
+    <comment>After successful change of the device's password</comment>
+  </data>
+  <data name="SuccessWifiConfigured" xml:space="preserve">
+    <value>Wi-Fi が構成されたデバイス</value>
+    <comment>Successful Wifi configuration </comment>
   </data>
 </root>

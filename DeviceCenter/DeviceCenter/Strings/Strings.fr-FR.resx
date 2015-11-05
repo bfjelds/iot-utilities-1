@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppNameDisplay" xml:space="preserve">
-    <value>gestionnaire pour appareils</value>
+    <value>Tableau de bord IoT</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Annuler</value>
@@ -135,8 +135,8 @@
   <data name="ConnectEthernetTitle" xml:space="preserve">
     <value>Ethernet</value>
   </data>
-  <data name="ConnectMessage1" xml:space="preserve">
-    <value>Insérez votre carte SD opérationnelle dans l’appareil,</value>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>Insérez votre carte SD finie dans l’appareil, puis connectez-la au réseau par le biais du Wi-Fi ou d’Ethernet</value>
   </data>
   <data name="ConnectMessage2" xml:space="preserve">
     <value>puis connectez votre carte au réseau à l’aide du Wi-Fi ou d’Ethernet.</value>
@@ -151,7 +151,7 @@
     <value>Branchez votre carte Wi-Fi et démarrez votre appareil. Cliquez sur Localiser mon appareil pour le détecter automatiquement.</value>
   </data>
   <data name="ConnectWiFiMessage2" xml:space="preserve">
-    <value>Afficher la liste des cartes Wi-Fi prises en charge</value>
+    <value>Voir une liste des cartes Wi-Fi prises en charge</value>
   </data>
   <data name="ConnectWiFiTitle" xml:space="preserve">
     <value>Wi-Fi</value>
@@ -205,10 +205,10 @@
     <value>La configuration du nom et du mot de passe de l’appareil permet de protéger votre appareil</value>
   </data>
   <data name="DeviceNamePwdPassword1" xml:space="preserve">
-    <value>Mot de passe</value>
+    <value>Ancien mot de passe</value>
   </data>
   <data name="DeviceNamePwdPassword2" xml:space="preserve">
-    <value>Confirmer le mot de passe</value>
+    <value>Nouveau mot de passe</value>
   </data>
   <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
     <value>Les mots de passe ne correspondent pas</value>
@@ -226,7 +226,7 @@
     <value>Recherche d’appareils Windows 10 IoT Core sur votre réseau</value>
   </data>
   <data name="FindMyDeviceButton" xml:space="preserve">
-    <value>Trouver mon appareil</value>
+    <value>Mes appareils</value>
   </data>
   <data name="FinishButton" xml:space="preserve">
     <value>Terminer</value>
@@ -242,7 +242,7 @@
     <comment>code will fill in the {0}</comment>
   </data>
   <data name="IntroMessage" xml:space="preserve">
-    <value>Vous disposez déjà d’un appareil Windows IoT Core sur votre réseau ?</value>
+    <value>Pour configurer un appareil, il vous suffit de télécharger et d’installer Windows 10 IoT Standard sur ce dernier.</value>
   </data>
   <data name="IntroSetUpNewDevice" xml:space="preserve">
     <value>Configurer un nouvel appareil</value>
@@ -251,7 +251,7 @@
     <value>Esquissez et concevez rapidement vos solutions Windows IoT sur un large choix d’appareils équipés de Windows IoT Core. Windows 10 vous offre des outils puissants vous permettant de développer rapidement votre solution et de la déployer sur votre appareil.</value>
   </data>
   <data name="IntroSubTitle2" xml:space="preserve">
-    <value>Pour configurer un appareil, il vous suffit de télécharger et d’installer Windows IoT Standard sur ce dernier</value>
+    <value>Pour configurer un appareil, il vous suffit de télécharger et d’installer Windows 10 IoT Standard sur ce dernier</value>
   </data>
   <data name="IntroTitle" xml:space="preserve">
     <value>Découvrez l’Internet de vos objets</value>
@@ -328,14 +328,14 @@
     <value>Afficher la liste des cartes SD recommandées</value>
   </data>
   <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
-    <value>Sélectionner le type de votre appareil</value>
+    <value>Type d’appareil</value>
     <comment>the combo values should come from the online xml file</comment>
   </data>
   <data name="NewDeviceSubTitle" xml:space="preserve">
     <value>Commençons par télécharger Windows 10 IoT Core sur votre appareil.</value>
   </data>
   <data name="NewDeviceTermsAndCondition" xml:space="preserve">
-    <value>termes du contrat de licence logiciel</value>
+    <value>J’accepte les termes du contrat de licence logiciel</value>
     <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
   </data>
   <data name="NewDeviceTitle" xml:space="preserve">
@@ -430,10 +430,10 @@
     <value>Configurer un nouvel appareil</value>
   </data>
   <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
-    <value>La carte DragonBoard 410c est fournie avec son propre ensemble d’outils d’installation. Une fois que vous aurez installé Windows et connecté cette carte à Internet, vous la trouverez dans Mes appareils.</value>
+    <value>Cette carte requiert un processus de configuration différent. Une fois que vous aurez installé Windows sur cette carte et que vous aurez connecté celle-ci à Internet, elle s’affichera dans votre liste d’appareils.</value>
   </data>
   <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
-    <value>Installation de Windows IoT Standard sur la carte DragonBoard 410c</value>
+    <value>Installation de Windows 10 IoT Standard sur la carte DragonBoard 410c</value>
   </data>
   <data name="SamplesAppRunning" xml:space="preserve">
     <value>Cette application s’exécute sur votre appareil.</value>
@@ -466,7 +466,7 @@
     <value>Consulter d’autres projets et didacticiels</value>
   </data>
   <data name="SamplesRadioMessage1" xml:space="preserve">
-    <value>Faites de votre appareil Windows IoT Standard une radio Internet pouvant être contrôlée depuis n’importe où dans votre maison.</value>
+    <value>Faites de votre appareil Windows 10 IoT Standard une radio Internet pouvant être contrôlée depuis n’importe où dans votre maison.</value>
   </data>
   <data name="SamplesRadioTitle" xml:space="preserve">
     <value>Internet radio</value>
@@ -497,5 +497,107 @@
   </data>
   <data name="WifiRepeatForFutureDevices" xml:space="preserve">
     <value>Effectuer cette procédure pour tous les appareils à venir</value>
+  </data>
+  <data name="RememberMyCredentials" xml:space="preserve">
+    <value>Mémoriser mes informations d’identification</value>
+    <comment>Save password</comment>
+  </data>
+  <data name="DeviceNamePwdPassword3" xml:space="preserve">
+    <value>Confirmation du mot de passe</value>
+  </data>
+  <data name="MessageUnableToGetWifi" xml:space="preserve">
+    <value>L’appareil distant n’a pas répondu à la demande de liste de points d’accès.</value>
+  </data>
+  <data name="DeviceListColOSVersion" xml:space="preserve">
+    <value>Version du système d’exploitation</value>
+  </data>
+  <data name="ErrorUnknownArchitecture" xml:space="preserve">
+    <value>Architecture d’appareil inconnue.  Utilisez le build {0} de Windows 10 IoT Standard ou un build plus récent</value>
+    <comment>{0} is the RTM version of TH2</comment>
+  </data>
+  <data name="SamplesAppRunningBackground" xml:space="preserve">
+    <value>Si cette application n’est pas exécutée au premier plan, appuyez sur le bouton ci-dessous pour l’amener au premier plan.</value>
+  </data>
+  <data name="SamplesForegroundButton" xml:space="preserve">
+    <value>Afficher</value>
+  </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© 2015 Microsoft Corporation</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>Déclaration de confidentialité</value>
+  </data>
+  <data name="AboutPrivateBuild" xml:space="preserve">
+    <value>Build privé</value>
+  </data>
+  <data name="AboutServicesAgreement" xml:space="preserve">
+    <value>Contrat de services Microsoft</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Tableau de bord Windows 10 IoT Standard</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>À propos de cette application</value>
+  </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>À propos de</value>
+  </data>
+  <data name="NewDeviceFlashingDownload" xml:space="preserve">
+    <value>Téléchargement du programme d’installation</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSI" xml:space="preserve">
+    <value>Décompression du programme d’installation</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailed" xml:space="preserve">
+    <value>La décompression du package d’installation de Windows 10 IoT Standard a échoué.</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
+    <value>Échec de l’installation</value>
+  </data>
+  <data name="DeviceListFilter" xml:space="preserve">
+    <value>Filtrer</value>
+  </data>
+  <data name="DeviceQualcommDragonboard" xml:space="preserve">
+    <value>Qualcomm DragonBoard 410c</value>
+  </data>
+  <data name="DevicesConfigureDevice" xml:space="preserve">
+    <value>Configurer l’appareil</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>Téléchargement terminé</value>
+  </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>Téléchargement de {0} Mo - {1} %</value>
+    <comment>Shows progress, 0 is megabytes sent, 1 is percent progress</comment>
+  </data>
+  <data name="FilterAllDevices" xml:space="preserve">
+    <value>Tout</value>
+  </data>
+  <data name="FilterNewDevices" xml:space="preserve">
+    <value>Nouveaux appareils</value>
+  </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>Redémarrage de l’appareil en cours...</value>
+  </data>
+  <data name="MessageBadPassword" xml:space="preserve">
+    <value>L’ancien mot de passe est incorrect</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ErrorNullDevice" xml:space="preserve">
+    <value>Erreur d’obtention de l’appareil cible. Réessayez.</value>
+  </data>
+  <data name="MessageBadWifiPassword" xml:space="preserve">
+    <value>La clé de sécurité réseau est incorrecte</value>
+    <comment>When wrong passkey is used for wifi setting</comment>
+  </data>
+  <data name="SuccessPasswordChanged" xml:space="preserve">
+    <value>Mot de passe de l’appareil modifié correctement</value>
+    <comment>After successful change of the device's password</comment>
+  </data>
+  <data name="SuccessWifiConfigured" xml:space="preserve">
+    <value>Le Wi-Fi de l’appareil est configuré</value>
+    <comment>Successful Wifi configuration </comment>
   </data>
 </root>
