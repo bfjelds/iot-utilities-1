@@ -15,13 +15,8 @@
         <TextBlock x:Name="labelVersion"  Text="--" />
         <TextBlock Text="{x:Static props:Strings.AboutCopyright}" Margin="0 20" />
         <TextBlock Margin="0 10">
-            <Hyperlink NavigateUri="https://www.microsoft.com/en-us/privacystatement/default.aspx" RequestNavigate="Hyperlink_RequestNavigate">
+            <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkId=521839" RequestNavigate="Hyperlink_RequestNavigate">
                 <TextBlock Text="{x:Static props:Strings.AboutPrivacy}" />
-            </Hyperlink>
-        </TextBlock>
-        <TextBlock>
-            <Hyperlink NavigateUri="https://www.microsoft.com/en-us/servicesagreement/" RequestNavigate="Hyperlink_RequestNavigate">
-                <TextBlock Text="{x:Static props:Strings.AboutServicesAgreement}" />
             </Hyperlink>
         </TextBlock>
     </StackPanel>
