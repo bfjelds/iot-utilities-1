@@ -11,6 +11,13 @@ using System.Threading.Tasks;
 
 namespace DeviceCenter
 {
+    public enum DeviceTypes
+    {
+        MBM,
+        RPI2,
+        QCOM
+    }
+
     /// <summary>
     /// Build info of a lkg.
     /// </summary>
@@ -50,19 +57,19 @@ namespace DeviceCenter
 
         public static LkgPlatform CreateMbm()
         {
-            var result = new LkgPlatform {Platform = "MBM"};
+            var result = new LkgPlatform { DeviceType = DeviceTypes.MBM};
             return result;
         }
 
         public static LkgPlatform CreateRpi2()
         {
-            var result = new LkgPlatform {Platform = "RPi2"};
+            var result = new LkgPlatform { DeviceType = DeviceTypes.RPI2};
             return result;
         }
 
         public static LkgPlatform CreateQCom()
         {
-            var result = new LkgPlatform {Platform = "QCOM"};
+            var result = new LkgPlatform { DeviceType = DeviceTypes.QCOM};
             return result;
         }
 
@@ -74,21 +81,21 @@ namespace DeviceCenter
         /// E.g. "MBM", "RPi2", etc.
         /// </summary>
         [DataMember]
-        public string Platform { get; set; }
+        public DeviceTypes DeviceType  { get; set; }
 
         public override string ToString()
         {
-            switch (this.Platform)
+            switch (this.DeviceType)
             {
-                case "MBM":
+                case DeviceTypes.MBM:
                     return MbmName;
-                case "RPi2":
+                case DeviceTypes.RPI2:
                     return RaspberryPi2Name;
-                case "QCOM":
+                case DeviceTypes.QCOM:
                     return DragonboardName;
+                default:
+                    return string.Empty;
             }
-            
-            return string.Empty;
         }
 
         /// <summary>
