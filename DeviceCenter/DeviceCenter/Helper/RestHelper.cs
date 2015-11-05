@@ -15,7 +15,7 @@ namespace DeviceCenter.Helper
     {
         public const string UrlFormat = "http://{0}:8080{1}";
 
-        public static string Encode64(string toEncodeString)
+        public static string EscapeUriString(string toEncodeString)
         {
             return Uri.EscapeUriString(Convert.ToBase64String(Encoding.ASCII.GetBytes(toEncodeString.Trim())));
         }
@@ -185,15 +185,6 @@ namespace DeviceCenter.Helper
                     using (var response = (HttpWebResponse)(await request.GetResponseAsync()))
                     {
                         result = response.StatusCode;
-                        if (result == HttpStatusCode.OK)
-                        {
-                            var objStream = response.GetResponseStream();
-                            
-                            // tbd check for null objStream
-                            var objReader = new StreamReader(objStream);
-
-                            var respData = objReader.ReadToEnd();
-                        }
                     }
 
                     return result;
@@ -251,15 +242,6 @@ namespace DeviceCenter.Helper
                     using (var response = (HttpWebResponse)(await req.GetResponseAsync()))
                     {
                         result = response.StatusCode;
-                        if (result == HttpStatusCode.OK)
-                        {
-                            var objStream = response.GetResponseStream();
-
-                            // tbd check for null.
-
-                            var objReader = new StreamReader(objStream);
-                            string respData = objReader.ReadToEnd();
-                        }
                     }
 
                     return result;

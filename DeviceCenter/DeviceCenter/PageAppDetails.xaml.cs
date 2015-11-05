@@ -81,13 +81,42 @@ namespace DeviceCenter
             }
             else
             {
-                string arch = string.IsNullOrEmpty(_device.Architecture) ? "ARM" : _device.Architecture;
+                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
+
+                string arch = string.Empty;
+
+                // Device discovered with pinger, try to get architecture with WebB REST call
+                if(string.IsNullOrEmpty(_device.Architecture))
+                {
+                    var osInfo = await webbRequest.GetDeviceInfoAsync();
+
+                    if(osInfo != null)
+                    {
+                        arch = osInfo.Arch;
+                    }
+                }
+                // Device discovered with mDNS
+                else
+                {
+                    arch = _device.Architecture;
+                }
+
+                // If we still could not get the device arch, give up
+                // and hide all the panels
+                // V2: Add message box saying that the architecture is
+                // unknown
+                if(string.IsNullOrEmpty(arch))
+                {
+                    PanelDeploying.Visibility = Visibility.Collapsed;
+                    PanelDeployed.Visibility = Visibility.Collapsed;
+                    PanelDeploy.Visibility = Visibility.Collapsed;
+
+                    return;
+                }
 
                 PanelDeploy.Visibility = Visibility.Collapsed;
                 PanelDeploying.Visibility = Visibility.Visible;
                 PanelDeployed.Visibility = Visibility.Collapsed;
-
-                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
                 var sourceFiles = this.AppItem.PlatformFiles[arch];
 
