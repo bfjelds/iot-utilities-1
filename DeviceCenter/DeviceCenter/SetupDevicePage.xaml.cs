@@ -333,7 +333,7 @@ namespace DeviceCenter
                 }
                 else
                 {
-                    DisMountVhd();
+                    DismountISO();
                     return string.Empty;
                 }
 
@@ -375,12 +375,12 @@ namespace DeviceCenter
                 // msiProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 msiProcess.Start();
                 msiProcess.WaitForExit();
-                DisMountVhd();
+                DismountISO();
 
                 return msiProcess.ExitCode != 0 ? string.Empty : Path.Combine(extractionPath, ffuPath);
             }
         }
-        void DisMountVhd()
+        void DismountISO()
         {
             using (var powerShellInstance = PowerShell.Create())
             {

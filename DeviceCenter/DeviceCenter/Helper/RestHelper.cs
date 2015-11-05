@@ -14,7 +14,7 @@ namespace DeviceCenter.Helper
     {
         public const string UrlFormat = "http://{0}:8080{1}";
 
-        public static string Encode64(string toEncodeString)
+        public static string EscapeUriString(string toEncodeString)
         {
             return Uri.EscapeUriString(Convert.ToBase64String(Encoding.ASCII.GetBytes(toEncodeString.Trim())));
         }
