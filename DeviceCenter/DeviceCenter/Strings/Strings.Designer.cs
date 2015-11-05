@@ -1429,6 +1429,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Device Wi-Fi is configured.  Please manually reset the device and confirm the device is in IoT Dashboards device list once it reboots.  You many need to repeat Wi-Fi setting if not.
+        /// </summary>
+        public static string WiFiMayBeConfigured {
+            get {
+                return ResourceManager.GetString("WiFiMayBeConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Next.
         /// </summary>
         public static string WifiNextButton {
