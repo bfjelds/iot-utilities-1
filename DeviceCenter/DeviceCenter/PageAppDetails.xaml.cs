@@ -38,6 +38,35 @@ namespace DeviceCenter
             GetAppState();
         }
 
+        private async void GetTheOtherAppState()
+        {
+            if (_device == null)
+            {
+                PanelDeploy.Visibility = Visibility.Collapsed;
+                PanelDeployed.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
+
+                var theOtherAppName = (this.AppItem.AppName == Strings.Strings.AppNameBlinky) ? Strings.Strings.AppNameInternetRadio : Strings.Strings.AppNameBlinky;
+
+                try
+                {
+                    if (await webbRequest.IsAppRunning(theOtherAppName))
+                    {
+                        await webbRequest.StopAppAsync(theOtherAppName);
+                    }
+                }
+                catch (WebBRest.RestError)
+                {
+                    PanelDeploying.Visibility = Visibility.Collapsed;
+                    PanelDeployed.Visibility = Visibility.Collapsed;
+                    PanelDeploy.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
         private async void GetAppState()
         {
             if (_device == null)
@@ -81,6 +110,8 @@ namespace DeviceCenter
             }
             else
             {
+                GetTheOtherAppState();
+
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
                 string arch = string.Empty;
@@ -173,32 +204,6 @@ namespace DeviceCenter
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             navigation.GoBack();
-        }
-
-        private async void ButtonBringAppForground_Click(object sender, RoutedEventArgs e)
-        {
-            if (_device == null)
-            {
-                PanelDeploying.Visibility = Visibility.Collapsed;
-                PanelDeployed.Visibility = Visibility.Collapsed;
-                PanelDeploy.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
-
-                if (!(await webbRequest.StartAppAsync(this.AppItem.AppName)))
-                {
-                    PanelDeploying.Visibility = Visibility.Collapsed;
-                    PanelDeployed.Visibility = Visibility.Collapsed;
-                    PanelDeploy.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
-                    Process.Start(new ProcessStartInfo(appUrl));
-                }
-            }
         }
 
         private void comboBoxDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)

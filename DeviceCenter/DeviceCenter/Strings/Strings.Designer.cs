@@ -115,11 +115,29 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to BlinkyHeadedWebService.
+        /// </summary>
+        public static string AppNameBlinky {
+            get {
+                return ResourceManager.GetString("AppNameBlinky", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IoT Dashboard.
         /// </summary>
         public static string AppNameDisplay {
             get {
                 return ResourceManager.GetString("AppNameDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InternetRadioHeaded.
+        /// </summary>
+        public static string AppNameInternetRadio {
+            get {
+                return ResourceManager.GetString("AppNameInternetRadio", resourceCulture);
             }
         }
         
@@ -1308,15 +1326,6 @@ namespace DeviceCenter.Strings {
         public static string SamplesTutorialOnline {
             get {
                 return ResourceManager.GetString("SamplesTutorialOnline", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         
