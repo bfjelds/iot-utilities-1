@@ -76,7 +76,7 @@ namespace DeviceCenter
             _telemetryTimer.Tick += TelemetryTimer_Tick;
         }
 
-        private void SoftwareAccessPoint_OnSoftAPDisconnected()
+        private void SoftwareAccessPoint_OnSoftAPDisconnected(object sender, EventArgs e)
         {
             _connectedToAdhoc = false;
         }

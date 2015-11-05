@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using DeviceCenter.DataContract;
 using DeviceCenter.Helper;
+using System.Runtime.Serialization;
 
 namespace DeviceCenter
 {
@@ -27,7 +28,8 @@ namespace DeviceCenter
 
         private readonly RestHelper _restHelper;
 
-        public class RestError : Exception
+        [Serializable]
+        public class RestError : Exception, ISerializable
         {
             public RestError(string message, Exception innerException) : base(message, innerException)
             {
