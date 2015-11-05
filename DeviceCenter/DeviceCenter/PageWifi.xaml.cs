@@ -289,25 +289,34 @@ namespace DeviceCenter
         private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync(DiscoveredDevice device)
         {
             var result = new ObservableCollection<WifiEntry>();
-            var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
 
-            var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
-            var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
-
-            var adapters = await webbRequest.GetWirelessAdaptersAsync();
-
-            if (adapters != null && adapters.Items != null)
+            try
             {
-                var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
-                if (networks != null)
+                var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
+
+                var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
+                var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
+
+                var adapters = await webbRequest.GetWirelessAdaptersAsync();
+
+                if (adapters != null && adapters.Items != null)
                 {
-                    foreach (var ssid in networks.Items)
+                    var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
+                    if (networks != null)
                     {
-                        result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                        foreach (var ssid in networks.Items)
+                        {
+                            result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                        }
                     }
                 }
+                else
+                {
+                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
+                    _navigationFrame.GoBack();
+                }
             }
-            else
+            catch (Exception)
             {
                 MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
                 _navigationFrame.GoBack();
