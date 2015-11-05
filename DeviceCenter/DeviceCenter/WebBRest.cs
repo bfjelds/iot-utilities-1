@@ -395,15 +395,22 @@ namespace DeviceCenter
         {
             const string URL = "/api/wifi/interfaces";
 
-            using (var response = await this._restHelper.GetOrPostRequestAsync(URL, true))
+            try
             {
-                if (response.StatusCode == HttpStatusCode.OK)
+                using (var response = await this._restHelper.GetOrPostRequestAsync(URL, true))
                 {
-                    return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        return RestHelper.ProcessJsonResponse(response, typeof(WirelessAdapters)) as WirelessAdapters;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
 
-            return null;
+            return new WirelessAdapters();
         }
 
         public async Task<IPConfigurations> GetIpConfigurationsAsync()
