@@ -601,7 +601,9 @@
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
-    <value>Device Wi-Fi is configured.  Please manually reset the device and confirm the device is in IoT Dashboards device list once it reboots.  You many need to repeat Wi-Fi setting if not</value>
+    <value>Your Wi-Fi is now set up. In order to apply the changes, please reboot your device.
+Your device will automatically appear in the device list after reboot is complete.
+If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
   </data>
 </root>

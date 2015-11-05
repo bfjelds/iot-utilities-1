@@ -1429,7 +1429,9 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Device Wi-Fi is configured.  Please manually reset the device and confirm the device is in IoT Dashboards device list once it reboots.  You many need to repeat Wi-Fi setting if not.
+        ///   Looks up a localized string similar to Your Wi-Fi is now set up. In order to apply the changes, please reboot your device.
+        ///Your device will automatically appear in the device list after reboot is complete.
+        ///If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up..
         /// </summary>
         public static string WiFiMayBeConfigured {
             get {
