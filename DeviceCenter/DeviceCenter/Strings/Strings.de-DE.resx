@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppNameDisplay" xml:space="preserve">
-    <value>Gerätecenter</value>
+    <value>IoT-Dashboard</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Abbrechen</value>
@@ -135,8 +135,8 @@
   <data name="ConnectEthernetTitle" xml:space="preserve">
     <value>Ethernet</value>
   </data>
-  <data name="ConnectMessage1" xml:space="preserve">
-    <value>Legen Sie die vorbereitete SD-Karte in das Gerät ein,</value>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>Legen Sie die vorbereitete SD-Karte in das Gerät ein, und verbinden Sie Ihr Board dann über WLAN oder Ethernet mit dem Netzwerk.</value>
   </data>
   <data name="ConnectMessage2" xml:space="preserve">
     <value>und verbinden Sie Ihr Board dann über WLAN oder Ethernet mit dem Netzwerk.</value>
@@ -205,10 +205,10 @@
     <value>Durch das Festlegen von Gerätenamen und Kennwort erhöhen Sie die Sicherheit Ihres Geräts.</value>
   </data>
   <data name="DeviceNamePwdPassword1" xml:space="preserve">
-    <value>Kennwort</value>
+    <value>Altes Kennwort</value>
   </data>
   <data name="DeviceNamePwdPassword2" xml:space="preserve">
-    <value>Kennwort wiederholen</value>
+    <value>Neues Kennwort</value>
   </data>
   <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
     <value>Kennwörter stimmen nicht überein.</value>
@@ -226,7 +226,7 @@
     <value>Windows 10 IoT Core-Geräte im Netzwerk werden gesucht</value>
   </data>
   <data name="FindMyDeviceButton" xml:space="preserve">
-    <value>Mein Gerät suchen</value>
+    <value>Meine Geräte</value>
   </data>
   <data name="FinishButton" xml:space="preserve">
     <value>Fertig stellen</value>
@@ -242,7 +242,7 @@
     <comment>code will fill in the {0}</comment>
   </data>
   <data name="IntroMessage" xml:space="preserve">
-    <value>Verfügen Sie bereits über ein Windows IoT Core-Gerät in Ihrem Netzwerk?</value>
+    <value>Zur Einrichtung eines Geräts müssen Sie nur Windows 10 IoT Core herunterladen und auf Ihrem Gerät installieren.</value>
   </data>
   <data name="IntroSetUpNewDevice" xml:space="preserve">
     <value>Neues Gerät einrichten</value>
@@ -251,7 +251,7 @@
     <value>Erstellen Sie schnell Prototypen und eigene Windows IoT-Lösungen für eine Vielzahl von Geräten unter Windows 10 IoT Core. Windows 10 gibt Ihnen leistungsstarke Tools für die schnelle Entwicklung und Bereitstellung auf Ihrem Gerät an die Hand.</value>
   </data>
   <data name="IntroSubTitle2" xml:space="preserve">
-    <value>Zur Einrichtung eines Geräts müssen Sie nur Windows IoT Core herunterladen und auf Ihrem Gerät installieren.</value>
+    <value>Zur Einrichtung eines Geräts müssen Sie nur Windows 10 IoT Core herunterladen und auf Ihrem Gerät installieren.</value>
   </data>
   <data name="IntroTitle" xml:space="preserve">
     <value>Entdecken Sie das „Internet der Dinge“</value>
@@ -328,14 +328,14 @@
     <value>Liste empfohlener SD-Karten anzeigen</value>
   </data>
   <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
-    <value>Gerätetyp auswählen</value>
+    <value>Gerätetyp</value>
     <comment>the combo values should come from the online xml file</comment>
   </data>
   <data name="NewDeviceSubTitle" xml:space="preserve">
     <value>Holen Sie zuerst Windows 10 IoT Core auf Ihr Gerät.</value>
   </data>
   <data name="NewDeviceTermsAndCondition" xml:space="preserve">
-    <value>Software-Lizenzbedingungen</value>
+    <value>Ich akzeptiere die Software-Lizenzbedingungen.</value>
     <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
   </data>
   <data name="NewDeviceTitle" xml:space="preserve">
@@ -430,10 +430,10 @@
     <value>Neues Gerät einrichten</value>
   </data>
   <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
-    <value>Das DragonBoard 410c wird mit eigenen Installationstools ausgeliefert. Nachdem Sie Windows installiert und dieses Board mit dem Internet verbunden haben, finden Sie es unter „Meine Geräte“.</value>
+    <value>Das Board erfordert einen abweichenden Setupvorgang. Nachdem Sie Windows auf diesem Board installiert und eine Internetverbindung hergestellt haben, wird es in Ihrer Geräteliste angezeigt.</value>
   </data>
   <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
-    <value>Installation von Windows IoT Core auf DragonBoard 410c</value>
+    <value>Windows 10 IoT Core wird auf DragonBoard 410c installiert</value>
   </data>
   <data name="SamplesAppRunning" xml:space="preserve">
     <value>Diese App wird auf Ihrem Gerät ausgeführt.</value>
@@ -466,7 +466,7 @@
     <value>Andere Projekte und Lernprogramme anzeigen</value>
   </data>
   <data name="SamplesRadioMessage1" xml:space="preserve">
-    <value>Verwandeln Sie Ihr Windows IoT Core-Gerät in ein Internetradio, das zuhause von jedem Punkt aus gesteuert werden kann.</value>
+    <value>Verwandeln Sie Ihr Windows 10 IoT Core-Gerät in ein Internetradio, das zuhause von jedem Punkt aus gesteuert werden kann.</value>
   </data>
   <data name="SamplesRadioTitle" xml:space="preserve">
     <value>Internet radio</value>
@@ -497,5 +497,107 @@
   </data>
   <data name="WifiRepeatForFutureDevices" xml:space="preserve">
     <value>Für alle zukünftigen Geräte so verfahren</value>
+  </data>
+  <data name="RememberMyCredentials" xml:space="preserve">
+    <value>Anmeldeinformationen speichern</value>
+    <comment>Save password</comment>
+  </data>
+  <data name="DeviceNamePwdPassword3" xml:space="preserve">
+    <value>Kennwort bestätigen</value>
+  </data>
+  <data name="MessageUnableToGetWifi" xml:space="preserve">
+    <value>Das Remotegerät hat auf die Anforderung zum Abruf der Zugriffspunktliste nicht geantwortet.</value>
+  </data>
+  <data name="DeviceListColOSVersion" xml:space="preserve">
+    <value>Betriebssystemversion</value>
+  </data>
+  <data name="ErrorUnknownArchitecture" xml:space="preserve">
+    <value>Unbekannte Gerätearchitektur. Verwenden Sie mindestens Windows 10 IoT Core-Build {0}.</value>
+    <comment>{0} is the RTM version of TH2</comment>
+  </data>
+  <data name="SamplesAppRunningBackground" xml:space="preserve">
+    <value>Wenn die App nicht im Vordergrund ausgeführt wird, können Sie die folgende Schaltfläche drücken, um sie in den Vordergrund zu verschieben.</value>
+  </data>
+  <data name="SamplesForegroundButton" xml:space="preserve">
+    <value>Anzeigen</value>
+  </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© 2015 Microsoft Corporation</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>Datenschutzbestimmungen</value>
+  </data>
+  <data name="AboutPrivateBuild" xml:space="preserve">
+    <value>Privater Build</value>
+  </data>
+  <data name="AboutServicesAgreement" xml:space="preserve">
+    <value>Microsoft-Servicevertrag</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Windows 10 IoT Core-Dashboard</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>Info zu dieser App</value>
+  </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="NewDeviceFlashingDownload" xml:space="preserve">
+    <value>Installer wird heruntergeladen</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSI" xml:space="preserve">
+    <value>Installer wird entpackt</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailed" xml:space="preserve">
+    <value>Fehler beim Entpacken des Windows 10 IoT Core-Installationspakets. </value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
+    <value>Fehler bei der Installation</value>
+  </data>
+  <data name="DeviceListFilter" xml:space="preserve">
+    <value>Filtern</value>
+  </data>
+  <data name="DeviceQualcommDragonboard" xml:space="preserve">
+    <value>Qualcomm DragonBoard 410c</value>
+  </data>
+  <data name="DevicesConfigureDevice" xml:space="preserve">
+    <value>Gerät konfigurieren</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>Download abgeschlossen</value>
+  </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>{0} MB heruntergeladen – {1} %</value>
+    <comment>Shows progress, 0 is megabytes sent, 1 is percent progress</comment>
+  </data>
+  <data name="FilterAllDevices" xml:space="preserve">
+    <value>Alle</value>
+  </data>
+  <data name="FilterNewDevices" xml:space="preserve">
+    <value>Neue Geräte</value>
+  </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>Gerät wird jetzt neu gestartet…</value>
+  </data>
+  <data name="MessageBadPassword" xml:space="preserve">
+    <value>Das alte Kennwort ist falsch.</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ErrorNullDevice" xml:space="preserve">
+    <value>Fehler beim Abrufen des Zielgeräts. Versuchen Sie es noch einmal.</value>
+  </data>
+  <data name="MessageBadWifiPassword" xml:space="preserve">
+    <value>Der Netzwerksicherheitsschlüssel ist falsch.</value>
+    <comment>When wrong passkey is used for wifi setting</comment>
+  </data>
+  <data name="SuccessPasswordChanged" xml:space="preserve">
+    <value>Das Gerätekennwort wurde erfolgreich geändert.</value>
+    <comment>After successful change of the device's password</comment>
+  </data>
+  <data name="SuccessWifiConfigured" xml:space="preserve">
+    <value>WLAN wurde für das Gerät konfiguriert.</value>
+    <comment>Successful Wifi configuration </comment>
   </data>
 </root>

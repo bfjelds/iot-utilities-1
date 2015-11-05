@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppNameDisplay" xml:space="preserve">
-    <value>设备中心</value>
+    <value>IoT 仪表板</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>取消</value>
@@ -135,8 +135,8 @@
   <data name="ConnectEthernetTitle" xml:space="preserve">
     <value>以太网</value>
   </data>
-  <data name="ConnectMessage1" xml:space="preserve">
-    <value>将已完成的 SD 卡插入设备。</value>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>将已完成的 SD 卡插入到设备中，然后使用 WLAN 或以太网将你的开发板连接到网络</value>
   </data>
   <data name="ConnectMessage2" xml:space="preserve">
     <value>然后，使用 WLAN 或以太网将开发板连接到网络。</value>
@@ -202,13 +202,13 @@
     <value>设备名称</value>
   </data>
   <data name="DeviceNamePwdMessage" xml:space="preserve">
-    <value>设置设备名称和密码可帮助保护设备</value>
+    <value>设置设备名称和密码可帮助保护设备安全</value>
   </data>
   <data name="DeviceNamePwdPassword1" xml:space="preserve">
-    <value>密码</value>
+    <value>旧密码</value>
   </data>
   <data name="DeviceNamePwdPassword2" xml:space="preserve">
-    <value>重复输入密码</value>
+    <value>新密码</value>
   </data>
   <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
     <value>密码不匹配</value>
@@ -226,7 +226,7 @@
     <value>在网络上查找 Windows 10 IoT 核心版设备</value>
   </data>
   <data name="FindMyDeviceButton" xml:space="preserve">
-    <value>查找我的设备</value>
+    <value>我的设备</value>
   </data>
   <data name="FinishButton" xml:space="preserve">
     <value>完成</value>
@@ -242,7 +242,7 @@
     <comment>code will fill in the {0}</comment>
   </data>
   <data name="IntroMessage" xml:space="preserve">
-    <value>在你的网络上已有 Windows IoT 核心版设备?</value>
+    <value>若要设置设备，你需要执行的所有操作就是将 Windows 10 IoT 核心版下载并安装到你的设备上。</value>
   </data>
   <data name="IntroSetUpNewDevice" xml:space="preserve">
     <value>设置新设备</value>
@@ -251,7 +251,7 @@
     <value>在运行 Windows 10 IoT 核心版的各种设备上快速创建原型并构建 Windows IoT 解决方案。Windows 10 为你提供了功能强大的工具，让你可以快速开发并部署到设备。</value>
   </data>
   <data name="IntroSubTitle2" xml:space="preserve">
-    <value>若要设置设备，你需要执行的所有操作就是将 Windows IoT 核心版下载并安装到你的设备上</value>
+    <value>若要设置设备，你需要执行的所有操作就是将 Windows 10 IoT 核心版下载并安装到你的设备上</value>
   </data>
   <data name="IntroTitle" xml:space="preserve">
     <value>在 Internet 上搜索你感兴趣的内容</value>
@@ -328,14 +328,14 @@
     <value>查看推荐的 SD 卡列表</value>
   </data>
   <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
-    <value>选择设备类型</value>
+    <value>设备类型</value>
     <comment>the combo values should come from the online xml file</comment>
   </data>
   <data name="NewDeviceSubTitle" xml:space="preserve">
     <value>首先，让我们将 Windows 10 IoT 核心版下载到你的设备上。</value>
   </data>
   <data name="NewDeviceTermsAndCondition" xml:space="preserve">
-    <value>软件许可条款</value>
+    <value>我接受这些软件许可条款</value>
     <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
   </data>
   <data name="NewDeviceTitle" xml:space="preserve">
@@ -403,7 +403,7 @@
     <value>设置</value>
   </data>
   <data name="DeviceDetailsUserNameAdmin" xml:space="preserve">
-    <value>Admin</value>
+    <value>Administrator</value>
   </data>
   <data name="DeviceDetailsUserNameLabel" xml:space="preserve">
     <value>用户名</value>
@@ -430,10 +430,10 @@
     <value>设置新设备</value>
   </data>
   <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
-    <value>DragonBoard 410c 附带了一套自己的安装工具。在安装 Windows 并将此开发板连接到 Internet 之后， 你将可以在“我的设备”中找到它。</value>
+    <value>此开发板需要一个不同的设置过程。在将 Windows 安装到此开发板并将其连接到 Internet 之后， 你将可以在设备列表中找到它。</value>
   </data>
   <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
-    <value>正在将 Windows IoT 核心版安装到 DragonBoard 410c 上</value>
+    <value>正在将 Windows 10 IoT 核心版安装到 DragonBoard 410c 上</value>
   </data>
   <data name="SamplesAppRunning" xml:space="preserve">
     <value>此应用正在你的设备上运行。</value>
@@ -442,7 +442,7 @@
     <value>硬件的“Hello World”。</value>
   </data>
   <data name="SamplesBlinkyMessage2" xml:space="preserve">
-    <value>打开和关闭设备的板载 LED。</value>
+    <value>改变（电路）板上LED的开关状态。</value>
   </data>
   <data name="SamplesBlinkyTitle" xml:space="preserve">
     <value>Hello blinky</value>
@@ -466,7 +466,7 @@
     <value>查看其他项目和教程</value>
   </data>
   <data name="SamplesRadioMessage1" xml:space="preserve">
-    <value>将你的 Windows IoT 核心版设备转换为可从你家中的任何位置控制的 Internet 收音机。</value>
+    <value>将你的 Windows 10 IoT 核心版设备转换为可从你家中的任何位置控制的 Internet 收音机。</value>
   </data>
   <data name="SamplesRadioTitle" xml:space="preserve">
     <value>Internet radio</value>
@@ -497,5 +497,107 @@
   </data>
   <data name="WifiRepeatForFutureDevices" xml:space="preserve">
     <value>对所有将来的设备执行此操作</value>
+  </data>
+  <data name="RememberMyCredentials" xml:space="preserve">
+    <value>记住我的凭据</value>
+    <comment>Save password</comment>
+  </data>
+  <data name="DeviceNamePwdPassword3" xml:space="preserve">
+    <value>确认密码</value>
+  </data>
+  <data name="MessageUnableToGetWifi" xml:space="preserve">
+    <value>远程设备未响应接入点列表的请求。</value>
+  </data>
+  <data name="DeviceListColOSVersion" xml:space="preserve">
+    <value>OS 版本</value>
+  </data>
+  <data name="ErrorUnknownArchitecture" xml:space="preserve">
+    <value>未知的设备体系结构。请使用 Windows 10 IoT 核心版内部版本 {0} 或更新版本</value>
+    <comment>{0} is the RTM version of TH2</comment>
+  </data>
+  <data name="SamplesAppRunningBackground" xml:space="preserve">
+    <value>如果此应用未在前台运行，你可以按下面的按钮以将其置于前台。</value>
+  </data>
+  <data name="SamplesForegroundButton" xml:space="preserve">
+    <value>显示</value>
+  </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© 2015 Microsoft Corporation</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>隐私声明</value>
+  </data>
+  <data name="AboutPrivateBuild" xml:space="preserve">
+    <value>个人用内部版本</value>
+  </data>
+  <data name="AboutServicesAgreement" xml:space="preserve">
+    <value>Microsoft 服务协议</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Windows 10 IoT 核心版仪表板</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>关于此应用</value>
+  </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="NewDeviceFlashingDownload" xml:space="preserve">
+    <value>正在下载安装程序</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSI" xml:space="preserve">
+    <value>正在将安装程序解包</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailed" xml:space="preserve">
+    <value>无法对 Windows 10 IoT 核心版安装包进行解包。</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
+    <value>安装失败</value>
+  </data>
+  <data name="DeviceListFilter" xml:space="preserve">
+    <value>筛选</value>
+  </data>
+  <data name="DeviceQualcommDragonboard" xml:space="preserve">
+    <value>Qualcomm DragonBoard 410c</value>
+  </data>
+  <data name="DevicesConfigureDevice" xml:space="preserve">
+    <value>配置设备</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>下载完成</value>
+  </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>已下载 {0} MB - {1}%</value>
+    <comment>Shows progress, 0 is megabytes sent, 1 is percent progress</comment>
+  </data>
+  <data name="FilterAllDevices" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="FilterNewDevices" xml:space="preserve">
+    <value>新设备</value>
+  </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>当前正在重新启动设备...</value>
+  </data>
+  <data name="MessageBadPassword" xml:space="preserve">
+    <value>旧密码错误</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ErrorNullDevice" xml:space="preserve">
+    <value>获取目标设备时出错。请再试一次。</value>
+  </data>
+  <data name="MessageBadWifiPassword" xml:space="preserve">
+    <value>网络安全密钥不正确</value>
+    <comment>When wrong passkey is used for wifi setting</comment>
+  </data>
+  <data name="SuccessPasswordChanged" xml:space="preserve">
+    <value>已成功更改设备密码</value>
+    <comment>After successful change of the device's password</comment>
+  </data>
+  <data name="SuccessWifiConfigured" xml:space="preserve">
+    <value>已配置设备 WLAN</value>
+    <comment>Successful Wifi configuration </comment>
   </data>
 </root>

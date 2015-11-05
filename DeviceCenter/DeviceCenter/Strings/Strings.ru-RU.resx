@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppNameDisplay" xml:space="preserve">
-    <value>Центр устройств</value>
+    <value>Панель мониторинга IoT</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Отмена</value>
@@ -135,8 +135,8 @@
   <data name="ConnectEthernetTitle" xml:space="preserve">
     <value>Ethernet</value>
   </data>
-  <data name="ConnectMessage1" xml:space="preserve">
-    <value>Вставьте подготовленную SD-карту в устройство.</value>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>Вставьте готовую SD-карту в устройство, затем подключите плату к сети, используя Wi-Fi или Ethernet</value>
   </data>
   <data name="ConnectMessage2" xml:space="preserve">
     <value>Затем подключите плату к сети через Wi-Fi или Ethernet.</value>
@@ -205,10 +205,10 @@
     <value>Настройка имени и пароля поможет защитить устройство</value>
   </data>
   <data name="DeviceNamePwdPassword1" xml:space="preserve">
-    <value>Пароль</value>
+    <value>Старый пароль</value>
   </data>
   <data name="DeviceNamePwdPassword2" xml:space="preserve">
-    <value>Введите пароль еще раз</value>
+    <value>Новый пароль</value>
   </data>
   <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
     <value>Пароли не совпадают</value>
@@ -226,7 +226,7 @@
     <value>Поиск устройств с Windows 10 IoT Базовая в вашей сети</value>
   </data>
   <data name="FindMyDeviceButton" xml:space="preserve">
-    <value>Поиск устройства</value>
+    <value>Мои устройства</value>
   </data>
   <data name="FinishButton" xml:space="preserve">
     <value>Готово</value>
@@ -242,7 +242,7 @@
     <comment>code will fill in the {0}</comment>
   </data>
   <data name="IntroMessage" xml:space="preserve">
-    <value>В вашей сети уже есть устройство с Windows IoT Базовая?</value>
+    <value>Чтобы настроить устройство, вам нужно всего лишь скачать и установить ОС Windows 10 IoT Базовая на этом устройстве.</value>
   </data>
   <data name="IntroSetUpNewDevice" xml:space="preserve">
     <value>Настройка нового устройства</value>
@@ -251,7 +251,7 @@
     <value>Вы можете быстро создавать прототипы и сборки своих решений для Windows IoT на самых различных устройствах под управлением системы Windows 10 IoT Базовая. В Windows 10 вы найдете мощные средства для оперативной разработки и развертывания на устройстве.</value>
   </data>
   <data name="IntroSubTitle2" xml:space="preserve">
-    <value>Чтобы настроить устройство, вам нужно всего лишь скачать и установить ОС Windows IoT Базовая на этом устройстве</value>
+    <value>Чтобы настроить устройство, вам нужно всего лишь скачать и установить ОС Windows 10 IoT Базовая на этом устройстве</value>
   </data>
   <data name="IntroTitle" xml:space="preserve">
     <value>Откройте для себя Интернет вещей</value>
@@ -328,14 +328,14 @@
     <value>Просмотреть список рекомендуемых SD-карт</value>
   </data>
   <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
-    <value>Укажите тип устройства</value>
+    <value>Тип устройства</value>
     <comment>the combo values should come from the online xml file</comment>
   </data>
   <data name="NewDeviceSubTitle" xml:space="preserve">
     <value>Сначала следует установить на вашем устройстве систему Windows 10 IoT Базовая.</value>
   </data>
   <data name="NewDeviceTermsAndCondition" xml:space="preserve">
-    <value>условия лицензии на программное обеспечение</value>
+    <value>Я принимаю условия лицензии на программное обеспечение</value>
     <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
   </data>
   <data name="NewDeviceTitle" xml:space="preserve">
@@ -430,10 +430,10 @@
     <value>Настроить новое устройство</value>
   </data>
   <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
-    <value>DragonBoard 410c поставляется с собственным набором средств установки. После установки Windows и подключения платы к Интернету вы сможете найти ее в разделе "Мои устройства".</value>
+    <value>Для этой платы требуется другой процесс настройки. После установки Windows на эту плату и ее подключения к Интернету вы сможете найти ее в списке устройств.</value>
   </data>
   <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
-    <value>Установка Windows IoT Базовая на DragonBoard 410c</value>
+    <value>Установка Windows 10 IoT Базовая на DragonBoard 410c</value>
   </data>
   <data name="SamplesAppRunning" xml:space="preserve">
     <value>Это приложение запущено на вашем устройстве.</value>
@@ -466,7 +466,7 @@
     <value>Просмотреть другие проекты и руководства</value>
   </data>
   <data name="SamplesRadioMessage1" xml:space="preserve">
-    <value>Включите интернет-радио на своем устройстве с ОС Windows IoT Базовая, которым можно управлять из любой комнаты вашего дома.</value>
+    <value>Включите интернет-радио на своем устройстве с ОС Windows 10 IoT Базовая, которым можно управлять из любой комнаты вашего дома.</value>
   </data>
   <data name="SamplesRadioTitle" xml:space="preserve">
     <value>Internet radio</value>
@@ -497,5 +497,107 @@
   </data>
   <data name="WifiRepeatForFutureDevices" xml:space="preserve">
     <value>Делать так же для всех будущих устройств</value>
+  </data>
+  <data name="RememberMyCredentials" xml:space="preserve">
+    <value>Запомнить мои учетные данные</value>
+    <comment>Save password</comment>
+  </data>
+  <data name="DeviceNamePwdPassword3" xml:space="preserve">
+    <value>Подтвердите пароль</value>
+  </data>
+  <data name="MessageUnableToGetWifi" xml:space="preserve">
+    <value>Удаленное устройство не отреагировало на запрос списка точек доступа.</value>
+  </data>
+  <data name="DeviceListColOSVersion" xml:space="preserve">
+    <value>Версия ОС</value>
+  </data>
+  <data name="ErrorUnknownArchitecture" xml:space="preserve">
+    <value>Неизвестная архитектура устройства.  Используйте ОС Windows 10 IoT Базовая сборки {0} или новее</value>
+    <comment>{0} is the RTM version of TH2</comment>
+  </data>
+  <data name="SamplesAppRunningBackground" xml:space="preserve">
+    <value>Если это приложение не выполняется на переднем плане, можно нажать кнопку ниже, чтобы вывести его на передний план.</value>
+  </data>
+  <data name="SamplesForegroundButton" xml:space="preserve">
+    <value>Показать</value>
+  </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© Корпорация Майкрософт (Microsoft Corporation), 2015</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>Заявление о конфиденциальности</value>
+  </data>
+  <data name="AboutPrivateBuild" xml:space="preserve">
+    <value>Закрытая сборка</value>
+  </data>
+  <data name="AboutServicesAgreement" xml:space="preserve">
+    <value>Соглашение об использовании служб Майкрософт</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Панель мониторинга Windows 10 IoT Базовая</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>Об этом приложении</value>
+  </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>Сведения</value>
+  </data>
+  <data name="NewDeviceFlashingDownload" xml:space="preserve">
+    <value>Загрузка установщика</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSI" xml:space="preserve">
+    <value>Распаковка установщика</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailed" xml:space="preserve">
+    <value>Не удалось распаковать пакет установки Windows 10 IoT Базовая.</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
+    <value>Сбой установки</value>
+  </data>
+  <data name="DeviceListFilter" xml:space="preserve">
+    <value>Фильтр</value>
+  </data>
+  <data name="DeviceQualcommDragonboard" xml:space="preserve">
+    <value>Qualcomm DragonBoard 410c</value>
+  </data>
+  <data name="DevicesConfigureDevice" xml:space="preserve">
+    <value>Настройка устройства</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>Загрузка завершена</value>
+  </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>{0} МБ, скачивание – {1}%</value>
+    <comment>Shows progress, 0 is megabytes sent, 1 is percent progress</comment>
+  </data>
+  <data name="FilterAllDevices" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="FilterNewDevices" xml:space="preserve">
+    <value>Новые устройства</value>
+  </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>Перезагрузка устройства...</value>
+  </data>
+  <data name="MessageBadPassword" xml:space="preserve">
+    <value>Неправильный старый пароль</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ErrorNullDevice" xml:space="preserve">
+    <value>Ошибка получения целевого устройства. Повторите попытку.</value>
+  </data>
+  <data name="MessageBadWifiPassword" xml:space="preserve">
+    <value>Сетевой ключ безопасности указан неправильно</value>
+    <comment>When wrong passkey is used for wifi setting</comment>
+  </data>
+  <data name="SuccessPasswordChanged" xml:space="preserve">
+    <value>Пароль устройства успешно изменен</value>
+    <comment>After successful change of the device's password</comment>
+  </data>
+  <data name="SuccessWifiConfigured" xml:space="preserve">
+    <value>Wi-Fi на этом устройстве настроен</value>
+    <comment>Successful Wifi configuration </comment>
   </data>
 </root>
