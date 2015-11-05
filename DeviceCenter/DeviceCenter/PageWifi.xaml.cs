@@ -142,35 +142,19 @@ namespace DeviceCenter
 
                 try
                 {
-                    bool success = await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
+                    Collapse();
 
-                    if (success)
-                    {
-                        Collapse();
-                        MessageBox.Show(Strings.Strings.SuccessWifiConfigured + "\n" + Strings.Strings.DeviceRebootingMessage);
-
-                        await _webbRequest.RestartAsync();
-                        this._navigationFrame.GoBack();
-                    }
-                    else
-                    {
-                        MessageBox.Show(Strings.Strings.MessageBadWifiPassword);
-                    }
+                    await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
                 }
                 catch (WebException error)
                 {
                     Debug.WriteLine($"Error connecting, {error.Message}");
                     Debug.WriteLine(error.ToString());
-
-                    HttpWebResponse response = error.Response as HttpWebResponse;
-                    if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
-                        MessageBox.Show(Strings.Strings.MessageBadWifiPassword);
-                    else
-                    {
-                        MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
-                        this._navigationFrame.GoBack();
-                    }
+                    // ignore errors, changes in Wifi will make existing TCP sockets unstable
                 }
+
+                MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
+                this._navigationFrame.GoBack();
             }
             finally
             {

@@ -436,6 +436,9 @@ namespace DeviceCenter
             {
                 using (var response = await this._restHelper.GetOrPostRequestAsync(url, true))
                 {
+                    if (response == null)
+                        return new AvailableNetworks();
+
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         return RestHelper.ProcessJsonResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
