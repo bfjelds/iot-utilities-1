@@ -12,23 +12,65 @@ namespace DeviceCenter.Helper
 {
     public class DiscoveryHelper : IDisposable
     {
-        // Bind to one of these when applying filtering
+        /// <summary>
+        /// Bind the listview to this to show all devices
+        /// </summary>
         public ObservableCollection<DiscoveredDevice> AllDevices { get; }
+
+        /// <summary>
+        /// Bind the listview to this to show only AllJoyn devices
+        /// </summary>
         public ObservableCollection<DiscoveredDevice> NewDevices { get; }
+
+        /// <summary>
+        /// Bind the listview to this to show only devices that are connected to the network
+        /// and are configurable
+        /// </summary>
         public ObservableCollection<DiscoveredDevice> ConfiguredDevices { get; }
 
+        // Broadcast helper classes
         readonly NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
         private BroadcastWatcher _broadCastWatcher = new BroadcastWatcher();
-        private readonly DispatcherTimer _broadCastWatcherStartTimer = new DispatcherTimer();
-        private readonly DispatcherTimer _broadCastWatcherStopTimer = new DispatcherTimer();
-        private readonly DispatcherTimer _rescanTimer = new DispatcherTimer();
-        private readonly int pollDelayBroadcast = 2;
-        private readonly int pollBroadcastListenInterval = 5;
-        private readonly int maxAgeDevice = 30;
-        private readonly int rescanPollDelay = 10;
-        private readonly ConcurrentDictionary<string, DiscoveredDevice> _adhocNetworks = new ConcurrentDictionary<string, DiscoveredDevice>();
-        private readonly ConcurrentDictionary<string, DiscoveredDevice> _knownDevices = new ConcurrentDictionary<string, DiscoveredDevice>();
 
+        /// <summary>
+        /// Timer for scanning new devices
+        /// </summary>
+        private readonly DispatcherTimer _scanNewDevicesTimer = new DispatcherTimer();
+
+        /// <summary>
+        /// Timer for stopping the above scan
+        /// </summary>
+        private readonly DispatcherTimer _completeScanNewDevicesTimer = new DispatcherTimer();
+
+        /// <summary>
+        /// Amount of time to wait before rescanning for new devices
+        /// </summary>
+        private readonly TimeSpan startScanNewDevicesDelay = TimeSpan.FromSeconds(10);
+
+        /// <summary>
+        /// Amount of time to wait before stopping the above scanning
+        /// </summary>
+        private readonly TimeSpan completeScanNewDevicesDelay = TimeSpan.FromSeconds(5);
+
+        /// <summary>
+        /// Amount of time a device can be remembered before we can cut it 
+        /// </summary>
+        private readonly TimeSpan maxAgeDevice = TimeSpan.FromSeconds(30);
+
+        /// <summary>
+        /// Cache lookup for AllJoyn discovered devices.  This helps locate the device instance by name
+        /// </summary>
+        private readonly ConcurrentDictionary<string, DiscoveredDevice> _adhocNetworks = new ConcurrentDictionary<string, DiscoveredDevice>();
+
+        /// <summary>
+        /// Cache lookup for mDNS and ebootpinger devices.  This helps locate the device instance by name
+        /// </summary>
+        private readonly ConcurrentDictionary<string, DiscoveredDevice> _foundDevices = new ConcurrentDictionary<string, DiscoveredDevice>();
+
+        /// <summary>
+        /// Call this to get an instance of this class.  This is reference counted to maintain
+        /// a single instance of this class.  Call Release when done
+        /// </summary>
         public static DiscoveryHelper Instance
         {
             get
@@ -42,6 +84,9 @@ namespace DeviceCenter.Helper
             }
         }
 
+        /// <summary>
+        /// Releases an instance of this class, deletes itself if no longer needed
+        /// </summary>
         public static void Release()
         {
             if (Interlocked.Decrement(ref _refCount) == 0)
@@ -56,31 +101,6 @@ namespace DeviceCenter.Helper
 
         private bool disposedValue = false; // To detect redundant calls
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    NativeMethods.StopDiscovery();
-                    _broadCastWatcher.RemoveListeners();
-                    _broadCastWatcherStartTimer.Stop();
-                    _broadCastWatcherStopTimer.Stop();
-                    _rescanTimer.Stop();
-                    _broadCastWatcherStartTimer.Tick -= StartBroadCastListener;
-                    _broadCastWatcherStopTimer.Tick -= StopBroadCastListener;
-                    _rescanTimer.Tick -= _rescanTimer_Tick;
-                }
-
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
         private DiscoveryHelper()
         {
             AllDevices = new ObservableCollection<DiscoveredDevice>();
@@ -89,47 +109,89 @@ namespace DeviceCenter.Helper
 
             _addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
 
-            _rescanTimer.Interval = TimeSpan.FromSeconds(rescanPollDelay);
-            _rescanTimer.Tick += _rescanTimer_Tick;
-            _rescanTimer.Start();
-
-            _broadCastWatcherStopTimer.Interval = TimeSpan.FromSeconds(pollBroadcastListenInterval);
-            _broadCastWatcherStopTimer.Tick += StopBroadCastListener;
+            // Initialize delay (but not enable) for completing discovery
+            _completeScanNewDevicesTimer.Interval = completeScanNewDevicesDelay;
+            _completeScanNewDevicesTimer.Tick += CompleteScanNewDevicesTimerTick;
             _broadCastWatcher.OnPing += new BroadcastWatcher.PingHandler(BroadcastWatcher_Ping);
 
-            // Wait for 2 second and start Broadcast discovery 
-            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(pollDelayBroadcast);
-            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
+            // Initialize delay (but not enable) for starting discovery
+            _scanNewDevicesTimer.Interval = startScanNewDevicesDelay;
+            _scanNewDevicesTimer.Tick += ScanNewDevicesTimerTick;
 
             StartDiscovery();
         }
 
+        /// <summary>
+        /// Performs cleanup of self
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    StopDiscovery();
+
+                    _scanNewDevicesTimer.Tick -= ScanNewDevicesTimerTick;
+                    _completeScanNewDevicesTimer.Tick -= CompleteScanNewDevicesTimerTick;
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        /// <summary>
+        /// Called to start destruction of this instance
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Stops the ebootpinter and mDNS discovery process as well as all timers.  Callers
+        /// will have to reenable timers if needed
+        /// </summary>
+        private void StopDiscovery()
+        {
+            // Stop all timers
+            _scanNewDevicesTimer.Stop();
+            _completeScanNewDevicesTimer.Stop();
+
+            // Stop all listeners
+            _broadCastWatcher.RemoveListeners();
+            NativeMethods.StopDiscovery();
+        }
+
+        /// <summary>
+        /// Starts the ebootpinger and mDNS discovery process for a limited amount of time
+        /// </summary>
         private void StartDiscovery()
         {
             // Stop everything first 
-            _broadCastWatcherStartTimer.Stop();
-            _broadCastWatcherStopTimer.Stop();
-            _broadCastWatcher.RemoveListeners();
-            NativeMethods.StopDiscovery();
+            StopDiscovery();
 
             // Start mDNS based discovery 
 
             // 1. Register the callback
             NativeMethods.RegisterCallback(_addCallbackdel);
 
-            _broadCastWatcherStartTimer.Start();
-
             // 2. Start device discovery using DNS-SD
             NativeMethods.StartDiscovery();
+
+            // 3. Start broadcast watcher
+            _broadCastWatcher.AddListeners();
+
+            // Start timer that will end scanning
+            _completeScanNewDevicesTimer.Start();
         }
 
-        private void _rescanTimer_Tick(object sender, EventArgs e)
-        {
-            _rescanTimer.Stop();
-
-            StartDiscovery();
-        }
-
+        /// <summary>
+        /// Called externally by the ViewDevicesPage to display AllJoyn devices
+        /// </summary>
+        /// <param name="accessPoint">The AdHoc device instance, a new device instance will be
+        /// created if the SSID doesn't exist.  If it does exist, the timeout will be reset</param>
         public void AddAdhocDevice(WlanInterop.WlanAvailableNetwork accessPoint)
         {
             DiscoveredDevice device = _adhocNetworks.GetOrAdd(accessPoint.SsidString, (key) =>
@@ -148,9 +210,16 @@ namespace DeviceCenter.Helper
                 return newDevice;
             });
 
-            device.Ping();
+            device.Seen();
         }
 
+        /// <summary>
+        /// Adds a device to the ConfiguredDevices and AllDevices list.  If it already exists,
+        /// it's timeout is reset
+        /// </summary>
+        /// <param name="Name">The device name</param>
+        /// <param name="IP">The device's IP address</param>
+        /// <param name="Mac">The device's Ethernet address</param>
         private void AddDeviceCallback(string deviceName, string ipV4Address, string txtParameters)
         {
             if (String.IsNullOrEmpty(deviceName) || String.IsNullOrEmpty(ipV4Address))
@@ -203,7 +272,7 @@ namespace DeviceCenter.Helper
                 }
             }
 
-            DiscoveredDevice device = _knownDevices.GetOrAdd(parsedDeviceName, (key) =>
+            DiscoveredDevice device = _foundDevices.GetOrAdd(parsedDeviceName, (key) =>
             {
                 var newDevice = new DiscoveredDevice()
                 {
@@ -239,60 +308,82 @@ namespace DeviceCenter.Helper
                 return newDevice;
             });
 
-            device.Ping();
-        }
-        private void StartBroadCastListener(object sender, EventArgs e)
-        {
-            // Stop listening after 5 seconds
-            _broadCastWatcher.AddListeners();
-            _broadCastWatcherStopTimer.Start();
-            _broadCastWatcherStartTimer.Stop();
+            device.Seen();
         }
 
+        /// <summary>
+        /// Called by the DeviceDiscovery DLL when a device announces itself
+        /// </summary>
+        /// <param name="Name">The device name</param>
+        /// <param name="IP">The device's IP address</param>
+        /// <param name="Mac">The device's Ethernet address</param>
         private void BroadcastWatcher_Ping(string Name, string IP, string Mac)
         {
             AddDeviceCallback(Name, IP, "");
         }
 
-        private void StopBroadCastListener(object sender, EventArgs e)
+        /// <summary>
+        /// Starts the process of scanning for new devices.  Any devices that we are already
+        /// aware of will have their timeouts reset 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ScanNewDevicesTimerTick(object sender, EventArgs e)
         {
-            // Stop listening for new devices
-            _broadCastWatcher.RemoveListeners();
-            _broadCastWatcherStopTimer.Stop();
+            StartDiscovery();
+        }
 
-            // scan known devices for any that haven't broadcasted in a while
-            DateTime devicesTooOld = DateTime.Now - TimeSpan.FromSeconds(maxAgeDevice);
+        /// <summary>
+        /// This function ends listening for new devices and scans/deletes any devices that haven't
+        /// answered in the specified amount of time
+        /// </summary>
+        /// <param name="sender">Set from timer event</param>
+        /// <param name="e">Set from timer event</param>
+        private void CompleteScanNewDevicesTimerTick(object sender, EventArgs e)
+        {
+            // Always be sure to stop listening for new devices and timers so they
+            // don't reenter this or add functions
+            StopDiscovery();
 
-            // build a list of devices we want to expire
+            // scan known devices for any that haven't been found in a while
+            DateTime devicesTooOld = DateTime.Now - maxAgeDevice;
+
+            // build a list of devices we want to expire, these will be removed from observable collections
             List<DiscoveredDevice> removeList = new List<DiscoveredDevice>();
 
-            foreach (var cur in _knownDevices)
+            // Scan for devices in the mDNS and ebootpinger lists.  Any that haven't responded
+            // in the specified time can be added to the removeList above
+            foreach (var cur in _foundDevices)
             {
-                if (cur.Value.LastKnownDiscovered < devicesTooOld)
+                if (cur.Value.LastSeen < devicesTooOld)
                 {
                     removeList.Add(cur.Value);
                 }
             }
 
-            // build a list of adhoc networks we want to expire
+            // Scan for WiFi only devices. Any that haven't announced themselves in the specified
+            // time can be added to the removeList above
             foreach (var cur in _adhocNetworks)
             {
-                if (cur.Value.LastKnownDiscovered < devicesTooOld)
+                if (cur.Value.LastSeen < devicesTooOld)
                 {
                     removeList.Add(cur.Value);
                 }
             }
 
+            // If there are any items to be removed,
             if (removeList.Count > 0)
             {
+                // From the UI thread,
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                 {
-                // remove them from the observable collections
-                foreach (var cur in removeList)
+                    // remove them from the observable collections
+                    foreach (var cur in removeList)
                     {
                         DiscoveredDevice device;
 
-                        if (_knownDevices.TryRemove(cur.DeviceName, out device))
+                        // A device may exist in more than one list, scan each one and remove
+                        if (_foundDevices.TryRemove(cur.DeviceName, out device))
                             if (this.ConfiguredDevices.Contains(device))
                                 this.ConfiguredDevices.Remove(device);
 
@@ -306,7 +397,8 @@ namespace DeviceCenter.Helper
                 }));
             }
 
-            _rescanTimer.Start();
+            // This resets the time to scan for old devices again later
+            _scanNewDevicesTimer.Start();
         }
     }
 }

@@ -39,11 +39,11 @@ namespace DeviceCenter
 
         public enum NetworkType { Ethernet, Adhoc };
 
-        public DateTime LastKnownDiscovered { get; private set; }
+        public DateTime LastSeen { get; private set; }
 
-        public void Ping()
+        public void Seen()
         {
-            this.LastKnownDiscovered = DateTime.Now;
+            this.LastSeen = DateTime.Now;
         }
 
         public DiscoveredDevice()
@@ -53,7 +53,7 @@ namespace DeviceCenter
             this.ManageVisible = Visibility.Visible;
             this.ConnectVisible = Visibility.Collapsed;
 
-            Ping();
+            Seen();
         }
 
         public DiscoveredDevice(WlanInterop.WlanAvailableNetwork wifi)
