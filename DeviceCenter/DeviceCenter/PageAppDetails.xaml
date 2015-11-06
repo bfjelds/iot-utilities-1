@@ -56,7 +56,6 @@
             <StackPanel x:Name="PanelDeployed" Width="246" HorizontalAlignment="Left" Margin="0 4" Height="66" >
                 <TextBlock Text="{x:Static props:Strings.SamplesAppRunning}" Margin="0 4" TextWrapping="Wrap" />
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="ButtonBringAppForground" Padding="30 6" Margin="4 4" Content="{x:Static props:Strings.SamplesForegroundButton}" Click="ButtonBringAppForground_Click" Background="#FF3277B8" Foreground="White" />
                     <Button x:Name="ButtonStopApp" Padding="30 6" HorizontalAlignment="Left" Margin="0 4" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopApp_Click" Background="#FFC18383" Foreground="White" />
                 </StackPanel>
             </StackPanel>
