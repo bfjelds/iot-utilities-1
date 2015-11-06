@@ -40,15 +40,15 @@ namespace WlanAPIs
                 "WlanRegisterNotification"
                 );
 
-            // enum interfaces
-            IntPtr nativeInterfaceList;
-            Util.ThrowIfFail(
-                WlanInterop.WlanEnumInterfaces(NativeHandle, IntPtr.Zero, out nativeInterfaceList),
-                "WlanEnumInterfaces"
-                );
-
+            IntPtr nativeInterfaceList = IntPtr.Zero;
             try
             {
+                // enum interfaces
+                Util.ThrowIfFail(
+                    WlanInterop.WlanEnumInterfaces(NativeHandle, IntPtr.Zero, out nativeInterfaceList),
+                    "WlanEnumInterfaces"
+                    );
+
                 this.Interfaces = ParseNativeWlanInterfaceList(nativeInterfaceList);
             }
             finally

@@ -1,24 +1,20 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 namespace WlanAPIs
 {
     /// <summary>
-    /// Helper class for IP routing table
+    /// Helper class for readinga and writing IP routing table
     /// </summary>
     public class IPRoutingTableHelper
     {
         private const string RouteAddLocalEntryArgument = "add $destIP mask 255.255.255.255 0.0.0.0 if $ifIndex";
         private const string RouteDeleteEntryArgument = "delete $destIP if $ifIndex";
-        private const int GETIP_RETRY_NUMBER = 20;
-        private const int GETIP_DELAY_DURATION = 500;
 
         static public IPRoutingTableHelper CreateByNicGuid(Guid interfaceGuid)
         {
@@ -39,6 +35,8 @@ namespace WlanAPIs
             IPAddress ipv4 = Util.GetIpv4(networkInterface);
 
             // already got a 192.168.173.x address, no need to update routing table
+            // ipv4 might be 255.255.255.255 at this moment if the connection is not ready
+            // update routing table for this case
             if (Util.IsDhcpipAddress(ipv4))
             {
                 return true;
@@ -117,11 +115,14 @@ namespace WlanAPIs
             var ipTablePtr = IntPtr.Zero;
             int size = 0;
 
-            var result = IPHelperInterop.GetIpForwardTable(ipTablePtr, ref size, true);
-            ipTablePtr = Marshal.AllocHGlobal(size);
-
             try
             {
+                Util.ThrowIfFail(
+                    IPHelperInterop.GetIpForwardTable(ipTablePtr, ref size, true), 
+                    "GetIpForwardTableSize");
+
+                ipTablePtr = Marshal.AllocHGlobal(size);
+
                 Util.ThrowIfFail(
                     IPHelperInterop.GetIpForwardTable(ipTablePtr, ref size, true),
                     "GetIpForwardTable");

@@ -82,7 +82,7 @@ namespace WlanAPIs
             var pingSender = new Ping();
             var options = new PingOptions();
 
-            // Create a buffer of 32 bytes of data to be transmitted.
+            // Create a buffer to be transmitted.
             const string DATA = "test ping";
             var buffer = Encoding.ASCII.GetBytes(DATA);
             const int TIMEOUT = 120;
@@ -128,33 +128,6 @@ namespace WlanAPIs
             var msg = string.Format(message, paras);
             // Console.WriteLine(msg);
             Debug.WriteLine("Error: " + msg);
-        }
-
-        public static bool RunNetshElevated(string arguments)
-        {
-            var procInfo = new ProcessStartInfo
-            {
-                UseShellExecute = true,
-                WorkingDirectory = System.Environment.SystemDirectory,
-                FileName = Path.Combine(System.Environment.SystemDirectory, @"netsh.exe"),
-                Arguments = arguments,
-                Verb = "runas",
-                WindowStyle = ProcessWindowStyle.Hidden
-            };
-
-            Info("RunNetshElevated [{0}]", arguments);
-            try
-            {
-                var proc = new Process { StartInfo = procInfo };
-                proc.Start();
-            }
-            catch (Exception)
-            {
-                Error("Failed to run elevated.");
-                return false;
-            }
-
-            return true;
         }
 
         public static bool RunRouteElevated(string arguments)
