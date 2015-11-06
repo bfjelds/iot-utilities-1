@@ -390,8 +390,8 @@ namespace DeviceCenter
                         ComboBoxIotBuild.SelectedIndex = 0;
                 }
 
-                PanelManualImage.Visibility = (item.DeviceType == DeviceTypes.QCOM) ? Visibility.Visible : Visibility.Collapsed;
-                PanelAutomaticImage.Visibility = (item.DeviceType != DeviceTypes.QCOM) ? Visibility.Visible : Visibility.Collapsed;
+                PanelManualImage.Visibility = (item.Platform == "QCOM") ? Visibility.Visible : Visibility.Collapsed;
+                PanelAutomaticImage.Visibility = (item.Platform != "QCOM") ? Visibility.Visible : Visibility.Collapsed;
 
                 buttonFlash.IsEnabled = UpdateStartState();
             }

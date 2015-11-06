@@ -61,13 +61,13 @@ namespace DeviceCenter.Helper
         {
             string msiName;
             string ffuPath;
-            switch (lkgPlatform.DeviceType)
+            switch (lkgPlatform.Platform)
             {
-                case DeviceTypes.MBM:
+                case "MBM":
                     msiName = _mbmMsiName;
                     ffuPath = _mbmFfuSubPath;
                     break;
-                case DeviceTypes.RPI2:
+                case "RPi2":
                     msiName = _rpi2MsiName;
                     ffuPath = _rpi2FfuSubPath;
                     break;
