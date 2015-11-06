@@ -62,7 +62,13 @@ namespace WlanAPIs
         {
             var networkInterface = GetNetworkInterface();
 
-            Util.Info("IPRoutingTableHelper: Adding local IP [{0}]", ipAddress);
+            // routing entry doesn't exists
+            if (!IsRoutingEntryExist(IPAddress.Parse(ipAddress)))
+            {
+                return true;
+            }
+
+            Util.Info("IPRoutingTableHelper: Deleting entry for IP [{0}]", ipAddress);
             var argument = RouteDeleteEntryArgument;
             argument = argument.Replace("$destIP", ipAddress);
             argument = argument.Replace("$ifIndex", Util.GetIndex(networkInterface).ToString());

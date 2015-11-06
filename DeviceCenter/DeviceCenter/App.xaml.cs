@@ -88,8 +88,8 @@ namespace DeviceCenter
 
             DriveInfo.DisposeWatcher();
 
-            // Disconnect from softAP and enable DHCP
-            Helper.SoftApHelper.Instance.DisconnectIfNeeded();
+            // remove entry DeviceCenter added in IP routing table
+            Helper.SoftApHelper.Instance.RemoveIPRoutingEntryIfNeeded();
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -101,8 +101,8 @@ namespace DeviceCenter
                 TelemetryClient.TrackException(exception);
             }
 
-            // Disconnect from softAP and enable DHCP on exception
-            Helper.SoftApHelper.Instance.DisconnectIfNeeded();
+            // remove entry DeviceCenter added in IP routing table
+            Helper.SoftApHelper.Instance.RemoveIPRoutingEntryIfNeeded();
         }
     }
 }

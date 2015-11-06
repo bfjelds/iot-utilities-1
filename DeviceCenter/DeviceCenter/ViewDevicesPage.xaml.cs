@@ -37,6 +37,11 @@ namespace DeviceCenter
         ~ViewDevicesPage()
         {
             _wifiRefreshTimer.Stop();
+
+            if (_connectedToAdhoc)
+            {
+                _softwareAccessPoint.DisconnectIfNeeded();
+            }
         }
 
         public ViewDevicesPage(Frame navigationFrame)

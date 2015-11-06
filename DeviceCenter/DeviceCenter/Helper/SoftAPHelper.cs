@@ -17,7 +17,7 @@ namespace DeviceCenter.Helper
         public const string SoftApSubnetAddr = "255.255.255.0";
         public const string SoftApPassword = "password";
         public const string SoftApNamePrefix = "AJ_";
-        public const int PingRetryNumber = 20;
+        public const int PingRetryNumber = 30;
         public const int PingDelay = 500;
         public const int PollDelay = 5;
         #endregion
@@ -120,16 +120,6 @@ namespace DeviceCenter.Helper
                 _isDisconnecting = true;
             }
 
-            if(_ipRoutingHelper != null && !_ipRoutingHelper.DeleteEntryIfNeeded(SoftApHostIp))
-            {
-                Util.Error("User selects not to enable DHCP");
-
-                // track this event in telemetry
-                App.TelemetryClient.TrackEvent("NotEnableDHCPByUser", new Dictionary<string, string>()
-                {
-                });
-            }
-
             try
             {
                 if (_isConnectedToSoftAp)
@@ -148,6 +138,14 @@ namespace DeviceCenter.Helper
             finally
             {
                 _isDisconnecting = false;
+            }
+        }
+
+        public void RemoveIPRoutingEntryIfNeeded()
+        {
+            if (_ipRoutingHelper != null && !_ipRoutingHelper.DeleteEntryIfNeeded(SoftApHostIp))
+            {
+                Util.Error("User selects not to delete IP routing entry");
             }
         }
 
