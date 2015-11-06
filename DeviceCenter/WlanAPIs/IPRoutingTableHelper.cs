@@ -117,9 +117,11 @@ namespace WlanAPIs
 
             try
             {
-                Util.ThrowIfFail(
-                    IPHelperInterop.GetIpForwardTable(ipTablePtr, ref size, true), 
-                    "GetIpForwardTableSize");
+                var ret = IPHelperInterop.GetIpForwardTable(ipTablePtr, ref size, true);
+                if(ret != IPHelperInterop.ERROR_INSUFFICIENT_BUFFER)
+                {
+                    throw new WLanException(ret, "GetIpForwardTableSize");
+                }
 
                 ipTablePtr = Marshal.AllocHGlobal(size);
 

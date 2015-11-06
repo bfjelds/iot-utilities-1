@@ -35,5 +35,7 @@ namespace WlanAPIs
             internal uint /*DWORD*/ dwForwardMetric4;
             internal uint /*DWORD*/ dwForwardMetric5;
         };
+
+        internal const uint ERROR_INSUFFICIENT_BUFFER = 0x7a;
     }
 }
