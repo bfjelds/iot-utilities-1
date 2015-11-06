@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -21,27 +18,17 @@ namespace DeviceCenter
     /// </summary>
     public partial class ViewDevicesPage : Page
     {
-        private DiscoveryHelper _discoveryHelper = new DiscoveryHelper();
+        private DiscoveryHelper _discoveryHelper = DiscoveryHelper.Instance;
         private readonly DispatcherTimer _telemetryTimer = new DispatcherTimer();
         private DiscoveredDevice _newestBuildDevice, _oldestBuildDevice;
 
         private readonly SoftApHelper _softwareAccessPoint;
         private readonly DispatcherTimer _wifiRefreshTimer = new DispatcherTimer();
-        private readonly ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork> _adhocNetworks = new ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork>();
 
         private readonly Frame _navigationFrame;
         private PageWifi _wifiPage;
         private bool _connectedToAdhoc = false;
         private readonly int pollDelayWifi = 5;
-
-        ~ViewDevicesPage()
-        {
-            _wifiRefreshTimer.Stop();
-            if (_connectedToAdhoc)
-            {
-                _softwareAccessPoint.DisconnectIfNeeded();
-            }
-        }
 
         public ViewDevicesPage(Frame navigationFrame)
         {
@@ -58,8 +45,7 @@ namespace DeviceCenter
             InitializeComponent();
 
             // set up binding
-            ListViewDevices.ItemsSource = _discoveryHelper.DiscoveredDevices;
-            _discoveryHelper.StartDiscovery();
+            UpdateFilter();
 
             //Sort the listview
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
@@ -70,13 +56,27 @@ namespace DeviceCenter
 
             _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(pollDelayWifi);
             _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
+            _wifiRefreshTimer.Start();
 
             // Set up polling
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             _telemetryTimer.Tick += TelemetryTimer_Tick;
+            _telemetryTimer.Start();
         }
 
-        private void SoftwareAccessPoint_OnSoftAPDisconnected()
+        ~ViewDevicesPage()
+        {
+            _wifiRefreshTimer.Stop();
+            if (_connectedToAdhoc)
+            {
+                _softwareAccessPoint.DisconnectIfNeeded();
+            }
+
+            DiscoveryHelper.Release();
+            _discoveryHelper = null;
+        }
+
+        private void SoftwareAccessPoint_OnSoftAPDisconnected(object sender, EventArgs e)
         {
             _connectedToAdhoc = false;
         }
@@ -110,20 +110,7 @@ namespace DeviceCenter
 
                 foreach (WlanInterop.WlanAvailableNetwork accessPoint in list)
                 {
-                    _adhocNetworks.GetOrAdd(accessPoint.SsidString, (key) =>
-                    {
-                        var newDevice = new DiscoveredDevice(accessPoint)
-                        {
-                            DeviceName = key
-                        };
-
-                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                        {
-                            _discoveryHelper.DiscoveredDevices.Add(newDevice);
-                        }));
-
-                        return accessPoint;
-                    });
+                    _discoveryHelper.AddAdhocDevice(accessPoint);
                 }
             }
             finally
@@ -142,7 +129,7 @@ namespace DeviceCenter
             // Only send a telemetry event if we've found build information
             if (_oldestBuildDevice != null && _newestBuildDevice != null)
             {
-                var deviceCount = _discoveryHelper.DiscoveredDevices.Count;
+                var deviceCount = _discoveryHelper.AllDevices.Count;
 
                 Debug.WriteLine("Sending telemetry event... ");
                 Debug.WriteLine("Max OS Version: " + _newestBuildDevice.OsVersion);
@@ -305,52 +292,29 @@ namespace DeviceCenter
             }
         }
 
-        private void Refresh()
-        {
-            _discoveryHelper.DiscoveredDevices.Clear();
-            _adhocNetworks.Clear();
-
-            _discoveryHelper.StartDiscovery();
-
-            RefreshWifiAsync();
-        }
-
-        private void ButtonRefresh_Click(object sender, RoutedEventArgs e)
-        {
-            Refresh();
-        }
-
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void UpdateFilter()
         {
             ComboBoxItem item = comboBoxFilter.SelectedItem as ComboBoxItem;
 
-            bool newValue = false;
-
-            if (item != null)
+            if (item != null && ListViewDevices != null)
             {
                 string filterText = item.Tag as string;
                 if (filterText == "New")
-                    newValue = true;
+                    ListViewDevices.ItemsSource = _discoveryHelper.NewDevices;
+                else
+                    ListViewDevices.ItemsSource = _discoveryHelper.AllDevices;
             }
+        }
 
-            if (ListViewDevices != null)
-            {
-                ICollectionView view = CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
-                if (null != view)
-                {
-                    view.Filter = (d) =>
-                    {
-                        DiscoveredDevice device = d as DiscoveredDevice;
-                        return newValue ? device.ConnectVisible == Visibility.Visible : device.ManageVisible == Visibility.Visible;
-                    };
-                }
-            }
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateFilter();
         }
     }
 }
