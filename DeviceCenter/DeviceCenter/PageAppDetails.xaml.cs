@@ -38,7 +38,7 @@ namespace DeviceCenter
             GetAppState();
         }
 
-        private async void GetTheOtherAppState()
+        private async void StopTheOtherApp()
         {
             if (_device == null)
             {
@@ -49,7 +49,7 @@ namespace DeviceCenter
             {
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
-                var theOtherAppName = (this.AppItem.AppName == Strings.Strings.AppNameBlinky) ? Strings.Strings.AppNameInternetRadio : Strings.Strings.AppNameBlinky;
+                var theOtherAppName = (this.AppItem.AppName == "BlinkyHeadedWebService") ? "InternetRadioHeaded" : "BlinkyHeadedWebService";
 
                 try
                 {
@@ -110,7 +110,7 @@ namespace DeviceCenter
             }
             else
             {
-                GetTheOtherAppState();
+                StopTheOtherApp();
 
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
