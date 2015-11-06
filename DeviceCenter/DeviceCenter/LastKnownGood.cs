@@ -27,6 +27,11 @@ namespace DeviceCenter
         [DataMember]
         public string Build { get; set; }
 
+        public override string ToString()
+        {
+            return Build;
+        }
+
         /// <summary>
         /// Build path
         /// </summary>

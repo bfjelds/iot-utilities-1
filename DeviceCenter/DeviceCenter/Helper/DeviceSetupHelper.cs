@@ -20,6 +20,26 @@ namespace DeviceCenter.Helper
         Flashing,
         Completed
     }
+
+    public enum BuildPathType
+    {
+        HttpURL,
+        ISOFile,
+        MSIFile,
+        FFUFile,
+        InvalidPath
+    }
+
+    public class ExtractFFUProgressEventArgs : EventArgs
+    {
+        public int Progress { get; set; }
+    }
+
+    public class FlashingCompletedEventArgs : EventArgs
+    {
+        public bool Success { get; set; }
+    }
+
     class DeviceSetupHelper
     {
         #region Constants
@@ -32,11 +52,8 @@ namespace DeviceCenter.Helper
         #endregion
 
         #region Events
-        public delegate void ExtractFFUProgressEventHandler(int progress);
-        public event ExtractFFUProgressEventHandler ExtractFFUProgress;
-
-        public delegate void FlashingCompletedEventHandler(bool success);
-        public event FlashingCompletedEventHandler FlashingCompleted; 
+        public event EventHandler<ExtractFFUProgressEventArgs> ExtractFFUProgress;
+        public event EventHandler<FlashingCompletedEventArgs> FlashingCompleted; 
         #endregion
 
         #region Private Members
@@ -57,8 +74,21 @@ namespace DeviceCenter.Helper
 
         #region Helper Methods to extract ISO
 
+        protected virtual void OnExtractFFUProgress(ExtractFFUProgressEventArgs e)
+        {
+            EventHandler<ExtractFFUProgressEventArgs> handler = ExtractFFUProgress;
+            if (null != handler)
+            {
+                handler(this, e);
+            }
+        }
+
         public string ExtractFFUFromISO(string isoFilePath, LkgPlatform lkgPlatform)
         {
+            var ExtractFFUProgressArgs = new ExtractFFUProgressEventArgs();
+            ExtractFFUProgressArgs.Progress = 0;
+            OnExtractFFUProgress(ExtractFFUProgressArgs);
+
             string msiName;
             string ffuPath;
             switch (lkgPlatform.Platform)
@@ -85,7 +115,9 @@ namespace DeviceCenter.Helper
                 Collection<PSObject> psOutput = powerShellInstance.Invoke();
 
                 // Update the progress to 1/3
-                ExtractFFUProgress(33);
+                ExtractFFUProgressArgs = new ExtractFFUProgressEventArgs();
+                ExtractFFUProgressArgs.Progress = 33;
+                OnExtractFFUProgress(ExtractFFUProgressArgs);
 
                 // loop through each output object item
                 string driveLetter = "";
@@ -130,7 +162,9 @@ namespace DeviceCenter.Helper
                 }
 
                 // Update the extraction progress to 2/3 done
-                ExtractFFUProgress(66);
+                ExtractFFUProgressArgs = new ExtractFFUProgressEventArgs();
+                ExtractFFUProgressArgs.Progress = 66;
+                OnExtractFFUProgress(ExtractFFUProgressArgs);
 
                 var msiProcess = new Process
                 {
@@ -148,7 +182,9 @@ namespace DeviceCenter.Helper
                 DisMountIso(isoFilePath);
 
                 // At this point, we are done with Extraction, change the progress to completed
-                ExtractFFUProgress(100);
+                ExtractFFUProgressArgs = new ExtractFFUProgressEventArgs();
+                ExtractFFUProgressArgs.Progress = 100;
+                OnExtractFFUProgress(ExtractFFUProgressArgs);
 
                 return msiProcess.ExitCode != 0 ? string.Empty : Path.Combine(extractionPath, ffuPath);
             }
@@ -157,8 +193,7 @@ namespace DeviceCenter.Helper
         {
             using (var powerShellInstance = PowerShell.Create())
             {
-                // Dismount the ISO
-                powerShellInstance.AddScript("$mountResult = Dismount-DiskImage " + isoFilePath);
+                powerShellInstance.AddScript("$dismountResult = Dismount-DiskImage " + isoFilePath + ";");
                 var psOutput = powerShellInstance.Invoke();
             }
         }
@@ -223,10 +258,19 @@ namespace DeviceCenter.Helper
                     _dismProcess = null;
                 }
 
-                FlashingCompleted(fSuccess);
+                var args = new FlashingCompletedEventArgs();
+                args.Success = fSuccess;
+                OnFlashingCompleted(args);
             }
         }
-
+        protected virtual void OnFlashingCompleted(FlashingCompletedEventArgs e)
+        {
+            EventHandler<FlashingCompletedEventArgs> handler = FlashingCompleted;
+            if (null != handler)
+            {
+                handler(this, e);
+            }
+        }
         public void CancelDism()
         {
             lock (_dismLock)
@@ -239,6 +283,28 @@ namespace DeviceCenter.Helper
             }
         }
 
+        #endregion
+
+        #region Static Methods
+        public static BuildPathType GetTypeOfBuildPath(string BuildPath)
+        {
+            if (BuildPath.StartsWith("http://") || BuildPath.StartsWith("https://"))
+            {
+                return BuildPathType.HttpURL;
+            }
+            else
+            {
+                var fileExtension = Path.GetExtension(BuildPath);
+                if (fileExtension.Equals(".iso", StringComparison.InvariantCultureIgnoreCase))
+                    return BuildPathType.ISOFile;
+                else if (fileExtension.Equals(".msi", StringComparison.InvariantCultureIgnoreCase))
+                    return BuildPathType.MSIFile;
+                else if (fileExtension.Equals(".ffu", StringComparison.InvariantCultureIgnoreCase))
+                    return BuildPathType.FFUFile;
+                else 
+                    return BuildPathType.InvalidPath;
+            }
+        }
         #endregion
     };
 }
