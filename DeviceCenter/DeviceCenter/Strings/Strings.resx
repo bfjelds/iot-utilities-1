@@ -582,8 +582,8 @@
   <data name="MessageBadPassword" xml:space="preserve">
     <value>The old password is incorrect</value>
   </data>
-  <data name="AppNameBlinky" xml:space="preserve">
-    <value>BlinkyHeadedWebService</value>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
   <data name="ErrorNullDevice" xml:space="preserve">
     <value>Error in getting target device. Please try again.</value>
@@ -605,8 +605,5 @@
 Your device will automatically appear in the device list after reboot is complete.
 If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
-  </data>
-  <data name="AppNameInternetRadio" xml:space="preserve">
-    <value>InternetRadioHeaded</value>
   </data>
 </root>
