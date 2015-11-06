@@ -16,6 +16,9 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageAppDetails : Page
     {
+        private const string BlinkyAppName = "BlinkyHeadedWebService";
+        private const string InternetRadioAppName = "InternetRadioHeaded";
+
         public AppInformation AppItem { get; private set; }
         public Frame navigation;
         private DiscoveredDevice _device = null;
@@ -49,7 +52,7 @@ namespace DeviceCenter
             {
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
-                var theOtherAppName = (this.AppItem.AppName == "BlinkyHeadedWebService") ? "InternetRadioHeaded" : "BlinkyHeadedWebService";
+                var theOtherAppName = (this.AppItem.AppName == BlinkyAppName) ? InternetRadioAppName : BlinkyAppName;
 
                 try
                 {
