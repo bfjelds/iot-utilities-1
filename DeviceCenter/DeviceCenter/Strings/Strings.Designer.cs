@@ -1315,8 +1315,7 @@ namespace DeviceCenter.Strings {
         ///   Looks up a localized string similar to .
         /// </summary>
         public static string String1 {
-            get
-            {
+            get {
                 return ResourceManager.GetString("String1", resourceCulture);
             }
         }
