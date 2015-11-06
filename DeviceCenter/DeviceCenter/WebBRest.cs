@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using DeviceCenter.DataContract;
 using DeviceCenter.Helper;
+using System.Runtime.InteropServices;
+using System.Net.Sockets;
 
 namespace DeviceCenter
 {
@@ -252,7 +254,37 @@ namespace DeviceCenter
                         {
                             await Task.Delay(QueryInterval);
                         }
+                        else
+                        {
+                            var state = RestHelper.ProcessJsonResponse(response, typeof(DeploymentState)) as DeploymentState;
+
+                            if (state != null)
+                            {
+                                if (state.IsSuccess)
+                                {
+                                    return true;
+                                }
+                                else
+                                {
+                                    // This throws a COMException
+                                    Marshal.ThrowExceptionForHR(state.HResult);
+                                }
+                            }
+                        }
                     }
+                }
+                catch (COMException ex)
+                {
+                    // I don't like to show a message box directly from here, but this call is nested in other call,
+                    // and that call catch all the exceptions and return false, because of that we loose the localized
+                    // exception message
+                    var errorCaption = Strings.Strings.AppNameDisplay;
+                    var errorMsg = ex.Message;
+
+                    // The message in the exception is localized
+                    MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                    return false;
                 }
                 catch (Exception ex)
                 {
@@ -310,9 +342,16 @@ namespace DeviceCenter
                 }
                     
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                if (ex.InnerException is SocketException)
+                {
+                    throw new RestError(ex.InnerException.Message, ex.InnerException);
+                }
+                else
+                {
+                    throw new RestError(ex.Message, ex);
+                }
             }
 
             return false;

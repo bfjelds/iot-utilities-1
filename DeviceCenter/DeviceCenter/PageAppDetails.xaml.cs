@@ -41,6 +41,11 @@ namespace DeviceCenter
             GetAppState();
         }
 
+        private void Page_Unloaded(object sender, object args)
+        {
+            _device = null;
+        }
+
         private async void StopTheOtherApp()
         {
             if (_device == null)
@@ -72,6 +77,8 @@ namespace DeviceCenter
 
         private async void GetAppState()
         {
+            var currentDevice = _device;
+
             if (_device == null)
             {
                 PanelDeploy.Visibility = Visibility.Collapsed;
@@ -94,10 +101,19 @@ namespace DeviceCenter
                         PanelDeployed.Visibility = Visibility.Collapsed;
                     }
                 }
-                catch (WebBRest.RestError)
+                catch (WebBRest.RestError ex)
                 {
-                    PanelDeploy.Visibility = Visibility.Collapsed;
-                    PanelDeployed.Visibility = Visibility.Collapsed;
+                    // Only hide the panels and display message box
+                    // if the selection didn't change
+                    if (currentDevice == _device)
+                    {
+                        PanelDeploy.Visibility = Visibility.Collapsed;
+                        PanelDeployed.Visibility = Visibility.Collapsed;
+
+                        MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    }
+
+                    Debug.WriteLine(ex.Message);
                 }
             }
         }
@@ -212,11 +228,16 @@ namespace DeviceCenter
         private void comboBoxDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             _device = comboBoxDevices.SelectedItem as DiscoveredDevice;
+
+            // If the selection changed, hide all the commands, as we don't yet know
+            // what we should show and the REST calls might take a while or even fail
+            PanelDeploying.Visibility = Visibility.Collapsed;
+            PanelDeployed.Visibility = Visibility.Collapsed;
+            PanelDeploy.Visibility = Visibility.Collapsed;
+
             if (_device == null)
             {
-                PanelDeploying.Visibility = Visibility.Collapsed;
-                PanelDeployed.Visibility = Visibility.Collapsed;
-                PanelDeploy.Visibility = Visibility.Collapsed;
+                return;
             }
             else
             {
