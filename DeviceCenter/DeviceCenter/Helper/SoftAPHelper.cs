@@ -17,7 +17,7 @@ namespace DeviceCenter.Helper
         public const string SoftApSubnetAddr = "255.255.255.0";
         public const string SoftApPassword = "password";
         public const string SoftApNamePrefix = "AJ_";
-        public const int PingRetryNumber = 10;
+        public const int PingRetryNumber = 20;
         public const int PingDelay = 500;
         public const int PollDelay = 5;
         #endregion
@@ -89,7 +89,7 @@ namespace DeviceCenter.Helper
 
                     Util.Info("--------- Checking IP and subnet ----------");
 
-                    if (_subnetHelper.DisableDhcpIfNeeded(SoftApClientIp, SoftApSubnetAddr) == false)
+                    if (_ipRoutingHelper.AddLocalEntryIfNeeded(SoftApHostIp) == false)
                     {
                         Util.Error("Failed to Check Ip And Subnet");
                         return false;
@@ -120,7 +120,7 @@ namespace DeviceCenter.Helper
                 _isDisconnecting = true;
             }
 
-            if(_subnetHelper != null && !_subnetHelper.EnableDhcpIfNeeded())
+            if(_ipRoutingHelper != null && !_ipRoutingHelper.DeleteEntryIfNeeded(SoftApHostIp))
             {
                 Util.Error("User selects not to enable DHCP");
 
@@ -167,7 +167,7 @@ namespace DeviceCenter.Helper
                     Util.Info(_wlanInterface.ToString());
                     Util.Info("Connected to " + _wlanInterface.CurrentConnection.ToString());
                     _wlanClient.OnAcmNotification += OnAcmNotification;
-                    _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
+                    _ipRoutingHelper = IPRoutingTableHelper.CreateByNicGuid(_wlanInterface.Guid);
                 }
                 else
                 {
@@ -213,7 +213,7 @@ namespace DeviceCenter.Helper
             for (var i = 0; i < PingRetryNumber; i++)
             {
                 var isReachable = await Util.Ping(SoftApHostIp);
-                Util.Info("Reachable [{0}]", isReachable ? "yes" : "no");
+                Util.Info("([{0}]) - Reachable [{1}]", i, isReachable ? "yes" : "no");
                 if (isReachable)
                 {
                     return true;
@@ -233,7 +233,7 @@ namespace DeviceCenter.Helper
                 case WlanInterop.WlanNotificationCodeAcm.Disconnected:
                     {
                         Util.Info("Disconnected from [{0}]", profileName);
-                        if (_isConnectedToSoftAp && profileName == Util.WlanProfileName)
+                        if (_isConnectedToSoftAp)
                         {
                             _isConnectedToSoftAp = false;
                             OnSoftApDisconnected?.Invoke();
@@ -246,7 +246,7 @@ namespace DeviceCenter.Helper
         private readonly WlanClient _wlanClient;
         private readonly WlanInterface _wlanInterface;
         private bool _isConnectedToSoftAp;
-        private readonly SubnetHelper _subnetHelper;
+        private readonly IPRoutingTableHelper _ipRoutingHelper;
         private static SoftApHelper _instance;
         private bool _isDisconnecting;
         private readonly object _disconnectLockObj = new object();

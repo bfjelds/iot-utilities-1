@@ -20,8 +20,6 @@
             Page welcomePage = new PageWelcome(_NavigationFrame);
 
             _NavigationFrame.Navigate(welcomePage);
-
-            Helper.SoftApHelper.Instance.DisconnectIfNeeded();
         }
 
         protected override void OnSourceInitialized(EventArgs e)

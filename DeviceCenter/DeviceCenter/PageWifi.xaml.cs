@@ -215,8 +215,6 @@ namespace DeviceCenter
 
         private void ReturnAsError(string message)
         {
-            _wifiManager.DisconnectIfNeeded();
-
             MessageBox.Show(message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
             _navigationFrame.GoBack();
@@ -280,8 +278,6 @@ namespace DeviceCenter
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            if (this._connected)
-                _wifiManager.DisconnectIfNeeded();
         }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)

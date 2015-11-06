@@ -12,13 +12,13 @@ namespace WlanAPIs
 {
     public class Util
     {
-        public const string WlanProfileName = "AthensSoftAP";
+        public const string AthensWlanProfileName = "AthensSoftAP";
         public const string AthensSoftApAuthentication = "WPA2PSK";
         public const string AthensSoftApEncryption = "AES";
         static readonly string ProfileTemplate =
             "<?xml version =\"1.0\" encoding=\"US-ASCII\"?>" +
             "<WLANProfile xmlns =\"http://www.microsoft.com/networking/WLAN/profile/v1\">" +
-                $"<name>{WlanProfileName}</name>" +
+                $"<name>{AthensWlanProfileName}</name>" +
                 "<SSIDConfig>" +
                     "<SSID>" +
                         "<name>$ssid</name>" +
@@ -67,7 +67,7 @@ namespace WlanAPIs
         /// <returns></returns>
         public static bool IsDhcpipAddress(IPAddress ip)
         {
-            bool isDhcp = (ip != IPAddress.None && !ip.ToString().StartsWith("192.168.173"));
+            bool isDhcp = (ip != IPAddress.None && ip.ToString().StartsWith("192.168.173"));
             Info("[{0}] is DHCP address [{1}]", ip, isDhcp);
             return isDhcp;
         }
@@ -150,7 +150,34 @@ namespace WlanAPIs
             }
             catch (Exception)
             {
-                Console.WriteLine("Failed to run elevated.");
+                Error("Failed to run elevated.");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool RunRouteElevated(string arguments)
+        {
+            var procInfo = new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                WorkingDirectory = System.Environment.SystemDirectory,
+                FileName = Path.Combine(System.Environment.SystemDirectory, @"ROUTE.exe"),
+                Arguments = arguments,
+                Verb = "runas",
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+
+            Info("RunRouteElevated [{0}]", arguments);
+            try
+            {
+                var proc = new Process { StartInfo = procInfo };
+                proc.Start();
+            }
+            catch (Exception ex)
+            {
+                Error("Failed to run elevated.{0}", ex);
                 return false;
             }
 
@@ -171,16 +198,13 @@ namespace WlanAPIs
         {
             var ipv4 = IPAddress.None;
 
-            if (networkInterface == null)
-            {
-                ipv4 = IPAddress.None;
-            }
-            else
+            if (networkInterface != null)
             {
                 if (networkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
                 {
                     foreach (var ip in networkInterface.GetIPProperties().UnicastAddresses)
                     {
+                        Util.Info("{0} - {1}", ip.Address.AddressFamily, ip.Address.MapToIPv4());
                         if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
                             ipv4 = ip.Address;
@@ -191,6 +215,22 @@ namespace WlanAPIs
 
             Util.Info("Curernt IP [{0}]", ipv4);
             return ipv4;
+        }
+
+        public static int GetIndex(NetworkInterface networkInterface)
+        {
+            var index = -1;
+
+            if (networkInterface != null)
+            {
+                if (networkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
+                {
+                    index = networkInterface.GetIPProperties().GetIPv4Properties().Index;
+                }
+            }
+
+            Util.Info("Curernt interface index [{0}]", index);
+            return index;
         }
     }
 }
