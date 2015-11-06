@@ -202,7 +202,7 @@ namespace WlanAPIs
                 }
             }
 
-            Util.Info("Curernt interface index [{0}]", index);
+            Util.Info("GetIndex returns [{0}]", index);
             return index;
         }
     }

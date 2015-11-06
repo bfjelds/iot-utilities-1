@@ -143,9 +143,21 @@ namespace DeviceCenter.Helper
 
         public void RemoveIPRoutingEntryIfNeeded()
         {
-            if (_ipRoutingHelper != null && !_ipRoutingHelper.DeleteEntryIfNeeded(SoftApHostIp))
+            try
             {
-                Util.Error("User selects not to delete IP routing entry");
+                if (_ipRoutingHelper != null && !_ipRoutingHelper.DeleteEntryIfNeeded(SoftApHostIp))
+                {
+                    Util.Error("User selects not to delete IP routing entry");
+                }
+            }
+            catch (WLanException wlanEx)
+            {
+                if (wlanEx.ErrorCode == WLanException.ERROR_IPROUTINGTABLE_REMOVE_FAILED)
+                {
+                    App.TelemetryClient.TrackEvent("IPRoutingRemoveFailure", new Dictionary<string, string>()
+                    {
+                    });
+                }
             }
         }
 

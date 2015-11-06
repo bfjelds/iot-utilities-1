@@ -125,9 +125,10 @@ namespace DeviceCenter
 
         private async void DoConnectAsync(string password)
         {
+            bool result = false;
             try
             {
-                await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
+                result = await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
             }
             catch (Exception err)
             {
@@ -135,7 +136,10 @@ namespace DeviceCenter
                 Debug.WriteLine(err.ToString());
             }
 
-            this._navigationFrame.GoBack();
+            if (result)
+            {
+                this._navigationFrame.GoBack();
+            }
         }
 
         public void AllowSecure(bool enabled)
@@ -211,8 +215,6 @@ namespace DeviceCenter
             _delayStart.Tick += delayStartTimer_Tick;
         }
 
-        private bool _connected = false;
-
         private void ReturnAsError(string message)
         {
             _wifiManager.DisconnectIfNeeded();
@@ -229,8 +231,6 @@ namespace DeviceCenter
             var connected = await _wifiManager.ConnectAsync(_device.WifiInstance, SoftApHelper.SoftApPassword);
             if (connected)
             {
-                this._connected = true;
-
                 var authentication = DialogAuthenticate.GetSavedPassword(this._device.WifiInstance.SsidString);
 
                 try
@@ -280,8 +280,7 @@ namespace DeviceCenter
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            if (this._connected)
-                _wifiManager.DisconnectIfNeeded();
+            _wifiManager.DisconnectIfNeeded();
         }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
