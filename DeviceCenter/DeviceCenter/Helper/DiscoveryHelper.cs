@@ -272,7 +272,7 @@ namespace DeviceCenter.Helper
                 }
             }
 
-            DiscoveredDevice device = _foundDevices.GetOrAdd(parsedDeviceName, (key) =>
+            DiscoveredDevice device = _foundDevices.GetOrAdd(ipAddress.ToString(), (key) =>
             {
                 var newDevice = new DiscoveredDevice()
                 {
@@ -383,7 +383,7 @@ namespace DeviceCenter.Helper
                         DiscoveredDevice device;
 
                         // A device may exist in more than one list, scan each one and remove
-                        if (_foundDevices.TryRemove(cur.DeviceName, out device))
+                        if (_foundDevices.TryRemove(cur.IpAddress.ToString(), out device))
                             if (this.ConfiguredDevices.Contains(device))
                                 this.ConfiguredDevices.Remove(device);
 
