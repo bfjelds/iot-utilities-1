@@ -271,16 +271,18 @@ namespace DeviceCenter.Helper
                 handler(this, e);
             }
         }
-        public void CancelDism()
+        public bool CancelDism()
         {
+            var fSuccess = false;
             lock (_dismLock)
             {
                 if (_dismProcess != null)
                 {
-                    NativeMethods.GenerateConsoleCtrlEvent(NativeMethods.CTRL_BREAK_EVENT, (uint)_dismProcess.Id);
+                    fSuccess = NativeMethods.GenerateConsoleCtrlEvent(NativeMethods.CTRL_C_EVENT, (uint)_dismProcess.Id);
                     App.TelemetryClient.TrackEvent("FlashSDCardCancel");
                 }
             }
+            return fSuccess;
         }
 
         #endregion

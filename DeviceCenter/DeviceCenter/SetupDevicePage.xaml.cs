@@ -236,6 +236,13 @@ namespace DeviceCenter
             }
 
             // Finally flash the FFU to SD card
+            if (string.IsNullOrEmpty(ffuPath))
+            {
+                Debug.WriteLine("Could not get the FFUPath");
+                _currentFlashingState = FlashingStates.Completed;
+                UpdateProgressState();
+                return;
+            }
             FlashFFU(ffuPath);
         }
 
@@ -408,8 +415,8 @@ namespace DeviceCenter
                     _currentFlashingState = FlashingStates.Completed;
                     break;
                 case FlashingStates.Flashing:
-                    _deviceSetupHelper.CancelDism();
-                    _currentFlashingState = FlashingStates.Completed;
+                    if (_deviceSetupHelper.CancelDism())
+                        _currentFlashingState = FlashingStates.Completed;
                     break;
             }
             UpdateProgressState();
