@@ -26,6 +26,8 @@ namespace DeviceCenter
         {
             public FileInfo AppX { get; set; }
 
+            public string PackageFullName { get; set; }
+
             public FileInfo Certificate { get; set; }
 
             public List<FileInfo> Dependencies { get; set; }
@@ -68,6 +70,7 @@ namespace DeviceCenter
                             "x86", new ApplicationFiles()
                             {
                                 AppX = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.2.0_x86.appx"),
+                                PackageFullName = "BlinkyHeadedWebService_1.0.2.0_x86__4a1rdwapkt3r8",
                                 Certificate = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.2.0_x86.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
@@ -80,6 +83,7 @@ namespace DeviceCenter
                             "ARM", new ApplicationFiles()
                             {
                                 AppX = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.2.0_ARM.appx"),
+                                PackageFullName = "BlinkyHeadedWebService_1.0.2.0_arm__4a1rdwapkt3r8",
                                 Certificate = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.2.0_ARM.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
@@ -107,6 +111,7 @@ namespace DeviceCenter
                             "x86", new ApplicationFiles()
                             {
                                 AppX = MakePath("InternetRadio\\x86\\InternetRadioHeaded_1.0.1.0_x86.appx"),
+                                PackageFullName = "InternetRadioHeaded_1.0.1.0_x86__4a1rdwapkt3r8", 
                                 Certificate = MakePath("InternetRadio\\X86\\InternetRadioHeaded_1.0.1.0_x86.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
@@ -119,6 +124,7 @@ namespace DeviceCenter
                             "ARM", new ApplicationFiles()
                             {
                                 AppX = MakePath("InternetRadio\\ARM\\InternetRadioHeaded_1.0.1.0_ARM.appx"),
+                                PackageFullName = "InternetRadioHeaded_1.0.1.0_arm__4a1rdwapkt3r8",
                                 Certificate = MakePath("InternetRadio\\ARM\\InternetRadioHeaded_1.0.1.0_ARM.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {

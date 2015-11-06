@@ -147,95 +147,117 @@ namespace DeviceCenter
             }
         }
 
-        public async Task<bool> InstallAppxAsync(string appName, IEnumerable<FileInfo> files)
+        public async Task<bool> RunAppxAsync(string packageFullName, IEnumerable<FileInfo> files)
         {
-            var url = AppxApiUrl + "package?package=";
-            url += files.First().Name;
+            bool isDeployed = false;
 
-            string boundary = "-----------------------" + DateTime.Now.Ticks.ToString("x");
+            var file1 = files.ElementAt(0);
+            var installedPackages = await this.GetInstalledPackagesAsync();
 
-            var request = (HttpWebRequest)WebRequest.Create(this._restHelper.CreateUri(url));
-            request.Accept = "*/*";
-            request.ContentType = "multipart/form-data; boundary=" + boundary;
-            request.Method = "POST";
-            request.KeepAlive = true;
-            var encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(this._restHelper.DeviceAuthentication.UserName + ":" + this._restHelper.DeviceAuthentication.Password));
-            request.Headers.Add("Authorization", "Basic " + encodedAuth);
-
-            using (Stream memStream = new MemoryStream())
+            foreach(var package in installedPackages.Items)
             {
-                var boundaryBytesMiddle = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
-                var boundaryBytesLast = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
-                await memStream.WriteAsync(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
-
-                var headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
-
-                var count = files.Count();
-
-                foreach (var file in files)
+                if(package.PackageFullName.Equals(packageFullName))
                 {
-                    var headerContentType = (file.Extension == ".cer") ? "application/x-x509-ca-cert" : "application/x-zip-compressed";
-                    var header = String.Format(headerTemplate, file.Name, file.Name, headerContentType);
-                    var headerBytes = Encoding.UTF8.GetBytes(header);
-                    await memStream.WriteAsync(headerBytes, 0, headerBytes.Length);
-
-                    using (var fileStream = file.OpenRead())
-                    {
-                        await fileStream.CopyToAsync(memStream);
-
-                        if (--count > 0)
-                        {
-                            await memStream.WriteAsync(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
-                        }
-                        else
-                        {
-                            await memStream.WriteAsync(boundaryBytesLast, 0, boundaryBytesLast.Length);
-                        }
-                    }
-                }
-
-                request.ContentLength = memStream.Length;
-
-                using (Stream requestStream = await request.GetRequestStreamAsync())
-                {
-                    memStream.Position = 0;
-                    await memStream.CopyToAsync(requestStream);
+                    isDeployed = true;
+                    break;
                 }
             }
 
-            try
+            bool deploymentSuccess = false;
+
+            if (!isDeployed)
             {
-                var result = HttpStatusCode.BadRequest;
+                #region DeployOperation
+                var url = AppxApiUrl + "package?package=";
+                url += files.First().Name;
 
-                using (HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync()))
+                string boundary = "-----------------------" + DateTime.Now.Ticks.ToString("x");
+
+                var request = (HttpWebRequest)WebRequest.Create(this._restHelper.CreateUri(url));
+                request.Accept = "*/*";
+                request.ContentType = "multipart/form-data; boundary=" + boundary;
+                request.Method = "POST";
+                request.KeepAlive = true;
+                var encodedAuth = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(this._restHelper.DeviceAuthentication.UserName + ":" + this._restHelper.DeviceAuthentication.Password));
+                request.Headers.Add("Authorization", "Basic " + encodedAuth);
+
+                using (Stream memStream = new MemoryStream())
                 {
-                    result = response.StatusCode;
+                    var boundaryBytesMiddle = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+                    var boundaryBytesLast = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
+                    await memStream.WriteAsync(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
 
-                    using (var stream = response.GetResponseStream())
+                    var headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
+
+                    var count = files.Count();
+
+                    foreach (var file in files)
                     {
-                        if (stream != null)
-                            using (var sr = new StreamReader(stream))
+                        var headerContentType = (file.Extension == ".cer") ? "application/x-x509-ca-cert" : "application/x-zip-compressed";
+                        var header = String.Format(headerTemplate, file.Name, file.Name, headerContentType);
+                        var headerBytes = Encoding.UTF8.GetBytes(header);
+                        await memStream.WriteAsync(headerBytes, 0, headerBytes.Length);
+
+                        using (var fileStream = file.OpenRead())
+                        {
+                            await fileStream.CopyToAsync(memStream);
+
+                            if (--count > 0)
                             {
-                                Debug.WriteLine(await sr.ReadToEndAsync());
+                                await memStream.WriteAsync(boundaryBytesMiddle, 0, boundaryBytesMiddle.Length);
                             }
+                            else
+                            {
+                                await memStream.WriteAsync(boundaryBytesLast, 0, boundaryBytesLast.Length);
+                            }
+                        }
+                    }
+
+                    request.ContentLength = memStream.Length;
+
+                    using (Stream requestStream = await request.GetRequestStreamAsync())
+                    {
+                        memStream.Position = 0;
+                        await memStream.CopyToAsync(requestStream);
                     }
                 }
 
-                if (result == HttpStatusCode.Accepted)
+                try
                 {
-                    if (await PollInstallStateAsync())
+                    var result = HttpStatusCode.BadRequest;
+
+                    using (HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync()))
                     {
-                        return await StartAppAsync(appName);
+                        result = response.StatusCode;
+
+                        using (var stream = response.GetResponseStream())
+                        {
+                            if (stream != null)
+                                using (var sr = new StreamReader(stream))
+                                {
+                                    Debug.WriteLine(await sr.ReadToEndAsync());
+                                }
+                        }
+                    }
+
+                    if (result == HttpStatusCode.Accepted)
+                    {
+                        deploymentSuccess = await PollInstallStateAsync();
                     }
                 }
+                catch (Exception ex)
+                {
+                    throw new RestError(ex.Message, ex);
+                }
+                #endregion
             }
-            catch (Exception ex)
+
+            if(!isDeployed && !deploymentSuccess)
             {
-                Debug.WriteLine(ex.Message);
                 return false;
             }
 
-            return false;
+            return await StartAppAsync(packageFullName);
         }
 
         public async Task<bool> PollInstallStateAsync()
@@ -319,7 +341,7 @@ namespace DeviceCenter
             return null;
         }
 
-        public async Task<bool> IsAppRunning(string appName)
+        public async Task<bool> IsAppRunning(string packageFullName)
         {
             const string URL = PerfMgrUrl + "processes";
             try
@@ -334,7 +356,7 @@ namespace DeviceCenter
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         var runningProcesses = RestHelper.ProcessJsonResponse(response, typeof(IoTProcesses)) as IoTProcesses;
-                        if (runningProcesses != null && runningProcesses.Items.Any(runningProcess => runningProcess.AppName == appName))
+                        if (runningProcesses != null && runningProcesses.Items.Any(runningProcess => runningProcess.PackageFullName == packageFullName))
                         {
                             return true;
                         }
@@ -357,7 +379,7 @@ namespace DeviceCenter
             return false;
         }
 
-        public async Task<bool> StartAppAsync(string appName)
+        public async Task<bool> StartAppAsync(string packageFullName)
         {
             var result = HttpStatusCode.BadRequest;
             try
@@ -372,7 +394,7 @@ namespace DeviceCenter
 
                 foreach (var app in installedPackages.Items)
                 {
-                    if (app.Name == appName)
+                    if (app.PackageFullName == packageFullName)
                     {
                         var url = AppTaskUrl + "app?appid=" + RestHelper.EscapeUriString(app.PackageRelativeId)
                                      + "&package=" + RestHelper.EscapeUriString(app.PackageFullName);
@@ -390,7 +412,7 @@ namespace DeviceCenter
             return (result == HttpStatusCode.OK);
         }
 
-        public async Task<bool> StopAppAsync(string appName)
+        public async Task<bool> StopAppAsync(string packageFullName)
         {
             var url = String.Empty;
             var result = HttpStatusCode.BadRequest;
@@ -407,7 +429,7 @@ namespace DeviceCenter
 
                 foreach (var app in installedPackages.Items)
                 {
-                    if (app.Name == appName)
+                    if (app.PackageFullName == packageFullName)
                     {
                         url = AppTaskUrl + "app?package=" + RestHelper.EscapeUriString(app.PackageFullName);
                         break;

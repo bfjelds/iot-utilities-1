@@ -1,10 +1,12 @@
-﻿using DeviceCenter.Helper;
+﻿using DeviceCenter.DataContract;
+using DeviceCenter.Helper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -110,7 +112,11 @@ namespace DeviceCenter
                         PanelDeploy.Visibility = Visibility.Collapsed;
                         PanelDeployed.Visibility = Visibility.Collapsed;
 
-                        MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        // If inner exception is SoketException, let the user know
+                        if (ex.InnerException is SocketException)
+                        {
+                            MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        }
                     }
 
                     Debug.WriteLine(ex.Message);
@@ -129,6 +135,8 @@ namespace DeviceCenter
             }
             else
             {
+                var currentDevice = _device;
+
                 StopTheOtherApp();
 
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
@@ -164,6 +172,9 @@ namespace DeviceCenter
                     return;
                 }
 
+                // Make sure device architecture is up to date
+                _device.Architecture = arch;
+
                 PanelDeploy.Visibility = Visibility.Collapsed;
                 PanelDeploying.Visibility = Visibility.Visible;
                 PanelDeployed.Visibility = Visibility.Collapsed;
@@ -174,20 +185,51 @@ namespace DeviceCenter
 
                 files.AddRange(sourceFiles.Dependencies);
 
-                if (!await webbRequest.InstallAppxAsync(this.AppItem.AppName, files))
+                try
                 {
-                    PanelDeploying.Visibility = Visibility.Collapsed;
-                    PanelDeployed.Visibility = Visibility.Collapsed;
-                    PanelDeploy.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    PanelDeploying.Visibility = Visibility.Collapsed;
-                    PanelDeployed.Visibility = Visibility.Visible;
-                    PanelDeploy.Visibility = Visibility.Collapsed;
+                    AppInformation.ApplicationFiles appFiles = null;
 
-                    var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
-                    Process.Start(new ProcessStartInfo(appUrl));
+                    // Should never happen
+                    if (!this.AppItem.PlatformFiles.TryGetValue(arch, out appFiles))
+                    {
+                        return;
+                    }
+
+                    string packageFullName = appFiles.PackageFullName;
+
+                    if (!await webbRequest.RunAppxAsync(packageFullName, files))
+                    {
+                        PanelDeploying.Visibility = Visibility.Collapsed;
+                        PanelDeployed.Visibility = Visibility.Collapsed;
+                        PanelDeploy.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        PanelDeploying.Visibility = Visibility.Collapsed;
+                        PanelDeployed.Visibility = Visibility.Visible;
+                        PanelDeploy.Visibility = Visibility.Collapsed;
+
+                        var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
+                        Process.Start(new ProcessStartInfo(appUrl));
+                    }
+                }
+                catch(WebBRest.RestError ex)
+                {
+                    // Only hide the panels and display message box
+                    // if the selection didn't change
+                    if (currentDevice == _device)
+                    {
+                        PanelDeploy.Visibility = Visibility.Collapsed;
+                        PanelDeployed.Visibility = Visibility.Collapsed;
+
+                        // If inner exception is SoketException, let the user know
+                        if (ex.InnerException is SocketException)
+                        {
+                            MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        }
+                    }
+
+                    Debug.WriteLine(ex.Message);
                 }
             }
         }
@@ -209,13 +251,48 @@ namespace DeviceCenter
             }
             else
             {
+                var currentDevice = _device;
+
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
-                if (await webbRequest.StopAppAsync(this.AppItem.AppName))
+                AppInformation.ApplicationFiles appFiles = null;
+
+                Debug.Assert(_device.Architecture != null);
+
+                // Should never happen
+                if (!this.AppItem.PlatformFiles.TryGetValue(_device.Architecture, out appFiles))
                 {
-                    PanelDeployed.Visibility = Visibility.Collapsed;
-                    PanelDeploying.Visibility = Visibility.Collapsed;
-                    PanelDeploy.Visibility = Visibility.Visible;
+                    return;
+                }
+
+                string packageFullName = appFiles.PackageFullName;
+
+                try
+                {
+                    if (await webbRequest.StopAppAsync(packageFullName))
+                    {
+                        PanelDeployed.Visibility = Visibility.Collapsed;
+                        PanelDeploying.Visibility = Visibility.Collapsed;
+                        PanelDeploy.Visibility = Visibility.Visible;
+                    }
+                }
+                catch(WebBRest.RestError ex)
+                {
+                    // Only hide the panels and display message box
+                    // if the selection didn't change
+                    if (currentDevice == _device)
+                    {
+                        PanelDeploy.Visibility = Visibility.Collapsed;
+                        PanelDeployed.Visibility = Visibility.Collapsed;
+
+                        // If inner exception is SoketException, let the user know
+                        if (ex.InnerException is SocketException)
+                        {
+                            MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        }
+                    }
+
+                    Debug.WriteLine(ex.Message);
                 }
             }
         }
