@@ -315,20 +315,6 @@ namespace DeviceCenter
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateFilter();
-
-            /*
-            if (ListViewDevices != null)
-            {
-                ICollectionView view = CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
-                if (null != view)
-                {
-                    view.Filter = (d) =>
-                    {
-                        DiscoveredDevice device = d as DiscoveredDevice;
-                        return newValue ? device.ConnectVisible == Visibility.Visible : device.ManageVisible == Visibility.Visible;
-                    };
-                }
-            }*/
         }
     }
 }

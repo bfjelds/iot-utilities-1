@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading;
@@ -20,9 +21,13 @@ namespace DeviceCenter.Helper
         private BroadcastWatcher _broadCastWatcher = new BroadcastWatcher();
         private readonly DispatcherTimer _broadCastWatcherStartTimer = new DispatcherTimer();
         private readonly DispatcherTimer _broadCastWatcherStopTimer = new DispatcherTimer();
+        private readonly DispatcherTimer _rescanTimer = new DispatcherTimer();
         private readonly int pollDelayBroadcast = 2;
         private readonly int pollBroadcastListenInterval = 5;
-        private readonly ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork> _adhocNetworks = new ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork>();
+        private readonly int maxAgeDevice = 30;
+        private readonly int rescanPollDelay = 10;
+        private readonly ConcurrentDictionary<string, DiscoveredDevice> _adhocNetworks = new ConcurrentDictionary<string, DiscoveredDevice>();
+        private readonly ConcurrentDictionary<string, DiscoveredDevice> _knownDevices = new ConcurrentDictionary<string, DiscoveredDevice>();
 
         public static DiscoveryHelper Instance
         {
@@ -61,8 +66,10 @@ namespace DeviceCenter.Helper
                     _broadCastWatcher.RemoveListeners();
                     _broadCastWatcherStartTimer.Stop();
                     _broadCastWatcherStopTimer.Stop();
+                    _rescanTimer.Stop();
                     _broadCastWatcherStartTimer.Tick -= StartBroadCastListener;
                     _broadCastWatcherStopTimer.Tick -= StopBroadCastListener;
+                    _rescanTimer.Tick -= _rescanTimer_Tick;
                 }
 
                 disposedValue = true;
@@ -82,6 +89,18 @@ namespace DeviceCenter.Helper
 
             _addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
 
+            _rescanTimer.Interval = TimeSpan.FromSeconds(rescanPollDelay);
+            _rescanTimer.Tick += _rescanTimer_Tick;
+            _rescanTimer.Start();
+
+            _broadCastWatcherStopTimer.Interval = TimeSpan.FromSeconds(pollBroadcastListenInterval);
+            _broadCastWatcherStopTimer.Tick += StopBroadCastListener;
+            _broadCastWatcher.OnPing += new BroadcastWatcher.PingHandler(BroadcastWatcher_Ping);
+
+            // Wait for 2 second and start Broadcast discovery 
+            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(pollDelayBroadcast);
+            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
+
             StartDiscovery();
         }
 
@@ -98,18 +117,22 @@ namespace DeviceCenter.Helper
             // 1. Register the callback
             NativeMethods.RegisterCallback(_addCallbackdel);
 
+            _broadCastWatcherStartTimer.Start();
+
             // 2. Start device discovery using DNS-SD
             NativeMethods.StartDiscovery();
+        }
 
-            // Wait for 2 second and start Broadcast discovery 
-            _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(pollDelayBroadcast);
-            _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
-            _broadCastWatcherStartTimer.Start();
+        private void _rescanTimer_Tick(object sender, EventArgs e)
+        {
+            _rescanTimer.Stop();
+
+            StartDiscovery();
         }
 
         public void AddAdhocDevice(WlanInterop.WlanAvailableNetwork accessPoint)
         {
-            _adhocNetworks.GetOrAdd(accessPoint.SsidString, (key) =>
+            DiscoveredDevice device = _adhocNetworks.GetOrAdd(accessPoint.SsidString, (key) =>
             {
                 var newDevice = new DiscoveredDevice(accessPoint)
                 {
@@ -122,8 +145,10 @@ namespace DeviceCenter.Helper
                     NewDevices.Add(newDevice);
                 }));
 
-                return accessPoint;
+                return newDevice;
             });
+
+            device.Ping();
         }
 
         private void AddDeviceCallback(string deviceName, string ipV4Address, string txtParameters)
@@ -178,48 +203,47 @@ namespace DeviceCenter.Helper
                 }
             }
 
-            var newDevice = new DiscoveredDevice()
+            DiscoveredDevice device = _knownDevices.GetOrAdd(parsedDeviceName, (key) =>
             {
-                DeviceName = parsedDeviceName,
-                DeviceModel = deviceModel,
-                Architecture = arch,
-                OsVersion = osVersion,
-                IpAddress = ipAddress,
-                UniqueId = deviceGuid,
-                Manage = new Uri($"http://administrator@{ipV4Address}/"),
-                Authentication = DialogAuthenticate.GetSavedPassword(deviceName)
-            };
-
-            if (Application.Current == null)
-            {
-                return;
-            }
-
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-            {
-                bool found = false;
-                foreach (DiscoveredDevice d in ConfiguredDevices)
+                var newDevice = new DiscoveredDevice()
                 {
-                    if ((d.IpAddress != null) && d.IpAddress.Equals(newDevice.IpAddress))
+                    DeviceName = parsedDeviceName,
+                    DeviceModel = deviceModel,
+                    Architecture = arch,
+                    OsVersion = osVersion,
+                    IpAddress = ipAddress,
+                    UniqueId = deviceGuid,
+                    Manage = new Uri($"http://administrator@{ipV4Address}/"),
+                    Authentication = DialogAuthenticate.GetSavedPassword(deviceName)
+                };
+
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                {
+                    bool found = false;
+                    foreach (DiscoveredDevice d in ConfiguredDevices)
                     {
-                        found = true;
-                        break;
+                        if ((d.IpAddress != null) && d.IpAddress.Equals(newDevice.IpAddress))
+                        {
+                            found = true;
+                            break;
+                        }
                     }
-                }
 
-                if (!found)
-                {
-                    ConfiguredDevices.Add(newDevice);
-                    AllDevices.Add(newDevice);
-                }
-            }));
+                    if (!found)
+                    {
+                        ConfiguredDevices.Add(newDevice);
+                        AllDevices.Add(newDevice);
+                    }
+                }));
+
+                return newDevice;
+            });
+
+            device.Ping();
         }
         private void StartBroadCastListener(object sender, EventArgs e)
         {
             // Stop listening after 5 seconds
-            _broadCastWatcherStopTimer.Interval = TimeSpan.FromSeconds(pollBroadcastListenInterval);
-            _broadCastWatcherStopTimer.Tick += StopBroadCastListener;
-            _broadCastWatcher.OnPing += new BroadcastWatcher.PingHandler(BroadcastWatcher_Ping);
             _broadCastWatcher.AddListeners();
             _broadCastWatcherStopTimer.Start();
             _broadCastWatcherStartTimer.Stop();
@@ -232,8 +256,57 @@ namespace DeviceCenter.Helper
 
         private void StopBroadCastListener(object sender, EventArgs e)
         {
+            // Stop listening for new devices
             _broadCastWatcher.RemoveListeners();
             _broadCastWatcherStopTimer.Stop();
+
+            // scan known devices for any that haven't broadcasted in a while
+            DateTime devicesTooOld = DateTime.Now - TimeSpan.FromSeconds(maxAgeDevice);
+
+            // build a list of devices we want to expire
+            List<DiscoveredDevice> removeList = new List<DiscoveredDevice>();
+
+            foreach (var cur in _knownDevices)
+            {
+                if (cur.Value.LastKnownDiscovered < devicesTooOld)
+                {
+                    removeList.Add(cur.Value);
+                }
+            }
+
+            // build a list of adhoc networks we want to expire
+            foreach (var cur in _adhocNetworks)
+            {
+                if (cur.Value.LastKnownDiscovered < devicesTooOld)
+                {
+                    removeList.Add(cur.Value);
+                }
+            }
+
+            if (removeList.Count > 0)
+            {
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                {
+                // remove them from the observable collections
+                foreach (var cur in removeList)
+                    {
+                        DiscoveredDevice device;
+
+                        if (_knownDevices.TryRemove(cur.DeviceName, out device))
+                            if (this.ConfiguredDevices.Contains(device))
+                                this.ConfiguredDevices.Remove(device);
+
+                        if (_adhocNetworks.TryRemove(cur.DeviceName, out device))
+                            if (this.NewDevices.Contains(device))
+                                this.NewDevices.Remove(device);
+
+                        if (this.AllDevices.Contains(cur))
+                            this.AllDevices.Remove(cur);
+                    }
+                }));
+            }
+
+            _rescanTimer.Start();
         }
     }
 }
