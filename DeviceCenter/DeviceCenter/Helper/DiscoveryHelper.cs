@@ -1,42 +1,91 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using WlanAPIs;
 
 namespace DeviceCenter.Helper
 {
-    class DiscoveryHelper
+    public class DiscoveryHelper : IDisposable
     {
-        public ObservableCollection<DiscoveredDevice> DiscoveredDevices { get; }
+        // Bind to one of these when applying filtering
+        public ObservableCollection<DiscoveredDevice> AllDevices { get; }
+        public ObservableCollection<DiscoveredDevice> NewDevices { get; }
+        public ObservableCollection<DiscoveredDevice> ConfiguredDevices { get; }
+
         readonly NativeMethods.AddDeviceCallbackDelegate _addCallbackdel;
         private BroadcastWatcher _broadCastWatcher = new BroadcastWatcher();
         private readonly DispatcherTimer _broadCastWatcherStartTimer = new DispatcherTimer();
         private readonly DispatcherTimer _broadCastWatcherStopTimer = new DispatcherTimer();
         private readonly int pollDelayBroadcast = 2;
         private readonly int pollBroadcastListenInterval = 5;
+        private readonly ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork> _adhocNetworks = new ConcurrentDictionary<string, WlanInterop.WlanAvailableNetwork>();
 
-        public DiscoveryHelper()
+        public static DiscoveryHelper Instance
         {
-            DiscoveredDevices = new ObservableCollection<DiscoveredDevice>();
+            get
+            {
+                if (_instance == null)
+                    _instance = new DiscoveryHelper();
+
+                Interlocked.Increment(ref _refCount);
+
+                return _instance;
+            }
+        }
+
+        public static void Release()
+        {
+            if (Interlocked.Decrement(ref _refCount) == 0)
+            {
+                _instance.Dispose();
+                _instance = null;
+            }
+        }
+
+        private static int _refCount = 0;
+        private static DiscoveryHelper _instance;
+
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    NativeMethods.StopDiscovery();
+                    _broadCastWatcher.RemoveListeners();
+                    _broadCastWatcherStartTimer.Stop();
+                    _broadCastWatcherStopTimer.Stop();
+                    _broadCastWatcherStartTimer.Tick -= StartBroadCastListener;
+                    _broadCastWatcherStopTimer.Tick -= StopBroadCastListener;
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        private DiscoveryHelper()
+        {
+            AllDevices = new ObservableCollection<DiscoveredDevice>();
+            NewDevices = new ObservableCollection<DiscoveredDevice>();
+            ConfiguredDevices = new ObservableCollection<DiscoveredDevice>();
+
             _addCallbackdel = new NativeMethods.AddDeviceCallbackDelegate(AddDeviceCallback);
+
+            StartDiscovery();
         }
 
-        ~DiscoveryHelper()
-        {
-            NativeMethods.StopDiscovery();
-            _broadCastWatcher.RemoveListeners();
-            _broadCastWatcherStartTimer.Stop();
-            _broadCastWatcherStopTimer.Stop();
-            _broadCastWatcherStartTimer.Tick -= StartBroadCastListener;
-            _broadCastWatcherStopTimer.Tick -= StopBroadCastListener;
-        }
-
-        public void StartDiscovery()
+        private void StartDiscovery()
         {
             // Stop everything first 
             _broadCastWatcherStartTimer.Stop();
@@ -56,6 +105,25 @@ namespace DeviceCenter.Helper
             _broadCastWatcherStartTimer.Interval = TimeSpan.FromSeconds(pollDelayBroadcast);
             _broadCastWatcherStartTimer.Tick += StartBroadCastListener;
             _broadCastWatcherStartTimer.Start();
+        }
+
+        public void AddAdhocDevice(WlanInterop.WlanAvailableNetwork accessPoint)
+        {
+            _adhocNetworks.GetOrAdd(accessPoint.SsidString, (key) =>
+            {
+                var newDevice = new DiscoveredDevice(accessPoint)
+                {
+                    DeviceName = key
+                };
+
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                {
+                    AllDevices.Add(newDevice);
+                    NewDevices.Add(newDevice);
+                }));
+
+                return accessPoint;
+            });
         }
 
         private void AddDeviceCallback(string deviceName, string ipV4Address, string txtParameters)
@@ -130,7 +198,7 @@ namespace DeviceCenter.Helper
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 bool found = false;
-                foreach (DiscoveredDevice d in DiscoveredDevices)
+                foreach (DiscoveredDevice d in ConfiguredDevices)
                 {
                     if ((d.IpAddress != null) && d.IpAddress.Equals(newDevice.IpAddress))
                     {
@@ -138,9 +206,11 @@ namespace DeviceCenter.Helper
                         break;
                     }
                 }
+
                 if (!found)
                 {
-                    DiscoveredDevices.Add(newDevice);
+                    ConfiguredDevices.Add(newDevice);
+                    AllDevices.Add(newDevice);
                 }
             }));
         }

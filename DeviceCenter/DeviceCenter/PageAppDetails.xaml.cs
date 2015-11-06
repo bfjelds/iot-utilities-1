@@ -1,13 +1,9 @@
 ﻿using DeviceCenter.Helper;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace DeviceCenter
 {
@@ -19,23 +15,29 @@ namespace DeviceCenter
         public AppInformation AppItem { get; private set; }
         public Frame navigation;
         private DiscoveredDevice _device = null;
-        private DiscoveryHelper _discoveryHelper = new DiscoveryHelper();
+        private DiscoveryHelper _discoveryHelper = DiscoveryHelper.Instance;
 
         public PageAppDetails(Frame navigation, AppInformation item)
         {
-            InitializeComponent();
-            comboBoxDevices.ItemsSource = _discoveryHelper.DiscoveredDevices;
-            _discoveryHelper.StartDiscovery();
-
             this.AppItem = item;
             this.DataContext = this.AppItem;
             this.navigation = navigation;
+
+            InitializeComponent();
+
+            comboBoxDevices.ItemsSource = _discoveryHelper.ConfiguredDevices;
 
             PanelDeploying.Visibility = Visibility.Collapsed;
             PanelDeployed.Visibility = Visibility.Collapsed;
             PanelDeploy.Visibility = Visibility.Collapsed;
 
             GetAppState();
+        }
+
+        ~PageAppDetails()
+        {
+            DiscoveryHelper.Release();
+            _discoveryHelper = null;
         }
 
         private async void GetAppState()
