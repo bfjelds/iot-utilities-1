@@ -40,15 +40,15 @@ namespace WlanAPIs
                 "WlanRegisterNotification"
                 );
 
-            // enum interfaces
-            IntPtr nativeInterfaceList;
-            Util.ThrowIfFail(
-                WlanInterop.WlanEnumInterfaces(NativeHandle, IntPtr.Zero, out nativeInterfaceList),
-                "WlanEnumInterfaces"
-                );
-
+            IntPtr nativeInterfaceList = IntPtr.Zero;
             try
             {
+                // enum interfaces
+                Util.ThrowIfFail(
+                    WlanInterop.WlanEnumInterfaces(NativeHandle, IntPtr.Zero, out nativeInterfaceList),
+                    "WlanEnumInterfaces"
+                    );
+
                 this.Interfaces = ParseNativeWlanInterfaceList(nativeInterfaceList);
             }
             finally
@@ -135,8 +135,11 @@ namespace WlanAPIs
                         reasonCode);
                 }
 
-                HandleAcmNotification(notifyData, connNotifyData);
-                OnAcmNotification?.Invoke(profileName, notifyData.notificationCode, (WlanInterop.WlanReasonCode)reasonCode);
+                if (profileName == Util.AthensWlanProfileName)
+                {
+                    HandleAcmNotification(notifyData, connNotifyData);
+                    OnAcmNotification?.Invoke(profileName, notifyData.notificationCode, (WlanInterop.WlanReasonCode)reasonCode);
+                }
             }
         }
 

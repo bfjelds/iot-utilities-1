@@ -8,7 +8,8 @@
       xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
       mc:Ignorable="d" 
       d:DesignWidth="500"
-      Title="PageAppDetails">
+      Title="PageAppDetails"
+      Unloaded="Page_Unloaded">
 
     <Page.Resources>
         <CollectionViewSource x:Key="_devicesCVS" Source="{Binding ConfiguredDevices}" >

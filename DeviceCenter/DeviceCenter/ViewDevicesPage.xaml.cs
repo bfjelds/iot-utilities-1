@@ -27,7 +27,6 @@ namespace DeviceCenter
 
         private readonly Frame _navigationFrame;
         private PageWifi _wifiPage;
-        private bool _connectedToAdhoc = false;
         private readonly int pollDelayWifi = 5;
 
         public ViewDevicesPage(Frame navigationFrame)
@@ -67,10 +66,7 @@ namespace DeviceCenter
         ~ViewDevicesPage()
         {
             _wifiRefreshTimer.Stop();
-            if (_connectedToAdhoc)
-            {
-                _softwareAccessPoint.DisconnectIfNeeded();
-            }
+            _softwareAccessPoint.DisconnectIfNeeded();
 
             DiscoveryHelper.Release();
             _discoveryHelper = null;
@@ -78,7 +74,6 @@ namespace DeviceCenter
 
         private void SoftwareAccessPoint_OnSoftAPDisconnected(object sender, EventArgs e)
         {
-            _connectedToAdhoc = false;
         }
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
