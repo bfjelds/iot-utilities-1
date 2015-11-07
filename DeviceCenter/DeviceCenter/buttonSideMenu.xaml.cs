@@ -1,7 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace DeviceCenter
@@ -14,10 +16,6 @@ namespace DeviceCenter
         public ButtonSideMenu()
         {
             InitializeComponent();
-
-            //Button x;
-            //x.Click
-            //x.Content
         }
 
         [Category("Behavior")]
@@ -36,6 +34,22 @@ namespace DeviceCenter
                     else
                         ReturnNormal();
                 }
+            }
+        }
+
+        private FontFamily SegoeMDL2Font = new FontFamily("Segoe MDL2 Assets");
+        private FontFamily IotFont = new FontFamily("IOT MDL2 Assets");
+
+        [CategoryAttribute("Common")]
+        public bool UseIotFont
+        {
+            get
+            {
+                return this.textBlockIcon.FontFamily == IotFont;
+            }
+            set
+            {
+                this.textBlockIcon.FontFamily = (value) ? IotFont : SegoeMDL2Font;
             }
         }
 

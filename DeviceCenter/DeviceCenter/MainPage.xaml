@@ -65,12 +65,13 @@
     <DockPanel>
         <Grid>
             <DockPanel Margin="0">
-                <StackPanel Orientation="Vertical" Background="#FFF0F0F0" Width="300">
-                    <local:ButtonSideMenu Margin="0 20 0 0" Text="{x:Static props:Strings.FindMyDeviceButton}" Icon="&#xE964;" Click="buttonMyDevices_Click"/>
-                    <local:ButtonSideMenu Text="{x:Static props:Strings.IntroSetUpNewDevice}" Icon="&#xE90F;" Click="buttonAddDevice_Click"/>
-                    <local:ButtonSideMenu Text="{x:Static props:Strings.LeftBarSamples}" Icon="&#xE179;" Click="buttonSamples_Click" />
-                    <local:ButtonSideMenu Text="{x:Static props:Strings.ButtonAbout}" Icon="&#xE11B;" Click="buttonAbout_Click"/>
-                </StackPanel>
+                <DockPanel Background="#FFF0F0F0" Width="300">
+                    <local:ButtonSideMenu DockPanel.Dock="Top" Margin="0 20 0 0" Text="{x:Static props:Strings.FindMyDeviceButton}" Icon="&#xE959;" Click="buttonMyDevices_Click" UseIotFont="True"/>
+                    <local:ButtonSideMenu DockPanel.Dock="Top" Text="{x:Static props:Strings.IntroSetUpNewDevice}" Icon="&#xEC7A;" Click="buttonAddDevice_Click"/>
+                    <local:ButtonSideMenu DockPanel.Dock="Top" Text="{x:Static props:Strings.LeftBarSamples}" Icon="&#xE179;" Click="buttonSamples_Click" />
+                    <local:ButtonSideMenu DockPanel.Dock="Bottom" Text="{x:Static props:Strings.DeviceDetailSettings}" Icon="&#xE115;" Click="buttonAbout_Click"/>
+                    <Rectangle/>
+                </DockPanel>
                 <Frame Margin="10 0" x:Name="_NavigationFrame" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" />
             </DockPanel>
         </Grid>
