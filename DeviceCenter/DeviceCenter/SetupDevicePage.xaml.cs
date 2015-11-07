@@ -33,10 +33,8 @@ namespace DeviceCenter
         private readonly LastKnownGood _lkg = new LastKnownGood();
         private EventArrivedEventHandler _usbhandler = null;
         private readonly Frame navigationFrame;
-        private FlashingStates _currentFlashingState = FlashingStates.Completed;
         private readonly WebClient _webClient = new WebClient();
-        private int _dismProcessId = 0;
-        private DeviceSetupHelper _deviceSetupHelper = new DeviceSetupHelper();
+        private DeviceSetupHelper _deviceSetupHelper = DeviceSetupHelper.Instance;
 
         #endregion
 
@@ -56,7 +54,11 @@ namespace DeviceCenter
 
             PanelManualImage.Visibility = Visibility.Collapsed;
             PanelAutomaticImage.Visibility = Visibility.Visible;
-            UpdateProgressState();
+            SetFlashingState(_deviceSetupHelper.CurrentFlashingState);
+
+            // Hookup the event handlers
+            _deviceSetupHelper.ExtractFFUProgress += ExtractFFUProgressChanged;
+            _deviceSetupHelper.FlashingCompleted += FlashingCompleted;
         }
 
         private void SetUpDefaults()
@@ -213,7 +215,7 @@ namespace DeviceCenter
                     break;
 
                 case BuildPathType.ISOFile:
-                    _currentFlashingState = FlashingStates.Downloading;
+                    SetFlashingState(FlashingStates.Downloading);
                     PanelFlashing.Visibility = Visibility.Visible;
                     FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingDownload;
                     FlashingProgress.Value = 0;
@@ -239,8 +241,7 @@ namespace DeviceCenter
             if (string.IsNullOrEmpty(ffuPath))
             {
                 Debug.WriteLine("Could not get the FFUPath");
-                _currentFlashingState = FlashingStates.Completed;
-                UpdateProgressState();
+                SetFlashingState(FlashingStates.Completed);
                 return;
             }
             FlashFFU(ffuPath);
@@ -248,8 +249,7 @@ namespace DeviceCenter
 
         private async Task<bool> DownloadISO(Uri downloadUri, string isoFilePath)
         {
-            _currentFlashingState = FlashingStates.Downloading;
-            UpdateProgressState();
+            SetFlashingState(FlashingStates.Downloading);
             var platform = ComboBoxDeviceType.SelectedItem as LkgPlatform;
             _webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
             _webClient.DownloadFileCompleted += (s, eventargs) =>
@@ -261,7 +261,7 @@ namespace DeviceCenter
                 }
             };
 
-            _currentFlashingState = FlashingStates.Downloading;
+            SetFlashingState(FlashingStates.Downloading);
 
             // Download the ISO file
             try
@@ -306,9 +306,7 @@ namespace DeviceCenter
 
         private async Task<string> ExtractFFU(string isoFilePath)
         {
-            _currentFlashingState = FlashingStates.Extracting;
-            UpdateProgressState();
-            _deviceSetupHelper.ExtractFFUProgress += ExtractFFUProgressChanged;
+            SetFlashingState(FlashingStates.Extracting);
             var deviceType = ComboBoxDeviceType.SelectedItem as LkgPlatform;
             string ffuPath = string.Empty;
             await Task.Run((Action)(() =>
@@ -341,8 +339,7 @@ namespace DeviceCenter
         private void FlashFFU(string ffuPath)
         {
             var driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
-            _currentFlashingState = FlashingStates.Flashing;
-            UpdateProgressState();
+            SetFlashingState(FlashingStates.Flashing);
 
             var dlg = new WindowWarning()
             {
@@ -354,17 +351,15 @@ namespace DeviceCenter
             var confirmation = dlg.ShowDialog();
             if (confirmation.HasValue && confirmation.Value == false)
             {
-                _currentFlashingState = FlashingStates.Completed;
+                SetFlashingState(FlashingStates.Completed);
                 buttonFlash.IsEnabled = UpdateStartState();
-                ResetProgressUi();
                 return;
             }
             else
             {
                 try
                 {
-                    _deviceSetupHelper.FlashingCompleted += FlashingCompleted;
-                    _dismProcessId = _deviceSetupHelper.FlashFFU(ffuPath, driveInfo);
+                    _deviceSetupHelper.FlashFFU(ffuPath, driveInfo);
                 }
                 catch (Exception ex)
                 {
@@ -401,25 +396,23 @@ namespace DeviceCenter
 
         private void ResetProgressUi()
         {
-            _currentFlashingState = FlashingStates.Completed;
-            UpdateProgressState();
+            SetFlashingState(FlashingStates.Completed);
         }
 
         private void buttonCancelDism_Click(object sender, RoutedEventArgs e)
         {
             // Only cancel DISM/Download
-            switch (_currentFlashingState)
+            switch (_deviceSetupHelper.CurrentFlashingState)
             {
                 case FlashingStates.Downloading:
                     _webClient.CancelAsync();
-                    _currentFlashingState = FlashingStates.Completed;
+                    SetFlashingState(FlashingStates.Completed);
                     break;
                 case FlashingStates.Flashing:
-                    if (_deviceSetupHelper.CancelDism())
-                        _currentFlashingState = FlashingStates.Completed;
+                    _deviceSetupHelper.CancelDism();
+                    SetFlashingState(FlashingStates.Completed);
                     break;
             }
-            UpdateProgressState();
         }
 
         private void ComboBoxDeviceType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -448,7 +441,7 @@ namespace DeviceCenter
 
         private bool UpdateStartState()
         {
-            if (_currentFlashingState != FlashingStates.Completed)
+            if (_deviceSetupHelper.CurrentFlashingState != FlashingStates.Completed)
                 return false;
 
             if (!RemoveableDevicesComboBox.IsEnabled || !ComboBoxDeviceType.IsEnabled)
@@ -467,12 +460,13 @@ namespace DeviceCenter
             return isChecked.HasValue && isChecked.Value;
         }
 
-        private void UpdateProgressState()
+        private void SetFlashingState(FlashingStates state)
         {
+            _deviceSetupHelper.CurrentFlashingState = state;
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
                 buttonFlash.IsEnabled = UpdateStartState();
-                switch (_currentFlashingState)
+                switch (_deviceSetupHelper.CurrentFlashingState)
                 {
                     case FlashingStates.Completed:
                         FlashingProgress.Value = 0;
@@ -517,6 +511,16 @@ namespace DeviceCenter
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
+            _deviceSetupHelper.ExtractFFUProgress -= ExtractFFUProgressChanged;
+            _deviceSetupHelper.FlashingCompleted += FlashingCompleted;
+
+            // Only cancel the download, do not cancel DISM
+            if (_deviceSetupHelper.CurrentFlashingState == FlashingStates.Downloading)
+            {
+                _webClient.CancelAsync();
+                _deviceSetupHelper.CurrentFlashingState = FlashingStates.Completed;
+            }
+
             DriveInfo.RemoveUSBDetectionHandler();
         }
 
@@ -527,3 +531,4 @@ namespace DeviceCenter
         }
     }
 }
+

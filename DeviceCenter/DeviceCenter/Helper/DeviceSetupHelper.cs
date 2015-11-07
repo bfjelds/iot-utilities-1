@@ -60,6 +60,10 @@ namespace DeviceCenter.Helper
 
         private readonly Object _dismLock = new Object();
         private Process _dismProcess = null;
+        private FlashingStates _currentFlashingState = FlashingStates.Completed;
+
+        // Singleton
+        private static DeviceSetupHelper _instance;
 
         #endregion
 
@@ -71,6 +75,22 @@ namespace DeviceCenter.Helper
         private BuildInfo _cachedBuildInfo;
 
         #endregion
+
+        public static DeviceSetupHelper Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new DeviceSetupHelper();
+                return _instance;
+            }
+        }
+
+        public FlashingStates CurrentFlashingState
+        {
+            get { return _currentFlashingState; }
+            set { _currentFlashingState = value; }
+        }
 
         #region Helper Methods to extract ISO
 
@@ -271,18 +291,16 @@ namespace DeviceCenter.Helper
                 handler(this, e);
             }
         }
-        public bool CancelDism()
+        public void CancelDism()
         {
-            var fSuccess = false;
             lock (_dismLock)
             {
                 if (_dismProcess != null)
                 {
-                    fSuccess = NativeMethods.GenerateConsoleCtrlEvent(NativeMethods.CTRL_C_EVENT, (uint)_dismProcess.Id);
+                    _dismProcess.Kill();
                     App.TelemetryClient.TrackEvent("FlashSDCardCancel");
                 }
             }
-            return fSuccess;
         }
 
         #endregion
@@ -310,3 +328,4 @@ namespace DeviceCenter.Helper
         #endregion
     };
 }
+
