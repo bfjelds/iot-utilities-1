@@ -7,7 +7,7 @@ using WlanAPIs;
 
 namespace DeviceCenter.Helper
 {
-    public delegate void SoftApDisconnectedHandler();
+    public delegate void SoftApDisconnectedHandler(object sender, EventArgs e);
 
     public class SoftApHelper
     {
@@ -252,7 +252,7 @@ namespace DeviceCenter.Helper
                         if (_isConnectedToSoftAp && profileName == Util.WlanProfileName)
                         {
                             _isConnectedToSoftAp = false;
-                            OnSoftApDisconnected?.Invoke();
+                            OnSoftApDisconnected?.Invoke(this, new EventArgs());
                         }
                     }
                     break;

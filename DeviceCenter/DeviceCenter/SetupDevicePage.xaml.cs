@@ -18,7 +18,7 @@ namespace DeviceCenter
     /// <summary>
     /// Interaction logic for SetupDevicePage.xaml
     /// </summary>
-    public partial class SetupDevicePage : Page
+    public partial class SetupDevicePage : Page, IDisposable
     {
         #region DownloadLinks
 
@@ -529,6 +529,28 @@ namespace DeviceCenter
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _webClient.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
     }
 }
 
