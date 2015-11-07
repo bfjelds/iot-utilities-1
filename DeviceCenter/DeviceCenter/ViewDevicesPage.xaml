@@ -22,7 +22,6 @@
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel >
             <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left" Margin="0 0 0 10"/>
-            <Button DockPanel.Dock="Top" x:Name="buttonRefresh" x:Uid="FlashButton" Grid.Row="4" Padding="30 5 30 5" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Refresh" Background="#FF3277B8" Foreground="White" Click="ButtonRefresh_Click" />
             <StackPanel DockPanel.Dock="Top" Margin="0 8" Orientation="Horizontal">
                 <TextBlock Text="{x:Static props:Strings.DeviceListFilter}" VerticalAlignment="Center" />
                 <ComboBox x:Name="comboBoxFilter" Width="150" Margin="10 0" SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged">

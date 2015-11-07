@@ -35,6 +35,7 @@ namespace DeviceCenter
             this.ShowConnect = Visibility.Collapsed;
             this.NeedPassword = Visibility.Collapsed;
             this.ShowExpanded = Visibility.Collapsed;
+            this.WaitingToConnect = Visibility.Collapsed;
             this.SavePassword = false;
 
             this._needPassword = this._network.SecurityEnabled;
@@ -57,10 +58,12 @@ namespace DeviceCenter
             {
                 switch (SignalStrength)
                 {
-                    case 1: return WifiIcons.Substring(1, 1);
-                    case 2: return WifiIcons.Substring(2, 1);
-                    case 3: return WifiIcons.Substring(3, 1);
-                    case 4: return WifiIcons.Substring(4, 1);
+                    case 0:
+                    case 1: return WifiIcons.Substring(0, 1);
+                    case 2: return WifiIcons.Substring(1, 1);
+                    case 3: return WifiIcons.Substring(2, 1);
+                    case 4: return WifiIcons.Substring(3, 1);
+                    case 5: return WifiIcons.Substring(4, 1);
                     default: return WifiIcons.Substring(0, 1);
                 }
             }
@@ -127,15 +130,44 @@ namespace DeviceCenter
         {
             try
             {
-                await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
-            }
-            catch (Exception err)
-            {
-                Debug.WriteLine($"Error connecting, {err.Message}");
-                Debug.WriteLine(err.ToString());
-            }
+                this.WaitingToConnect = Visibility.Visible;
+                this.ShowConnect = Visibility.Hidden;
+                this.ReadyToConnect = false;
+                this.EnableSecureConnect = false;
 
-            this._navigationFrame.GoBack();
+                OnPropertyChanged("EnableSecureConnect");
+                OnPropertyChanged("WaitingToConnect");
+                OnPropertyChanged("ReadyToConnect");
+                OnPropertyChanged("ShowConnect");
+
+                try
+                {
+                    Collapse();
+
+                    await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
+                }
+                catch (WebException error)
+                {
+                    Debug.WriteLine($"Error connecting, {error.Message}");
+                    Debug.WriteLine(error.ToString());
+                    // ignore errors, changes in Wifi will make existing TCP sockets unstable
+                }
+
+                MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
+                this._navigationFrame.GoBack();
+            }
+            finally
+            {
+                this.WaitingToConnect = Visibility.Collapsed;
+                this.ReadyToConnect = true;
+                this.EnableSecureConnect = true;
+                this.ShowConnect = password == string.Empty ? Visibility.Visible : Visibility.Collapsed;
+
+                OnPropertyChanged("EnableSecureConnect");
+                OnPropertyChanged("WaitingToConnect");
+                OnPropertyChanged("ReadyToConnect");
+                OnPropertyChanged("ShowConnect");
+            }
         }
 
         public void AllowSecure(bool enabled)
@@ -170,6 +202,7 @@ namespace DeviceCenter
         public Visibility NeedPassword { get; private set; }
 
         public Visibility ShowExpanded { get; private set; }
+        public Visibility WaitingToConnect { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string info)
@@ -211,8 +244,6 @@ namespace DeviceCenter
             _delayStart.Tick += delayStartTimer_Tick;
         }
 
-        private bool _connected = false;
-
         private void ReturnAsError(string message)
         {
             _wifiManager.DisconnectIfNeeded();
@@ -229,8 +260,6 @@ namespace DeviceCenter
             var connected = await _wifiManager.ConnectAsync(_device.WifiInstance, SoftApHelper.SoftApPassword);
             if (connected)
             {
-                this._connected = true;
-
                 var authentication = DialogAuthenticate.GetSavedPassword(this._device.WifiInstance.SsidString);
 
                 try
@@ -256,23 +285,37 @@ namespace DeviceCenter
         private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync(DiscoveredDevice device)
         {
             var result = new ObservableCollection<WifiEntry>();
-            var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
 
-            var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
-            var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
-
-            var adapters = await webbRequest.GetWirelessAdaptersAsync();
-
-            if (adapters != null && adapters.Items != null)
+            try
             {
-                var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
-                if (networks != null)
+                var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
+
+                var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
+                var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
+
+                var adapters = await webbRequest.GetWirelessAdaptersAsync();
+
+                if (adapters != null && adapters.Items != null)
                 {
-                    foreach (var ssid in networks.Items)
+                    var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
+                    if (networks != null)
                     {
-                        result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                        foreach (var ssid in networks.Items)
+                        {
+                            result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                        }
                     }
                 }
+                else
+                {
+                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
+                    _navigationFrame.GoBack();
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
+                _navigationFrame.GoBack();
             }
 
             return result;
@@ -280,8 +323,7 @@ namespace DeviceCenter
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            if (this._connected)
-                _wifiManager.DisconnectIfNeeded();
+            _wifiManager.DisconnectIfNeeded();
         }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)

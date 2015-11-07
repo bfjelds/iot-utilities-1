@@ -25,7 +25,7 @@ namespace DeviceCenter
     /// <summary>
     /// Interaction logic for SetupDevicePage.xaml
     /// </summary>
-    public partial class SetupDevicePage : Page
+    public partial class SetupDevicePage : Page, IDisposable
     {
         /// <summary>
         /// Parser for the LKG file.   
@@ -51,7 +51,7 @@ namespace DeviceCenter
         private string _isoFilePath;
         private FlashingStates _currentFlashingState;
         private bool _internalBuild = false;
-        readonly WebClient _webClient = new WebClient();
+        private WebClient _webClient = new WebClient();
 
         public SetupDevicePage(Frame navigationFrame)
         {
@@ -154,6 +154,7 @@ namespace DeviceCenter
         private async Task RefreshDriveList()
         {  
             RemoveableDevicesComboBox.IsEnabled = false;
+            checkBoxEula.IsEnabled = false;
 
             List<DriveInfo> drives = null;
             await Task.Run((Action)(() =>
@@ -177,6 +178,7 @@ namespace DeviceCenter
                         RemoveableDevicesComboBox.Items.Add(drive);
                         RemoveableDevicesComboBox.IsEnabled = true;
                     }
+                    checkBoxEula.IsEnabled = true;
                 }
 
                 RemoveableDevicesComboBox.SelectedIndex = 0;
@@ -623,5 +625,27 @@ namespace DeviceCenter
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _webClient.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
     }
 }

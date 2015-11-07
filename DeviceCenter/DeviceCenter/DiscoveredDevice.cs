@@ -39,12 +39,21 @@ namespace DeviceCenter
 
         public enum NetworkType { Ethernet, Adhoc };
 
+        public DateTime LastSeen { get; private set; }
+
+        public void Seen()
+        {
+            this.LastSeen = DateTime.Now;
+        }
+
         public DiscoveredDevice()
         {
             this.Network = NetworkType.Ethernet;
 
             this.ManageVisible = Visibility.Visible;
             this.ConnectVisible = Visibility.Collapsed;
+
+            Seen();
         }
 
         public DiscoveredDevice(WlanInterop.WlanAvailableNetwork wifi)

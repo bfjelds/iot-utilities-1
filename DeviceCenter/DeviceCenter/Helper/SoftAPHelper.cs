@@ -7,7 +7,15 @@ using WlanAPIs;
 
 namespace DeviceCenter.Helper
 {
-    public delegate void SoftApDisconnectedHandler();
+    public delegate void SoftApDisconnectedHandler(object sender, EventArgs e);
+
+    enum WlanConnectResult
+    {
+        Success = 0,
+        FailWlan,
+        FailUpdateIPRouting,
+        FailPing
+    }
 
     public class SoftApHelper
     {
@@ -17,7 +25,7 @@ namespace DeviceCenter.Helper
         public const string SoftApSubnetAddr = "255.255.255.0";
         public const string SoftApPassword = "password";
         public const string SoftApNamePrefix = "AJ_";
-        public const int PingRetryNumber = 10;
+        public const int PingRetryNumber = 30;
         public const int PingDelay = 500;
         public const int PollDelay = 5;
         #endregion
@@ -77,37 +85,48 @@ namespace DeviceCenter.Helper
                 return false;
             }
 
-            return await Task.Run(
+            var connectResult = await Task.Run(
                 async () =>
                 {
                     Util.Info("--------- connecting to soft AP ----------");
                     if (ConnectToSoftAp(network, password) == false)
                     {
                         Util.Error("Failed to connect to soft AP");
-                        return false;
+                        return WlanConnectResult.FailWlan;
                     }
 
                     Util.Info("--------- Checking IP and subnet ----------");
 
-                    if (CheckIpAndSubnet() == false)
+                    if (_ipRoutingHelper.AddLocalEntryIfNeeded(SoftApHostIp) == false)
                     {
                         Util.Error("Failed to Check Ip And Subnet");
-                        return false;
+                        return WlanConnectResult.FailUpdateIPRouting;
                     }
 
                     Util.Info("--------- Testing connection ----------");
-                    return await TestConnection();
+                    if(await TestConnection() == false)
+                    {
+                        return WlanConnectResult.FailPing;
+                    }
+
+                    return WlanConnectResult.Success;
                 }
             );
+
+            App.TelemetryClient.TrackEvent("SoftAPConnectResult", new Dictionary<string, string>()
+            {
+                { "ConnectResult", connectResult.ToString()}
+            });
+
+            return connectResult == WlanConnectResult.Success;
         }
 
         public void DisconnectIfNeeded()
         {
-            // tbd this code need refactor to cleanly handle when Wi-Fi doesn't exist in the system.
-
             if (_wlanInterface == null)
             {
-                Util.Error("Disconnect: No Wlan interface");
+                Util.Info("Disconnect: No Wlan interface");
+                return;
             }
 
             lock(_disconnectLockObj)
@@ -121,14 +140,9 @@ namespace DeviceCenter.Helper
                 _isDisconnecting = true;
             }
 
-            if(_subnetHelper != null && !_subnetHelper.EnableDhcp())
-            {
-                Util.Error("User selects not to enable DHCP");
-            }
-
             try
             {
-                if (_isConnectedToSoftAp && _wlanInterface != null)
+                if (_isConnectedToSoftAp)
                 {
                     _wlanInterface.Disconnect();
                 }
@@ -147,7 +161,25 @@ namespace DeviceCenter.Helper
             }
         }
 
-        public IPAddress Ipv4 => _subnetHelper.GetIpv4();
+        public void RemoveIPRoutingEntryIfNeeded()
+        {
+            try
+            {
+                if (_ipRoutingHelper != null && !_ipRoutingHelper.DeleteEntryIfNeeded(SoftApHostIp))
+                {
+                    Util.Error("User selects not to delete IP routing entry");
+                }
+            }
+            catch (WLanException wlanEx)
+            {
+                if (wlanEx.ErrorCode == WLanException.ERROR_IPROUTINGTABLE_REMOVE_FAILED)
+                {
+                    App.TelemetryClient.TrackEvent("IPRoutingRemoveFailure", new Dictionary<string, string>()
+                    {
+                    });
+                }
+            }
+        }
 
         private SoftApHelper()
         {
@@ -165,7 +197,7 @@ namespace DeviceCenter.Helper
                     Util.Info(_wlanInterface.ToString());
                     Util.Info("Connected to " + _wlanInterface.CurrentConnection.ToString());
                     _wlanClient.OnAcmNotification += OnAcmNotification;
-                    _subnetHelper = SubnetHelper.CreateByNicGuid(_wlanInterface.Guid);
+                    _ipRoutingHelper = IPRoutingTableHelper.CreateByNicGuid(_wlanInterface.Guid);
                 }
                 else
                 {
@@ -206,40 +238,33 @@ namespace DeviceCenter.Helper
             return _isConnectedToSoftAp;
         }
 
-        private bool CheckIpAndSubnet()
-        {
-            var ipv4 = _subnetHelper.GetIpv4();
-            Util.Info("Curernt IP [{0}]", ipv4);
-
-
-            var isDhcp = Util.IsDhcpipAddress(ipv4.ToString());
-            Util.Info("Is DHCP IP [{0}]", isDhcp ? "yes" : "no");
-
-            if (!isDhcp)
-            {
-                Util.Info("Switch to IP address {0}", SoftApClientIp);
-                return _subnetHelper.DisableDhcp(SoftApClientIp, SoftApSubnetAddr);
-            }
-
-            return true;
-        }
-
         private async Task<bool> TestConnection()
         {
-            for (var i = 0; i < PingRetryNumber; i++)
+            bool isReachable = false;
+            int pingRetries = 0;
+
+            for (pingRetries = 0; pingRetries < PingRetryNumber; pingRetries++)
             {
-                var isReachable = await Util.Ping(SoftApHostIp);
-                Util.Info("Reachable [{0}]", isReachable ? "yes" : "no");
+                isReachable = await Util.Ping(SoftApHostIp);
+                Util.Info("([{0}]) - Reachable [{1}]", pingRetries, isReachable ? "yes" : "no");
                 if (isReachable)
                 {
-                    return true;
+                    break;
                 }
 
                 await Task.Delay(PingDelay);
             }
 
-            Util.Error("Ping failed after retries");
-            return false;
+            App.TelemetryClient.TrackEvent("TestConnection", new Dictionary<string, string>()
+            {
+                { "Reachable", isReachable.ToString()},
+                { "RetryNumber",  pingRetries.ToString()},
+                { "WaitTime", (pingRetries * PingDelay / 1000).ToString()}
+            });
+
+            Util.Info("Is reachable? [{0}]", isReachable);
+
+            return isReachable;
         }
 
         private void OnAcmNotification(string profileName, int notificationCode, WlanInterop.WlanReasonCode reasonCode)
@@ -249,10 +274,10 @@ namespace DeviceCenter.Helper
                 case WlanInterop.WlanNotificationCodeAcm.Disconnected:
                     {
                         Util.Info("Disconnected from [{0}]", profileName);
-                        if (_isConnectedToSoftAp && profileName == Util.WlanProfileName)
+                        if (_isConnectedToSoftAp)
                         {
                             _isConnectedToSoftAp = false;
-                            OnSoftApDisconnected?.Invoke();
+                            OnSoftApDisconnected?.Invoke(this, new EventArgs());
                         }
                     }
                     break;
@@ -262,7 +287,7 @@ namespace DeviceCenter.Helper
         private readonly WlanClient _wlanClient;
         private readonly WlanInterface _wlanInterface;
         private bool _isConnectedToSoftAp;
-        private readonly SubnetHelper _subnetHelper;
+        private readonly IPRoutingTableHelper _ipRoutingHelper;
         private static SoftApHelper _instance;
         private bool _isDisconnecting;
         private readonly object _disconnectLockObj = new object();
