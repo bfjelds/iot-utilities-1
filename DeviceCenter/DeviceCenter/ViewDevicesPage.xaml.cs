@@ -52,15 +52,24 @@ namespace DeviceCenter
 
             //Register the callbacks
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
-
+            _softwareAccessPoint.OnWlanScanComplete += SoftwareAccessPoint_OnWlanScanComplete;
             _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(pollDelayWifi);
             _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
             _wifiRefreshTimer.Start();
+            WifiRefreshTimer_Tick(this, null);
 
             // Set up polling
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             _telemetryTimer.Tick += TelemetryTimer_Tick;
             _telemetryTimer.Start();
+        }
+
+        private void SoftwareAccessPoint_OnWlanScanComplete(object sender, WlanScanCompleteArgs e)
+        {
+            foreach (WlanInterop.WlanAvailableNetwork accessPoint in e.AvaliableNetworks)
+            {
+                _discoveryHelper.AddAdhocDevice(accessPoint);
+            }
         }
 
         ~ViewDevicesPage()
@@ -89,23 +98,13 @@ namespace DeviceCenter
 
             try
             {
-                IList<WlanInterop.WlanAvailableNetwork> list = null;
-
                 try
                 {
-                    list = _softwareAccessPoint.GetAvailableNetworkList();
+                    _softwareAccessPoint.GetAvailableNetworkList();
                 }
                 catch (WLanException)
                 {
                     // ignore error, return empty list
-                }
-
-                if (list == null)
-                    return;
-
-                foreach (WlanInterop.WlanAvailableNetwork accessPoint in list)
-                {
-                    _discoveryHelper.AddAdhocDevice(accessPoint);
                 }
             }
             finally
