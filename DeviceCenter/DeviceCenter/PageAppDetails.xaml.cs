@@ -49,7 +49,7 @@ namespace DeviceCenter
             _discoveryHelper = null;
         }
 
-        private async void StopTheOtherApp()
+        private async void StopTheOtherApp(string arch)
         {
             if (_device == null)
             {
@@ -60,7 +60,19 @@ namespace DeviceCenter
             {
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
-                var theOtherAppName = (this.AppItem.AppName == BlinkyAppName) ? InternetRadioAppName : BlinkyAppName;
+                string theOtherAppName = null;
+
+                if(arch.Equals("x86"))
+                {
+                    theOtherAppName = (this.AppItem.AppName == BlinkyAppName) ? AppInformation.InternetRadio_PackageFullName_x86 : AppInformation.Blinky_PackageFullName_x86;
+                }
+                else if(arch.Equals("arm"))
+                {
+                    theOtherAppName = (this.AppItem.AppName == BlinkyAppName) ? AppInformation.InternetRadio_PackageFullName_arm : AppInformation.Blinky_PackageFullName_arm;
+                }
+
+                // This should never happen
+                Debug.Assert(theOtherAppName != null);
 
                 try
                 {
@@ -137,9 +149,7 @@ namespace DeviceCenter
             }
             else
             {
-                var currentDevice = _device;
-
-                StopTheOtherApp();
+                var currentDevice = _device;                
 
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
@@ -177,6 +187,8 @@ namespace DeviceCenter
 
                 // Make sure device architecture is up to date
                 _device.Architecture = arch;
+
+                StopTheOtherApp(arch);
 
                 PanelDeploy.Visibility = Visibility.Collapsed;
                 PanelDeploying.Visibility = Visibility.Visible;
