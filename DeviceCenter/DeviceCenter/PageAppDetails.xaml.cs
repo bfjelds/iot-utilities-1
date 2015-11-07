@@ -314,30 +314,32 @@ namespace DeviceCenter
         private void comboBoxDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!this.initializing)
-                _device = comboBoxDevices.SelectedItem as DiscoveredDevice;
-
-            // If the selection changed, hide all the commands, as we don't yet know
-            // what we should show and the REST calls might take a while or even fail
-            PanelDeploying.Visibility = Visibility.Collapsed;
-            PanelDeployed.Visibility = Visibility.Collapsed;
-            PanelDeploy.Visibility = Visibility.Collapsed;
-
-            if (_device == null)
-            {
-                return;
-            }
-            else
             {
                 _device = comboBoxDevices.SelectedItem as DiscoveredDevice;
+
+                // If the selection changed, hide all the commands, as we don't yet know
+                // what we should show and the REST calls might take a while or even fail
+                PanelDeploying.Visibility = Visibility.Collapsed;
+                PanelDeployed.Visibility = Visibility.Collapsed;
+                PanelDeploy.Visibility = Visibility.Collapsed;
+
                 if (_device == null)
                 {
-                    PanelDeploying.Visibility = Visibility.Collapsed;
-                    PanelDeployed.Visibility = Visibility.Collapsed;
-                    PanelDeploy.Visibility = Visibility.Collapsed;
+                    return;
                 }
                 else
                 {
-                    GetAppState();
+                    _device = comboBoxDevices.SelectedItem as DiscoveredDevice;
+                    if (_device == null)
+                    {
+                        PanelDeploying.Visibility = Visibility.Collapsed;
+                        PanelDeployed.Visibility = Visibility.Collapsed;
+                        PanelDeploy.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        GetAppState();
+                    }
                 }
             }
         }
