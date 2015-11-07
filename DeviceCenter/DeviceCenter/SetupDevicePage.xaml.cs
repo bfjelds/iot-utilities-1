@@ -154,6 +154,7 @@ namespace DeviceCenter
         private async Task RefreshDriveList()
         {  
             RemoveableDevicesComboBox.IsEnabled = false;
+            checkBoxEula.IsEnabled = false;
 
             List<DriveInfo> drives = null;
             await Task.Run((Action)(() =>
@@ -177,6 +178,7 @@ namespace DeviceCenter
                         RemoveableDevicesComboBox.Items.Add(drive);
                         RemoveableDevicesComboBox.IsEnabled = true;
                     }
+                    checkBoxEula.IsEnabled = true;
                 }
 
                 RemoveableDevicesComboBox.SelectedIndex = 0;
