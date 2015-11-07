@@ -329,17 +329,7 @@ namespace DeviceCenter
                 }
                 else
                 {
-                    _device = comboBoxDevices.SelectedItem as DiscoveredDevice;
-                    if (_device == null)
-                    {
-                        PanelDeploying.Visibility = Visibility.Collapsed;
-                        PanelDeployed.Visibility = Visibility.Collapsed;
-                        PanelDeploy.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        GetAppState();
-                    }
+                    GetAppState();
                 }
             }
         }
