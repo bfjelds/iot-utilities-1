@@ -7,7 +7,7 @@ using WlanAPIs;
 
 namespace DeviceCenter.Helper
 {
-    public delegate void SoftApDisconnectedHandler();
+    public delegate void SoftApDisconnectedHandler(object sender, EventArgs e);
 
     enum WlanConnectResult
     {
@@ -264,7 +264,7 @@ namespace DeviceCenter.Helper
 
             Util.Info("Is reachable? [{0}]", isReachable);
 
-            return false;
+            return isReachable;
         }
 
         private void OnAcmNotification(string profileName, int notificationCode, WlanInterop.WlanReasonCode reasonCode)
@@ -277,7 +277,7 @@ namespace DeviceCenter.Helper
                         if (_isConnectedToSoftAp)
                         {
                             _isConnectedToSoftAp = false;
-                            OnSoftApDisconnected?.Invoke();
+                            OnSoftApDisconnected?.Invoke(this, new EventArgs());
                         }
                     }
                     break;

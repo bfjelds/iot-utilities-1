@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using DeviceCenter.DataContract;
 using DeviceCenter.Helper;
+using System.Runtime.Serialization;
 
 namespace DeviceCenter
 {
@@ -27,7 +28,8 @@ namespace DeviceCenter
 
         private readonly RestHelper _restHelper;
 
-        public class RestError : Exception
+        [Serializable]
+        public class RestError : Exception, ISerializable
         {
             public RestError(string message, Exception innerException) : base(message, innerException)
             {
@@ -391,8 +393,6 @@ namespace DeviceCenter
             return result == HttpStatusCode.OK;
         }
 
-        #region webB rest for wifi onboarding
-
         public async Task<WirelessAdapters> GetWirelessAdaptersAsync()
         {
             const string URL = "/api/wifi/interfaces";
@@ -445,6 +445,9 @@ namespace DeviceCenter
             {
                 using (var response = await this._restHelper.GetOrPostRequestAsync(url, true))
                 {
+                    if (response == null)
+                        return new AvailableNetworks();
+
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         return RestHelper.ProcessJsonResponse(response, typeof(AvailableNetworks)) as AvailableNetworks;
@@ -462,35 +465,26 @@ namespace DeviceCenter
 
         public async Task<bool> ConnectToNetworkAsync(string adapterName, string ssid, string ssidPassword)
         {
-            var url = "/api/wifi/network?";
-            url = url + "interface=" + adapterName.Trim("{}".ToCharArray());
-            url = url + "&ssid=" + RestHelper.EscapeUriString(ssid);
-            url = url + "&op=" + "connect";
-            url = url + "&createprofile=" + "yes";
+            Dictionary<string, string> connectArguments = new Dictionary<string, string>()
+            {
+                { "interface", adapterName.Trim("{}".ToCharArray()) },
+                { "ssid", RestHelper.EscapeUriString(ssid) },
+                { "op", "connect" },
+                { "createprofile", "yes" }
+            };
+
             if (!string.IsNullOrEmpty(ssidPassword))
             {
-                url = url + "&key=" + RestHelper.EscapeUriString(ssidPassword);
+                connectArguments.Add("key", RestHelper.EscapeUriString(ssidPassword));
             }
 
-            try
-            {
-                // "using" just to make sure the HttpWebResponse is disposed
-                using (var response = await this._restHelper.GetOrPostRequestAsync(url, false))
-                {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
+            Uri path = this._restHelper.CreateUri("/api/wifi/network", connectArguments);
 
-            return false;
+            // "using" just to make sure the HttpWebResponse is disposed
+            using (var response = await this._restHelper.GetOrPostRequestAsync(path, false))
+            {
+                return response.StatusCode == HttpStatusCode.OK;
+            }
         }
-
-        #endregion
     }
 }
