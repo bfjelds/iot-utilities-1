@@ -138,8 +138,9 @@ namespace WlanAPIs
                 if (profileName == Util.AthensWlanProfileName)
                 {
                     HandleAcmNotification(notifyData, connNotifyData);
-                    OnAcmNotification?.Invoke(profileName, notifyData.notificationCode, (WlanInterop.WlanReasonCode)reasonCode);
                 }
+
+                OnAcmNotification?.Invoke(profileName, notifyData.notificationCode, (WlanInterop.WlanReasonCode)reasonCode);
             }
         }
 

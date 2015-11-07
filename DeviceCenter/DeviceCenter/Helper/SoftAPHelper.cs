@@ -8,6 +8,12 @@ using WlanAPIs;
 namespace DeviceCenter.Helper
 {
     public delegate void SoftApDisconnectedHandler(object sender, EventArgs e);
+    public delegate void WlanScanCompleteHandler(object sender, WlanScanCompleteArgs e);
+
+    public class WlanScanCompleteArgs : EventArgs
+    {
+        public IList<WlanInterop.WlanAvailableNetwork> AvaliableNetworks { get; set; }
+    }
 
     enum WlanConnectResult
     {
@@ -32,49 +38,26 @@ namespace DeviceCenter.Helper
 
         #region public
         public event SoftApDisconnectedHandler OnSoftApDisconnected;
+        public event WlanScanCompleteHandler OnWlanScanComplete;
 
-        public IList<WlanInterop.WlanAvailableNetwork> GetAvailableNetworkList()
+        public void GetAvailableNetworkList()
         {
-            var networkList = new List<WlanInterop.WlanAvailableNetwork>();
+            Util.Info("========== start GetAvailableNetworkList =========");
+
             if (_wlanInterface == null)
             {
                 Util.Error("GetAvailableNetworkList: No Wlan interface");
-                return networkList;
+                return;
             }
 
-            List<WlanInterop.WlanAvailableNetwork> nativeNetworkList = null;
             try
             {
                 _wlanInterface.Scan();
-
-                nativeNetworkList = _wlanInterface.GetAvailableNetworkList();
             }
             catch (WLanException)
             {
                 // error occurred at calling wlan WINAPI
-                return networkList;
             }
-
-            var sortedWLanNetworks = new SortedList<uint, WlanInterop.WlanAvailableNetwork>();
-            var uniqueWlanNetworks = new HashSet<string>();
-
-            uint index = 0;
-            foreach (var network in nativeNetworkList)
-            {
-                var ssid = network.SsidString;
-
-                if (!ssid.StartsWith(SoftApNamePrefix) || uniqueWlanNetworks.Contains(ssid)) continue;
-
-                Util.Info(network.ToString());
-
-                // dup keys is not allowed
-                var key = network.wlanSignalQuality * 10 + index;
-                sortedWLanNetworks.Add(key, network);
-                uniqueWlanNetworks.Add(ssid);
-                index++;
-            }
-
-            return sortedWLanNetworks.Values.Reverse().ToList();
         }
 
         public async Task<bool> ConnectAsync(WlanInterop.WlanAvailableNetwork network, string password)
@@ -281,7 +264,50 @@ namespace DeviceCenter.Helper
                         }
                     }
                     break;
+                case WlanInterop.WlanNotificationCodeAcm.ScanComplete:
+                    {
+                        HandleScanComplete();
+                    }
+                    break;
             }
+        }
+
+        private void HandleScanComplete()
+        {
+            var networkList = new List<WlanInterop.WlanAvailableNetwork>();
+            try
+            {
+                networkList = _wlanInterface.GetAvailableNetworkList();
+            }
+            catch (WLanException)
+            {
+            }
+
+            var sortedWLanNetworks = new SortedList<uint, WlanInterop.WlanAvailableNetwork>();
+            var uniqueWlanNetworks = new HashSet<string>();
+
+            uint index = 0;
+            foreach (var network in networkList)
+            {
+                var ssid = network.SsidString;
+
+                if (!ssid.StartsWith(SoftApNamePrefix) || uniqueWlanNetworks.Contains(ssid)) continue;
+
+                Util.Info(network.ToString());
+
+                // dup keys is not allowed
+                var key = network.wlanSignalQuality * 10 + index;
+                sortedWLanNetworks.Add(key, network);
+                uniqueWlanNetworks.Add(ssid);
+                index++;
+            }
+
+            var args = new WlanScanCompleteArgs();
+            args.AvaliableNetworks = sortedWLanNetworks.Values.Reverse().ToList();
+
+            OnWlanScanComplete?.Invoke(this, args);
+
+            Util.Info("======== WlanScanComplete ============");
         }
 
         private readonly WlanClient _wlanClient;
