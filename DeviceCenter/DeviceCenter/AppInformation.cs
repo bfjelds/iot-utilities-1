@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DeviceCenter.Helper;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
@@ -10,6 +11,10 @@ namespace DeviceCenter
     /// </summary>
     public class AppInformation
     {
+        ~AppInformation()
+        {
+            DiscoveryHelper.Release();
+        }
 
         // TBD: Warning
         // If we change the samples we need to make sure to update the Package Full Name
@@ -58,6 +63,16 @@ namespace DeviceCenter
                 return new FileInfo(Path.Combine(CachedRootDirectory, "Assets", "Apps", fileName));
 
             return null;
+        }
+
+        private DiscoveryHelper _discoveryHelper = DiscoveryHelper.Instance;
+
+        public ObservableCollection<DiscoveredDevice> ConfiguredDevices
+        {
+            get
+            {
+                return _discoveryHelper.ConfiguredDevices;
+            }
         }
 
         public string OnlineInfo { get; private set; }
