@@ -16,11 +16,11 @@ namespace DeviceCenter
         // strings bellow. Failing to so so will cause the app to not be updated because
         // Device Center will think the app is already deployed.
 
-        private const string Blinky_PackageFullName_x86 = "BlinkyHeadedWebService_1.0.2.0_x86__4a1rdwapkt3r8";
-        private const string Blinky_PackageFullName_arm = "BlinkyHeadedWebService_1.0.2.0_arm__4a1rdwapkt3r8";
+        public static string Blinky_PackageFullName_x86 = "BlinkyHeadedWebService_1.0.2.0_x86__4a1rdwapkt3r8";
+        public static string Blinky_PackageFullName_arm = "BlinkyHeadedWebService_1.0.2.0_arm__4a1rdwapkt3r8";
 
-        private const string InternetRadio_PackageFullName_x86 = "InternetRadioHeaded_1.0.1.0_x86__4a1rdwapkt3r8";
-        private const string InternetRadio_PackageFullName_arm = "InternetRadioHeaded_1.0.1.0_arm__4a1rdwapkt3r8";
+        public static string InternetRadio_PackageFullName_x86 = "InternetRadioHeaded_1.0.1.0_x86__4a1rdwapkt3r8";
+        public static string InternetRadio_PackageFullName_arm = "InternetRadioHeaded_1.0.1.0_arm__4a1rdwapkt3r8";
 
         public string PosterFile { get; private set; }
 
