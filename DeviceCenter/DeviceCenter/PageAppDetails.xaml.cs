@@ -1,5 +1,6 @@
 ﻿using DeviceCenter.Helper;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -18,7 +19,7 @@ namespace DeviceCenter
         public AppInformation AppItem { get; private set; }
         public Frame navigation;
         private DiscoveredDevice _device = null;
-        private DiscoveryHelper _discoveryHelper = DiscoveryHelper.Instance;
+        private bool initializing = true;
 
         public PageAppDetails(Frame navigation, AppInformation item)
         {
@@ -28,19 +29,17 @@ namespace DeviceCenter
 
             InitializeComponent();
 
-            comboBoxDevices.ItemsSource = _discoveryHelper.ConfiguredDevices;
+            // this is to prevent the combobox from selecting the first item while loading.  This
+            // can cause it to try to get application state which may trigger an authentication
+            // message.
+            initializing = false;
+            comboBoxDevices.SelectedIndex = -1;
 
             PanelDeploying.Visibility = Visibility.Collapsed;
             PanelDeployed.Visibility = Visibility.Collapsed;
             PanelDeploy.Visibility = Visibility.Collapsed;
 
             GetAppState();
-        }
-
-        ~PageAppDetails()
-        {
-            DiscoveryHelper.Release();
-            _discoveryHelper = null;
         }
 
         private async void StopTheOtherApp()
@@ -213,16 +212,19 @@ namespace DeviceCenter
 
         private void comboBoxDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _device = comboBoxDevices.SelectedItem as DiscoveredDevice;
-            if (_device == null)
+            if (!this.initializing)
             {
-                PanelDeploying.Visibility = Visibility.Collapsed;
-                PanelDeployed.Visibility = Visibility.Collapsed;
-                PanelDeploy.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                GetAppState();
+                _device = comboBoxDevices.SelectedItem as DiscoveredDevice;
+                if (_device == null)
+                {
+                    PanelDeploying.Visibility = Visibility.Collapsed;
+                    PanelDeployed.Visibility = Visibility.Collapsed;
+                    PanelDeploy.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    GetAppState();
+                }
             }
         }
 
