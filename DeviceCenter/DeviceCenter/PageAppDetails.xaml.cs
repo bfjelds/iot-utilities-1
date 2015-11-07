@@ -1,15 +1,10 @@
-﻿using DeviceCenter.DataContract;
-using DeviceCenter.Helper;
-using System;
+﻿using DeviceCenter.Helper;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace DeviceCenter
 {
@@ -111,9 +106,10 @@ namespace DeviceCenter
                     {
                         PanelDeploy.Visibility = Visibility.Collapsed;
                         PanelDeployed.Visibility = Visibility.Collapsed;
+                        PanelDeploying.Visibility = Visibility.Collapsed;
 
                         // If inner exception is SoketException, let the user know
-                        if (ex.InnerException is SocketException)
+                        if (ex.InnerException is WebException)
                         {
                             MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         }
@@ -146,6 +142,7 @@ namespace DeviceCenter
                 // Device discovered with pinger, try to get architecture with WebB REST call
                 if(string.IsNullOrEmpty(_device.Architecture))
                 {
+                    // GetDeviceInfoAsync does not throw
                     var osInfo = await webbRequest.GetDeviceInfoAsync();
 
                     if(osInfo != null)
@@ -219,11 +216,12 @@ namespace DeviceCenter
                     // if the selection didn't change
                     if (currentDevice == _device)
                     {
-                        PanelDeploy.Visibility = Visibility.Collapsed;
+                        PanelDeploy.Visibility = Visibility.Visible;
                         PanelDeployed.Visibility = Visibility.Collapsed;
+                        PanelDeploying.Visibility = Visibility.Collapsed;
 
                         // If inner exception is SoketException, let the user know
-                        if (ex.InnerException is SocketException)
+                        if (ex.InnerException is WebException)
                         {
                             MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         }
@@ -283,10 +281,11 @@ namespace DeviceCenter
                     if (currentDevice == _device)
                     {
                         PanelDeploy.Visibility = Visibility.Collapsed;
-                        PanelDeployed.Visibility = Visibility.Collapsed;
+                        PanelDeployed.Visibility = Visibility.Visible;
+                        PanelDeploying.Visibility = Visibility.Collapsed;
 
                         // If inner exception is SoketException, let the user know
-                        if (ex.InnerException is SocketException)
+                        if (ex.InnerException is WebException)
                         {
                             MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         }
