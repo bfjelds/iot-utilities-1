@@ -37,19 +37,16 @@ namespace DeviceCenter
             }
         }
 
-        private FontFamily SegoeMDL2Font = new FontFamily("Segoe MDL2 Assets");
-        private FontFamily IotFont = new FontFamily("IOT MDL2 Assets");
-
         [CategoryAttribute("Common")]
-        public bool UseIotFont
+        public FontFamily IconFont
         {
             get
             {
-                return this.textBlockIcon.FontFamily == IotFont;
+                return this.textBlockIcon.FontFamily;
             }
             set
             {
-                this.textBlockIcon.FontFamily = (value) ? IotFont : SegoeMDL2Font;
+                this.textBlockIcon.FontFamily = value;
             }
         }
 
