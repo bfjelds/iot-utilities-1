@@ -9,6 +9,14 @@ namespace DeviceCenter.Helper
 {
     public delegate void SoftApDisconnectedHandler();
 
+    enum WlanConnectResult
+    {
+        Success = 0,
+        FailWlan,
+        FailUpdateIPRouting,
+        FailPing
+    }
+
     public class SoftApHelper
     {
         #region consts
@@ -77,14 +85,14 @@ namespace DeviceCenter.Helper
                 return false;
             }
 
-            return await Task.Run(
+            var connectResult = await Task.Run(
                 async () =>
                 {
                     Util.Info("--------- connecting to soft AP ----------");
                     if (ConnectToSoftAp(network, password) == false)
                     {
                         Util.Error("Failed to connect to soft AP");
-                        return false;
+                        return WlanConnectResult.FailWlan;
                     }
 
                     Util.Info("--------- Checking IP and subnet ----------");
@@ -92,13 +100,25 @@ namespace DeviceCenter.Helper
                     if (_ipRoutingHelper.AddLocalEntryIfNeeded(SoftApHostIp) == false)
                     {
                         Util.Error("Failed to Check Ip And Subnet");
-                        return false;
+                        return WlanConnectResult.FailUpdateIPRouting;
                     }
 
                     Util.Info("--------- Testing connection ----------");
-                    return await TestConnection();
+                    if(await TestConnection() == false)
+                    {
+                        return WlanConnectResult.FailPing;
+                    }
+
+                    return WlanConnectResult.Success;
                 }
             );
+
+            App.TelemetryClient.TrackEvent("SoftAPConnectResult", new Dictionary<string, string>()
+            {
+                { "ConnectResult", connectResult.ToString()}
+            });
+
+            return connectResult == WlanConnectResult.Success;
         }
 
         public void DisconnectIfNeeded()
@@ -220,19 +240,30 @@ namespace DeviceCenter.Helper
 
         private async Task<bool> TestConnection()
         {
-            for (var i = 0; i < PingRetryNumber; i++)
+            bool isReachable = false;
+            int pingRetries = 0;
+
+            for (pingRetries = 0; pingRetries < PingRetryNumber; pingRetries++)
             {
-                var isReachable = await Util.Ping(SoftApHostIp);
-                Util.Info("([{0}]) - Reachable [{1}]", i, isReachable ? "yes" : "no");
+                isReachable = await Util.Ping(SoftApHostIp);
+                Util.Info("([{0}]) - Reachable [{1}]", pingRetries, isReachable ? "yes" : "no");
                 if (isReachable)
                 {
-                    return true;
+                    break;
                 }
 
                 await Task.Delay(PingDelay);
             }
 
-            Util.Error("Ping failed after retries");
+            App.TelemetryClient.TrackEvent("TestConnection", new Dictionary<string, string>()
+            {
+                { "Reachable", isReachable.ToString()},
+                { "RetryNumber",  pingRetries.ToString()},
+                { "WaitTime", (pingRetries * PingDelay / 1000).ToString()}
+            });
+
+            Util.Info("Is reachable? [{0}]", isReachable);
+
             return false;
         }
 
