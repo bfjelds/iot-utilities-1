@@ -10,6 +10,18 @@ namespace DeviceCenter
     /// </summary>
     public class AppInformation
     {
+
+        // TBD: Warning
+        // If we change the samples we need to make sure to update the Package Full Name
+        // strings bellow. Failing to so so will cause the app to not be updated because
+        // Device Center will think the app is already deployed.
+
+        private const string Blinky_PackageFullName_x86 = "BlinkyHeadedWebService_1.0.2.0_x86__4a1rdwapkt3r8";
+        private const string Blinky_PackageFullName_arm = "BlinkyHeadedWebService_1.0.2.0_arm__4a1rdwapkt3r8";
+
+        private const string InternetRadio_PackageFullName_x86 = "InternetRadioHeaded_1.0.1.0_x86__4a1rdwapkt3r8";
+        private const string InternetRadio_PackageFullName_arm = "InternetRadioHeaded_1.0.1.0_arm__4a1rdwapkt3r8";
+
         public string PosterFile { get; private set; }
 
         public string Title { get; private set; }
@@ -25,6 +37,8 @@ namespace DeviceCenter
         public class ApplicationFiles
         {
             public FileInfo AppX { get; set; }
+
+            public string PackageFullName { get; set; }
 
             public FileInfo Certificate { get; set; }
 
@@ -68,6 +82,7 @@ namespace DeviceCenter
                             "x86", new ApplicationFiles()
                             {
                                 AppX = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.2.0_x86.appx"),
+                                PackageFullName = Blinky_PackageFullName_x86,
                                 Certificate = MakePath("Blinky\\x86\\BlinkyHeadedWebService_1.0.2.0_x86.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
@@ -80,6 +95,7 @@ namespace DeviceCenter
                             "ARM", new ApplicationFiles()
                             {
                                 AppX = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.2.0_ARM.appx"),
+                                PackageFullName = Blinky_PackageFullName_arm,
                                 Certificate = MakePath("Blinky\\arm\\BlinkyHeadedWebService_1.0.2.0_ARM.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
@@ -107,6 +123,7 @@ namespace DeviceCenter
                             "x86", new ApplicationFiles()
                             {
                                 AppX = MakePath("InternetRadio\\x86\\InternetRadioHeaded_1.0.1.0_x86.appx"),
+                                PackageFullName = InternetRadio_PackageFullName_x86, 
                                 Certificate = MakePath("InternetRadio\\X86\\InternetRadioHeaded_1.0.1.0_x86.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
@@ -119,6 +136,7 @@ namespace DeviceCenter
                             "ARM", new ApplicationFiles()
                             {
                                 AppX = MakePath("InternetRadio\\ARM\\InternetRadioHeaded_1.0.1.0_ARM.appx"),
+                                PackageFullName = InternetRadio_PackageFullName_arm,
                                 Certificate = MakePath("InternetRadio\\ARM\\InternetRadioHeaded_1.0.1.0_ARM.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {

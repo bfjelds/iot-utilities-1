@@ -7,7 +7,8 @@
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
       d:DesignWidth="500"
-      Title="PageAppDetails">
+      Title="PageAppDetails"
+      Unloaded="Page_Unloaded">
 
     <DockPanel>
         <Grid DockPanel.Dock="Top">
