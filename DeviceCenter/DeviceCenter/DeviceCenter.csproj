@@ -171,6 +171,9 @@
     <Compile Include="PageWifi.xaml.cs">
       <DependentUpon>PageWifi.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PasswordPeek.xaml.cs">
+      <DependentUpon>PasswordPeek.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SamplesPage.xaml.cs">
       <DependentUpon>SamplesPage.xaml</DependentUpon>
     </Compile>
@@ -243,6 +246,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageWifi.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PasswordPeek.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
