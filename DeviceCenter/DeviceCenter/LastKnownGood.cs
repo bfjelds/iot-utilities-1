@@ -136,7 +136,7 @@ namespace DeviceCenter
         /// </summary>
         public async Task<bool> ReadFileAsync()
         {
-            await Task.Factory.StartNew(() =>
+            return await Task.Factory.StartNew(() =>
             {
                 string lkgJson; 
                 using (WebClient wc = new WebClient())
@@ -148,6 +148,7 @@ namespace DeviceCenter
                     catch (WebException)
                     {
                         return false;
+
                     }
 
                     if (string.IsNullOrWhiteSpace(lkgJson))
@@ -175,7 +176,6 @@ namespace DeviceCenter
                     return true;
                 }
             });
-            return true;
         }
 
 
