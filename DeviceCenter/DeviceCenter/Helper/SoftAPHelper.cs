@@ -272,7 +272,7 @@ namespace DeviceCenter.Helper
             }
         }
 
-        private void HandleScanComplete()
+        public void HandleScanComplete()
         {
             var networkList = new List<WlanInterop.WlanAvailableNetwork>();
             try
