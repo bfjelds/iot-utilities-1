@@ -600,4 +600,10 @@
     <value>장치 Wi-Fi가 구성되었습니다.</value>
     <comment>Successful Wifi configuration </comment>
   </data>
+  <data name="WiFiMayBeConfigured" xml:space="preserve">
+    <value>Wi-Fi가 현재 설정되었습니다. 변경 사항을 적용하려면 장치를 재시작해주세요.
+재시작이 완료된 후 장치 리스트에 장치가 자동으로 나타납니다.
+몇 분 뒤에도 장치가 리스트에 나타나지 않으면 Wi-Fi 설정을 반복해야 합니다.</value>
+    <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
 </root>

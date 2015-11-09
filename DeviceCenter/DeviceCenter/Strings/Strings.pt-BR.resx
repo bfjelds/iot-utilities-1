@@ -600,4 +600,10 @@
     <value>O dispositivo Wi-Fi está configurado</value>
     <comment>Successful Wifi configuration </comment>
   </data>
+  <data name="WiFiMayBeConfigured" xml:space="preserve">
+    <value>Sua rede Wi-Fi está configurada. Para aplicar as alterações, reinicialize o dispositivo.
+O dispositivo aparecerá automaticamente na lista de dispositivos depois que a reinicialização estiver concluída.
+Se o dispositivo não aparecer na lista depois de alguns minutos, talvez seja necessário repetir a configuração da rede Wi-Fi.</value>
+    <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
 </root>
