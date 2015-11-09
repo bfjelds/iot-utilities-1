@@ -28,7 +28,7 @@ namespace DeviceCenter
             ButtonOk.IsEnabled = false;
         }
 
-        private void textBoxPassword2_PasswordChanged(object sender, RoutedEventArgs e)
+        private void textBoxPassword_PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (textBoxPassword1.Password == textBoxPassword2.Password)
             {
@@ -38,6 +38,7 @@ namespace DeviceCenter
             else
             {
                 PasswordCheckLabel.Text = Strings.Strings.DeviceNamePwdPasswordDontMatch;
+                ButtonOk.IsEnabled = false;
             }
         }
 
