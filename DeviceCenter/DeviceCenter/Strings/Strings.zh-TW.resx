@@ -600,4 +600,10 @@
     <value>裝置 Wi-Fi 已設定</value>
     <comment>Successful Wifi configuration </comment>
   </data>
+  <data name="WiFiMayBeConfigured" xml:space="preserve">
+    <value>您的 Wi-Fi 現在已設定完成。若要套用變更，請將您的裝置重新開機。
+完成重新開機之後，您的裝置將會自動出現在裝置清單中。
+若您的裝置在數分鐘後仍未出現在該清單中，您可能需要重新執行 Wi-Fi 設定步驟。</value>
+    <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
 </root>
