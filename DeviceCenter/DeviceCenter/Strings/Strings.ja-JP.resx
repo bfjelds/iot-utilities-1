@@ -597,4 +597,10 @@
     <value>Wi-Fi が構成されたデバイス</value>
     <comment>Successful Wifi configuration </comment>
   </data>
+  <data name="WiFiMayBeConfigured" xml:space="preserve">
+    <value>Wi-Fi の設定が完了しました。変更を適用するには、デバイスを再起動してください。
+再起動が完了すると、デバイス一覧にお使いのデバイスが自動的に表示されるようになります。
+数分たっても一覧にデバイスが表示されない場合は、Wi-Fi の再設定が必要になる場合があります。</value>
+    <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
 </root>
