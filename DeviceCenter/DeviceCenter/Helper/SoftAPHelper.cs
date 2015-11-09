@@ -40,26 +40,6 @@ namespace DeviceCenter.Helper
         public event SoftApDisconnectedHandler OnSoftApDisconnected;
         public event WlanScanCompleteHandler OnWlanScanComplete;
 
-        public void GetAvailableNetworkList()
-        {
-            Util.Info("========== start GetAvailableNetworkList =========");
-
-            if (_wlanInterface == null)
-            {
-                Util.Error("GetAvailableNetworkList: No Wlan interface");
-                return;
-            }
-
-            try
-            {
-                _wlanInterface.Scan();
-            }
-            catch (WLanException)
-            {
-                // error occurred at calling wlan WINAPI
-            }
-        }
-
         public async Task<bool> ConnectAsync(WlanInterop.WlanAvailableNetwork network, string password)
         {
             if (_wlanInterface == null)
@@ -266,14 +246,16 @@ namespace DeviceCenter.Helper
                     break;
                 case WlanInterop.WlanNotificationCodeAcm.ScanComplete:
                     {
-                        HandleScanComplete();
+                        GetAvailableNetworkList();
                     }
                     break;
             }
         }
 
-        public void HandleScanComplete()
+        public void GetAvailableNetworkList()
         {
+            Util.Info("{0} ======== GetAvailableNetworkList Start ============", DateTime.Now.ToShortTimeString());
+
             var networkList = new List<WlanInterop.WlanAvailableNetwork>();
             try
             {
@@ -307,7 +289,7 @@ namespace DeviceCenter.Helper
 
             OnWlanScanComplete?.Invoke(this, args);
 
-            Util.Info("======== WlanScanComplete ============");
+            Util.Info("{0} ======== GetAvailableNetworkList End ============", DateTime.Now.ToShortTimeString());
         }
 
         private readonly WlanClient _wlanClient;

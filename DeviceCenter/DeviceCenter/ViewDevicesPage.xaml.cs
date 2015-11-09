@@ -53,15 +53,9 @@ namespace DeviceCenter
             //Register the callbacks
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
             _softwareAccessPoint.OnWlanScanComplete += SoftwareAccessPoint_OnWlanScanComplete;
-            _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(pollDelayWifi);
-            _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
-
-            // temporarily disable wlanscan
-            // _wifiRefreshTimer.Start();
-            // WifiRefreshTimer_Tick(this, null);
 
             // Get avaliable wifi list once at startup
-            _softwareAccessPoint.HandleScanComplete();
+            _softwareAccessPoint.GetAvailableNetworkList();
 
             // Set up polling
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
