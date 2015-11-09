@@ -7,9 +7,6 @@ using WlanAPIs;
 
 namespace DeviceCenter.Helper
 {
-    public delegate void SoftApDisconnectedHandler(object sender, EventArgs e);
-    public delegate void WlanScanCompleteHandler(object sender, WlanScanCompleteArgs e);
-
     public class WlanScanCompleteArgs : EventArgs
     {
         public IList<WlanInterop.WlanAvailableNetwork> AvaliableNetworks { get; set; }
@@ -37,8 +34,8 @@ namespace DeviceCenter.Helper
         #endregion
 
         #region public
-        public event SoftApDisconnectedHandler OnSoftApDisconnected;
-        public event WlanScanCompleteHandler OnWlanScanComplete;
+        public event EventHandler OnSoftApDisconnected;
+        public event EventHandler<WlanScanCompleteArgs> OnWlanScanComplete;
 
         public async Task<bool> ConnectAsync(WlanInterop.WlanAvailableNetwork network, string password)
         {
@@ -265,10 +262,9 @@ namespace DeviceCenter.Helper
             {
             }
 
-            var sortedWLanNetworks = new SortedList<uint, WlanInterop.WlanAvailableNetwork>();
+            var wlanNetworks = new List<WlanInterop.WlanAvailableNetwork>();
             var uniqueWlanNetworks = new HashSet<string>();
 
-            uint index = 0;
             foreach (var network in networkList)
             {
                 var ssid = network.SsidString;
@@ -277,15 +273,12 @@ namespace DeviceCenter.Helper
 
                 Util.Info(network.ToString());
 
-                // dup keys is not allowed
-                var key = network.wlanSignalQuality * 10 + index;
-                sortedWLanNetworks.Add(key, network);
+                wlanNetworks.Add(network);
                 uniqueWlanNetworks.Add(ssid);
-                index++;
             }
 
             var args = new WlanScanCompleteArgs();
-            args.AvaliableNetworks = sortedWLanNetworks.Values.Reverse().ToList();
+            args.AvaliableNetworks = wlanNetworks.OrderByDescending(l => l.wlanSignalQuality).ToList();
 
             OnWlanScanComplete?.Invoke(this, args);
 
