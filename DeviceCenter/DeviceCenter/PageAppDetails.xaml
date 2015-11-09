@@ -5,10 +5,19 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
+      xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
       mc:Ignorable="d" 
       d:DesignWidth="500"
-      Title="PageAppDetails">
+      Title="PageAppDetails"
+      Unloaded="Page_Unloaded">
 
+    <Page.Resources>
+        <CollectionViewSource x:Key="_devicesCVS" Source="{Binding ConfiguredDevices}" >
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="DeviceName" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </Page.Resources>
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
@@ -34,7 +43,10 @@
         <StackPanel Margin="0 20 0 0">
             <TextBlock Text="{x:Static props:Strings.SamplesRun}" FontSize="20" TextWrapping="Wrap"  Margin="4" VerticalAlignment="Top"/>
             <TextBlock Margin="4" Text="{x:Static props:Strings.SamplesDeviceLabel}" />
-            <ComboBox x:Name="comboBoxDevices" Margin="4"  Width="300" HorizontalAlignment="Left" SelectedIndex="0" SelectionChanged="comboBoxDevices_SelectionChanged" >
+            <ComboBox x:Name="comboBoxDevices" Margin="4"  Width="300" 
+                      HorizontalAlignment="Left" 
+                      SelectionChanged="comboBoxDevices_SelectionChanged"
+                      ItemsSource="{Binding Source={StaticResource _devicesCVS}}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">

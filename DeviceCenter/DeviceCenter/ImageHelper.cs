@@ -70,10 +70,10 @@ namespace DeviceCenter
 
         static public void InitializeWatcher()
         {
-            var query = "SELECT * FROM __InstanceCreationEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
+            var query = "SELECT * FROM __InstanceCreationEvent WITHIN 1 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
             _usbAddWatcher = new ManagementEventWatcher(new EventQuery(query));
 
-            query = "SELECT * FROM __InstanceDeletionEvent WITHIN 10 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
+            query = "SELECT * FROM __InstanceDeletionEvent WITHIN 1 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
             _usbRemoveWatcher = new ManagementEventWatcher(new EventQuery(query));
         }
 
