@@ -3,10 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Management;
 using System.Diagnostics;
+using System.IO;
 
 namespace DeviceCenter
 {
@@ -20,20 +19,27 @@ namespace DeviceCenter
             Model = model;
         }
 
+        public override string ToString()
+        {
+            return $"{this.DriveName} {this.SizeString} [{this.Model}]";
+        }
+
         public string DriveName { get; private set; }
+
         public string PhysicalDriveId { get; private set; }
 
-        private ulong size;
+        private ulong _size;
+
         public ulong Size
         {
             get
             {
-                return size;
+                return _size;
             }
 
             private set
             {
-                size = value;
+                _size = value;
                 InitSizeString();
             }
         }
@@ -42,19 +48,72 @@ namespace DeviceCenter
 
         public string SizeString { get; private set; }
 
-        private readonly string[] unitString = { "bytes", "Kb", "Mb", "Gb" };
+        private readonly string[] _unitString = { "bytes", "Kb", "Mb", "Gb" };
 
         private void InitSizeString()
         {
-            var s = size;
-            int unit = 0;
+            var s = _size;
+            var unit = 0;
             while (s > 1024 && unit < 3)
             {
                 s /= 1024;
                 ++unit;
             }
 
-            SizeString = s.ToString() + unitString[unit];
+            SizeString = s.ToString() + _unitString[unit];
+        }
+
+
+        static ManagementEventWatcher _usbAddWatcher = null;
+
+        static ManagementEventWatcher _usbRemoveWatcher = null;
+
+        static public void InitializeWatcher()
+        {
+            var query = "SELECT * FROM __InstanceCreationEvent WITHIN 1 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
+            _usbAddWatcher = new ManagementEventWatcher(new EventQuery(query));
+
+            query = "SELECT * FROM __InstanceDeletionEvent WITHIN 1 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
+            _usbRemoveWatcher = new ManagementEventWatcher(new EventQuery(query));
+        }
+
+        static public void DisposeWatcher()
+        {
+            _usbAddWatcher?.Dispose();
+
+            _usbRemoveWatcher?.Dispose();
+        }
+
+        static public void AddUSBDetectionHandler(EventArrivedEventHandler usbDetectionHandler)
+        {
+            try
+            {
+                _usbAddWatcher.EventArrived += usbDetectionHandler;
+                _usbAddWatcher.Start();
+            }
+
+            catch (Exception)
+            {
+                _usbAddWatcher?.Stop();
+            }            
+
+            try
+            {
+                _usbRemoveWatcher.EventArrived += usbDetectionHandler;
+                _usbRemoveWatcher.Start();
+            }
+
+            catch (Exception)
+            {
+                _usbRemoveWatcher?.Stop();
+            }
+        }
+
+        static public void RemoveUSBDetectionHandler()
+        {
+            _usbAddWatcher?.Stop();
+
+            _usbRemoveWatcher?.Stop();
         }
 
         static public List<DriveInfo> GetRemovableDriveList()
@@ -62,9 +121,9 @@ namespace DeviceCenter
             var res = new List<DriveInfo>();
             try
             {
-                var drives = new ManagementClass("Win32_DiskDrive");
+                var drives = new ManagementClass("Win32_DiskDrive");                
                 var moc = drives.GetInstances();
-                foreach (ManagementObject mo in moc)
+                foreach (var mo in moc.Cast<ManagementObject>())
                 {
                     try
                     {
@@ -74,8 +133,9 @@ namespace DeviceCenter
                             continue;
                         }
                         var partitions = mo.GetRelated("Win32_DiskPartition");
-                        foreach (ManagementObject partition in partitions)
+                        foreach (var o in partitions)
                         {
+                            var partition = (ManagementObject) o;
                             var logicalDisks = partition.GetRelated("Win32_LogicalDisk");
                             if (logicalDisks.Count != 1)
                             {
@@ -92,12 +152,15 @@ namespace DeviceCenter
                     }
                     catch (Exception)
                     {
+                        // do nothing, return empty list
                     }
                 }
             }
             catch (Exception)
             {
+                // do nothing, return empty list
             }
+
             return res;
         }
 
@@ -105,27 +168,36 @@ namespace DeviceCenter
 
     public class Dism
     {
-        public static int FlashFFUImageToDrive(string ffuImage, DriveInfo driveInfo)
+        public static Process FlashFfuImageToDrive(string ffuImage, DriveInfo driveInfo)
         {
-            // TODO (alecont): Add logic to pick up dism from system32 if available...
-            var current_dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            var dism = System.IO.Path.Combine(current_dir, @"dism\dism.exe");
+            // rely on DISM in system32.
+            var dismExe = Environment.SystemDirectory + "\\" + "dism.exe";
 
-            Process process = new Process();
-            process.StartInfo.UseShellExecute = true;
-            process.StartInfo.Verb = "runas";
-            process.StartInfo.FileName = dism;
-            process.StartInfo.Arguments =
-                String.Format("/Apply-Image /ImageFile:\"{0}\" /ApplyDrive:{1} /SkipPlatformCheck",
-                    ffuImage,
-                    driveInfo.PhysicalDriveId
-                    );
+            // Bail if FFU file does not exist.
+            if (!File.Exists(ffuImage))
+            {
+                Debug.WriteLine("Dism: ffu file not found: [{0}]", ffuImage);
+                throw new FileNotFoundException(null, ffuImage);
+            }
+
+            var process = new Process
+            {
+                StartInfo =
+                {
+                    UseShellExecute = true,
+                    Verb = "runas",
+                    FileName = dismExe,
+                    Arguments =
+                        $"/Apply-Image /ApplyDrive:{driveInfo.PhysicalDriveId} /SkipPlatformCheck /ImageFile:\"{ffuImage}\""
+                }
+            };
+
             System.Diagnostics.Debug.WriteLine("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
+            
             process.Start();
-            process.WaitForExit();
-            return process.ExitCode;
-        }
 
+            return process;
+        }
     }
 
 }

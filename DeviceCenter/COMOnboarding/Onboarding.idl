@@ -1,0 +1,88 @@
+import "unknwn.idl";
+
+[object, uuid(17ab5dda-ac44-4c5e-b9b4-a02d84cab909)]
+interface IWifi : IUnknown
+{
+    HRESULT GetSSID([out, retval] BSTR *ssid);
+    HRESULT IsLocalWifi([out, retval] BOOL *ret);
+    // Used for remote Wifi
+    HRESULT GetSecurity([out, retval] INT16 *security);
+    // Used for local Wifi
+    HRESULT IsSecurityEnabled([out, retval] BOOL *ret);
+    HRESULT GetAuthAlg([out, retval] INT32 *auth);
+    HRESULT GetCipherAlg([out, retval] INT32 *cipher);
+};
+
+[object, uuid(83c09cf3-08f5-4e94-9aea-bb9e9aca44e0)]
+interface IWifiList : IUnknown
+{
+    HRESULT Size([out, retval] unsigned int *size);
+    HRESULT AddItem([in] BSTR Ssid, [in] INT16 Security);
+    HRESULT AddItemEx([in] BSTR Ssid, [in] BOOL securityEnabled, [in] INT32 authAlg, [in] INT32 cipherAlg);
+    HRESULT GetItem([in] unsigned int index, [out, retval] IWifi **wifi);
+}
+
+[object, uuid(aaa174d8-a38e-4585-bf23-d0acdda3dcb6)]
+interface IOnboardingConsumer : IUnknown
+{
+    HRESULT JoinSession();
+    HRESULT GetState([out][retval] INT16 *value);
+    HRESULT GetLastError([out] INT16 *value1, [out] BSTR *value2);
+    HRESULT GetScanInfo([out, retval] IWifiList **list);
+    HRESULT ConfigWifi([in] BSTR ssid, [in] BSTR password, [in] INT16 authType, [out][retval] INT16 *ret);
+    HRESULT Connect();
+    HRESULT Offboard();
+    HRESULT GetDisplayName([out, retval] BSTR *name);
+}
+
+[object, uuid(78859b17-cd1d-4d0d-85f9-60ac0c74896e)]
+interface IOnboardeeAdded : IUnknown
+{
+    HRESULT Added([in] IOnboardingConsumer *consumer);
+}
+
+[object, uuid(2bed2356-10a5-4901-a243-4caec8391918)]
+interface IWifiConnectionResult : IUnknown
+{
+    HRESULT ConnectionResult([in] int reasonCode, [in] BSTR reasonStr);
+}
+
+[object, uuid(75f2b34f-3b87-4a70-93c9-51522d2d549c)]
+interface IOnboardingManager : IUnknown
+{
+    HRESULT Init();
+    HRESULT Shutdown();
+    HRESULT SetOnboardeeAddedHandler(IOnboardeeAdded *handler);
+    HRESULT SetWifiConnectionResultHandler(IWifiConnectionResult *handler);
+    HRESULT GetOnboardingNetworks([out, retval] IWifiList **list);
+    HRESULT ConnectToOnboardingNetwork([in] IWifi *wifi, [in] BSTR password);
+    HRESULT RestoreWifi();
+};
+
+[uuid(dadbd0c9-6d82-429c-b82b-f101c4c65166)]
+library Onboarding
+{
+    [uuid(4dd87a68-19c8-4bbd-baff-b9e66d60d392)]
+    coclass OnboardingManager
+    {
+        [default] interface IOnboardingManager;
+    }
+
+    [uuid(aab6f9a4-725f-4ad1-8ebd-5c27ac731d89)]
+    coclass OnboardingConsumer
+    {
+        [default] interface IOnboardingConsumer;
+    }
+
+    [uuid(e9801623-589e-4231-87b2-0ac7ed4f0f07)]
+    coclass WifiList
+    {
+        [default] interface IWifiList;
+    }
+
+    [uuid(de8f542f-d0aa-4f28-9f90-6035c38f3ab9)]
+    coclass Wifi
+    {
+        [default] interface IWifi;
+    }
+};

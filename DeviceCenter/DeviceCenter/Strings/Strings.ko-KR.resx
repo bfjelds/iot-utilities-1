@@ -1,0 +1,609 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppNameDisplay" xml:space="preserve">
+    <value>IoT 대시보드</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="ConnectAlertMessage" xml:space="preserve">
+    <value>단말기를 설정하려면 단말기에 연결되어야 합니다. 일시적으로 인터넷 연결이 끊어집니다. 설정이 완료되는 즉시 다시 연결됩니다.</value>
+  </data>
+  <data name="ConnectAlertTitle" xml:space="preserve">
+    <value>계속하기 전에</value>
+  </data>
+  <data name="ConnectEthernetMessage" xml:space="preserve">
+    <value>이더넷 케이블을 네트워크에 연결하세요. 사용 중인 PC가 동일한 네트워크에 있어야 합니다. 준비되면 "내 장치 찾기"를 클릭하세요.</value>
+  </data>
+  <data name="ConnectEthernetTitle" xml:space="preserve">
+    <value>이더넷</value>
+  </data>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>완료된 SD 카드를 장치에 삽입한 다음 Wi-Fi 또는 이더넷을 사용하여 보드를 네트워크에 연결하세요.</value>
+  </data>
+  <data name="ConnectMessage2" xml:space="preserve">
+    <value>그런 다음 Wi-Fi 또는 이더넷을 사용하여 보드를 네트워크에 연결하세요.</value>
+  </data>
+  <data name="ConnectSetupAnotherDevice" xml:space="preserve">
+    <value>다른 장치 설정</value>
+  </data>
+  <data name="ConnectTitle" xml:space="preserve">
+    <value>SD 카드가 준비되었습니다.</value>
+  </data>
+  <data name="ConnectWiFiMessage1" xml:space="preserve">
+    <value>Wi-Fi 어댑터를 연결하고 장치를 부팅하세요. "내 장치 찾기"를 클릭하면 장치가 자동으로 검색됩니다.</value>
+  </data>
+  <data name="ConnectWiFiMessage2" xml:space="preserve">
+    <value>지원되는 Wi-Fi 어댑터의 목록을 확인해 보세요.</value>
+  </data>
+  <data name="ConnectWiFiTitle" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="ConnetSubTitle" xml:space="preserve">
+    <value>이제 연결하겠습니다.</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>계속</value>
+  </data>
+  <data name="DeviceListCantFindDevice" xml:space="preserve">
+    <value>단말기를 찾을 수 없나요?</value>
+  </data>
+  <data name="DeviceListColConnection" xml:space="preserve">
+    <value>연결</value>
+  </data>
+  <data name="DeviceListColIPAddress" xml:space="preserve">
+    <value>IP 주소</value>
+  </data>
+  <data name="DeviceListColName" xml:space="preserve">
+    <value>이름</value>
+  </data>
+  <data name="DeviceListColOpenInDevicePortal" xml:space="preserve">
+    <value>Device Portal에서 열기</value>
+  </data>
+  <data name="DeviceListColSettings" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="DeviceListColType" xml:space="preserve">
+    <value>유형</value>
+  </data>
+  <data name="DeviceListEnterNetworkInfo" xml:space="preserve">
+    <value>네트워크 정보 입력</value>
+  </data>
+  <data name="DeviceListManage" xml:space="preserve">
+    <value>Windows Device Portal에서 관리</value>
+  </data>
+  <data name="DeviceListOS" xml:space="preserve">
+    <value>OS</value>
+  </data>
+  <data name="DeviceListScanAgain" xml:space="preserve">
+    <value>다시 스캔</value>
+  </data>
+  <data name="DeviceListTroubleshoot" xml:space="preserve">
+    <value>단말기 연결 문제 해결</value>
+  </data>
+  <data name="DeviceNamePwdDeviceNameLabel" xml:space="preserve">
+    <value>단말기 이름</value>
+  </data>
+  <data name="DeviceNamePwdMessage" xml:space="preserve">
+    <value>단말기 이름 및 비밀번호를 설정하면 단말기 보안에 도움이 됩니다.</value>
+  </data>
+  <data name="DeviceNamePwdPassword1" xml:space="preserve">
+    <value>이전 비밀번호</value>
+  </data>
+  <data name="DeviceNamePwdPassword2" xml:space="preserve">
+    <value>새 비밀번호</value>
+  </data>
+  <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
+    <value>비밀번호가 일치하지 않습니다.</value>
+  </data>
+  <data name="DeviceNamePwdPasswordMatch" xml:space="preserve">
+    <value>비밀번호 일치</value>
+  </data>
+  <data name="DeviceNamePwdSubtitle" xml:space="preserve">
+    <value>단말기 이름 및 비밀번호 설정</value>
+  </data>
+  <data name="DeviceNamePwdUserNameLabel" xml:space="preserve">
+    <value>사용자 이름</value>
+  </data>
+  <data name="FindDeviceMessage" xml:space="preserve">
+    <value>네트워크에서 Windows 10 IoT Core 단말기 찾기</value>
+  </data>
+  <data name="FindMyDeviceButton" xml:space="preserve">
+    <value>내 장치</value>
+  </data>
+  <data name="FinishButton" xml:space="preserve">
+    <value>마침</value>
+  </data>
+  <data name="FoundDeviceEnterNetworkInfo" xml:space="preserve">
+    <value>네트워크 정보를 입력하세요.</value>
+  </data>
+  <data name="FoundDeviceMessage" xml:space="preserve">
+    <value>네트워크에서 1개의 무선 단말기를 찾았습니다.</value>
+  </data>
+  <data name="FoundDevicesMessage" xml:space="preserve">
+    <value>네트워크에서 {0}개의 무선 단말기를 찾았습니다.</value>
+    <comment>code will fill in the {0}</comment>
+  </data>
+  <data name="IntroMessage" xml:space="preserve">
+    <value>장치를 설정하려면 Windows 10 IoT Core를 다운로드하여 장치에 설치하기만 하면 됩니다.</value>
+  </data>
+  <data name="IntroSetUpNewDevice" xml:space="preserve">
+    <value>새 단말기 설정</value>
+  </data>
+  <data name="IntroSubTitle" xml:space="preserve">
+    <value>Windows 10 IoT Core를 실행하는 다양한 단말기에서 Windows IoT 솔루션을 빠르게 프로토타입화하고 빌드하세요. Windows 10에서는 빠르게 개발하여 단말기에 배포할 수 있는 강력한 도구를 제공합니다.</value>
+  </data>
+  <data name="IntroSubTitle2" xml:space="preserve">
+    <value>장치를 설정하려면 Windows 10 IoT Core를 다운로드하여 장치에 설치하기만 하면 됩니다.</value>
+  </data>
+  <data name="IntroTitle" xml:space="preserve">
+    <value>사물 인터넷 검색</value>
+  </data>
+  <data name="LabelInsecureWifi" xml:space="preserve">
+    <value>열기</value>
+    <comment>Same as wifi list in Windows for open access points</comment>
+  </data>
+  <data name="LabelSaveWifiPassword" xml:space="preserve">
+    <value>이후의 모든 장치에 대해 이 작업 수행</value>
+    <comment>Option to save your wifi password</comment>
+  </data>
+  <data name="LabelSecureWifi" xml:space="preserve">
+    <value>보안됨</value>
+    <comment>Same as wifi list in Windows for secured access points</comment>
+  </data>
+  <data name="MBM" xml:space="preserve">
+    <value>Minnow Board Max</value>
+  </data>
+  <data name="NetworkCredentialsNetworkNameLabel" xml:space="preserve">
+    <value>무선 네트워크 이름</value>
+  </data>
+  <data name="NetworkCredentialsPasswordLabel" xml:space="preserve">
+    <value>무선 비밀번호</value>
+  </data>
+  <data name="NetworkCredentialsSubTitle" xml:space="preserve">
+    <value>네트워크 자격 증명</value>
+  </data>
+  <data name="NewDeviceAcceptLabel" xml:space="preserve">
+    <value>동의함</value>
+    <comment>note to loc: "I accept the" + "terms and conditions" are part of the same sentence</comment>
+  </data>
+  <data name="NewDeviceAlertMessage" xml:space="preserve">
+    <value>계속 진행하기 전에 카드의 모든 파일을 백업하세요.</value>
+  </data>
+  <data name="NewDeviceAlertMessage2" xml:space="preserve">
+    <value>플래싱을 수행하면 카드에 이전에 저장된 데이터가 모두 지워집니다.</value>
+  </data>
+  <data name="NewDeviceAlertTitle" xml:space="preserve">
+    <value>계속하기 전에</value>
+  </data>
+  <data name="NewDeviceCancelDownloading" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="NewDeviceDownloadAndInstall" xml:space="preserve">
+    <value>다운로드 및 설치</value>
+  </data>
+  <data name="NewDeviceDownloading" xml:space="preserve">
+    <value>Windows 10 IoT Core</value>
+  </data>
+  <data name="NewDeviceDownloadingProgress" xml:space="preserve">
+    <value>{0}MB 다운로드 중 - {1}%</value>
+    <comment>{0} is the number of MB downloaded. {1} is the percent of the download</comment>
+  </data>
+  <data name="NewDeviceDriveLabel" xml:space="preserve">
+    <value>드라이브</value>
+  </data>
+  <data name="NewDeviceFlashing" xml:space="preserve">
+    <value>SD 카드 플래싱</value>
+  </data>
+  <data name="NewDeviceFlashingProgress1" xml:space="preserve">
+    <value>이 작업을 완료하는 데에는 몇 분 정도 걸립니다.</value>
+  </data>
+  <data name="NewDeviceFlashingProgress2" xml:space="preserve">
+    <value>SD 카드를 제거하지 마세요.</value>
+  </data>
+  <data name="NewDeviceInsertSDCardMessage" xml:space="preserve">
+    <value>SD 카드를 컴퓨터에 삽입하세요.</value>
+  </data>
+  <data name="NewDeviceInsertSDCardMessage2" xml:space="preserve">
+    <value>이 프로세스에서는 카드의 콘텐츠를 모두 지웁니다.</value>
+  </data>
+  <data name="NewDeviceRecommendedSDCards" xml:space="preserve">
+    <value>권장 SD 카드의 목록 보기</value>
+  </data>
+  <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
+    <value>장치 유형</value>
+    <comment>the combo values should come from the online xml file</comment>
+  </data>
+  <data name="NewDeviceSubTitle" xml:space="preserve">
+    <value>먼저 단말기에서 Windows 10 IoT Core를 다운로드하겠습니다.</value>
+  </data>
+  <data name="NewDeviceTermsAndCondition" xml:space="preserve">
+    <value>소프트웨어 사용 조건에 동의합니다.</value>
+    <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
+  </data>
+  <data name="NewDeviceTitle" xml:space="preserve">
+    <value>새 단말기 설정</value>
+  </data>
+  <data name="OkButton" xml:space="preserve">
+    <value>확인</value>
+  </data>
+  <data name="WifiSubTitle" xml:space="preserve">
+    <value>장치에 표시될 수 있는 네트워크는 다음과 같습니다.</value>
+  </data>
+  <data name="SuccessAction1" xml:space="preserve">
+    <value>브라우저에서 Windows Device Portal 열기</value>
+  </data>
+  <data name="SuccessAction2" xml:space="preserve">
+    <value>도구 다운로드</value>
+  </data>
+  <data name="SuccessAction3" xml:space="preserve">
+    <value>프로젝트 및 설명서 탐색</value>
+  </data>
+  <data name="SuccessMessage1" xml:space="preserve">
+    <value>Windows Device Portal에서 단말기 구성</value>
+  </data>
+  <data name="SuccessMessage2" xml:space="preserve">
+    <value>PC 설정</value>
+  </data>
+  <data name="SuccessMessage3" xml:space="preserve">
+    <value>첫 번째 Windows 앱 작성</value>
+  </data>
+  <data name="SuccessSubTitle" xml:space="preserve">
+    <value>개발을 시작할 준비가 되었습니다.</value>
+  </data>
+  <data name="SuccessTitle" xml:space="preserve">
+    <value>성공! {0}이(가) 온라인 상태임</value>
+    <comment>{0} is the device name</comment>
+  </data>
+  <data name="WifiTitle" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="ViewAcceptableSDCards" xml:space="preserve">
+    <value>권장 SD 카드의 목록 보기</value>
+  </data>
+  <data name="ConnectLater" xml:space="preserve">
+    <value>나중에 찾고 내 장치로 이동하기</value>
+  </data>
+  <data name="DeviceDetailDeviceNameLabel" xml:space="preserve">
+    <value>장치 이름</value>
+  </data>
+  <data name="DeviceDetailsApplyButton" xml:space="preserve">
+    <value>적용</value>
+  </data>
+  <data name="DeviceDetailsChangePwd" xml:space="preserve">
+    <value>장치 비밀번호 변경</value>
+  </data>
+  <data name="DeviceDetailsDevicePortal" xml:space="preserve">
+    <value>Device Portal</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
+    <value>Windows System Portal을 사용하면 장치를 세부적으로 구성할 수 있습니다.</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
+    <value>브라우저에서 Device Portal 열기</value>
+  </data>
+  <data name="DeviceDetailSettings" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="DeviceDetailsUserNameAdmin" xml:space="preserve">
+    <value>관리자</value>
+  </data>
+  <data name="DeviceDetailsUserNameLabel" xml:space="preserve">
+    <value>사용자 이름</value>
+  </data>
+  <data name="DeviceListLearnMore" xml:space="preserve">
+    <value>자세한 정보</value>
+  </data>
+  <data name="DeviceListNoDevices" xml:space="preserve">
+    <value>네트워크에서 장치를 찾을 수 없습니다.</value>
+  </data>
+  <data name="DeviceNamePwdBackButton" xml:space="preserve">
+    <value>뒤로</value>
+  </data>
+  <data name="DeviceNamePwdDoneButton" xml:space="preserve">
+    <value>완료</value>
+  </data>
+  <data name="LeftBarMyDevices" xml:space="preserve">
+    <value>내 장치</value>
+  </data>
+  <data name="LeftBarSamples" xml:space="preserve">
+    <value>몇 가지 샘플 사용해 보기</value>
+  </data>
+  <data name="LeftBarSetUpNewDevice" xml:space="preserve">
+    <value>새 장치 설정</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
+    <value>이 보드의 설정은 다른 프로세스가 필요합니다. 이 보드에 Windows를 설치하고 인터넷에 연결하면 장치 리스트에서 확인할 수 있습니다.</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
+    <value>DragonBoard 410c에서 Windows 10 IoT Core를 설치하는 중</value>
+  </data>
+  <data name="SamplesAppRunning" xml:space="preserve">
+    <value>이 앱이 장치에서 실행되고 있습니다.</value>
+  </data>
+  <data name="SamplesBlinkyMessage1" xml:space="preserve">
+    <value>하드웨어의 "Hello World"입니다.</value>
+  </data>
+  <data name="SamplesBlinkyMessage2" xml:space="preserve">
+    <value>장치의 온보드 LED를 켜고 끕니다.</value>
+  </data>
+  <data name="SamplesBlinkyTitle" xml:space="preserve">
+    <value>Hello blinky</value>
+  </data>
+  <data name="SamplesDeployAndRunButton" xml:space="preserve">
+    <value>배포 및 실행</value>
+  </data>
+  <data name="SamplesDeploying" xml:space="preserve">
+    <value>배포하는 중...</value>
+  </data>
+  <data name="SamplesDeviceLabel" xml:space="preserve">
+    <value>장치</value>
+  </data>
+  <data name="SamplesDownload" xml:space="preserve">
+    <value>GitHub에서 코드 다운로드</value>
+  </data>
+  <data name="SamplesLearnMore" xml:space="preserve">
+    <value>수행할 수 있는 기능에 대한 자세한 정보</value>
+  </data>
+  <data name="SamplesOtherProjects" xml:space="preserve">
+    <value>기타 프로젝트 및 자습서 보기</value>
+  </data>
+  <data name="SamplesRadioMessage1" xml:space="preserve">
+    <value>집 안 어느 곳에서나 제어할 수 있는 인터넷 라디오로 Windows 10 IoT Core 장치를 전환하세요.</value>
+  </data>
+  <data name="SamplesRadioTitle" xml:space="preserve">
+    <value>Internet radio</value>
+  </data>
+  <data name="SamplesRun" xml:space="preserve">
+    <value>장치에서 이 앱 실행</value>
+  </data>
+  <data name="SamplesStartCoding" xml:space="preserve">
+    <value>코딩 시작</value>
+  </data>
+  <data name="SamplesStopButton" xml:space="preserve">
+    <value>중지</value>
+  </data>
+  <data name="SamplesSubTitle" xml:space="preserve">
+    <value>장치에서 샘플 앱 배포 및 실행</value>
+  </data>
+  <data name="SamplesTitle" xml:space="preserve">
+    <value>몇 가지 샘플 사용해 보기</value>
+  </data>
+  <data name="SamplesTutorialOnline" xml:space="preserve">
+    <value>온라인 자습서 참조</value>
+  </data>
+  <data name="WifiBackButton" xml:space="preserve">
+    <value>뒤로</value>
+  </data>
+  <data name="WifiNextButton" xml:space="preserve">
+    <value>다음</value>
+  </data>
+  <data name="WifiRepeatForFutureDevices" xml:space="preserve">
+    <value>이후의 모든 장치에 대해 이 작업 수행</value>
+  </data>
+  <data name="RememberMyCredentials" xml:space="preserve">
+    <value>내 자격 증명 기억</value>
+    <comment>Save password</comment>
+  </data>
+  <data name="DeviceNamePwdPassword3" xml:space="preserve">
+    <value>비밀번호 확인</value>
+  </data>
+  <data name="MessageUnableToGetWifi" xml:space="preserve">
+    <value>원격 장치가 액세스 지점 목록에 대한 요청에 응답하지 않았습니다.</value>
+  </data>
+  <data name="DeviceListColOSVersion" xml:space="preserve">
+    <value>OS 버전</value>
+  </data>
+  <data name="ErrorUnknownArchitecture" xml:space="preserve">
+    <value>알 수 없는 장치 아키텍처입니다. Windows 10 IoT Core 빌드 {0} 이상을 사용하세요.</value>
+    <comment>{0} is the RTM version of TH2</comment>
+  </data>
+  <data name="SamplesAppRunningBackground" xml:space="preserve">
+    <value>앱이 포그라운드로 실행되고 있지 않을 경우 아래 버튼을 눌러 포그라운드로 가져오세요.</value>
+  </data>
+  <data name="SamplesForegroundButton" xml:space="preserve">
+    <value>표시</value>
+  </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© 2015 Microsoft Corporation</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>개인 정보 취급 방침</value>
+  </data>
+  <data name="AboutPrivateBuild" xml:space="preserve">
+    <value>개인 빌드</value>
+  </data>
+  <data name="AboutServicesAgreement" xml:space="preserve">
+    <value>Microsoft 서비스 계약</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Windows 10 IoT Core 대시보드</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>이 앱 정보</value>
+  </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>소개</value>
+  </data>
+  <data name="NewDeviceFlashingDownload" xml:space="preserve">
+    <value>설치 프로그램 다운로드 중</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSI" xml:space="preserve">
+    <value>설치 프로그램의 압축을 푸는 중</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailed" xml:space="preserve">
+    <value>Windows 10 IoT Core 설치 패키지의 압축을 풀지 못했습니다.</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
+    <value>설치 실패</value>
+  </data>
+  <data name="DeviceListFilter" xml:space="preserve">
+    <value>필터</value>
+  </data>
+  <data name="DeviceQualcommDragonboard" xml:space="preserve">
+    <value>Qualcomm DragonBoard 410c</value>
+  </data>
+  <data name="DevicesConfigureDevice" xml:space="preserve">
+    <value>장치 구성</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>다운로드 완료</value>
+  </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>{0}MB 다운로드 중 - {1}%</value>
+    <comment>Shows progress, 0 is megabytes sent, 1 is percent progress</comment>
+  </data>
+  <data name="FilterAllDevices" xml:space="preserve">
+    <value>모두</value>
+  </data>
+  <data name="FilterNewDevices" xml:space="preserve">
+    <value>새 장치</value>
+  </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>지금 장치를 재시작 중...</value>
+  </data>
+  <data name="MessageBadPassword" xml:space="preserve">
+    <value>이전 비밀 번호는 올바르지 않습니다.</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ErrorNullDevice" xml:space="preserve">
+    <value>대상 장치를 가져오는 동안 오류가 발생했습니다. 다시 시도하세요.</value>
+  </data>
+  <data name="MessageBadWifiPassword" xml:space="preserve">
+    <value>네트워크 보안 키가 잘못되었습니다.</value>
+    <comment>When wrong passkey is used for wifi setting</comment>
+  </data>
+  <data name="SuccessPasswordChanged" xml:space="preserve">
+    <value>장치 암호가 변경되었습니다.</value>
+    <comment>After successful change of the device's password</comment>
+  </data>
+  <data name="SuccessWifiConfigured" xml:space="preserve">
+    <value>장치 Wi-Fi가 구성되었습니다.</value>
+    <comment>Successful Wifi configuration </comment>
+  </data>
+  <data name="WiFiMayBeConfigured" xml:space="preserve">
+    <value>Wi-Fi가 현재 설정되었습니다. 변경 사항을 적용하려면 장치를 재시작해주세요.
+재시작이 완료된 후 장치 리스트에 장치가 자동으로 나타납니다.
+몇 분 뒤에도 장치가 리스트에 나타나지 않으면 Wi-Fi 설정을 반복해야 합니다.</value>
+    <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
+</root>

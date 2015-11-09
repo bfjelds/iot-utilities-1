@@ -61,11 +61,74 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Device Center.
+        ///   Looks up a localized string similar to © 2015 Microsoft Corporation.
+        /// </summary>
+        public static string AboutCopyright {
+            get {
+                return ResourceManager.GetString("AboutCopyright", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Privacy Statement.
+        /// </summary>
+        public static string AboutPrivacy {
+            get {
+                return ResourceManager.GetString("AboutPrivacy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Private Build.
+        /// </summary>
+        public static string AboutPrivateBuild {
+            get {
+                return ResourceManager.GetString("AboutPrivateBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microsoft Services Agreement.
+        /// </summary>
+        public static string AboutServicesAgreement {
+            get {
+                return ResourceManager.GetString("AboutServicesAgreement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows 10 IoT Core Dashboard.
+        /// </summary>
+        public static string AboutSubtitle {
+            get {
+                return ResourceManager.GetString("AboutSubtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About this app.
+        /// </summary>
+        public static string AboutTitle {
+            get {
+                return ResourceManager.GetString("AboutTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IoT Dashboard.
         /// </summary>
         public static string AppNameDisplay {
             get {
                 return ResourceManager.GetString("AppNameDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        public static string ButtonAbout {
+            get {
+                return ResourceManager.GetString("ButtonAbout", resourceCulture);
             }
         }
         
@@ -97,56 +160,56 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connect via Wi-Fi.
+        ///   Looks up a localized string similar to Connect your Ethernet cable to your network. Make sure your PC is on the same network. When you&apos;re ready, click &quot;Find my device&quot;..
         /// </summary>
-        public static string ConnectHelpMessage1 {
+        public static string ConnectEthernetMessage {
             get {
-                return ResourceManager.GetString("ConnectHelpMessage1", resourceCulture);
+                return ResourceManager.GetString("ConnectEthernetMessage", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connect using an Ethernet cable.
+        ///   Looks up a localized string similar to Ethernet.
         /// </summary>
-        public static string ConnectHelpMessage2 {
+        public static string ConnectEthernetTitle {
             get {
-                return ResourceManager.GetString("ConnectHelpMessage2", resourceCulture);
+                return ResourceManager.GetString("ConnectEthernetTitle", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connect later.
+        ///   Looks up a localized string similar to Find it later, just take me to my devices.
         /// </summary>
-        public static string ConnectHelpMessage3 {
+        public static string ConnectLater {
             get {
-                return ResourceManager.GetString("ConnectHelpMessage3", resourceCulture);
+                return ResourceManager.GetString("ConnectLater", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Need more help?.
+        ///   Looks up a localized string similar to Insert your finished SD card into the device, then connect your board to the network using Wi-Fi or Ethernet.
         /// </summary>
-        public static string ConnectHelpSubTitle {
+        public static string ConnectMessage {
             get {
-                return ResourceManager.GetString("ConnectHelpSubTitle", resourceCulture);
+                return ResourceManager.GetString("ConnectMessage", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to First, insert your finished SD card into the device..
-        /// </summary>
-        public static string ConnectMessage1 {
-            get {
-                return ResourceManager.GetString("ConnectMessage1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Then, connect your board to the network using Wi-Fi or Ethernet..
+        ///   Looks up a localized string similar to then connect your board to the network using Wi-Fi or Ethernet..
         /// </summary>
         public static string ConnectMessage2 {
             get {
                 return ResourceManager.GetString("ConnectMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set up another device.
+        /// </summary>
+        public static string ConnectSetupAnotherDevice {
+            get {
+                return ResourceManager.GetString("ConnectSetupAnotherDevice", resourceCulture);
             }
         }
         
@@ -156,6 +219,33 @@ namespace DeviceCenter.Strings {
         public static string ConnectTitle {
             get {
                 return ResourceManager.GetString("ConnectTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plug in your Wi-Fi adapter and boot up your device. Click &quot;Find my device&quot; and it will be automatically detected..
+        /// </summary>
+        public static string ConnectWiFiMessage1 {
+            get {
+                return ResourceManager.GetString("ConnectWiFiMessage1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to See a list of supported Wi-Fi adapters.
+        /// </summary>
+        public static string ConnectWiFiMessage2 {
+            get {
+                return ResourceManager.GetString("ConnectWiFiMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wi-Fi.
+        /// </summary>
+        public static string ConnectWiFiTitle {
+            get {
+                return ResourceManager.GetString("ConnectWiFiTitle", resourceCulture);
             }
         }
         
@@ -178,11 +268,155 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Device name.
+        /// </summary>
+        public static string DeviceDetailDeviceNameLabel {
+            get {
+                return ResourceManager.GetString("DeviceDetailDeviceNameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply.
+        /// </summary>
+        public static string DeviceDetailsApplyButton {
+            get {
+                return ResourceManager.GetString("DeviceDetailsApplyButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change device password.
+        /// </summary>
+        public static string DeviceDetailsChangePwd {
+            get {
+                return ResourceManager.GetString("DeviceDetailsChangePwd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device Portal.
+        /// </summary>
+        public static string DeviceDetailsDevicePortal {
+            get {
+                return ResourceManager.GetString("DeviceDetailsDevicePortal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows System Portal allows you to configure your device in detail.
+        /// </summary>
+        public static string DeviceDetailsDevicePortalMessage1 {
+            get {
+                return ResourceManager.GetString("DeviceDetailsDevicePortalMessage1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Device Portal in browser.
+        /// </summary>
+        public static string DeviceDetailsDevicePortalOpen {
+            get {
+                return ResourceManager.GetString("DeviceDetailsDevicePortalOpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string DeviceDetailSettings {
+            get {
+                return ResourceManager.GetString("DeviceDetailSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Administrator.
+        /// </summary>
+        public static string DeviceDetailsUserNameAdmin {
+            get {
+                return ResourceManager.GetString("DeviceDetailsUserNameAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User name.
+        /// </summary>
+        public static string DeviceDetailsUserNameLabel {
+            get {
+                return ResourceManager.GetString("DeviceDetailsUserNameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t find your device?.
         /// </summary>
         public static string DeviceListCantFindDevice {
             get {
                 return ResourceManager.GetString("DeviceListCantFindDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connection.
+        /// </summary>
+        public static string DeviceListColConnection {
+            get {
+                return ResourceManager.GetString("DeviceListColConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IP Address.
+        /// </summary>
+        public static string DeviceListColIPAddress {
+            get {
+                return ResourceManager.GetString("DeviceListColIPAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string DeviceListColName {
+            get {
+                return ResourceManager.GetString("DeviceListColName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open in Device Portal.
+        /// </summary>
+        public static string DeviceListColOpenInDevicePortal {
+            get {
+                return ResourceManager.GetString("DeviceListColOpenInDevicePortal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OS Version.
+        /// </summary>
+        public static string DeviceListColOSVersion {
+            get {
+                return ResourceManager.GetString("DeviceListColOSVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string DeviceListColSettings {
+            get {
+                return ResourceManager.GetString("DeviceListColSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        public static string DeviceListColType {
+            get {
+                return ResourceManager.GetString("DeviceListColType", resourceCulture);
             }
         }
         
@@ -196,11 +430,47 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filter.
+        /// </summary>
+        public static string DeviceListFilter {
+            get {
+                return ResourceManager.GetString("DeviceListFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Learn more.
+        /// </summary>
+        public static string DeviceListLearnMore {
+            get {
+                return ResourceManager.GetString("DeviceListLearnMore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manage in Windows Device Portal.
         /// </summary>
         public static string DeviceListManage {
             get {
                 return ResourceManager.GetString("DeviceListManage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No devices found on the network.
+        /// </summary>
+        public static string DeviceListNoDevices {
+            get {
+                return ResourceManager.GetString("DeviceListNoDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OS.
+        /// </summary>
+        public static string DeviceListOS {
+            get {
+                return ResourceManager.GetString("DeviceListOS", resourceCulture);
             }
         }
         
@@ -223,11 +493,29 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string DeviceNamePwdBackButton {
+            get {
+                return ResourceManager.GetString("DeviceNamePwdBackButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Device name.
         /// </summary>
         public static string DeviceNamePwdDeviceNameLabel {
             get {
                 return ResourceManager.GetString("DeviceNamePwdDeviceNameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Done.
+        /// </summary>
+        public static string DeviceNamePwdDoneButton {
+            get {
+                return ResourceManager.GetString("DeviceNamePwdDoneButton", resourceCulture);
             }
         }
         
@@ -241,7 +529,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password.
+        ///   Looks up a localized string similar to Old password.
         /// </summary>
         public static string DeviceNamePwdPassword1 {
             get {
@@ -250,7 +538,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password.
+        ///   Looks up a localized string similar to New password.
         /// </summary>
         public static string DeviceNamePwdPassword2 {
             get {
@@ -259,7 +547,16 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Passwords do not match.
+        ///   Looks up a localized string similar to Confirm password.
+        /// </summary>
+        public static string DeviceNamePwdPassword3 {
+            get {
+                return ResourceManager.GetString("DeviceNamePwdPassword3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passwords don&apos;t match.
         /// </summary>
         public static string DeviceNamePwdPasswordDontMatch {
             get {
@@ -295,6 +592,87 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Qualcomm DragonBoard 410c.
+        /// </summary>
+        public static string DeviceQualcommDragonboard {
+            get {
+                return ResourceManager.GetString("DeviceQualcommDragonboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rebooting the device now....
+        /// </summary>
+        public static string DeviceRebootingMessage {
+            get {
+                return ResourceManager.GetString("DeviceRebootingMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure device.
+        /// </summary>
+        public static string DevicesConfigureDevice {
+            get {
+                return ResourceManager.GetString("DevicesConfigureDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download complete.
+        /// </summary>
+        public static string DownloadComplete {
+            get {
+                return ResourceManager.GetString("DownloadComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} MB downloading - {1}%.
+        /// </summary>
+        public static string DownloadProgress {
+            get {
+                return ResourceManager.GetString("DownloadProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error in getting target device. Please try again..
+        /// </summary>
+        public static string ErrorNullDevice {
+            get {
+                return ResourceManager.GetString("ErrorNullDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown device architecture.  Please use Windows 10 IoT Core build {0} or newer.
+        /// </summary>
+        public static string ErrorUnknownArchitecture {
+            get {
+                return ResourceManager.GetString("ErrorUnknownArchitecture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string FilterAllDevices {
+            get {
+                return ResourceManager.GetString("FilterAllDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New devices.
+        /// </summary>
+        public static string FilterNewDevices {
+            get {
+                return ResourceManager.GetString("FilterNewDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finding Windows 10 IoT Core devices on your network.
         /// </summary>
         public static string FindDeviceMessage {
@@ -304,7 +682,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Find my device.
+        ///   Looks up a localized string similar to My devices.
         /// </summary>
         public static string FindMyDeviceButton {
             get {
@@ -349,7 +727,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Already have a Windows IoT Core device on your network?.
+        ///   Looks up a localized string similar to To set up a device, all you need to do is download and install Windows 10 IoT Core to your device..
         /// </summary>
         public static string IntroMessage {
             get {
@@ -376,11 +754,110 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to To set up a device, all you need to do is download and install Windows 10 IoT Core to your device.
+        /// </summary>
+        public static string IntroSubTitle2 {
+            get {
+                return ResourceManager.GetString("IntroSubTitle2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Discover the internet of your things.
         /// </summary>
         public static string IntroTitle {
             get {
                 return ResourceManager.GetString("IntroTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        public static string LabelInsecureWifi {
+            get {
+                return ResourceManager.GetString("LabelInsecureWifi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do this for all future devices.
+        /// </summary>
+        public static string LabelSaveWifiPassword {
+            get {
+                return ResourceManager.GetString("LabelSaveWifiPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Secured.
+        /// </summary>
+        public static string LabelSecureWifi {
+            get {
+                return ResourceManager.GetString("LabelSecureWifi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to My devices.
+        /// </summary>
+        public static string LeftBarMyDevices {
+            get {
+                return ResourceManager.GetString("LeftBarMyDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try some samples.
+        /// </summary>
+        public static string LeftBarSamples {
+            get {
+                return ResourceManager.GetString("LeftBarSamples", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set up a new device.
+        /// </summary>
+        public static string LeftBarSetUpNewDevice {
+            get {
+                return ResourceManager.GetString("LeftBarSetUpNewDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minnow Board Max.
+        /// </summary>
+        public static string MBM {
+            get {
+                return ResourceManager.GetString("MBM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The old password is incorrect.
+        /// </summary>
+        public static string MessageBadPassword {
+            get {
+                return ResourceManager.GetString("MessageBadPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The network security key isn&apos;t correct.
+        /// </summary>
+        public static string MessageBadWifiPassword {
+            get {
+                return ResourceManager.GetString("MessageBadWifiPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The remote device did not respond to request for access point list..
+        /// </summary>
+        public static string MessageUnableToGetWifi {
+            get {
+                return ResourceManager.GetString("MessageUnableToGetWifi", resourceCulture);
             }
         }
         
@@ -421,11 +898,20 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Make sure you back up any files on your card before proceeding. Flashing will erase anything previously stored on the card..
+        ///   Looks up a localized string similar to Make sure you back up any files on your card before proceeding..
         /// </summary>
         public static string NewDeviceAlertMessage {
             get {
                 return ResourceManager.GetString("NewDeviceAlertMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flashing will erase anything previously stored on the card..
+        /// </summary>
+        public static string NewDeviceAlertMessage2 {
+            get {
+                return ResourceManager.GetString("NewDeviceAlertMessage2", resourceCulture);
             }
         }
         
@@ -439,6 +925,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string NewDeviceCancelDownloading {
+            get {
+                return ResourceManager.GetString("NewDeviceCancelDownloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Download and install.
         /// </summary>
         public static string NewDeviceDownloadAndInstall {
@@ -448,11 +943,38 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downloading Windows 10 IoT Core.
+        ///   Looks up a localized string similar to Windows 10 IoT Core.
         /// </summary>
         public static string NewDeviceDownloading {
             get {
                 return ResourceManager.GetString("NewDeviceDownloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} MB downloading - {1}%.
+        /// </summary>
+        public static string NewDeviceDownloadingProgress {
+            get {
+                return ResourceManager.GetString("NewDeviceDownloadingProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This board requires a different process for setting up. After you install Windows on this board and connect it to the Internet, you will find it on your device list..
+        /// </summary>
+        public static string NewDeviceDragonBoardMessage1 {
+            get {
+                return ResourceManager.GetString("NewDeviceDragonBoardMessage1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installing Windows 10 IoT Core on the DragonBoard 410c.
+        /// </summary>
+        public static string NewDeviceDragonBoardMessage2 {
+            get {
+                return ResourceManager.GetString("NewDeviceDragonBoardMessage2", resourceCulture);
             }
         }
         
@@ -475,7 +997,61 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insert an SD card into your computer. Note that this process will erase all content on your card..
+        ///   Looks up a localized string similar to Downloading the installer.
+        /// </summary>
+        public static string NewDeviceFlashingDownload {
+            get {
+                return ResourceManager.GetString("NewDeviceFlashingDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpacking the installer.
+        /// </summary>
+        public static string NewDeviceFlashingExtractMSI {
+            get {
+                return ResourceManager.GetString("NewDeviceFlashingExtractMSI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to unpack the Windows 10 IoT Core installation package. .
+        /// </summary>
+        public static string NewDeviceFlashingExtractMSIFailed {
+            get {
+                return ResourceManager.GetString("NewDeviceFlashingExtractMSIFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Installation failed.
+        /// </summary>
+        public static string NewDeviceFlashingExtractMSIFailedCaption {
+            get {
+                return ResourceManager.GetString("NewDeviceFlashingExtractMSIFailedCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This will take a few minutes to complete..
+        /// </summary>
+        public static string NewDeviceFlashingProgress1 {
+            get {
+                return ResourceManager.GetString("NewDeviceFlashingProgress1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please don&apos;t remove your SD card..
+        /// </summary>
+        public static string NewDeviceFlashingProgress2 {
+            get {
+                return ResourceManager.GetString("NewDeviceFlashingProgress2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert an SD card into your computer..
         /// </summary>
         public static string NewDeviceInsertSDCardMessage {
             get {
@@ -484,7 +1060,25 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select your device type.
+        ///   Looks up a localized string similar to Note that this process will erase all content on your card..
+        /// </summary>
+        public static string NewDeviceInsertSDCardMessage2 {
+            get {
+                return ResourceManager.GetString("NewDeviceInsertSDCardMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View the list of recommended SD cards.
+        /// </summary>
+        public static string NewDeviceRecommendedSDCards {
+            get {
+                return ResourceManager.GetString("NewDeviceRecommendedSDCards", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device type.
         /// </summary>
         public static string NewDeviceSelectDeviceTypeLabel {
             get {
@@ -502,7 +1096,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to terms and conditions.
+        ///   Looks up a localized string similar to I accept the software license terms.
         /// </summary>
         public static string NewDeviceTermsAndCondition {
             get {
@@ -525,6 +1119,204 @@ namespace DeviceCenter.Strings {
         public static string OkButton {
             get {
                 return ResourceManager.GetString("OkButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remember my credentials.
+        /// </summary>
+        public static string RememberMyCredentials {
+            get {
+                return ResourceManager.GetString("RememberMyCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This app is running on your device..
+        /// </summary>
+        public static string SamplesAppRunning {
+            get {
+                return ResourceManager.GetString("SamplesAppRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If this app is not running in the foreground, you can press the button below to bring it to foreground..
+        /// </summary>
+        public static string SamplesAppRunningBackground {
+            get {
+                return ResourceManager.GetString("SamplesAppRunningBackground", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &quot;Hello World&quot; of hardware..
+        /// </summary>
+        public static string SamplesBlinkyMessage1 {
+            get {
+                return ResourceManager.GetString("SamplesBlinkyMessage1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle your device&apos;s onboard LED on and off..
+        /// </summary>
+        public static string SamplesBlinkyMessage2 {
+            get {
+                return ResourceManager.GetString("SamplesBlinkyMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hello blinky.
+        /// </summary>
+        public static string SamplesBlinkyTitle {
+            get {
+                return ResourceManager.GetString("SamplesBlinkyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deploy and run.
+        /// </summary>
+        public static string SamplesDeployAndRunButton {
+            get {
+                return ResourceManager.GetString("SamplesDeployAndRunButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deploying....
+        /// </summary>
+        public static string SamplesDeploying {
+            get {
+                return ResourceManager.GetString("SamplesDeploying", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device.
+        /// </summary>
+        public static string SamplesDeviceLabel {
+            get {
+                return ResourceManager.GetString("SamplesDeviceLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download code from GitHub.
+        /// </summary>
+        public static string SamplesDownload {
+            get {
+                return ResourceManager.GetString("SamplesDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show.
+        /// </summary>
+        public static string SamplesForegroundButton {
+            get {
+                return ResourceManager.GetString("SamplesForegroundButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Learn more about what you can do.
+        /// </summary>
+        public static string SamplesLearnMore {
+            get {
+                return ResourceManager.GetString("SamplesLearnMore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Look at other projects and tutorials.
+        /// </summary>
+        public static string SamplesOtherProjects {
+            get {
+                return ResourceManager.GetString("SamplesOtherProjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Turn your Windows 10 IoT Core device into an internet radio that can be controlled from anywhere in your home..
+        /// </summary>
+        public static string SamplesRadioMessage1 {
+            get {
+                return ResourceManager.GetString("SamplesRadioMessage1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internet radio.
+        /// </summary>
+        public static string SamplesRadioTitle {
+            get {
+                return ResourceManager.GetString("SamplesRadioTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run this app on your device.
+        /// </summary>
+        public static string SamplesRun {
+            get {
+                return ResourceManager.GetString("SamplesRun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start coding.
+        /// </summary>
+        public static string SamplesStartCoding {
+            get {
+                return ResourceManager.GetString("SamplesStartCoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        public static string SamplesStopButton {
+            get {
+                return ResourceManager.GetString("SamplesStopButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deploy and run sample apps on your device.
+        /// </summary>
+        public static string SamplesSubTitle {
+            get {
+                return ResourceManager.GetString("SamplesSubTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try some samples.
+        /// </summary>
+        public static string SamplesTitle {
+            get {
+                return ResourceManager.GetString("SamplesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to See the tutorial online.
+        /// </summary>
+        public static string SamplesTutorialOnline {
+            get {
+                return ResourceManager.GetString("SamplesTutorialOnline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         
@@ -583,6 +1375,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Device password changed successfully.
+        /// </summary>
+        public static string SuccessPasswordChanged {
+            get {
+                return ResourceManager.GetString("SuccessPasswordChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You&apos;re ready to start developing..
         /// </summary>
         public static string SuccessSubTitle {
@@ -597,6 +1398,80 @@ namespace DeviceCenter.Strings {
         public static string SuccessTitle {
             get {
                 return ResourceManager.GetString("SuccessTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The device Wi-Fi is configured.
+        /// </summary>
+        public static string SuccessWifiConfigured {
+            get {
+                return ResourceManager.GetString("SuccessWifiConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View the list of recommended SD cards.
+        /// </summary>
+        public static string ViewAcceptableSDCards {
+            get {
+                return ResourceManager.GetString("ViewAcceptableSDCards", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string WifiBackButton {
+            get {
+                return ResourceManager.GetString("WifiBackButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your Wi-Fi is now set up. In order to apply the changes, please reboot your device.
+        ///Your device will automatically appear in the device list after reboot is complete.
+        ///If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up..
+        /// </summary>
+        public static string WiFiMayBeConfigured {
+            get {
+                return ResourceManager.GetString("WiFiMayBeConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string WifiNextButton {
+            get {
+                return ResourceManager.GetString("WifiNextButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do this for all future devices.
+        /// </summary>
+        public static string WifiRepeatForFutureDevices {
+            get {
+                return ResourceManager.GetString("WifiRepeatForFutureDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Here are the networks your device can see.
+        /// </summary>
+        public static string WifiSubTitle {
+            get {
+                return ResourceManager.GetString("WifiSubTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wi-Fi.
+        /// </summary>
+        public static string WifiTitle {
+            get {
+                return ResourceManager.GetString("WifiTitle", resourceCulture);
             }
         }
     }

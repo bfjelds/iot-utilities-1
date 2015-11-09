@@ -1,0 +1,609 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppNameDisplay" xml:space="preserve">
+    <value>IoT 儀表板</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ConnectAlertMessage" xml:space="preserve">
+    <value>需要連線到您的裝置以進行設定。您將暫時從網際網路中斷連線。設定完成之後，我們將盡快為您重新連線。</value>
+  </data>
+  <data name="ConnectAlertTitle" xml:space="preserve">
+    <value>在您繼續之前</value>
+  </data>
+  <data name="ConnectEthernetMessage" xml:space="preserve">
+    <value>將您的乙太網路纜線連接到網路。請確認您的電腦是位於相同的網路中。當您準備就緒時，請按一下 [尋找我的裝置]。</value>
+  </data>
+  <data name="ConnectEthernetTitle" xml:space="preserve">
+    <value>乙太網路</value>
+  </data>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>將已完成的 SD 記憶卡插入到裝置，然後使用 Wi-Fi 或乙太網路將您的主機板連線到網路。</value>
+  </data>
+  <data name="ConnectMessage2" xml:space="preserve">
+    <value>然後使用 Wi-Fi 或乙太網路將您的主機板連線到網路。</value>
+  </data>
+  <data name="ConnectSetupAnotherDevice" xml:space="preserve">
+    <value>設定其他裝置</value>
+  </data>
+  <data name="ConnectTitle" xml:space="preserve">
+    <value>您的 SD 記憶卡已就緒。</value>
+  </data>
+  <data name="ConnectWiFiMessage1" xml:space="preserve">
+    <value>插入您的 Wi-Fi 介面卡，並將您的裝置開機。按一下 [尋找我的裝置]，系統將自動偵測您的裝置。</value>
+  </data>
+  <data name="ConnectWiFiMessage2" xml:space="preserve">
+    <value>檢視支援的 Wi-Fi 介面卡清單</value>
+  </data>
+  <data name="ConnectWiFiTitle" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="ConnetSubTitle" xml:space="preserve">
+    <value>現在，開始連線</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>繼續</value>
+  </data>
+  <data name="DeviceListCantFindDevice" xml:space="preserve">
+    <value>找不到您的裝置?</value>
+  </data>
+  <data name="DeviceListColConnection" xml:space="preserve">
+    <value>連線</value>
+  </data>
+  <data name="DeviceListColIPAddress" xml:space="preserve">
+    <value>IP 位址</value>
+  </data>
+  <data name="DeviceListColName" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="DeviceListColOpenInDevicePortal" xml:space="preserve">
+    <value>在 Device Portal 中開啟</value>
+  </data>
+  <data name="DeviceListColSettings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="DeviceListColType" xml:space="preserve">
+    <value>類型</value>
+  </data>
+  <data name="DeviceListEnterNetworkInfo" xml:space="preserve">
+    <value>輸入網路資訊</value>
+  </data>
+  <data name="DeviceListManage" xml:space="preserve">
+    <value>在 Windows Device Portal 中管理</value>
+  </data>
+  <data name="DeviceListOS" xml:space="preserve">
+    <value>OS</value>
+  </data>
+  <data name="DeviceListScanAgain" xml:space="preserve">
+    <value>再次掃描</value>
+  </data>
+  <data name="DeviceListTroubleshoot" xml:space="preserve">
+    <value>針對裝置連線問題進行疑難排解</value>
+  </data>
+  <data name="DeviceNamePwdDeviceNameLabel" xml:space="preserve">
+    <value>裝置名稱</value>
+  </data>
+  <data name="DeviceNamePwdMessage" xml:space="preserve">
+    <value>設定裝置名稱與密碼有助於保護您的裝置</value>
+  </data>
+  <data name="DeviceNamePwdPassword1" xml:space="preserve">
+    <value>舊密碼</value>
+  </data>
+  <data name="DeviceNamePwdPassword2" xml:space="preserve">
+    <value>新密碼</value>
+  </data>
+  <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
+    <value>密碼不相符</value>
+  </data>
+  <data name="DeviceNamePwdPasswordMatch" xml:space="preserve">
+    <value>密碼相符</value>
+  </data>
+  <data name="DeviceNamePwdSubtitle" xml:space="preserve">
+    <value>設定裝置名稱與密碼</value>
+  </data>
+  <data name="DeviceNamePwdUserNameLabel" xml:space="preserve">
+    <value>使用者名稱</value>
+  </data>
+  <data name="FindDeviceMessage" xml:space="preserve">
+    <value>尋找您網路上的 Windows 10 IoT 核心版裝置</value>
+  </data>
+  <data name="FindMyDeviceButton" xml:space="preserve">
+    <value>我的裝置</value>
+  </data>
+  <data name="FinishButton" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="FoundDeviceEnterNetworkInfo" xml:space="preserve">
+    <value>請輸入網路資訊</value>
+  </data>
+  <data name="FoundDeviceMessage" xml:space="preserve">
+    <value>在網路上發現 1 個無線裝置</value>
+  </data>
+  <data name="FoundDevicesMessage" xml:space="preserve">
+    <value>在網路上發現 {0} 個無線裝置</value>
+    <comment>code will fill in the {0}</comment>
+  </data>
+  <data name="IntroMessage" xml:space="preserve">
+    <value>若要設定裝置，您只需要下載「Windows 10 IoT 核心版」並安裝到您的裝置。</value>
+  </data>
+  <data name="IntroSetUpNewDevice" xml:space="preserve">
+    <value>設定新裝置</value>
+  </data>
+  <data name="IntroSubTitle" xml:space="preserve">
+    <value>在各種執行 Windows 10 IoT 核心版的裝置上快速地建立原型並建置您的 Windows IoT 解決方案。Windows 10 提供強大的工具，讓您可以快速開發並部署到裝置上。</value>
+  </data>
+  <data name="IntroSubTitle2" xml:space="preserve">
+    <value>若要設定裝置，您只需要下載「Windows 10 IoT 核心版」並安裝到您的裝置</value>
+  </data>
+  <data name="IntroTitle" xml:space="preserve">
+    <value>在網際網路上探索您的內容</value>
+  </data>
+  <data name="LabelInsecureWifi" xml:space="preserve">
+    <value>開放</value>
+    <comment>Same as wifi list in Windows for open access points</comment>
+  </data>
+  <data name="LabelSaveWifiPassword" xml:space="preserve">
+    <value>針對所有未來的裝置執行此動作</value>
+    <comment>Option to save your wifi password</comment>
+  </data>
+  <data name="LabelSecureWifi" xml:space="preserve">
+    <value>安全</value>
+    <comment>Same as wifi list in Windows for secured access points</comment>
+  </data>
+  <data name="MBM" xml:space="preserve">
+    <value>Minnow Board Max</value>
+  </data>
+  <data name="NetworkCredentialsNetworkNameLabel" xml:space="preserve">
+    <value>無線網路名稱</value>
+  </data>
+  <data name="NetworkCredentialsPasswordLabel" xml:space="preserve">
+    <value>無線網路密碼</value>
+  </data>
+  <data name="NetworkCredentialsSubTitle" xml:space="preserve">
+    <value>網路認證</value>
+  </data>
+  <data name="NewDeviceAcceptLabel" xml:space="preserve">
+    <value>我接受</value>
+    <comment>note to loc: "I accept the" + "terms and conditions" are part of the same sentence</comment>
+  </data>
+  <data name="NewDeviceAlertMessage" xml:space="preserve">
+    <value>在繼續之前，請確認您已備份記憶卡上的所有檔案。</value>
+  </data>
+  <data name="NewDeviceAlertMessage2" xml:space="preserve">
+    <value>刷新將清除記憶卡上儲存的所有內容。</value>
+  </data>
+  <data name="NewDeviceAlertTitle" xml:space="preserve">
+    <value>在您繼續之前</value>
+  </data>
+  <data name="NewDeviceCancelDownloading" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="NewDeviceDownloadAndInstall" xml:space="preserve">
+    <value>下載並安裝</value>
+  </data>
+  <data name="NewDeviceDownloading" xml:space="preserve">
+    <value>Windows 10 IoT 核心版</value>
+  </data>
+  <data name="NewDeviceDownloadingProgress" xml:space="preserve">
+    <value>正在下載 {0} MB - {1}%</value>
+    <comment>{0} is the number of MB downloaded. {1} is the percent of the download</comment>
+  </data>
+  <data name="NewDeviceDriveLabel" xml:space="preserve">
+    <value>磁碟機</value>
+  </data>
+  <data name="NewDeviceFlashing" xml:space="preserve">
+    <value>正在刷新您的 SD 記憶卡</value>
+  </data>
+  <data name="NewDeviceFlashingProgress1" xml:space="preserve">
+    <value>這需要數分鐘才能完成。</value>
+  </data>
+  <data name="NewDeviceFlashingProgress2" xml:space="preserve">
+    <value>請勿移除您的 SD 記憶卡。</value>
+  </data>
+  <data name="NewDeviceInsertSDCardMessage" xml:space="preserve">
+    <value>將 SD 記憶卡插入您的電腦。</value>
+  </data>
+  <data name="NewDeviceInsertSDCardMessage2" xml:space="preserve">
+    <value>請注意，此程序將會清除您記憶卡上的所有內容。</value>
+  </data>
+  <data name="NewDeviceRecommendedSDCards" xml:space="preserve">
+    <value>檢視建議的 SD 記憶卡清單</value>
+  </data>
+  <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
+    <value>裝置類型</value>
+    <comment>the combo values should come from the online xml file</comment>
+  </data>
+  <data name="NewDeviceSubTitle" xml:space="preserve">
+    <value>首先，在您的裝置取得 Windows 10 IoT 核心版。</value>
+  </data>
+  <data name="NewDeviceTermsAndCondition" xml:space="preserve">
+    <value>我接受軟體授權條款</value>
+    <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
+  </data>
+  <data name="NewDeviceTitle" xml:space="preserve">
+    <value>設定新裝置</value>
+  </data>
+  <data name="OkButton" xml:space="preserve">
+    <value>確定</value>
+  </data>
+  <data name="WifiSubTitle" xml:space="preserve">
+    <value>這裡會顯示您的裝置可以使用的網路</value>
+  </data>
+  <data name="SuccessAction1" xml:space="preserve">
+    <value>在瀏覽器中開啟 Windows Device Portal</value>
+  </data>
+  <data name="SuccessAction2" xml:space="preserve">
+    <value>取得工具</value>
+  </data>
+  <data name="SuccessAction3" xml:space="preserve">
+    <value>探索專案與教學課程</value>
+  </data>
+  <data name="SuccessMessage1" xml:space="preserve">
+    <value>在 Windows Device Portal 中設定您的裝置</value>
+  </data>
+  <data name="SuccessMessage2" xml:space="preserve">
+    <value>設定您的電腦</value>
+  </data>
+  <data name="SuccessMessage3" xml:space="preserve">
+    <value>撰寫您的第一個 Windows 應用程式</value>
+  </data>
+  <data name="SuccessSubTitle" xml:space="preserve">
+    <value>您已準備好可以開始開發。</value>
+  </data>
+  <data name="SuccessTitle" xml:space="preserve">
+    <value>成功! {0} 已在線上。</value>
+    <comment>{0} is the device name</comment>
+  </data>
+  <data name="WifiTitle" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="ViewAcceptableSDCards" xml:space="preserve">
+    <value>檢視建議的 SD 記憶卡清單</value>
+  </data>
+  <data name="ConnectLater" xml:space="preserve">
+    <value>稍後再尋找它，只要顯示我的裝置</value>
+  </data>
+  <data name="DeviceDetailDeviceNameLabel" xml:space="preserve">
+    <value>裝置名稱</value>
+  </data>
+  <data name="DeviceDetailsApplyButton" xml:space="preserve">
+    <value>套用</value>
+  </data>
+  <data name="DeviceDetailsChangePwd" xml:space="preserve">
+    <value>變更裝置密碼</value>
+  </data>
+  <data name="DeviceDetailsDevicePortal" xml:space="preserve">
+    <value>Device Portal</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
+    <value>Windows System Portal 可讓您詳細設定您的裝置</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
+    <value>在瀏覽器中開啟 Device Portal</value>
+  </data>
+  <data name="DeviceDetailSettings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="DeviceDetailsUserNameAdmin" xml:space="preserve">
+    <value>系統管理員</value>
+  </data>
+  <data name="DeviceDetailsUserNameLabel" xml:space="preserve">
+    <value>使用者名稱</value>
+  </data>
+  <data name="DeviceListLearnMore" xml:space="preserve">
+    <value>深入了解</value>
+  </data>
+  <data name="DeviceListNoDevices" xml:space="preserve">
+    <value>在網路上找不到任何裝置</value>
+  </data>
+  <data name="DeviceNamePwdBackButton" xml:space="preserve">
+    <value>上一步</value>
+  </data>
+  <data name="DeviceNamePwdDoneButton" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="LeftBarMyDevices" xml:space="preserve">
+    <value>我的裝置</value>
+  </data>
+  <data name="LeftBarSamples" xml:space="preserve">
+    <value>嘗試一些範例</value>
+  </data>
+  <data name="LeftBarSetUpNewDevice" xml:space="preserve">
+    <value>設定新裝置</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
+    <value>此主機板需要不同的設定程序。將 Windows 安裝在此主機板並連線到網際網路之後，您將會在您的裝置清單上看到它。</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
+    <value>正在於 DragonBoard 410c 上安裝「Windows 10 IoT 核心版」</value>
+  </data>
+  <data name="SamplesAppRunning" xml:space="preserve">
+    <value>此應用程式正於您的裝置上執行。</value>
+  </data>
+  <data name="SamplesBlinkyMessage1" xml:space="preserve">
+    <value>硬體的 "Hello World"。</value>
+  </data>
+  <data name="SamplesBlinkyMessage2" xml:space="preserve">
+    <value>切換裝置的主機板內建 LED。</value>
+  </data>
+  <data name="SamplesBlinkyTitle" xml:space="preserve">
+    <value>Hello blinky</value>
+  </data>
+  <data name="SamplesDeployAndRunButton" xml:space="preserve">
+    <value>部署並執行</value>
+  </data>
+  <data name="SamplesDeploying" xml:space="preserve">
+    <value>正在部署...</value>
+  </data>
+  <data name="SamplesDeviceLabel" xml:space="preserve">
+    <value>裝置</value>
+  </data>
+  <data name="SamplesDownload" xml:space="preserve">
+    <value>從 GitHub 下載程式碼</value>
+  </data>
+  <data name="SamplesLearnMore" xml:space="preserve">
+    <value>深入了解您可以執行的動作</value>
+  </data>
+  <data name="SamplesOtherProjects" xml:space="preserve">
+    <value>查看其他專案與教學課程</value>
+  </data>
+  <data name="SamplesRadioMessage1" xml:space="preserve">
+    <value>將您的「Windows 10 IoT 核心版」裝置變成可從家中任何地方控制的網際網路收音機。</value>
+  </data>
+  <data name="SamplesRadioTitle" xml:space="preserve">
+    <value>Internet radio</value>
+  </data>
+  <data name="SamplesRun" xml:space="preserve">
+    <value>在您的裝置上執行此應用程式</value>
+  </data>
+  <data name="SamplesStartCoding" xml:space="preserve">
+    <value>開始撰寫程式碼</value>
+  </data>
+  <data name="SamplesStopButton" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="SamplesSubTitle" xml:space="preserve">
+    <value>在您的裝置上部署並執行範例應用程式</value>
+  </data>
+  <data name="SamplesTitle" xml:space="preserve">
+    <value>嘗試一些範例</value>
+  </data>
+  <data name="SamplesTutorialOnline" xml:space="preserve">
+    <value>線上查看教學課程</value>
+  </data>
+  <data name="WifiBackButton" xml:space="preserve">
+    <value>上一步</value>
+  </data>
+  <data name="WifiNextButton" xml:space="preserve">
+    <value>下一步</value>
+  </data>
+  <data name="WifiRepeatForFutureDevices" xml:space="preserve">
+    <value>針對所有未來的裝置執行此動作</value>
+  </data>
+  <data name="RememberMyCredentials" xml:space="preserve">
+    <value>記住我的認證</value>
+    <comment>Save password</comment>
+  </data>
+  <data name="DeviceNamePwdPassword3" xml:space="preserve">
+    <value>確認密碼</value>
+  </data>
+  <data name="MessageUnableToGetWifi" xml:space="preserve">
+    <value>遠端裝置未回應存取點清單的要求。</value>
+  </data>
+  <data name="DeviceListColOSVersion" xml:space="preserve">
+    <value>OS 版本</value>
+  </data>
+  <data name="ErrorUnknownArchitecture" xml:space="preserve">
+    <value>未知的裝置架構。請使用「Windows 10 IoT 核心版」組建 {0} 或更新版本</value>
+    <comment>{0} is the RTM version of TH2</comment>
+  </data>
+  <data name="SamplesAppRunningBackground" xml:space="preserve">
+    <value>若此應用程式不是在前景執行，您可以按下下面的按鈕將它帶到前景。</value>
+  </data>
+  <data name="SamplesForegroundButton" xml:space="preserve">
+    <value>顯示</value>
+  </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© 2015 Microsoft Corporation</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>隱私權聲明</value>
+  </data>
+  <data name="AboutPrivateBuild" xml:space="preserve">
+    <value>私用組建</value>
+  </data>
+  <data name="AboutServicesAgreement" xml:space="preserve">
+    <value>Microsoft 服務合約</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Windows 10 IoT 核心版儀表板</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>關於此應用程式</value>
+  </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>關於</value>
+  </data>
+  <data name="NewDeviceFlashingDownload" xml:space="preserve">
+    <value>正在下載安裝程式</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSI" xml:space="preserve">
+    <value>正在解壓縮安裝程式</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailed" xml:space="preserve">
+    <value>無法解壓縮「Windows 10 IoT 核心版」安裝套件。</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
+    <value>安裝失敗</value>
+  </data>
+  <data name="DeviceListFilter" xml:space="preserve">
+    <value>篩選</value>
+  </data>
+  <data name="DeviceQualcommDragonboard" xml:space="preserve">
+    <value>Qualcomm DragonBoard 410c</value>
+  </data>
+  <data name="DevicesConfigureDevice" xml:space="preserve">
+    <value>設定裝置</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>下載完成</value>
+  </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>正在下載 {0} MB - {1}%</value>
+    <comment>Shows progress, 0 is megabytes sent, 1 is percent progress</comment>
+  </data>
+  <data name="FilterAllDevices" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="FilterNewDevices" xml:space="preserve">
+    <value>新裝置</value>
+  </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>目前正在將裝置重新開機...</value>
+  </data>
+  <data name="MessageBadPassword" xml:space="preserve">
+    <value>舊密碼不正確</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ErrorNullDevice" xml:space="preserve">
+    <value>取得目標裝置時發生錯誤。請再試一次。</value>
+  </data>
+  <data name="MessageBadWifiPassword" xml:space="preserve">
+    <value>網路安全性金鑰不正確</value>
+    <comment>When wrong passkey is used for wifi setting</comment>
+  </data>
+  <data name="SuccessPasswordChanged" xml:space="preserve">
+    <value>已順利變更裝置密碼</value>
+    <comment>After successful change of the device's password</comment>
+  </data>
+  <data name="SuccessWifiConfigured" xml:space="preserve">
+    <value>裝置 Wi-Fi 已設定</value>
+    <comment>Successful Wifi configuration </comment>
+  </data>
+  <data name="WiFiMayBeConfigured" xml:space="preserve">
+    <value>您的 Wi-Fi 現在已設定完成。若要套用變更，請將您的裝置重新開機。
+完成重新開機之後，您的裝置將會自動出現在裝置清單中。
+若您的裝置在數分鐘後仍未出現在該清單中，您可能需要重新執行 Wi-Fi 設定步驟。</value>
+    <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
+</root>

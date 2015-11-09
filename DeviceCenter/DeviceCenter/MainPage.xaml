@@ -6,60 +6,74 @@
         xmlns:local="clr-namespace:DeviceCenter"
         xmlns:props="clr-namespace:DeviceCenter.Strings"
         mc:Ignorable="d"
-        Title="Device Center" Height="720" Width="1280">
+        Title="{x:Static props:Strings.AppNameDisplay}" Height="700" Width="1200" MinWidth="400" MinHeight="400" Icon="MainIcon.ico">
+    <Window.Resources>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+        <Style x:Key="ButtonStyleNavigation" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true" d:IsLocked="True">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" d:IsLocked="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true"/>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="#FFDADADA"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FFDADADA"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="#FFC1C1C1"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FFC1C1C1"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#FFF4F4F4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <DockPanel>
-        <Frame x:Name="_NavigationFrame" NavigationUIVisibility="Hidden" />
-    <Grid Background="{StaticResource ApplicationPageBackgroundBrush}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40" />
-                    <RowDefinition Height="108" />
-                    <RowDefinition Height="367" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <Grid x:Name="CloudRow" HorizontalAlignment="Right" Grid.Row="1">
-                    <Canvas>
-                        <Image x:Name="CloudImage" Canvas.Right="60" Source="Assets/cloud.png" />
-                    </Canvas>
-                </Grid>
-
-                <Grid x:Name="PageBackgroundRow" Grid.Row="3">
-                    <Image x:Name="PageBackgroundImage" Stretch="Fill" Source="Assets/background_and_trees.png" />
-                </Grid>
-
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="213" />
-                        <ColumnDefinition Width="124" />
-                        <ColumnDefinition Width="77"  />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="199" />
-                        <ColumnDefinition Width="213" />
-                    </Grid.ColumnDefinitions>
-
-                    <Grid x:Name="BlinkyColumn" Grid.Column="1">
-                        <Image x:Name="BlinkyImage" HorizontalAlignment="Left" Stretch="Uniform" VerticalAlignment="Center" Source="Assets/blinky.png" />
-                    </Grid>
-
-                    <Grid x:Name="TextColumn" Grid.Column="3">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="50" />
-                            <RowDefinition Height="85" />
-                            <RowDefinition Height="72" />
-                            <RowDefinition Height="48" />
-                            <RowDefinition Height="18" />
-                            <RowDefinition Height="48" />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Grid.Row="1" FontSize="30" FontFamily="Segoe UI Semilight" Foreground="{StaticResource ApplicationPageControlForgroundTextBrushLight}" VerticalAlignment="Bottom" Text="Windows 10 IoT Core"/>
-                        <TextBlock Grid.Row="2" FontSize="70" FontFamily="Segoe UI Light" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" VerticalAlignment="Top" Text="{x:Static props:Strings.AppNameDisplay}" />
-                        <Button Grid.Row="4" FontSize="24" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="View Devices on the network" Click="ViewDevicesButton_Click"/>
-                        <Button Grid.Row="6" FontSize="24" FontFamily="Segoe UI Light" Padding="30 5 30 5" Foreground="{StaticResource ApplicationPageControlForgroundTextBrush}" Background="{StaticResource ApplicationPageButtonBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Setup a device" Click="SetupDeviceButton_Click"/>
-                    </Grid>
-                </Grid>
-            </Grid>
+        <Grid>
+            <DockPanel Margin="0">
+                <DockPanel Background="#FFF0F0F0" Width="300">
+                    <local:ButtonSideMenu DockPanel.Dock="Top" Margin="0 20 0 0" Text="{x:Static props:Strings.FindMyDeviceButton}" Icon="&#xE959;" Click="buttonMyDevices_Click" IconFont="./Assets/#IOT MDL2 Assets" />
+                    <local:ButtonSideMenu DockPanel.Dock="Top" Text="{x:Static props:Strings.IntroSetUpNewDevice}" Icon="&#xEC7A;" Click="buttonAddDevice_Click"/>
+                    <local:ButtonSideMenu DockPanel.Dock="Top" Text="{x:Static props:Strings.LeftBarSamples}" Icon="&#xE179;" Click="buttonSamples_Click" />
+                    <local:ButtonSideMenu DockPanel.Dock="Bottom" Text="{x:Static props:Strings.DeviceDetailSettings}" Icon="&#xE115;" Click="buttonAbout_Click"/>
+                    <Rectangle/>
+                </DockPanel>
+                <Frame Margin="10 0" x:Name="_NavigationFrame" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+            </DockPanel>
         </Grid>
-        </DockPanel>
+    </DockPanel>
 </Window>

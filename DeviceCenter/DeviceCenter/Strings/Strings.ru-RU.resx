@@ -1,0 +1,609 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppNameDisplay" xml:space="preserve">
+    <value>Панель мониторинга IoT</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="ConnectAlertMessage" xml:space="preserve">
+    <value>Чтобы продолжить настройку, нам нужно подключиться к вашему устройству. Соединение с Интернетом прервется на время и будет восстановлено, как только завершится настройка.</value>
+  </data>
+  <data name="ConnectAlertTitle" xml:space="preserve">
+    <value>Обязательные действия</value>
+  </data>
+  <data name="ConnectEthernetMessage" xml:space="preserve">
+    <value>Подключите кабель Ethernet к сети. Убедитесь, что ПК подключен к той же сети. Когда все будет готово, щелкните "Поиск устройства".</value>
+  </data>
+  <data name="ConnectEthernetTitle" xml:space="preserve">
+    <value>Ethernet</value>
+  </data>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>Вставьте готовую SD-карту в устройство, затем подключите плату к сети, используя Wi-Fi или Ethernet</value>
+  </data>
+  <data name="ConnectMessage2" xml:space="preserve">
+    <value>Затем подключите плату к сети через Wi-Fi или Ethernet.</value>
+  </data>
+  <data name="ConnectSetupAnotherDevice" xml:space="preserve">
+    <value>Настроить другое устройство</value>
+  </data>
+  <data name="ConnectTitle" xml:space="preserve">
+    <value>SD-карта готова.</value>
+  </data>
+  <data name="ConnectWiFiMessage1" xml:space="preserve">
+    <value>Подключите адаптер Wi-Fi и загрузите устройство. Щелкните "Поиск устройства", и оно будет обнаружено автоматически.</value>
+  </data>
+  <data name="ConnectWiFiMessage2" xml:space="preserve">
+    <value>Просмотреть список поддерживаемых адаптеров Wi-Fi</value>
+  </data>
+  <data name="ConnectWiFiTitle" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="ConnetSubTitle" xml:space="preserve">
+    <value>Теперь следует подключиться</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
+  <data name="DeviceListCantFindDevice" xml:space="preserve">
+    <value>Не удается найти устройство?</value>
+  </data>
+  <data name="DeviceListColConnection" xml:space="preserve">
+    <value>Подключение</value>
+  </data>
+  <data name="DeviceListColIPAddress" xml:space="preserve">
+    <value>IP-адрес</value>
+  </data>
+  <data name="DeviceListColName" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="DeviceListColOpenInDevicePortal" xml:space="preserve">
+    <value>Открыть в Device Portal</value>
+  </data>
+  <data name="DeviceListColSettings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="DeviceListColType" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="DeviceListEnterNetworkInfo" xml:space="preserve">
+    <value>Введите сведения о сети</value>
+  </data>
+  <data name="DeviceListManage" xml:space="preserve">
+    <value>Управление на портале Windows Device Portal</value>
+  </data>
+  <data name="DeviceListOS" xml:space="preserve">
+    <value>ОС</value>
+  </data>
+  <data name="DeviceListScanAgain" xml:space="preserve">
+    <value>Повторная проверка</value>
+  </data>
+  <data name="DeviceListTroubleshoot" xml:space="preserve">
+    <value>Устранение проблем с подключением устройства</value>
+  </data>
+  <data name="DeviceNamePwdDeviceNameLabel" xml:space="preserve">
+    <value>Имя устройства</value>
+  </data>
+  <data name="DeviceNamePwdMessage" xml:space="preserve">
+    <value>Настройка имени и пароля поможет защитить устройство</value>
+  </data>
+  <data name="DeviceNamePwdPassword1" xml:space="preserve">
+    <value>Старый пароль</value>
+  </data>
+  <data name="DeviceNamePwdPassword2" xml:space="preserve">
+    <value>Новый пароль</value>
+  </data>
+  <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
+    <value>Пароли не совпадают</value>
+  </data>
+  <data name="DeviceNamePwdPasswordMatch" xml:space="preserve">
+    <value>Пароли совпадают</value>
+  </data>
+  <data name="DeviceNamePwdSubtitle" xml:space="preserve">
+    <value>Настройка имени и пароля для устройства</value>
+  </data>
+  <data name="DeviceNamePwdUserNameLabel" xml:space="preserve">
+    <value>Имя пользователя</value>
+  </data>
+  <data name="FindDeviceMessage" xml:space="preserve">
+    <value>Поиск устройств с Windows 10 IoT Базовая в вашей сети</value>
+  </data>
+  <data name="FindMyDeviceButton" xml:space="preserve">
+    <value>Мои устройства</value>
+  </data>
+  <data name="FinishButton" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="FoundDeviceEnterNetworkInfo" xml:space="preserve">
+    <value>Введите сведения о сети</value>
+  </data>
+  <data name="FoundDeviceMessage" xml:space="preserve">
+    <value>В сети найдено одно беспроводное устройство</value>
+  </data>
+  <data name="FoundDevicesMessage" xml:space="preserve">
+    <value>Найденные в сети беспроводные устройства: {0}</value>
+    <comment>code will fill in the {0}</comment>
+  </data>
+  <data name="IntroMessage" xml:space="preserve">
+    <value>Чтобы настроить устройство, вам нужно всего лишь скачать и установить ОС Windows 10 IoT Базовая на этом устройстве.</value>
+  </data>
+  <data name="IntroSetUpNewDevice" xml:space="preserve">
+    <value>Настройка нового устройства</value>
+  </data>
+  <data name="IntroSubTitle" xml:space="preserve">
+    <value>Вы можете быстро создавать прототипы и сборки своих решений для Windows IoT на самых различных устройствах под управлением системы Windows 10 IoT Базовая. В Windows 10 вы найдете мощные средства для оперативной разработки и развертывания на устройстве.</value>
+  </data>
+  <data name="IntroSubTitle2" xml:space="preserve">
+    <value>Чтобы настроить устройство, вам нужно всего лишь скачать и установить ОС Windows 10 IoT Базовая на этом устройстве</value>
+  </data>
+  <data name="IntroTitle" xml:space="preserve">
+    <value>Откройте для себя Интернет вещей</value>
+  </data>
+  <data name="LabelInsecureWifi" xml:space="preserve">
+    <value>Открыть</value>
+    <comment>Same as wifi list in Windows for open access points</comment>
+  </data>
+  <data name="LabelSaveWifiPassword" xml:space="preserve">
+    <value>Делать так же для всех будущих устройств</value>
+    <comment>Option to save your wifi password</comment>
+  </data>
+  <data name="LabelSecureWifi" xml:space="preserve">
+    <value>Безопасные</value>
+    <comment>Same as wifi list in Windows for secured access points</comment>
+  </data>
+  <data name="MBM" xml:space="preserve">
+    <value>Minnow Board Max</value>
+  </data>
+  <data name="NetworkCredentialsNetworkNameLabel" xml:space="preserve">
+    <value>Имя беспроводной сети</value>
+  </data>
+  <data name="NetworkCredentialsPasswordLabel" xml:space="preserve">
+    <value>Пароль беспроводной сети</value>
+  </data>
+  <data name="NetworkCredentialsSubTitle" xml:space="preserve">
+    <value>Учетные данные сети</value>
+  </data>
+  <data name="NewDeviceAcceptLabel" xml:space="preserve">
+    <value>Я принимаю</value>
+    <comment>note to loc: "I accept the" + "terms and conditions" are part of the same sentence</comment>
+  </data>
+  <data name="NewDeviceAlertMessage" xml:space="preserve">
+    <value>Прежде чем продолжить, сохраните копию всех файлов, которые есть на карте.</value>
+  </data>
+  <data name="NewDeviceAlertMessage2" xml:space="preserve">
+    <value>В процессе обновления карта будет полностью очищена.</value>
+  </data>
+  <data name="NewDeviceAlertTitle" xml:space="preserve">
+    <value>Обязательные действия</value>
+  </data>
+  <data name="NewDeviceCancelDownloading" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="NewDeviceDownloadAndInstall" xml:space="preserve">
+    <value>Скачать и установить</value>
+  </data>
+  <data name="NewDeviceDownloading" xml:space="preserve">
+    <value>Windows 10 IoT Базовая</value>
+  </data>
+  <data name="NewDeviceDownloadingProgress" xml:space="preserve">
+    <value>{0} МБ, скачивание – {1}%</value>
+    <comment>{0} is the number of MB downloaded. {1} is the percent of the download</comment>
+  </data>
+  <data name="NewDeviceDriveLabel" xml:space="preserve">
+    <value>Диск</value>
+  </data>
+  <data name="NewDeviceFlashing" xml:space="preserve">
+    <value>Обновление SD-карты</value>
+  </data>
+  <data name="NewDeviceFlashingProgress1" xml:space="preserve">
+    <value>Это займет несколько минут.</value>
+  </data>
+  <data name="NewDeviceFlashingProgress2" xml:space="preserve">
+    <value>Не вынимайте SD-карту.</value>
+  </data>
+  <data name="NewDeviceInsertSDCardMessage" xml:space="preserve">
+    <value>Вставьте SD-карту в компьютер.</value>
+  </data>
+  <data name="NewDeviceInsertSDCardMessage2" xml:space="preserve">
+    <value>Обратите внимание, что в результате этого процесса с вашей карты будет удалено все содержимое.</value>
+  </data>
+  <data name="NewDeviceRecommendedSDCards" xml:space="preserve">
+    <value>Просмотреть список рекомендуемых SD-карт</value>
+  </data>
+  <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
+    <value>Тип устройства</value>
+    <comment>the combo values should come from the online xml file</comment>
+  </data>
+  <data name="NewDeviceSubTitle" xml:space="preserve">
+    <value>Сначала следует установить на вашем устройстве систему Windows 10 IoT Базовая.</value>
+  </data>
+  <data name="NewDeviceTermsAndCondition" xml:space="preserve">
+    <value>Я принимаю условия лицензии на программное обеспечение</value>
+    <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
+  </data>
+  <data name="NewDeviceTitle" xml:space="preserve">
+    <value>Настройка нового устройства</value>
+  </data>
+  <data name="OkButton" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="WifiSubTitle" xml:space="preserve">
+    <value>Вот сети, которые может обнаружить ваше устройство</value>
+  </data>
+  <data name="SuccessAction1" xml:space="preserve">
+    <value>Открыть Windows Device Portal в браузере</value>
+  </data>
+  <data name="SuccessAction2" xml:space="preserve">
+    <value>Получение инструментов</value>
+  </data>
+  <data name="SuccessAction3" xml:space="preserve">
+    <value>Обзор проектов и учебных пособий</value>
+  </data>
+  <data name="SuccessMessage1" xml:space="preserve">
+    <value>Настройка устройства на портале Windows Device Portal</value>
+  </data>
+  <data name="SuccessMessage2" xml:space="preserve">
+    <value>Настройка компьютера</value>
+  </data>
+  <data name="SuccessMessage3" xml:space="preserve">
+    <value>Создайте свое первое приложение для Windows</value>
+  </data>
+  <data name="SuccessSubTitle" xml:space="preserve">
+    <value>Можно приступать к разработке.</value>
+  </data>
+  <data name="SuccessTitle" xml:space="preserve">
+    <value>Готово! Устройство {0} подключено к сети.</value>
+    <comment>{0} is the device name</comment>
+  </data>
+  <data name="WifiTitle" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="ViewAcceptableSDCards" xml:space="preserve">
+    <value>Просмотреть список рекомендуемых SD-карт</value>
+  </data>
+  <data name="ConnectLater" xml:space="preserve">
+    <value>Отложить поиск и перейти к разделу "Мои устройства"</value>
+  </data>
+  <data name="DeviceDetailDeviceNameLabel" xml:space="preserve">
+    <value>Имя устройства</value>
+  </data>
+  <data name="DeviceDetailsApplyButton" xml:space="preserve">
+    <value>Применить</value>
+  </data>
+  <data name="DeviceDetailsChangePwd" xml:space="preserve">
+    <value>Изменить пароль к устройству</value>
+  </data>
+  <data name="DeviceDetailsDevicePortal" xml:space="preserve">
+    <value>Device Portal</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
+    <value>Windows System Portal позволяет всесторонне настроить устройство</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
+    <value>Открыть Device Portal в браузере</value>
+  </data>
+  <data name="DeviceDetailSettings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="DeviceDetailsUserNameAdmin" xml:space="preserve">
+    <value>Администратор</value>
+  </data>
+  <data name="DeviceDetailsUserNameLabel" xml:space="preserve">
+    <value>Имя пользователя</value>
+  </data>
+  <data name="DeviceListLearnMore" xml:space="preserve">
+    <value>Подробнее</value>
+  </data>
+  <data name="DeviceListNoDevices" xml:space="preserve">
+    <value>Устройства в сети не найдены</value>
+  </data>
+  <data name="DeviceNamePwdBackButton" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="DeviceNamePwdDoneButton" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="LeftBarMyDevices" xml:space="preserve">
+    <value>Мои устройства</value>
+  </data>
+  <data name="LeftBarSamples" xml:space="preserve">
+    <value>Испробовать некоторые примеры</value>
+  </data>
+  <data name="LeftBarSetUpNewDevice" xml:space="preserve">
+    <value>Настроить новое устройство</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
+    <value>Для этой платы требуется другой процесс настройки. После установки Windows на эту плату и ее подключения к Интернету вы сможете найти ее в списке устройств.</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
+    <value>Установка Windows 10 IoT Базовая на DragonBoard 410c</value>
+  </data>
+  <data name="SamplesAppRunning" xml:space="preserve">
+    <value>Это приложение запущено на вашем устройстве.</value>
+  </data>
+  <data name="SamplesBlinkyMessage1" xml:space="preserve">
+    <value>"Здравствуй, мир!" оборудования.</value>
+  </data>
+  <data name="SamplesBlinkyMessage2" xml:space="preserve">
+    <value>Включение и выключение индикатора на корпусе вашего устройства.</value>
+  </data>
+  <data name="SamplesBlinkyTitle" xml:space="preserve">
+    <value>Hello blinky</value>
+  </data>
+  <data name="SamplesDeployAndRunButton" xml:space="preserve">
+    <value>Развернуть и запустить</value>
+  </data>
+  <data name="SamplesDeploying" xml:space="preserve">
+    <value>Развертывание...</value>
+  </data>
+  <data name="SamplesDeviceLabel" xml:space="preserve">
+    <value>Устройство</value>
+  </data>
+  <data name="SamplesDownload" xml:space="preserve">
+    <value>Скачайте код из GitHub</value>
+  </data>
+  <data name="SamplesLearnMore" xml:space="preserve">
+    <value>Узнайте больше о доступных действиях</value>
+  </data>
+  <data name="SamplesOtherProjects" xml:space="preserve">
+    <value>Просмотреть другие проекты и руководства</value>
+  </data>
+  <data name="SamplesRadioMessage1" xml:space="preserve">
+    <value>Включите интернет-радио на своем устройстве с ОС Windows 10 IoT Базовая, которым можно управлять из любой комнаты вашего дома.</value>
+  </data>
+  <data name="SamplesRadioTitle" xml:space="preserve">
+    <value>Internet radio</value>
+  </data>
+  <data name="SamplesRun" xml:space="preserve">
+    <value>Запустите это приложение на вашем устройстве</value>
+  </data>
+  <data name="SamplesStartCoding" xml:space="preserve">
+    <value>Приступите к созданию кода</value>
+  </data>
+  <data name="SamplesStopButton" xml:space="preserve">
+    <value>Остановить</value>
+  </data>
+  <data name="SamplesSubTitle" xml:space="preserve">
+    <value>Разверните и запустите примеры приложений на вашем устройстве</value>
+  </data>
+  <data name="SamplesTitle" xml:space="preserve">
+    <value>Испробовать некоторые примеры</value>
+  </data>
+  <data name="SamplesTutorialOnline" xml:space="preserve">
+    <value>Читать руководство в Интернете</value>
+  </data>
+  <data name="WifiBackButton" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="WifiNextButton" xml:space="preserve">
+    <value>Далее</value>
+  </data>
+  <data name="WifiRepeatForFutureDevices" xml:space="preserve">
+    <value>Делать так же для всех будущих устройств</value>
+  </data>
+  <data name="RememberMyCredentials" xml:space="preserve">
+    <value>Запомнить мои учетные данные</value>
+    <comment>Save password</comment>
+  </data>
+  <data name="DeviceNamePwdPassword3" xml:space="preserve">
+    <value>Подтвердите пароль</value>
+  </data>
+  <data name="MessageUnableToGetWifi" xml:space="preserve">
+    <value>Удаленное устройство не отреагировало на запрос списка точек доступа.</value>
+  </data>
+  <data name="DeviceListColOSVersion" xml:space="preserve">
+    <value>Версия ОС</value>
+  </data>
+  <data name="ErrorUnknownArchitecture" xml:space="preserve">
+    <value>Неизвестная архитектура устройства.  Используйте ОС Windows 10 IoT Базовая сборки {0} или новее</value>
+    <comment>{0} is the RTM version of TH2</comment>
+  </data>
+  <data name="SamplesAppRunningBackground" xml:space="preserve">
+    <value>Если это приложение не выполняется на переднем плане, можно нажать кнопку ниже, чтобы вывести его на передний план.</value>
+  </data>
+  <data name="SamplesForegroundButton" xml:space="preserve">
+    <value>Показать</value>
+  </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© Корпорация Майкрософт (Microsoft Corporation), 2015</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>Заявление о конфиденциальности</value>
+  </data>
+  <data name="AboutPrivateBuild" xml:space="preserve">
+    <value>Закрытая сборка</value>
+  </data>
+  <data name="AboutServicesAgreement" xml:space="preserve">
+    <value>Соглашение об использовании служб Майкрософт</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Панель мониторинга Windows 10 IoT Базовая</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>Об этом приложении</value>
+  </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>Сведения</value>
+  </data>
+  <data name="NewDeviceFlashingDownload" xml:space="preserve">
+    <value>Загрузка установщика</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSI" xml:space="preserve">
+    <value>Распаковка установщика</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailed" xml:space="preserve">
+    <value>Не удалось распаковать пакет установки Windows 10 IoT Базовая.</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
+    <value>Сбой установки</value>
+  </data>
+  <data name="DeviceListFilter" xml:space="preserve">
+    <value>Фильтр</value>
+  </data>
+  <data name="DeviceQualcommDragonboard" xml:space="preserve">
+    <value>Qualcomm DragonBoard 410c</value>
+  </data>
+  <data name="DevicesConfigureDevice" xml:space="preserve">
+    <value>Настройка устройства</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>Загрузка завершена</value>
+  </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>{0} МБ, скачивание – {1}%</value>
+    <comment>Shows progress, 0 is megabytes sent, 1 is percent progress</comment>
+  </data>
+  <data name="FilterAllDevices" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="FilterNewDevices" xml:space="preserve">
+    <value>Новые устройства</value>
+  </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>Перезагрузка устройства...</value>
+  </data>
+  <data name="MessageBadPassword" xml:space="preserve">
+    <value>Неправильный старый пароль</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ErrorNullDevice" xml:space="preserve">
+    <value>Ошибка получения целевого устройства. Повторите попытку.</value>
+  </data>
+  <data name="MessageBadWifiPassword" xml:space="preserve">
+    <value>Сетевой ключ безопасности указан неправильно</value>
+    <comment>When wrong passkey is used for wifi setting</comment>
+  </data>
+  <data name="SuccessPasswordChanged" xml:space="preserve">
+    <value>Пароль устройства успешно изменен</value>
+    <comment>After successful change of the device's password</comment>
+  </data>
+  <data name="SuccessWifiConfigured" xml:space="preserve">
+    <value>Wi-Fi на этом устройстве настроен</value>
+    <comment>Successful Wifi configuration </comment>
+  </data>
+  <data name="WiFiMayBeConfigured" xml:space="preserve">
+    <value>Функция Wi-Fi настроена.Чтобы изменения вступили в силу, перезагрузите устройство.
+После перезагрузки устройство автоматически отобразится в списке устройств.
+Если устройство не появилось в списке в течение нескольких минут, попробуйте настроить функцию Wi-Fi еще раз.</value>
+    <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
+</root>

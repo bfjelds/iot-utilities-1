@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppNameDisplay" xml:space="preserve">
-    <value>Device Center</value>
+    <value>IoT Dashboard</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Cancel</value>
@@ -129,26 +129,32 @@
   <data name="ConnectAlertTitle" xml:space="preserve">
     <value>Before you continue</value>
   </data>
-  <data name="ConnectHelpMessage1" xml:space="preserve">
-    <value>Connect via Wi-Fi</value>
+  <data name="ConnectEthernetMessage" xml:space="preserve">
+    <value>Connect your Ethernet cable to your network. Make sure your PC is on the same network. When you're ready, click "Find my device".</value>
   </data>
-  <data name="ConnectHelpMessage2" xml:space="preserve">
-    <value>Connect using an Ethernet cable</value>
+  <data name="ConnectEthernetTitle" xml:space="preserve">
+    <value>Ethernet</value>
   </data>
-  <data name="ConnectHelpMessage3" xml:space="preserve">
-    <value>Connect later</value>
-  </data>
-  <data name="ConnectHelpSubTitle" xml:space="preserve">
-    <value>Need more help?</value>
-  </data>
-  <data name="ConnectMessage1" xml:space="preserve">
-    <value>First, insert your finished SD card into the device.</value>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>Insert your finished SD card into the device, then connect your board to the network using Wi-Fi or Ethernet</value>
   </data>
   <data name="ConnectMessage2" xml:space="preserve">
-    <value>Then, connect your board to the network using Wi-Fi or Ethernet.</value>
+    <value>then connect your board to the network using Wi-Fi or Ethernet.</value>
+  </data>
+  <data name="ConnectSetupAnotherDevice" xml:space="preserve">
+    <value>Set up another device</value>
   </data>
   <data name="ConnectTitle" xml:space="preserve">
     <value>Your SD card is ready.</value>
+  </data>
+  <data name="ConnectWiFiMessage1" xml:space="preserve">
+    <value>Plug in your Wi-Fi adapter and boot up your device. Click "Find my device" and it will be automatically detected.</value>
+  </data>
+  <data name="ConnectWiFiMessage2" xml:space="preserve">
+    <value>See a list of supported Wi-Fi adapters</value>
+  </data>
+  <data name="ConnectWiFiTitle" xml:space="preserve">
+    <value>Wi-Fi</value>
   </data>
   <data name="ConnetSubTitle" xml:space="preserve">
     <value>Now, let's get connected</value>
@@ -159,11 +165,32 @@
   <data name="DeviceListCantFindDevice" xml:space="preserve">
     <value>Can't find your device?</value>
   </data>
+  <data name="DeviceListColConnection" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="DeviceListColIPAddress" xml:space="preserve">
+    <value>IP Address</value>
+  </data>
+  <data name="DeviceListColName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="DeviceListColOpenInDevicePortal" xml:space="preserve">
+    <value>Open in Device Portal</value>
+  </data>
+  <data name="DeviceListColSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="DeviceListColType" xml:space="preserve">
+    <value>Type</value>
+  </data>
   <data name="DeviceListEnterNetworkInfo" xml:space="preserve">
     <value>Enter network information</value>
   </data>
   <data name="DeviceListManage" xml:space="preserve">
     <value>Manage in Windows Device Portal</value>
+  </data>
+  <data name="DeviceListOS" xml:space="preserve">
+    <value>OS</value>
   </data>
   <data name="DeviceListScanAgain" xml:space="preserve">
     <value>Scan again</value>
@@ -178,13 +205,13 @@
     <value>Setting the device name and password helps secure your device</value>
   </data>
   <data name="DeviceNamePwdPassword1" xml:space="preserve">
-    <value>Password</value>
+    <value>Old password</value>
   </data>
   <data name="DeviceNamePwdPassword2" xml:space="preserve">
-    <value>Password</value>
+    <value>New password</value>
   </data>
   <data name="DeviceNamePwdPasswordDontMatch" xml:space="preserve">
-    <value>Passwords do not match</value>
+    <value>Passwords don't match</value>
   </data>
   <data name="DeviceNamePwdPasswordMatch" xml:space="preserve">
     <value>Passwords match</value>
@@ -199,7 +226,7 @@
     <value>Finding Windows 10 IoT Core devices on your network</value>
   </data>
   <data name="FindMyDeviceButton" xml:space="preserve">
-    <value>Find my device</value>
+    <value>My devices</value>
   </data>
   <data name="FinishButton" xml:space="preserve">
     <value>Finish</value>
@@ -215,7 +242,7 @@
     <comment>code will fill in the {0}</comment>
   </data>
   <data name="IntroMessage" xml:space="preserve">
-    <value>Already have a Windows IoT Core device on your network?</value>
+    <value>To set up a device, all you need to do is download and install Windows 10 IoT Core to your device.</value>
   </data>
   <data name="IntroSetUpNewDevice" xml:space="preserve">
     <value>Set up a new device</value>
@@ -223,8 +250,26 @@
   <data name="IntroSubTitle" xml:space="preserve">
     <value>Rapidly prototype and build your Windows IoT solutions on a variety of devices running Windows 10 IoT Core. Windows 10 gives you powerful tools that let you develop fast and deploy to your device.</value>
   </data>
+  <data name="IntroSubTitle2" xml:space="preserve">
+    <value>To set up a device, all you need to do is download and install Windows 10 IoT Core to your device</value>
+  </data>
   <data name="IntroTitle" xml:space="preserve">
     <value>Discover the internet of your things</value>
+  </data>
+  <data name="LabelInsecureWifi" xml:space="preserve">
+    <value>Open</value>
+    <comment>Same as wifi list in Windows for open access points</comment>
+  </data>
+  <data name="LabelSaveWifiPassword" xml:space="preserve">
+    <value>Do this for all future devices</value>
+    <comment>Option to save your wifi password</comment>
+  </data>
+  <data name="LabelSecureWifi" xml:space="preserve">
+    <value>Secured</value>
+    <comment>Same as wifi list in Windows for secured access points</comment>
+  </data>
+  <data name="MBM" xml:space="preserve">
+    <value>Minnow Board Max</value>
   </data>
   <data name="NetworkCredentialsNetworkNameLabel" xml:space="preserve">
     <value>Wireless network name</value>
@@ -240,16 +285,26 @@
     <comment>note to loc: "I accept the" + "terms and conditions" are part of the same sentence</comment>
   </data>
   <data name="NewDeviceAlertMessage" xml:space="preserve">
-    <value>Make sure you back up any files on your card before proceeding. Flashing will erase anything previously stored on the card.</value>
+    <value>Make sure you back up any files on your card before proceeding.</value>
+  </data>
+  <data name="NewDeviceAlertMessage2" xml:space="preserve">
+    <value>Flashing will erase anything previously stored on the card.</value>
   </data>
   <data name="NewDeviceAlertTitle" xml:space="preserve">
     <value>Before you continue</value>
+  </data>
+  <data name="NewDeviceCancelDownloading" xml:space="preserve">
+    <value>Cancel</value>
   </data>
   <data name="NewDeviceDownloadAndInstall" xml:space="preserve">
     <value>Download and install</value>
   </data>
   <data name="NewDeviceDownloading" xml:space="preserve">
-    <value>Downloading Windows 10 IoT Core</value>
+    <value>Windows 10 IoT Core</value>
+  </data>
+  <data name="NewDeviceDownloadingProgress" xml:space="preserve">
+    <value>{0} MB downloading - {1}%</value>
+    <comment>{0} is the number of MB downloaded. {1} is the percent of the download</comment>
   </data>
   <data name="NewDeviceDriveLabel" xml:space="preserve">
     <value>Drive</value>
@@ -257,18 +312,30 @@
   <data name="NewDeviceFlashing" xml:space="preserve">
     <value>Flashing your SD card</value>
   </data>
+  <data name="NewDeviceFlashingProgress1" xml:space="preserve">
+    <value>This will take a few minutes to complete.</value>
+  </data>
+  <data name="NewDeviceFlashingProgress2" xml:space="preserve">
+    <value>Please don't remove your SD card.</value>
+  </data>
   <data name="NewDeviceInsertSDCardMessage" xml:space="preserve">
-    <value>Insert an SD card into your computer. Note that this process will erase all content on your card.</value>
+    <value>Insert an SD card into your computer.</value>
+  </data>
+  <data name="NewDeviceInsertSDCardMessage2" xml:space="preserve">
+    <value>Note that this process will erase all content on your card.</value>
+  </data>
+  <data name="NewDeviceRecommendedSDCards" xml:space="preserve">
+    <value>View the list of recommended SD cards</value>
   </data>
   <data name="NewDeviceSelectDeviceTypeLabel" xml:space="preserve">
-    <value>Select your device type</value>
+    <value>Device type</value>
     <comment>the combo values should come from the online xml file</comment>
   </data>
   <data name="NewDeviceSubTitle" xml:space="preserve">
     <value>First, let's get Windows 10 IoT Core on your device.</value>
   </data>
   <data name="NewDeviceTermsAndCondition" xml:space="preserve">
-    <value>terms and conditions</value>
+    <value>I accept the software license terms</value>
     <comment>this will be the label for an hyperlink pointing to the EULA on our websites</comment>
   </data>
   <data name="NewDeviceTitle" xml:space="preserve">
@@ -276,6 +343,9 @@
   </data>
   <data name="OkButton" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="WifiSubTitle" xml:space="preserve">
+    <value>Here are the networks your device can see</value>
   </data>
   <data name="SuccessAction1" xml:space="preserve">
     <value>Open Windows Device Portal in browser</value>
@@ -301,5 +371,239 @@
   <data name="SuccessTitle" xml:space="preserve">
     <value>Success! {0} is online.</value>
     <comment>{0} is the device name</comment>
+  </data>
+  <data name="WifiTitle" xml:space="preserve">
+    <value>Wi-Fi</value>
+  </data>
+  <data name="ViewAcceptableSDCards" xml:space="preserve">
+    <value>View the list of recommended SD cards</value>
+  </data>
+  <data name="ConnectLater" xml:space="preserve">
+    <value>Find it later, just take me to my devices</value>
+  </data>
+  <data name="DeviceDetailDeviceNameLabel" xml:space="preserve">
+    <value>Device name</value>
+  </data>
+  <data name="DeviceDetailsApplyButton" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="DeviceDetailsChangePwd" xml:space="preserve">
+    <value>Change device password</value>
+  </data>
+  <data name="DeviceDetailsDevicePortal" xml:space="preserve">
+    <value>Device Portal</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
+    <value>Windows System Portal allows you to configure your device in detail</value>
+  </data>
+  <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
+    <value>Open Device Portal in browser</value>
+  </data>
+  <data name="DeviceDetailSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="DeviceDetailsUserNameAdmin" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="DeviceDetailsUserNameLabel" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="DeviceListLearnMore" xml:space="preserve">
+    <value>Learn more</value>
+  </data>
+  <data name="DeviceListNoDevices" xml:space="preserve">
+    <value>No devices found on the network</value>
+  </data>
+  <data name="DeviceNamePwdBackButton" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="DeviceNamePwdDoneButton" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="LeftBarMyDevices" xml:space="preserve">
+    <value>My devices</value>
+  </data>
+  <data name="LeftBarSamples" xml:space="preserve">
+    <value>Try some samples</value>
+  </data>
+  <data name="LeftBarSetUpNewDevice" xml:space="preserve">
+    <value>Set up a new device</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage1" xml:space="preserve">
+    <value>This board requires a different process for setting up. After you install Windows on this board and connect it to the Internet, you will find it on your device list.</value>
+  </data>
+  <data name="NewDeviceDragonBoardMessage2" xml:space="preserve">
+    <value>Installing Windows 10 IoT Core on the DragonBoard 410c</value>
+  </data>
+  <data name="SamplesAppRunning" xml:space="preserve">
+    <value>This app is running on your device.</value>
+  </data>
+  <data name="SamplesBlinkyMessage1" xml:space="preserve">
+    <value>The "Hello World" of hardware.</value>
+  </data>
+  <data name="SamplesBlinkyMessage2" xml:space="preserve">
+    <value>Toggle your device's onboard LED on and off.</value>
+  </data>
+  <data name="SamplesBlinkyTitle" xml:space="preserve">
+    <value>Hello blinky</value>
+  </data>
+  <data name="SamplesDeployAndRunButton" xml:space="preserve">
+    <value>Deploy and run</value>
+  </data>
+  <data name="SamplesDeploying" xml:space="preserve">
+    <value>Deploying...</value>
+  </data>
+  <data name="SamplesDeviceLabel" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="SamplesDownload" xml:space="preserve">
+    <value>Download code from GitHub</value>
+  </data>
+  <data name="SamplesLearnMore" xml:space="preserve">
+    <value>Learn more about what you can do</value>
+  </data>
+  <data name="SamplesOtherProjects" xml:space="preserve">
+    <value>Look at other projects and tutorials</value>
+  </data>
+  <data name="SamplesRadioMessage1" xml:space="preserve">
+    <value>Turn your Windows 10 IoT Core device into an internet radio that can be controlled from anywhere in your home.</value>
+  </data>
+  <data name="SamplesRadioTitle" xml:space="preserve">
+    <value>Internet radio</value>
+  </data>
+  <data name="SamplesRun" xml:space="preserve">
+    <value>Run this app on your device</value>
+  </data>
+  <data name="SamplesStartCoding" xml:space="preserve">
+    <value>Start coding</value>
+  </data>
+  <data name="SamplesStopButton" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="SamplesSubTitle" xml:space="preserve">
+    <value>Deploy and run sample apps on your device</value>
+  </data>
+  <data name="SamplesTitle" xml:space="preserve">
+    <value>Try some samples</value>
+  </data>
+  <data name="SamplesTutorialOnline" xml:space="preserve">
+    <value>See the tutorial online</value>
+  </data>
+  <data name="WifiBackButton" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="WifiNextButton" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="WifiRepeatForFutureDevices" xml:space="preserve">
+    <value>Do this for all future devices</value>
+  </data>
+  <data name="RememberMyCredentials" xml:space="preserve">
+    <value>Remember my credentials</value>
+    <comment>Save password</comment>
+  </data>
+  <data name="DeviceNamePwdPassword3" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="MessageUnableToGetWifi" xml:space="preserve">
+    <value>The remote device did not respond to request for access point list.</value>
+  </data>
+  <data name="DeviceListColOSVersion" xml:space="preserve">
+    <value>OS Version</value>
+  </data>
+  <data name="ErrorUnknownArchitecture" xml:space="preserve">
+    <value>Unknown device architecture.  Please use Windows 10 IoT Core build {0} or newer</value>
+    <comment>{0} is the RTM version of TH2</comment>
+  </data>
+  <data name="SamplesAppRunningBackground" xml:space="preserve">
+    <value>If this app is not running in the foreground, you can press the button below to bring it to foreground.</value>
+  </data>
+  <data name="SamplesForegroundButton" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="AboutCopyright" xml:space="preserve">
+    <value>© 2015 Microsoft Corporation</value>
+  </data>
+  <data name="AboutPrivacy" xml:space="preserve">
+    <value>Privacy Statement</value>
+  </data>
+  <data name="AboutPrivateBuild" xml:space="preserve">
+    <value>Private Build</value>
+  </data>
+  <data name="AboutServicesAgreement" xml:space="preserve">
+    <value>Microsoft Services Agreement</value>
+  </data>
+  <data name="AboutSubtitle" xml:space="preserve">
+    <value>Windows 10 IoT Core Dashboard</value>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>About this app</value>
+  </data>
+  <data name="ButtonAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="NewDeviceFlashingDownload" xml:space="preserve">
+    <value>Downloading the installer</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSI" xml:space="preserve">
+    <value>Unpacking the installer</value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailed" xml:space="preserve">
+    <value>Failed to unpack the Windows 10 IoT Core installation package. </value>
+  </data>
+  <data name="NewDeviceFlashingExtractMSIFailedCaption" xml:space="preserve">
+    <value>Installation failed</value>
+  </data>
+  <data name="DeviceListFilter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="DeviceQualcommDragonboard" xml:space="preserve">
+    <value>Qualcomm DragonBoard 410c</value>
+  </data>
+  <data name="DevicesConfigureDevice" xml:space="preserve">
+    <value>Configure device</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>Download complete</value>
+  </data>
+  <data name="DownloadProgress" xml:space="preserve">
+    <value>{0} MB downloading - {1}%</value>
+    <comment>Shows progress, 0 is megabytes sent, 1 is percent progress</comment>
+  </data>
+  <data name="FilterAllDevices" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="FilterNewDevices" xml:space="preserve">
+    <value>New devices</value>
+  </data>
+  <data name="DeviceRebootingMessage" xml:space="preserve">
+    <value>Rebooting the device now...</value>
+  </data>
+  <data name="MessageBadPassword" xml:space="preserve">
+    <value>The old password is incorrect</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ErrorNullDevice" xml:space="preserve">
+    <value>Error in getting target device. Please try again.</value>
+  </data>
+  <data name="MessageBadWifiPassword" xml:space="preserve">
+    <value>The network security key isn't correct</value>
+    <comment>When wrong passkey is used for wifi setting</comment>
+  </data>
+  <data name="SuccessPasswordChanged" xml:space="preserve">
+    <value>Device password changed successfully</value>
+    <comment>After successful change of the device's password</comment>
+  </data>
+  <data name="SuccessWifiConfigured" xml:space="preserve">
+    <value>The device Wi-Fi is configured</value>
+    <comment>Successful Wifi configuration </comment>
+  </data>
+  <data name="WiFiMayBeConfigured" xml:space="preserve">
+    <value>Your Wi-Fi is now set up. In order to apply the changes, please reboot your device.
+Your device will automatically appear in the device list after reboot is complete.
+If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
+    <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
   </data>
 </root>
