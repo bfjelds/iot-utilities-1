@@ -1,7 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace DeviceCenter
@@ -14,10 +16,6 @@ namespace DeviceCenter
         public ButtonSideMenu()
         {
             InitializeComponent();
-
-            //Button x;
-            //x.Click
-            //x.Content
         }
 
         [Category("Behavior")]
@@ -36,6 +34,19 @@ namespace DeviceCenter
                     else
                         ReturnNormal();
                 }
+            }
+        }
+
+        [CategoryAttribute("Common")]
+        public FontFamily IconFont
+        {
+            get
+            {
+                return this.textBlockIcon.FontFamily;
+            }
+            set
+            {
+                this.textBlockIcon.FontFamily = value;
             }
         }
 

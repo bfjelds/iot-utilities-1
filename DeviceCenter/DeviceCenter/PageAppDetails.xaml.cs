@@ -1,5 +1,6 @@
 ﻿using DeviceCenter.Helper;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -19,7 +20,7 @@ namespace DeviceCenter
         public AppInformation AppItem { get; private set; }
         public Frame navigation;
         private DiscoveredDevice _device = null;
-        private DiscoveryHelper _discoveryHelper = DiscoveryHelper.Instance;
+        private bool initializing = true;
 
         public PageAppDetails(Frame navigation, AppInformation item)
         {
@@ -29,7 +30,11 @@ namespace DeviceCenter
 
             InitializeComponent();
 
-            comboBoxDevices.ItemsSource = _discoveryHelper.ConfiguredDevices;
+            // this is to prevent the combobox from selecting the first item while loading.  This
+            // can cause it to try to get application state which may trigger an authentication
+            // message.
+            initializing = false;
+            comboBoxDevices.SelectedIndex = -1;
 
             PanelDeploying.Visibility = Visibility.Collapsed;
             PanelDeployed.Visibility = Visibility.Collapsed;
@@ -46,10 +51,9 @@ namespace DeviceCenter
         ~PageAppDetails()
         {
             DiscoveryHelper.Release();
-            _discoveryHelper = null;
         }
 
-        private async void StopTheOtherApp()
+        private async void StopTheOtherApp(string arch)
         {
             if (_device == null)
             {
@@ -60,7 +64,19 @@ namespace DeviceCenter
             {
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
-                var theOtherAppName = (this.AppItem.AppName == BlinkyAppName) ? InternetRadioAppName : BlinkyAppName;
+                string theOtherAppName = null;
+
+                if(arch.Equals("x86"))
+                {
+                    theOtherAppName = (this.AppItem.AppName == BlinkyAppName) ? AppInformation.InternetRadio_PackageFullName_x86 : AppInformation.Blinky_PackageFullName_x86;
+                }
+                else if(arch.Equals("arm"))
+                {
+                    theOtherAppName = (this.AppItem.AppName == BlinkyAppName) ? AppInformation.InternetRadio_PackageFullName_arm : AppInformation.Blinky_PackageFullName_arm;
+                }
+
+                // This should never happen
+                Debug.Assert(theOtherAppName != null);
 
                 try
                 {
@@ -137,9 +153,7 @@ namespace DeviceCenter
             }
             else
             {
-                var currentDevice = _device;
-
-                StopTheOtherApp();
+                var currentDevice = _device;                
 
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
@@ -177,6 +191,8 @@ namespace DeviceCenter
 
                 // Make sure device architecture is up to date
                 _device.Architecture = arch;
+
+                StopTheOtherApp(arch);
 
                 PanelDeploy.Visibility = Visibility.Collapsed;
                 PanelDeploying.Visibility = Visibility.Visible;
@@ -309,21 +325,24 @@ namespace DeviceCenter
 
         private void comboBoxDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _device = comboBoxDevices.SelectedItem as DiscoveredDevice;
-
-            // If the selection changed, hide all the commands, as we don't yet know
-            // what we should show and the REST calls might take a while or even fail
-            PanelDeploying.Visibility = Visibility.Collapsed;
-            PanelDeployed.Visibility = Visibility.Collapsed;
-            PanelDeploy.Visibility = Visibility.Collapsed;
-
-            if (_device == null)
+            if (!this.initializing)
             {
-                return;
-            }
-            else
-            {
-                GetAppState();
+                _device = comboBoxDevices.SelectedItem as DiscoveredDevice;
+
+                // If the selection changed, hide all the commands, as we don't yet know
+                // what we should show and the REST calls might take a while or even fail
+                PanelDeploying.Visibility = Visibility.Collapsed;
+                PanelDeployed.Visibility = Visibility.Collapsed;
+                PanelDeploy.Visibility = Visibility.Collapsed;
+
+                if (_device == null)
+                {
+                    return;
+                }
+                else
+                {
+                    GetAppState();
+                }
             }
         }
 

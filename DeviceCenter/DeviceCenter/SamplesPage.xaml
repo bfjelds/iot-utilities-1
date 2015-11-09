@@ -16,7 +16,7 @@
             </StackPanel>
         </ScrollViewer>
         <TextBlock DockPanel.Dock="Top" Text="{x:Static props:Strings.SamplesLearnMore}" TextWrapping="Wrap" Margin="0,10,0,0" />
-        <TextBlock x:Name="buttonStartCoding" DockPanel.Dock="Top"  FontSize="14" TextWrapping="Wrap" Margin="0,10,0,0" >
+        <TextBlock x:Name="buttonStartCoding" DockPanel.Dock="Top" TextWrapping="Wrap" Margin="0,10,0,0" >
             <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkID=698291" RequestNavigate="Hyperlink_RequestNavigate">
                 <TextBlock Text="{x:Static props:Strings.SamplesStartCoding}"/>
             </Hyperlink>
