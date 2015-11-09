@@ -156,20 +156,6 @@ namespace WlanAPIs
             public Guid interfaceGuid;
             public int dataSize;
             public IntPtr dataPtr;
-
-            public object NotificationCode
-            {
-                get
-                {
-                    if (notificationSource == WlanNotificationSource.MSM)
-                        return (WlanNotificationCodeMsm)notificationCode;
-                    else if (notificationSource == WlanNotificationSource.ACM)
-                        return (WlanNotificationCodeAcm)notificationCode;
-                    else
-                        return notificationCode;
-                }
-
-            }
         }
 
         public enum WlanNotificationCodeMsm

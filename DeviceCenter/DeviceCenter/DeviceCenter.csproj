@@ -32,7 +32,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>62</ApplicationRevision>
+    <ApplicationRevision>63</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -141,6 +141,7 @@
       <DependentUpon>buttonSideMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataContract\AvailableNetworks.cs" />
+    <Compile Include="DataContract\DeploymentState.cs" />
     <Compile Include="DataContract\IPConfigurations.cs" />
     <Compile Include="DataContract\IoTProcesses.cs" />
     <Compile Include="DataContract\OsInfo.cs" />
