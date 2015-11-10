@@ -30,15 +30,18 @@ namespace DeviceCenter
 
         private void textBoxPassword_PasswordChanged(object sender, RoutedEventArgs e)
         {
+            ButtonOk.IsEnabled = !string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) 
+                && !string.IsNullOrWhiteSpace(textBoxPassword1.Password) 
+                && !string.IsNullOrWhiteSpace(textBoxPassword2.Password) 
+                && textBoxPassword1.Password == textBoxPassword2.Password;
+
             if (textBoxPassword1.Password == textBoxPassword2.Password)
             {
-                PasswordCheckLabel.Text = "";
-                ButtonOk.IsEnabled = true;
+                PasswordCheckLabel.Visibility = Visibility.Collapsed;
             }
             else
             {
-                PasswordCheckLabel.Text = Strings.Strings.DeviceNamePwdPasswordDontMatch;
-                ButtonOk.IsEnabled = false;
+                PasswordCheckLabel.Visibility = Visibility.Visible;
             }
         }
 
