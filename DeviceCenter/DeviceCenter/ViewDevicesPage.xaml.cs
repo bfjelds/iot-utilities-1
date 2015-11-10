@@ -27,7 +27,6 @@ namespace DeviceCenter
 
         private readonly Frame _navigationFrame;
         private PageWifi _wifiPage;
-        private readonly int pollDelayWifi = 5;
 
         public ViewDevicesPage(Frame navigationFrame)
         {
@@ -52,15 +51,23 @@ namespace DeviceCenter
 
             //Register the callbacks
             _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
+            _softwareAccessPoint.OnWlanScanComplete += SoftwareAccessPoint_OnWlanScanComplete;
 
-            _wifiRefreshTimer.Interval = TimeSpan.FromSeconds(pollDelayWifi);
-            _wifiRefreshTimer.Tick += WifiRefreshTimer_Tick;
-            _wifiRefreshTimer.Start();
+            // Get avaliable wifi list once at startup
+            _softwareAccessPoint.GetAvailableNetworkList();
 
             // Set up polling
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             _telemetryTimer.Tick += TelemetryTimer_Tick;
             _telemetryTimer.Start();
+        }
+
+        private void SoftwareAccessPoint_OnWlanScanComplete(object sender, WlanScanCompleteArgs e)
+        {
+            foreach (WlanInterop.WlanAvailableNetwork accessPoint in e.AvaliableNetworks)
+            {
+                _discoveryHelper.AddAdhocDevice(accessPoint);
+            }
         }
 
         ~ViewDevicesPage()
@@ -80,43 +87,6 @@ namespace DeviceCenter
         {
             if (_wifiRefreshTimer != null)
                 _wifiRefreshTimer.Stop();
-        }
-
-        private void RefreshWifiAsync()
-        {
-            if (_wifiRefreshTimer == null || _softwareAccessPoint == null)
-                return;
-
-            try
-            {
-                IList<WlanInterop.WlanAvailableNetwork> list = null;
-
-                try
-                {
-                    list = _softwareAccessPoint.GetAvailableNetworkList();
-                }
-                catch (WLanException)
-                {
-                    // ignore error, return empty list
-                }
-
-                if (list == null)
-                    return;
-
-                foreach (WlanInterop.WlanAvailableNetwork accessPoint in list)
-                {
-                    _discoveryHelper.AddAdhocDevice(accessPoint);
-                }
-            }
-            finally
-            {
-                _wifiRefreshTimer.Start();
-            }
-        }
-
-        private void WifiRefreshTimer_Tick(object sender, EventArgs e)
-        {
-            RefreshWifiAsync();
         }
 
         private void TelemetryTimer_Tick(object sender, EventArgs e)
@@ -147,8 +117,6 @@ namespace DeviceCenter
 
             _telemetryTimer.Stop();
         }
-
-
 
         private int compareOsVersions(string osVersion1, string osVersion2)
         {
