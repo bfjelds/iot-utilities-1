@@ -123,6 +123,12 @@ namespace DeviceCenter.Helper
 
         public void RemoveIPRoutingEntryIfNeeded()
         {
+            if (_wlanInterface == null)
+            {
+                Util.Info("RemoveIPRoutingEntryIfNeeded: No Wlan interface");
+                return;
+            }
+
             try
             {
                 if (_ipRoutingHelper != null && !_ipRoutingHelper.DeleteEntryIfNeeded(SoftApHostIp))
@@ -139,6 +145,48 @@ namespace DeviceCenter.Helper
                     });
                 }
             }
+        }
+
+        public void GetAvailableNetworkList()
+        {
+            if (_wlanInterface == null)
+            {
+                Util.Info("GetAvailableNetworkList: No Wlan interface");
+                return;
+            }
+
+            Util.Info("{0} ======== GetAvailableNetworkList Start ============", DateTime.Now.ToShortTimeString());
+
+            var networkList = new List<WlanInterop.WlanAvailableNetwork>();
+            try
+            {
+                networkList = _wlanInterface.GetAvailableNetworkList();
+            }
+            catch (WLanException)
+            {
+            }
+
+            var wlanNetworks = new List<WlanInterop.WlanAvailableNetwork>();
+            var uniqueWlanNetworks = new HashSet<string>();
+
+            foreach (var network in networkList)
+            {
+                var ssid = network.SsidString;
+
+                if (!ssid.StartsWith(SoftApNamePrefix) || uniqueWlanNetworks.Contains(ssid)) continue;
+
+                Util.Info(network.ToString());
+
+                wlanNetworks.Add(network);
+                uniqueWlanNetworks.Add(ssid);
+            }
+
+            var args = new WlanScanCompleteArgs();
+            args.AvaliableNetworks = wlanNetworks.OrderByDescending(l => l.wlanSignalQuality).ToList();
+
+            OnWlanScanComplete?.Invoke(this, args);
+
+            Util.Info("{0} ======== GetAvailableNetworkList End ============", DateTime.Now.ToShortTimeString());
         }
 
         private SoftApHelper()
@@ -247,47 +295,6 @@ namespace DeviceCenter.Helper
                     }
                     break;
             }
-        }
-
-        public void GetAvailableNetworkList()
-        {
-            if(_wlanInterface == null)
-            {
-                return;
-            }
-
-            Util.Info("{0} ======== GetAvailableNetworkList Start ============", DateTime.Now.ToShortTimeString());
-
-            var networkList = new List<WlanInterop.WlanAvailableNetwork>();
-            try
-            {
-                networkList = _wlanInterface.GetAvailableNetworkList();
-            }
-            catch (WLanException)
-            {
-            }
-
-            var wlanNetworks = new List<WlanInterop.WlanAvailableNetwork>();
-            var uniqueWlanNetworks = new HashSet<string>();
-
-            foreach (var network in networkList)
-            {
-                var ssid = network.SsidString;
-
-                if (!ssid.StartsWith(SoftApNamePrefix) || uniqueWlanNetworks.Contains(ssid)) continue;
-
-                Util.Info(network.ToString());
-
-                wlanNetworks.Add(network);
-                uniqueWlanNetworks.Add(ssid);
-            }
-
-            var args = new WlanScanCompleteArgs();
-            args.AvaliableNetworks = wlanNetworks.OrderByDescending(l => l.wlanSignalQuality).ToList();
-
-            OnWlanScanComplete?.Invoke(this, args);
-
-            Util.Info("{0} ======== GetAvailableNetworkList End ============", DateTime.Now.ToShortTimeString());
         }
 
         private readonly WlanClient _wlanClient;
