@@ -9,20 +9,76 @@
     <UserControl.Resources>
         <Storyboard x:Key="StoryboardMouseEnter">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangle">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="StoryboardMouseLeave">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangle">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="StoryboardSelect">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangleSelected">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="textBlockIcon">
+                <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource {x:Static SystemColors.MenuHighlightColorKey}}"/>
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="textBlockText">
+                <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource {x:Static SystemColors.MenuHighlightColorKey}}"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="StoryboardDeselect">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangleSelected">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="textBlockIcon">
+                <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource {x:Static SystemColors.MenuTextColorKey}}"/>
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="textBlockText">
+                <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource {x:Static SystemColors.MenuTextColorKey}}"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="StoryboardOnLoaded">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangleSelected">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </UserControl.Resources>
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard x:Name="StoryboardOnLoaded_BeginStoryboard" Storyboard="{StaticResource StoryboardOnLoaded}"/>
+        </EventTrigger>
+    </UserControl.Triggers>
+    <UserControl.Foreground>
+        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveCaptionTextColorKey}}"/>
+    </UserControl.Foreground>
     <Grid>
-        <Rectangle x:Name="rectangle" Stroke="{x:Null}" StrokeThickness="0" Fill="#FFE5E6FF" Opacity="0"/>
-        <StackPanel Orientation="Horizontal" d:LayoutOverrides="Height" Margin="8,8.612,8,7.386" Focusable="True">
-            <TextBlock x:Name="textBlockIcon" TextWrapping="Wrap" d:LayoutOverrides="TopMargin, BottomMargin, LeftPosition, RightPosition" Margin="5" FontSize="21.333" Text="&#xE959;" Width="30" FontFamily="./Assets/#Segoe MDL2 Assets" VerticalAlignment="Center"/>
-            <TextBlock x:Name="textBlockText" TextWrapping="Wrap" Text="TextBlock" HorizontalAlignment="Left" FontSize="14" Margin="5"  VerticalAlignment="Center"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="197*"/>
+        </Grid.ColumnDefinitions>
+        <Rectangle x:Name="rectangle" Stroke="{x:Null}" StrokeThickness="0" Opacity="0" Grid.ColumnSpan="2">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Rectangle x:Name="rectangleSelected">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+            </Rectangle.Fill>
+        </Rectangle>
+        <StackPanel Orientation="Horizontal" d:LayoutOverrides="Height" Margin="3.035,8.612,8,7.386" Focusable="True" Grid.Column="1">
+            <TextBlock x:Name="textBlockIcon" TextWrapping="Wrap" d:LayoutOverrides="TopMargin, BottomMargin, LeftPosition, RightPosition" Margin="5" FontSize="21.333" Text="&#xE959;" Width="30" FontFamily="./Assets/#Segoe MDL2 Assets" VerticalAlignment="Center">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.MenuTextColorKey}}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+            <TextBlock x:Name="textBlockText" TextWrapping="Wrap" Text="TextBlock" HorizontalAlignment="Left" FontSize="14" Margin="5"  VerticalAlignment="Center">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.MenuTextColorKey}}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -11,54 +11,41 @@ using System.Windows.Threading;
 using System.Net;
 using System.Management.Automation;
 using System.Collections.ObjectModel;
+using DeviceCenter.Helper;
 
 namespace DeviceCenter
 {
-    public enum FlashingStates
-    {
-        Downloading,
-        Extracting,
-        Flashing,
-        Completed
-    }
-
     /// <summary>
     /// Interaction logic for SetupDevicePage.xaml
     /// </summary>
     public partial class SetupDevicePage : Page, IDisposable
     {
-        /// <summary>
-        /// Parser for the LKG file.   
-        /// TBD this is needed only for internal build.
-        /// </summary>
+        #region DownloadLinks
 
-#region Constants
-        private readonly Uri _rpi2DownloadLink = new Uri("http://go.microsoft.com/fwlink/?LinkId=619755");
-        private readonly Uri _mbmDownloadLink = new Uri("http://go.microsoft.com/fwlink/?LinkId=619756");        
-        private readonly string _rpi2MsiName = "Windows_10_IoT_Core_RPi2.msi";
-        private readonly string _mbmMsiName = "Windows_10_IoT_Core_Mbm.msi";
-        private readonly string _mbmFfuSubPath = @"Microsoft IoT\FFU\MinnowBoardMax\Flash.ffu";
-        private readonly string _rpi2FfuSubPath = @"Microsoft IoT\FFU\RaspberryPi2\Flash.ffu";
-        readonly LastKnownGood _lkg = new LastKnownGood();
-#endregion
+        private readonly string _rpi2DownloadLink = "http://go.microsoft.com/fwlink/?LinkId=619755";
+        private readonly string _mbmDownloadLink = "http://go.microsoft.com/fwlink/?LinkId=619756";
 
-        private double _flashStartTime = 0;
-        private LkgPlatform _cachedDeviceType;
-        private DriveInfo _cachedDriveInfo;
-        private BuildInfo _cachedBuildInfo;
+        #endregion
+
+        #region Private Members
+
+        private readonly string _isoFileName = "windows_10_iot_core.iso";
+        private readonly LastKnownGood _lkg = new LastKnownGood();
         private EventArrivedEventHandler _usbhandler = null;
         private readonly Frame navigationFrame;
-        private string _isoFilePath;
-        private FlashingStates _currentFlashingState;
-        private bool _internalBuild = false;
-        private WebClient _webClient = new WebClient();
+        private readonly WebClient _webClient = new WebClient();
+        private DeviceSetupHelper _deviceSetupHelper = DeviceSetupHelper.Instance;
+
+        #endregion
 
         public SetupDevicePage(Frame navigationFrame)
         {
             InitializeComponent();
             this.navigationFrame = navigationFrame;
-
             App.TelemetryClient.TrackPageView(this.GetType().Name);
+
+            PanelManualImage.Visibility = Visibility.Collapsed;
+            PanelAutomaticImage.Visibility = Visibility.Visible;
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -68,23 +55,35 @@ namespace DeviceCenter
             this._usbhandler = new EventArrivedEventHandler(UsbAddedorRemoved);
             DriveInfo.AddUSBDetectionHandler(_usbhandler);
 
-            PanelManualImage.Visibility = Visibility.Collapsed;
-            PanelAutomaticImage.Visibility = Visibility.Visible;
+            SetFlashingState(_deviceSetupHelper.CurrentFlashingState);
+
+            // Hookup the event handlers
+            _deviceSetupHelper.ExtractFFUProgress += ExtractFFUProgressChanged;
+            _deviceSetupHelper.FlashingCompleted += FlashingCompleted;
         }
 
         private void SetUpDefaults()
         {
             // If unable to read files
-            _internalBuild = false;
-            ComboBoxIotBuild.Visibility = Visibility.Hidden;
+            ComboBoxIotBuild.Visibility = Visibility.Collapsed;
+            var mbmPlatform = LkgPlatform.CreateMbm();
+            mbmPlatform.LkgBuilds = new List<BuildInfo>();
+            mbmPlatform.LkgBuilds.Add(new BuildInfo("RTM", _mbmDownloadLink));
 
-            // TODO: populate here for ISO on Internet.  TFS#5299920.
+            var rpi2Platform = LkgPlatform.CreateRpi2();
+            rpi2Platform.LkgBuilds = new List<BuildInfo>();
+            rpi2Platform.LkgBuilds.Add(new BuildInfo("RTM", _rpi2DownloadLink));
 
-            ComboBoxDeviceType.Items.Add("LKG not found \\\\webnas\\AthensDrop");
+            var qcomPlatform = LkgPlatform.CreateQCom();
+            qcomPlatform.LkgBuilds = new List<BuildInfo>();
+            qcomPlatform.LkgBuilds.Add(new BuildInfo("RTM", "NA"));
+
+            ComboBoxDeviceType.Items.Add(rpi2Platform);
+            ComboBoxDeviceType.Items.Add(mbmPlatform);
+            ComboBoxDeviceType.Items.Add(qcomPlatform);
             ComboBoxDeviceType.SelectedIndex = 0;
-            ComboBoxDeviceType.IsEnabled = false;
-
-            buttonFlash.IsEnabled = UpdateStartState();
+            ComboBoxDeviceType.IsEnabled = true;
+            ComboBoxIotBuild.IsEnabled = true;
         }
 
         private async void ReadLkgFile()
@@ -103,7 +102,6 @@ namespace DeviceCenter
                 return;
             }
 
-            _internalBuild = true;
             var entries = new List<LkgPlatform>();
             ComboBoxDeviceType.IsEnabled = false;
             ComboBoxIotBuild.IsEnabled = false;
@@ -116,18 +114,7 @@ namespace DeviceCenter
                 {
                     foreach (var currentPlatform in _lkg.LkgAllPlatforms.AllPlatforms)
                     {
-                        switch (currentPlatform.Platform)
-                        {
-                            case "MBM":
-                                entries.Add(currentPlatform);
-                                break;
-                            case "RPi2":
-                                entries.Add(currentPlatform);
-                                break;
-                            case "QCOM":
-                                entries.Add(currentPlatform);
-                                break;
-                        }
+                        entries.Add(currentPlatform);
                     }
                 }
             }));
@@ -136,8 +123,10 @@ namespace DeviceCenter
                 ComboBoxDeviceType.Items.Add(currentEntry);
 
             if (ComboBoxDeviceType.Items.Count == 0)
-            {   
-                ComboBoxDeviceType.Items.Add("LKG not found \\\\webnas\\AthensDrop");
+            {
+                ComboBoxDeviceType.Items.Add("Failed to fetch the list");
+                ComboBoxDeviceType.SelectedIndex = 0;
+                ComboBoxDeviceType.IsEnabled = false;
             }
             else
             {
@@ -145,14 +134,13 @@ namespace DeviceCenter
                 ComboBoxIotBuild.IsEnabled = true;
             }
 
-            ComboBoxDeviceType.SelectedIndex = 0;
-
+            // Rpi2 is default
+            ComboBoxDeviceType.SelectedIndex = 1;
             buttonFlash.IsEnabled = UpdateStartState();
-        }      
-
+        }
 
         private async Task RefreshDriveList()
-        {  
+        {
             RemoveableDevicesComboBox.IsEnabled = false;
             checkBoxEula.IsEnabled = false;
 
@@ -188,14 +176,12 @@ namespace DeviceCenter
         }
 
         public async void UsbAddedorRemoved(object sender, EventArgs e)
-        {            
-            await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () => 
+        {
+            await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
             {
                 await RefreshDriveList();
             }));
         }
-
-        private Process _dismProcess = null;
 
         /// <summary>
         /// Called when user clicks Continue to flash image to SD card. 
@@ -204,43 +190,70 @@ namespace DeviceCenter
         /// <param name="e">not used</param>
         private async void FlashSDCard_Click(object sender, RoutedEventArgs e)
         {
+            var deviceType = ComboBoxDeviceType.SelectedItem as LkgPlatform;
+            var driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
+
             // For internal build use the BuildInfo
             buttonFlash.IsEnabled = false;
-            if (_internalBuild)
+            string ffuPath = string.Empty;
+            var buildInfo = ComboBoxIotBuild.SelectedItem as BuildInfo;
+            string isoFilePath = Path.Combine(Path.GetTempPath(), _isoFileName);
+
+            var BuildPathType = DeviceSetupHelper.GetTypeOfBuildPath(buildInfo.Path);
+
+            switch (BuildPathType)
             {
-                var build = ComboBoxIotBuild.SelectedItem as BuildInfo;
-                if (build != null)
-                {
-                    FlashFFU(build);
+                case BuildPathType.FFUFile:
+                    ffuPath = buildInfo.Path;
+                    break;
+
+                case BuildPathType.HttpURL:
+                    bool fDownloadSuccess = await DownloadISO(new Uri(buildInfo.Path), isoFilePath);
+                    if (!fDownloadSuccess)
+                    {
+                        Debug.WriteLine("Failed to download the ISO File from the URL");
+                        return;
+                    }
+                    ffuPath = await ExtractFFU(isoFilePath);
+                    break;
+
+                case BuildPathType.ISOFile:
+                    SetFlashingState(FlashingStates.Downloading);
+                    PanelFlashing.Visibility = Visibility.Visible;
+                    FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingDownload;
+                    FlashingProgress.Value = 0;
+                    try
+                    {
+                        File.Copy(buildInfo.Path, isoFilePath, true);
+                        FlashingProgress.Value = 100;
+                    }
+                    catch (Exception)
+                    {
+                        Debug.WriteLine("Failed to copy the ISO File from the remote share");
+                        return;
+                    }
+                    ffuPath = await ExtractFFU(isoFilePath);
+                    break;
+
+                default:
+                    Debug.WriteLine("Unsupported type of BuildUrl encountered.");
                     return;
-                }
             }
 
-            // For public builds, download the FFU from Download Center
-
-            // show the Download progress 
-            PanelFlashing.Visibility = Visibility.Visible;
-
-            // 1. Download the image from the URL 
-            Uri downloadUri;
-            string msiName;
-            string ffuSubPath; 
-            if (ComboBoxDeviceType.SelectedIndex == 1)
+            // Finally flash the FFU to SD card
+            if (string.IsNullOrEmpty(ffuPath))
             {
-                downloadUri = _rpi2DownloadLink;
-                msiName = _rpi2MsiName;
-                ffuSubPath = _rpi2FfuSubPath;
+                Debug.WriteLine("Could not get the FFUPath");
+                SetFlashingState(FlashingStates.Completed);
+                return;
             }
-            else
-            {
-                downloadUri = _mbmDownloadLink;
-                msiName = _mbmMsiName;
-                ffuSubPath = _mbmFfuSubPath;
-            }
+            FlashFFU(ffuPath);
+        }
 
-            _isoFilePath = Path.Combine(Path.GetTempPath(), "windows_10_iot_core.iso");
-            FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingDownload;
-            var selectedType = ComboBoxDeviceType.SelectedValuePath;
+        private async Task<bool> DownloadISO(Uri downloadUri, string isoFilePath)
+        {
+            SetFlashingState(FlashingStates.Downloading);
+            var platform = ComboBoxDeviceType.SelectedItem as LkgPlatform;
             _webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
             _webClient.DownloadFileCompleted += (s, eventargs) =>
             {
@@ -251,10 +264,12 @@ namespace DeviceCenter
                 }
             };
 
-            _currentFlashingState = FlashingStates.Downloading;
+            SetFlashingState(FlashingStates.Downloading);
+
+            // Download the ISO file
             try
             {
-                await _webClient.DownloadFileTaskAsync(downloadUri, _isoFilePath);
+                await _webClient.DownloadFileTaskAsync(downloadUri, isoFilePath);
             }
             catch (WebException exception)
             {
@@ -263,212 +278,24 @@ namespace DeviceCenter
                     var errorCaption = Strings.Strings.AppNameDisplay;
                     MessageBox.Show(exception.Message, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     ResetProgressUi();
+                    return false;
                 }
                 else
                 {
-                    return;
+                    return false;
                 }
             }
             catch (Exception exception)
             {
                 var errorCaption = Strings.Strings.AppNameDisplay;
                 MessageBox.Show(exception.Message, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
+                return false;
             }
 
-            FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingExtractMSI;
-            _currentFlashingState = FlashingStates.Extracting;
-            FlashingProgress.Value = 0;
-            string ffuPath = string.Empty;
-            await Task.Run((Action)(() =>
-            {
-                ffuPath = Extract(msiName, ffuSubPath);
-            }));
-
-            if (String.IsNullOrEmpty(ffuPath))
-            {
-                MessageBox.Show(Strings.Strings.NewDeviceFlashingExtractMSIFailed,
-                                Strings.Strings.NewDeviceFlashingExtractMSIFailedCaption,
-                                MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return; 
-            }
-            FlashingProgress.Value = 99;
-            FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashing;
-            _currentFlashingState = FlashingStates.Flashing;
-
-            FlashFFU(ffuPath);
-            
-            _currentFlashingState = FlashingStates.Completed;
+            return true;
         }
 
-        public string  Extract(string msiName, string ffuPath)
-        {
-            using (PowerShell powerShellInstance = PowerShell.Create())
-            {
-                // use "AddScript" to add the contents of a script file to the end of the execution pipeline.
-                // use "AddCommand" to add individual commands/cmdlets to the end of the execution pipeline.
-                powerShellInstance.AddScript("$mountResult = Mount-DiskImage " + _isoFilePath + " -PassThru | Get-Volume; $mountResult.DriveLetter; ");
-
-                // invoke the script
-                Collection<PSObject> psOutput = powerShellInstance.Invoke();
-
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                {
-                    FlashingProgress.Value = 33;
-                }));
-
-                // loop through each output object item
-                string driveLetter = "";
-                foreach (PSObject outputItem in psOutput)
-                {
-                    if (null != outputItem)
-                    {
-                        driveLetter = outputItem.BaseObject.ToString();
-                        break;
-                    }
-                }
-
-                string msiPath;
-                if (!string.IsNullOrEmpty(driveLetter))
-                {
-                    msiPath = driveLetter + Path.VolumeSeparatorChar + Path.DirectorySeparatorChar + msiName;
-                }
-                else
-                {
-                    DismountISO();
-                    return string.Empty;
-                }
-
-                string extractionPath = Path.Combine(Path.GetTempPath() + "IoTCoreMSIContent");
-
-                // Delete everything in the extractionPath
-                try
-                {
-                    var extractionPathInfo = new DirectoryInfo(extractionPath);
-                    foreach (var file in extractionPathInfo.GetFiles())
-                    {
-                        file.Delete();
-                    }
-                    foreach (var dir in extractionPathInfo.GetDirectories())
-                    {
-                        dir.Delete(true);
-                    }
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    // It is ok if directory is not present.
-                }
-
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                {
-                    FlashingProgress.Value = 66;
-                }));
-
-                var msiProcess = new Process
-                {
-                    StartInfo =
-                    {
-                        FileName = "msiexec",
-                        Arguments =
-                            $@"/a {msiPath} /qn TARGETDIR={extractionPath} REINSTALLMODE=amus"
-                    }
-                };
-                
-                // msiProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                msiProcess.Start();
-                msiProcess.WaitForExit();
-                DismountISO();
-
-                return msiProcess.ExitCode != 0 ? string.Empty : Path.Combine(extractionPath, ffuPath);
-            }
-        }
-        void DismountISO()
-        {
-            using (var powerShellInstance = PowerShell.Create())
-            {
-                // Dismount the ISO
-                powerShellInstance.AddScript("$mountResult = Dismount-DiskImage " + _isoFilePath);
-                var psOutput = powerShellInstance.Invoke();
-            }
-        }
-
-        void FlashFFU(BuildInfo bldInfo)
-        {
-            FlashFFU(bldInfo.Path);
-            var deviceType = ComboBoxDeviceType.SelectedItem as LkgPlatform;
-
-            App.TelemetryClient.TrackEvent("FlashSDCard", new Dictionary<string, string>()
-            {
-                { "DeviceType", (deviceType != null) ? deviceType.ToString() : "" },
-                { "Build",  (bldInfo != null) ? bldInfo.Build.ToString() : ""}
-            });
-
-            // For flash speed metric telemetry
-            _cachedBuildInfo = bldInfo;
-            lock (_dismLock)
-            {
-                _cachedDeviceType = deviceType;
-            }
-            _cachedDriveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo; ;
-            _flashStartTime = App.GlobalStopwatch.ElapsedMilliseconds;
-        }
-
-        void FlashFFU(string ffuPath)
-        {
-            lock (_dismLock)
-            {
-                if (!UpdateStartState())
-                    return;
-
-                var driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
-                Debug.Assert(driveInfo != null);
-
-                var dlg = new WindowWarning()
-                {
-                    Header = Strings.Strings.ConnectAlertTitle,
-                    Message = Strings.Strings.NewDeviceAlertMessage + "\n" + Strings.Strings.NewDeviceAlertMessage2,
-                    Owner = Window.GetWindow(this)
-                };
-
-                var confirmation = dlg.ShowDialog();
-                if (confirmation.HasValue && confirmation.Value == false)
-                {
-                    buttonFlash.IsEnabled = true;
-                    ResetProgressUi();
-                }
-
-                if (confirmation.HasValue && confirmation.Value)
-                {
-                    try
-                    {
-                        _dismProcess = Dism.FlashFfuImageToDrive(ffuPath, driveInfo);
-                        _dismProcess.EnableRaisingEvents = true;
-                        _dismProcess.Exited += DismProcess_Exited;
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-
-                        var exception = ex as FileNotFoundException;
-
-                        if (exception != null)
-                        {
-                            // the app name as caption
-                            var errorCaption = Strings.Strings.AppNameDisplay;
-
-                            // show the filename, use standard windows error
-                            var errorMsg = new Win32Exception(2).Message + ": " + exception.FileName;
-
-                            MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
-        void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
@@ -477,69 +304,118 @@ namespace DeviceCenter
                 double percentage = bytesIn / totalBytes * 100;
                 FlashingProgress.Value = int.Parse(Math.Truncate(percentage).ToString());
             }));
-          
+
         }
 
-        private readonly object _dismLock = new object();
+        private async Task<string> ExtractFFU(string isoFilePath)
+        {
+            SetFlashingState(FlashingStates.Extracting);
+            var deviceType = ComboBoxDeviceType.SelectedItem as LkgPlatform;
+            string ffuPath = string.Empty;
+            await Task.Run((Action)(() =>
+            {
+                ffuPath = _deviceSetupHelper.ExtractFFUFromISO(isoFilePath, deviceType);
+            }));
+            if (String.IsNullOrEmpty(ffuPath))
+            {
+                Debug.WriteLine("Failed to extract the FFU from ISO file");
+                MessageBox.Show(Strings.Strings.NewDeviceFlashingExtractMSIFailed,
+                                Strings.Strings.NewDeviceFlashingExtractMSIFailedCaption,
+                                MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                ffuPath = string.Empty;
+            }
+            return ffuPath;
+        }
+
+        private void ExtractFFUProgressChanged(object sender, ExtractFFUProgressEventArgs e)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                if (FlashingProgress.Value == 0)
+                {
+                    
+                }
+                FlashingProgress.Value = e.Progress;
+            }));
+        }
+
+        private void FlashFFU(string ffuPath)
+        {
+            var driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
+            SetFlashingState(FlashingStates.Flashing);
+
+            var dlg = new WindowWarning()
+            {
+                Header = Strings.Strings.ConnectAlertTitle,
+                Message = Strings.Strings.NewDeviceAlertMessage + "\n" + Strings.Strings.NewDeviceAlertMessage2,
+                Owner = Window.GetWindow(this)
+            };
+
+            var confirmation = dlg.ShowDialog();
+            if (confirmation.HasValue && confirmation.Value == false)
+            {
+                SetFlashingState(FlashingStates.Completed);
+                buttonFlash.IsEnabled = UpdateStartState();
+                return;
+            }
+            else
+            {
+                try
+                {
+                    _deviceSetupHelper.FlashFFU(ffuPath, driveInfo);
+                }
+                catch (Exception ex)
+                {
+                    HandleFlashFFUException(ex);
+                    return;
+                }
+            }
+        }
+
+        void FlashingCompleted(object sender, FlashingCompletedEventArgs e)
+        {
+            ResetProgressUi();
+            if (!e.Success)
+            {
+                Debug.WriteLine("Flashing FFU to SD Card Failed");
+            }
+        }
+
+        private void HandleFlashFFUException(Exception ex)
+        {
+            Debug.WriteLine(ex.ToString());
+            var exception = ex as FileNotFoundException;
+            if (exception != null)
+            {
+                // the app name as caption
+                var errorCaption = Strings.Strings.AppNameDisplay;
+
+                // show the filename, use standard windows error
+                var errorMsg = new Win32Exception(2).Message + ": " + exception.FileName;
+
+                MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
 
         private void ResetProgressUi()
         {
-            _currentFlashingState = FlashingStates.Completed;
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
-            {
-                buttonFlash.IsEnabled = true;
-                FlashingProgress.Value = 0;
-                PanelFlashing.Visibility = Visibility.Hidden;
-            }));
-        }
-
-        private void DismProcess_Exited(object sender, EventArgs e)
-        {
-            lock(_dismLock)
-            {
-                // Measure how long it took to flash the image
-                App.TelemetryClient.TrackMetric("FlashSDCardTimeMs", App.GlobalStopwatch.ElapsedMilliseconds - _flashStartTime, new Dictionary<string, string>()
-                {
-                    { "DeviceType", (_cachedDeviceType != null) ? _cachedDeviceType.ToString() : "" },
-                    { "Build",  (_cachedBuildInfo != null) ? _cachedBuildInfo.Build.ToString() : ""},
-                    { "DriveSize", (_cachedDriveInfo != null) ? _cachedDriveInfo.SizeString : ""},
-                    { "DriveModel", (_cachedDriveInfo != null) ? _cachedDriveInfo.Model : "" }
-                });
-
-                if (_dismProcess != null)
-                {
-                    _dismProcess.Dispose();
-                    _dismProcess = null;
-                }
-
-                ResetProgressUi();
-            }
-
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-            {
-                this.navigationFrame.Navigate(new PageDiskImageComplete(this.navigationFrame));
-            }));
+            SetFlashingState(FlashingStates.Completed);
         }
 
         private void buttonCancelDism_Click(object sender, RoutedEventArgs e)
         {
-            switch (_currentFlashingState)
+            // Only cancel DISM/Download
+            switch (_deviceSetupHelper.CurrentFlashingState)
             {
                 case FlashingStates.Downloading:
                     _webClient.CancelAsync();
+                    SetFlashingState(FlashingStates.Completed);
                     break;
                 case FlashingStates.Flashing:
-                    lock (_dismLock)
-                    {
-                        if (_dismProcess != null)
-                        {
-                            NativeMethods.GenerateConsoleCtrlEvent(NativeMethods.CTRL_BREAK_EVENT, (uint)_dismProcess.Id);
-                            App.TelemetryClient.TrackEvent("FlashSDCardCancel");
-                        }
-                    }
+                    _deviceSetupHelper.CancelDism();
+                    SetFlashingState(FlashingStates.Completed);
                     break;
             }
-            _currentFlashingState = FlashingStates.Completed;
         }
 
         private void ComboBoxDeviceType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -547,16 +423,13 @@ namespace DeviceCenter
             var item = ComboBoxDeviceType.SelectedItem as LkgPlatform;
             if (item != null)
             {
-                if (_internalBuild)
-                {
-                    ComboBoxIotBuild.Items.Clear();
+                ComboBoxIotBuild.Items.Clear();
 
-                    foreach (var cur in item.LkgBuilds)
-                        ComboBoxIotBuild.Items.Add(cur);
+                foreach (var cur in item.LkgBuilds)
+                    ComboBoxIotBuild.Items.Add(cur);
 
-                    if (ComboBoxIotBuild.Items.Count > 0)
-                        ComboBoxIotBuild.SelectedIndex = 0;
-                }
+                if (ComboBoxIotBuild.Items.Count > 0)
+                    ComboBoxIotBuild.SelectedIndex = 0;
 
                 PanelManualImage.Visibility = (item.Platform == "QCOM") ? Visibility.Visible : Visibility.Collapsed;
                 PanelAutomaticImage.Visibility = (item.Platform != "QCOM") ? Visibility.Visible : Visibility.Collapsed;
@@ -564,28 +437,18 @@ namespace DeviceCenter
                 buttonFlash.IsEnabled = UpdateStartState();
             }
             else
+            {
                 buttonFlash.IsEnabled = false;
+            }
         }
 
         private bool UpdateStartState()
         {
+            if (_deviceSetupHelper.CurrentFlashingState != FlashingStates.Completed)
+                return false;
+
             if (!RemoveableDevicesComboBox.IsEnabled || !ComboBoxDeviceType.IsEnabled)
                 return false;
-
-            if (_dismProcess != null)
-                return false;
-
-            if (_internalBuild)
-            {
-                // guards for invalid data
-                if (ComboBoxIotBuild.SelectedIndex < 0)
-                    return false;
-
-                // guards for invalid data
-                BuildInfo build = ComboBoxIotBuild.SelectedItem as BuildInfo;
-                if (build == null)
-                    return false;
-            }
 
             if (RemoveableDevicesComboBox.SelectedItem == null)
                 return false;
@@ -598,6 +461,40 @@ namespace DeviceCenter
             var isChecked = checkBoxEula.IsChecked;
 
             return isChecked.HasValue && isChecked.Value;
+        }
+
+        private void SetFlashingState(FlashingStates state)
+        {
+            _deviceSetupHelper.CurrentFlashingState = state;
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                buttonFlash.IsEnabled = UpdateStartState();
+                switch (_deviceSetupHelper.CurrentFlashingState)
+                {
+                    case FlashingStates.Completed:
+                        FlashingProgress.Value = 0;
+                        PanelFlashing.Visibility = Visibility.Collapsed;
+                        break;
+                    case FlashingStates.Downloading:
+                        FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingDownload;
+                        buttonFlash.IsEnabled = false;
+                        PanelFlashing.Visibility = Visibility.Visible;
+                        buttonCancelDism.IsEnabled = true;
+                        break;
+                    case FlashingStates.Extracting:
+                        FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingExtractMSI;
+                        buttonFlash.IsEnabled = false;
+                        PanelFlashing.Visibility = Visibility.Visible;
+                        buttonCancelDism.IsEnabled = false;
+                        break;
+                    case FlashingStates.Flashing:
+                        FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashing;
+                        buttonFlash.IsEnabled = false;
+                        PanelFlashing.Visibility = Visibility.Visible;
+                        buttonCancelDism.IsEnabled = true;
+                        break;
+                }
+            }));
         }
 
         private void ComboBoxIotBuild_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -617,6 +514,16 @@ namespace DeviceCenter
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
+            _deviceSetupHelper.ExtractFFUProgress -= ExtractFFUProgressChanged;
+            _deviceSetupHelper.FlashingCompleted += FlashingCompleted;
+
+            // Only cancel the download, do not cancel DISM
+            if (_deviceSetupHelper.CurrentFlashingState == FlashingStates.Downloading)
+            {
+                _webClient.CancelAsync();
+                _deviceSetupHelper.CurrentFlashingState = FlashingStates.Completed;
+            }
+
             DriveInfo.RemoveUSBDetectionHandler();
         }
 
@@ -649,3 +556,4 @@ namespace DeviceCenter
         #endregion
     }
 }
+

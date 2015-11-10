@@ -19,6 +19,9 @@
             </Grid>
         </DataTemplate>
     </Page.Resources>
+    <Page.Foreground>
+        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
+    </Page.Foreground>
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel >
             <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left" Margin="0 0 0 10"/>
