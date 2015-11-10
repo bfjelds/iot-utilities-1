@@ -7,7 +7,9 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System;
+using System.Configuration;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace DeviceCenter
 {
@@ -17,17 +19,17 @@ namespace DeviceCenter
     [DataContract]
     public class BuildInfo
     {
-        public BuildInfo(int buildNumber, string buildPath) { Build = buildNumber; Path = buildPath; }
+        public BuildInfo(string buildNumber, string buildPath) { Build = buildNumber; Path = buildPath; }
 
         /// <summary>
         /// Build number
         /// </summary>
         [DataMember]
-        public int Build { get; set; }
+        public string Build { get; set; }
 
         public override string ToString()
         {
-            return Build.ToString();
+            return Build;
         }
 
         /// <summary>
@@ -36,7 +38,7 @@ namespace DeviceCenter
         [DataMember]
         public string Path { get; set; }
     }
-    
+
     /// <summary>
     /// Each platform may have multiple LKGs.
     /// </summary>
@@ -50,19 +52,19 @@ namespace DeviceCenter
 
         public static LkgPlatform CreateMbm()
         {
-            var result = new LkgPlatform {Platform = "MBM"};
+            var result = new LkgPlatform { Platform = "MBM" };
             return result;
         }
 
         public static LkgPlatform CreateRpi2()
         {
-            var result = new LkgPlatform {Platform = "RPi2"};
+            var result = new LkgPlatform { Platform = "RPi2" };
             return result;
         }
 
         public static LkgPlatform CreateQCom()
         {
-            var result = new LkgPlatform {Platform = "QCOM"};
+            var result = new LkgPlatform { Platform = "QCOM" };
             return result;
         }
 
@@ -87,9 +89,10 @@ namespace DeviceCenter
                 case "QCOM":
                     return DragonboardName;
             }
-            
+
             return string.Empty;
         }
+
 
         /// <summary>
         /// List of LKG builds or none.
@@ -116,7 +119,12 @@ namespace DeviceCenter
         /// <summary>
         /// LKG info file.  tbd point to the final file.
         /// </summary>
-        static string LkgFileName = "\\\\webnas\\AthensDrop\\LKG\\iot_lkg.txt";
+        private readonly string _lkgFilePath = "http://go.microsoft.com/fwlink/?LinkId=698772";
+        private string _additionalBuildsFilePath;
+        public LastKnownGood()
+        {
+            _additionalBuildsFilePath = ConfigurationManager.AppSettings.Get("LKGFilePath");
+        }
 
         /// <summary>
         /// Deserialized contents.
@@ -128,74 +136,103 @@ namespace DeviceCenter
         /// </summary>
         public async Task<bool> ReadFileAsync()
         {
-            var fileExists = false;
-
-            await Task.Factory.StartNew(() =>
+            return await Task.Factory.StartNew(() =>
             {
-                fileExists = File.Exists(LkgFileName);
-
-                //  LKG file looks like the following:
-                //
-                //  {
-                //      "AllPlatforms":
-                //      [
-                //          { 
-                //              "Platform":"MBM",
-                //              "LkgBuilds":
-                //              [
-                //                  {"Build":1,"Path":"path1"},
-                //                  {"Build":2,"Path":"path2"},
-                //                  {"Build":3,"Path":"path3"}
-                //              ]            
-                //          },            
-                //          {
-                //              "Platform":"RPi2",
-                //              "LkgBuilds":
-                //              [
-                //                  {"Build":4,"Path":"path4"},
-                //                  {"Build":5,"Path":"path5"},
-                //                  {"Build":6,"Path":"path6"}
-                //              ]            
-                //          },
-                //          {
-                //              "Platform":"QCOM",
-                //              "LkgBuilds":
-                //              [
-                //                  {"Build":7,"Path":"path7"},
-                //                  {"Build":8,"Path":"path8"},
-                //                  {"Build":9,"Path":"path9"}
-                //              ]            
-                //          }
-                //      ]
-                //  }
-
-                if (fileExists)
+                string lkgJson; 
+                using (WebClient wc = new WebClient())
                 {
                     try
                     {
-                        string fileContent;
-                        using (var sr = File.OpenText(LkgFileName))
-                        {
-                            fileContent = sr.ReadToEnd();
-                        }
-
-                        var jsonSerializer = new DataContractJsonSerializer(typeof(LkgAllPlatforms));
-
-                        LkgAllPlatforms = (LkgAllPlatforms)jsonSerializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(fileContent)));
+                        lkgJson = wc.DownloadString(_lkgFilePath);
                     }
-                    catch (Exception ex)
+                    catch (WebException)
                     {
-                        Debug.WriteLine(ex.Message);
+                        return false;
+
                     }
+
+                    if (string.IsNullOrWhiteSpace(lkgJson))
+                    {
+                        return false;
+                    }
+                    ParseJsonString(lkgJson);
+
+                    if (File.Exists(_additionalBuildsFilePath))
+                    {
+                        try
+                        {
+                            string fileContent;
+                            using (var sr = File.OpenText(_additionalBuildsFilePath))
+                            {
+                                fileContent = sr.ReadToEnd();
+                            }
+                            ParseJsonString(fileContent);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.Message);
+                        }
+                    }
+                    return true;
                 }
             });
+        }
 
-            if (!fileExists)
+
+        void ParseJsonString(string inputString)
+        {
+            //  LKG file looks like the following:
+            //
+            //  {
+            //      "AllPlatforms":
+            //      [
+            //          { 
+            //              "Platform":"MBM",
+            //              "LkgBuilds":
+            //              [
+            //                  {"Build":1,"Path":"path1"},
+            //                  {"Build":2,"Path":"path2"},
+            //                  {"Build":3,"Path":"path3"}
+            //              ]            
+            //          },            
+            //          {
+            //              "Platform":"RPi2",
+            //              "LkgBuilds":
+            //              [
+            //                  {"Build":4,"Path":"path4"},
+            //                  {"Build":5,"Path":"path5"},
+            //                  {"Build":6,"Path":"path6"}
+            //              ]            
+            //          },
+            //          {
+            //              "Platform":"QCOM",
+            //              "LkgBuilds":
+            //              [
+            //                  {"Build":7,"Path":"path7"},
+            //                  {"Build":8,"Path":"path8"},
+            //                  {"Build":9,"Path":"path9"}
+            //              ]            
+            //          }
+            //      ]
+            //  }
+
+            var jsonSerializer = new DataContractJsonSerializer(typeof(LkgAllPlatforms));
+
+            var newLkgPlatforms = (LkgAllPlatforms)jsonSerializer.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(inputString)));
+
+            if (LkgAllPlatforms == null)
             {
-                Debug.WriteLine("LkgInsider: LKG file not found");
+                LkgAllPlatforms = newLkgPlatforms;
             }
-
-            return fileExists;
+            else
+            {
+                // Append to the existing list
+                foreach(LkgPlatform platform in LkgAllPlatforms.AllPlatforms)
+                {
+                    var newPlatform = newLkgPlatforms.AllPlatforms.Find(item => item.Platform == platform.Platform);
+                    platform.LkgBuilds.AddRange(newPlatform.LkgBuilds);
+                }
+            }
         }
     }
 }
