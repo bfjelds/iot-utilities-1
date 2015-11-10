@@ -16,7 +16,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>\\scratch2\scratch\kusum\DeviceCenterPublish\</PublishUrl>
+    <PublishUrl>\\scratch2\scratch\stjong\DeviceCenter\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Unc</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -26,7 +26,6 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <UpdateUrl>\\scratch2\scratch\kusum\DeviceCenterPublish\</UpdateUrl>
     <ProductName>Windows 10 IoT Core Dashboard</ProductName>
     <PublisherName>Windows 10 IoT Core</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
