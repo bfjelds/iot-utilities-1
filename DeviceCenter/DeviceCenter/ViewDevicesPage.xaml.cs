@@ -286,13 +286,14 @@ namespace DeviceCenter
 
             dataView.SortDescriptions.Clear();
 
-            foreach (var sortBy in sortByList)
+            using (dataView.DeferRefresh())
             {
-                SortDescription sd = new SortDescription(sortBy, direction);
-                dataView.SortDescriptions.Add(sd);
+                foreach (var sortBy in sortByList)
+                {
+                    SortDescription sd = new SortDescription(sortBy, direction);
+                    dataView.SortDescriptions.Add(sd);
+                }
             }
-
-            dataView.Refresh();
         }
 
         private void ListViewDevices_Click(object sender, RoutedEventArgs e)
@@ -320,6 +321,8 @@ namespace DeviceCenter
                         }
                     }
 
+                    // callback will provide the localized name of the column clicked.  Reverse
+                    // it to get the column itself and sort it
                     string header = headerClicked.Column.Header as string;
                     if (header == Strings.Strings.DeviceListColName)
                         Sort(direction, "DeviceName", "IpAddress");
@@ -332,24 +335,6 @@ namespace DeviceCenter
 
                     else if (header == Strings.Strings.DeviceListOS)
                         Sort(direction, "OsVersion", "DeviceName", "IpAddress");
-
-                    if (direction == ListSortDirection.Ascending)
-                    {
-                        headerClicked.Column.HeaderTemplate =
-                          Resources["HeaderTemplateArrowUp"] as DataTemplate;
-                    }
-                    else
-                    {
-                        headerClicked.Column.HeaderTemplate =
-                          Resources["HeaderTemplateArrowDown"] as DataTemplate;
-                    }
-
-                    // Remove arrow from previously sorted header
-                    if (_lastHeaderClicked != null && _lastHeaderClicked != headerClicked)
-                    {
-                        _lastHeaderClicked.Column.HeaderTemplate = null;
-                    }
-
 
                     _lastHeaderClicked = headerClicked;
                     _lastDirection = direction;
