@@ -232,7 +232,7 @@ namespace DeviceCenter.Helper
             string osVersion = "";
             Guid deviceGuid = Guid.Empty;
             string arch = "";
-            IPAddress ipAddress = IPAddress.Parse(ipV4Address);
+            IPAddressSortable ipAddress = IPAddressSortable.Parse(ipV4Address);
 
             // mDNS Discovered devices are in format "devicename.local". Remove the suffix
             if (deviceName.IndexOf('.') > 0)
