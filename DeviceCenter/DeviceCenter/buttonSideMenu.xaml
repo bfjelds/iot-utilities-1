@@ -9,23 +9,35 @@
     <UserControl.Resources>
         <Storyboard x:Key="StoryboardMouseEnter">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangle">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="StoryboardMouseLeave">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangle">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="StoryboardSelect">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangleSelected">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="textBlockIcon">
+                <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource {x:Static SystemColors.MenuHighlightColorKey}}"/>
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="textBlockText">
+                <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource {x:Static SystemColors.MenuHighlightColorKey}}"/>
+            </ColorAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="StoryboardDeselect">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangleSelected">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="textBlockIcon">
+                <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource {x:Static SystemColors.MenuTextColorKey}}"/>
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="textBlockText">
+                <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource {x:Static SystemColors.MenuTextColorKey}}"/>
+            </ColorAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="StoryboardOnLoaded">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangleSelected">
@@ -46,12 +58,12 @@
             <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="197*"/>
         </Grid.ColumnDefinitions>
-        <Rectangle x:Name="rectangleSelected">
+        <Rectangle x:Name="rectangle" Stroke="{x:Null}" StrokeThickness="0" Opacity="0" Grid.ColumnSpan="2">
             <Rectangle.Fill>
-                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle x:Name="rectangle" Stroke="{x:Null}" StrokeThickness="0" Opacity="0" Grid.ColumnSpan="2">
+        <Rectangle x:Name="rectangleSelected">
             <Rectangle.Fill>
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
             </Rectangle.Fill>
