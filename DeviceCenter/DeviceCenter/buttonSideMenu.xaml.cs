@@ -30,9 +30,9 @@ namespace DeviceCenter
                 {
                     _selected = value;
                     if (_selected)
-                        Highlight();
+                        ((Storyboard)FindResource("StoryboardSelect")).Begin();
                     else
-                        ReturnNormal();
+                        ((Storyboard)FindResource("StoryboardDeselect")).Begin();
                 }
             }
         }
@@ -67,30 +67,16 @@ namespace DeviceCenter
         private bool _selected = false;
         private bool _mouseDown = false;
 
-        private void Highlight()
-        {
-            Storyboard animation = (Storyboard)FindResource("StoryboardMouseEnter");
-            animation.Begin();
-        }
-
-        private void ReturnNormal()
-        {
-            Storyboard animation = (Storyboard)FindResource("StoryboardMouseLeave");
-            animation.Begin();
-        }
-
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             base.OnMouseEnter(e);
-            if (!Selected)
-                Highlight();
+            ((Storyboard)FindResource("StoryboardMouseEnter")).Begin();
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             base.OnMouseLeave(e);
-            if (!Selected)
-                ReturnNormal();
+            ((Storyboard)FindResource("StoryboardMouseLeave")).Begin();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
