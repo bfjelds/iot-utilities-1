@@ -251,6 +251,11 @@ namespace DeviceCenter.Helper
 
         public void GetAvailableNetworkList()
         {
+            if(_wlanInterface == null)
+            {
+                return;
+            }
+
             Util.Info("{0} ======== GetAvailableNetworkList Start ============", DateTime.Now.ToShortTimeString());
 
             var networkList = new List<WlanInterop.WlanAvailableNetwork>();
