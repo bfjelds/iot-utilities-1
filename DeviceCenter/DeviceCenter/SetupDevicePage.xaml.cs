@@ -43,6 +43,9 @@ namespace DeviceCenter
             InitializeComponent();
             this.navigationFrame = navigationFrame;
             App.TelemetryClient.TrackPageView(this.GetType().Name);
+
+            PanelManualImage.Visibility = Visibility.Collapsed;
+            PanelAutomaticImage.Visibility = Visibility.Visible;
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -52,8 +55,6 @@ namespace DeviceCenter
             this._usbhandler = new EventArrivedEventHandler(UsbAddedorRemoved);
             DriveInfo.AddUSBDetectionHandler(_usbhandler);
 
-            PanelManualImage.Visibility = Visibility.Collapsed;
-            PanelAutomaticImage.Visibility = Visibility.Visible;
             SetFlashingState(_deviceSetupHelper.CurrentFlashingState);
 
             // Hookup the event handlers

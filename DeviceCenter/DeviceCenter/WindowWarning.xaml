@@ -7,15 +7,41 @@
         xmlns:props="clr-namespace:DeviceCenter.Strings"
         mc:Ignorable="d"
         Title="{x:Static props:Strings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Width="497.683" Height="210.299" ShowInTaskbar="False">
-    <DockPanel Background="WhiteSmoke">
+    <Window.Foreground>
+        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
+    </Window.Foreground>
+    <DockPanel>
+        <DockPanel.Background>
+            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
+        </DockPanel.Background>
         <TextBlock DockPanel.Dock="Top" x:Name="labelMessageHeader" Margin="10" FontSize="20" FontFamily="Segoe UI SemiLight" Text="Title" />
         <Grid DockPanel.Dock="Bottom"  Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="234*"/>
                 <ColumnDefinition Width="235*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="ButtonOk" IsDefault="True" Content="{x:Static props:Strings.ContinueButton}" Padding="4" Background="#3277BF" Foreground="White" Click="ButtonOk_Click" Margin="0,0,10,0" />
-            <Button x:Name="ButtonCancel" IsCancel="True" Content="{x:Static props:Strings.CancelButton}" Padding="4" Margin="10,0,0,0" Click="ButtonCancel_Click" Background="#FF787878" Foreground="White" Grid.Column="1"/>
+            <Button x:Name="ButtonOk" IsDefault="True" Content="{x:Static props:Strings.ContinueButton}" Padding="4" Click="ButtonOk_Click" Margin="0,0,10,0">
+                <Button.Foreground>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
+                </Button.Foreground>
+                <Button.BorderBrush>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="ButtonCancel" IsCancel="True" Content="{x:Static props:Strings.CancelButton}" Padding="4" Margin="10,0,0,0" Click="ButtonCancel_Click" Grid.Column="1">
+                <Button.Foreground>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
+                </Button.Foreground>
+                <Button.BorderBrush>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                </Button.BorderBrush>
+                <Button.Background>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
+                </Button.Background>
+            </Button>
         </Grid>
         <TextBlock Margin="10" x:Name="labelMessageText" TextWrapping="Wrap" Text="Message" />
     </DockPanel>

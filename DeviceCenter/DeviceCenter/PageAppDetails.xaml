@@ -10,7 +10,6 @@
       d:DesignWidth="500"
       Title="PageAppDetails"
       Unloaded="Page_Unloaded">
-
     <Page.Resources>
         <CollectionViewSource x:Key="_devicesCVS" Source="{Binding ConfiguredDevices}" >
             <CollectionViewSource.SortDescriptions>
@@ -18,6 +17,9 @@
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
     </Page.Resources>
+    <Page.Foreground>
+        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
+    </Page.Foreground>
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
@@ -57,18 +59,58 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <StackPanel x:Name="PanelDeploy" Margin="4" Orientation="Horizontal">
-                <Button x:Name="ButtonDeploy" Padding="30 6" HorizontalAlignment="Left" Content="{x:Static props:Strings.SamplesDeployAndRunButton}" Click="ButtonDeploy_Click" Background="#FF3277B8" Foreground="White" />
-                <Button x:Name="ButtonCancel"  Content="{x:Static props:Strings.WifiBackButton}" Padding="30 5 30 5" Background="#FF787878" Foreground="White"  Margin="10,0,0,0" Click="ButtonCancel_Click" />
+                <Button x:Name="ButtonDeploy" Padding="30 6" HorizontalAlignment="Left" Content="{x:Static props:Strings.SamplesDeployAndRunButton}" Click="ButtonDeploy_Click" >
+                    <Button.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
+                    </Button.Foreground>
+                    <Button.BorderBrush>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                    </Button.BorderBrush>
+                    <Button.Background>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                    </Button.Background>
+                </Button>
+                <Button x:Name="ButtonCancel"  Content="{x:Static props:Strings.WifiBackButton}" Padding="30 5 30 5"  Margin="10,0,0,0" Click="ButtonCancel_Click" >
+                    <Button.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
+                    </Button.Foreground>
+                    <Button.Background>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
+                    </Button.Background>
+                    <Button.BorderBrush>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                    </Button.BorderBrush>
+                </Button>
             </StackPanel>
             <StackPanel x:Name="PanelDeploying" Width="200" HorizontalAlignment="Left" Margin="4" >
-                <Button x:Name="ButtonStopDeploy" Padding="30 6"  HorizontalAlignment="Left" Background="#FFC18383" Foreground="White"  Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopDeploy_Click" />
+                <Button x:Name="ButtonStopDeploy" Padding="30 6"  HorizontalAlignment="Left"  Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopDeploy_Click" >
+                    <Button.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
+                    </Button.Foreground>
+                    <Button.BorderBrush>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
+                    </Button.BorderBrush>
+                    <Button.Background>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
+                    </Button.Background>
+                </Button>
                 <TextBlock Text="{x:Static props:Strings.SamplesDeploying}" Margin="0 4" TextWrapping="Wrap" />
                 <ProgressBar x:Name="progressWaiting" IsIndeterminate="True" />
             </StackPanel>
             <StackPanel x:Name="PanelDeployed" Width="246" HorizontalAlignment="Left" Margin="0 4" Height="66" >
                 <TextBlock Text="{x:Static props:Strings.SamplesAppRunning}" Margin="0 4" TextWrapping="Wrap" />
                 <StackPanel Orientation="Horizontal">
-                    <Button x:Name="ButtonStopApp" Padding="30 6" HorizontalAlignment="Left" Margin="0 4" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopApp_Click" Background="#FFC18383" Foreground="White" />
+                    <Button x:Name="ButtonStopApp" Padding="30 6" HorizontalAlignment="Left" Margin="0 4" Content="{x:Static props:Strings.SamplesStopButton}" Click="ButtonStopApp_Click" >
+                        <Button.Foreground>
+                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
+                        </Button.Foreground>
+                        <Button.Background>
+                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
+                        </Button.Background>
+                        <Button.BorderBrush>
+                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
+                        </Button.BorderBrush>
+                    </Button>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
