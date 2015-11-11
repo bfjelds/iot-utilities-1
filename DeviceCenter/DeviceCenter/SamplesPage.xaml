@@ -1,4 +1,4 @@
-﻿<Page x:Class="DeviceCenter.SamplesPage"
+﻿<Page x:Name="page" x:Class="DeviceCenter.SamplesPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,10 +7,45 @@
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
       d:DesignHeight="383.333" d:DesignWidth="394.667"
-      Title="{x:Static props:Strings.LeftBarSamples}">
+      Title="{x:Static props:Strings.LeftBarSamples}" RenderTransformOrigin="0.5,0.5">
     <Page.Foreground>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     </Page.Foreground>
+      
+    <Page.Resources>
+        <Storyboard x:Key="OnLoadedFadeIn">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="page">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="page">
+                <EasingDoubleKeyFrame KeyTime="0" Value="300"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
+    <Page.RenderTransform>
+        <TransformGroup>
+            <ScaleTransform/>
+            <SkewTransform/>
+            <RotateTransform/>
+            <TranslateTransform/>
+        </TransformGroup>
+    </Page.RenderTransform>
+    <Page.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard x:Name="OnLoadedFadeIn_BeginStoryboard" Storyboard="{StaticResource OnLoadedFadeIn}"/>
+        </EventTrigger>
+    </Page.Triggers>
+
     <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <TextBlock DockPanel.Dock="Top" Text="{x:Static props:Strings.SamplesDeployAndRunButton}" FontSize="30" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <TextBlock DockPanel.Dock="Top" Text="{x:Static props:Strings.SamplesSubTitle}" TextWrapping="Wrap" Margin="0,10,0,0"/>

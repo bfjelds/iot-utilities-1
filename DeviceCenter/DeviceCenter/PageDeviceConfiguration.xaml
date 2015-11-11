@@ -1,4 +1,4 @@
-﻿<Page x:Class="DeviceCenter.PageDeviceConfiguration"
+﻿<Page x:Name="page" x:Class="DeviceCenter.PageDeviceConfiguration"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,10 +6,45 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      Title="{x:Static props:Strings.NewDeviceTitle}" Loaded="Page_Loaded" d:DesignHeight="429.333">
+      Title="{x:Static props:Strings.NewDeviceTitle}" Loaded="Page_Loaded" d:DesignHeight="429.333" RenderTransformOrigin="0.5,0.5">
     <Page.Foreground>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     </Page.Foreground>
+      
+    <Page.Resources>
+        <Storyboard x:Key="OnLoadedFadeIn">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="page">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="page">
+                <EasingDoubleKeyFrame KeyTime="0" Value="300"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
+    <Page.RenderTransform>
+        <TransformGroup>
+            <ScaleTransform/>
+            <SkewTransform/>
+            <RotateTransform/>
+            <TranslateTransform/>
+        </TransformGroup>
+    </Page.RenderTransform>
+    <Page.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard x:Name="OnLoadedFadeIn_BeginStoryboard" Storyboard="{StaticResource OnLoadedFadeIn}"/>
+        </EventTrigger>
+    </Page.Triggers>
+
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto">
             <StackPanel>
