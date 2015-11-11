@@ -284,10 +284,10 @@ namespace DeviceCenter
         {
             ICollectionView dataView = CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
 
-            dataView.SortDescriptions.Clear();
-
             using (dataView.DeferRefresh())
             {
+                dataView.SortDescriptions.Clear();
+
                 foreach (var sortBy in sortByList)
                 {
                     SortDescription sd = new SortDescription(sortBy, direction);
