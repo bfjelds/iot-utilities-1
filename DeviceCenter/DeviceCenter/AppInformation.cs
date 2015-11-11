@@ -161,8 +161,8 @@ namespace DeviceCenter
                             }
                         }
                     },
-                    OnlineInfo = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm",
-                    OnlineSourceCode = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm"
+                    OnlineInfo = "https://www.hackster.io/windows-iot/connected-clock-radio-85c9fc",
+                    OnlineSourceCode = "https://www.hackster.io/windows-iot/connected-clock-radio-85c9fc"
                 });
             }
 

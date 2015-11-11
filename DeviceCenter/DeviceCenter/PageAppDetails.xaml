@@ -33,11 +33,11 @@
                         <TextBlock Text="{x:Static props:Strings.SamplesTutorialOnline}" />
                     </Hyperlink>
                 </TextBlock>
-                <TextBlock Margin="4">
+                <!--TextBlock Margin="4">
                     <Hyperlink NavigateUri="{Binding OnlineSourceCode}" RequestNavigate="Hyperlink_RequestNavigate">
                         <TextBlock Text="{x:Static props:Strings.SamplesDownload}" />
                     </Hyperlink>
-                </TextBlock>
+                </-->
             </StackPanel>
         </Grid>
         <StackPanel Margin="0 20 0 0">
