@@ -1,4 +1,4 @@
-﻿<Page x:Class="DeviceCenter.ViewDevicesPage"
+﻿<Page x:Name="page" x:Class="DeviceCenter.ViewDevicesPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,7 +7,7 @@
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
       FontSize="12"
-      Title="{x:Static props:Strings.FindMyDeviceButton}" d:DesignHeight="500" d:DesignWidth="814.32">
+      Title="{x:Static props:Strings.FindMyDeviceButton}" d:DesignHeight="500" d:DesignWidth="814.32" RenderTransformOrigin="0.5,0.5">
     <Page.Resources>
         <DataTemplate x:Key="CleanHeaderTemplate">
             <Grid>
@@ -18,10 +18,44 @@
                 </TextBlock>
             </Grid>
         </DataTemplate>
+        <Storyboard x:Key="OnLoadedFadeIn">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="page">
+                <EasingDoubleKeyFrame KeyTime="0" Value="300"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="page">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </Page.Resources>
+
     <Page.Foreground>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     </Page.Foreground>
+
+    <Page.RenderTransform>
+        <TransformGroup>
+            <ScaleTransform/>
+            <SkewTransform/>
+            <RotateTransform/>
+            <TranslateTransform/>
+        </TransformGroup>
+    </Page.RenderTransform>
+    <Page.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard x:Name="OnLoadedFadeIn_BeginStoryboard" Storyboard="{StaticResource OnLoadedFadeIn}"/>
+        </EventTrigger>
+    </Page.Triggers>
+
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel >
             <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left" Margin="0 0 0 10"/>

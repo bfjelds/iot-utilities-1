@@ -23,7 +23,6 @@ namespace DeviceCenter
         private DiscoveredDevice _newestBuildDevice, _oldestBuildDevice;
 
         private readonly SoftApHelper _softwareAccessPoint;
-        private readonly DispatcherTimer _wifiRefreshTimer = new DispatcherTimer();
 
         private readonly Frame _navigationFrame;
         private PageWifi _wifiPage;
@@ -66,15 +65,11 @@ namespace DeviceCenter
 
         private void SoftwareAccessPoint_OnWlanScanComplete(object sender, WlanScanCompleteArgs e)
         {
-            foreach (WlanInterop.WlanAvailableNetwork accessPoint in e.AvaliableNetworks)
-            {
-                _discoveryHelper.AddAdhocDevice(accessPoint);
-            }
+            _discoveryHelper.RefreshAdhocDevices(e.AvaliableNetworks);
         }
 
         ~ViewDevicesPage()
         {
-            _wifiRefreshTimer.Stop();
             _softwareAccessPoint.DisconnectIfNeeded();
 
             DiscoveryHelper.Release();
@@ -87,8 +82,6 @@ namespace DeviceCenter
 
         private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
         {
-            if (_wifiRefreshTimer != null)
-                _wifiRefreshTimer.Stop();
         }
 
         private void TelemetryTimer_Tick(object sender, EventArgs e)
@@ -158,7 +151,6 @@ namespace DeviceCenter
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
-            _wifiRefreshTimer.Stop();
             try
             {
                 var frameworkElement = sender as FrameworkElement;
@@ -201,7 +193,6 @@ namespace DeviceCenter
             }
             finally
             {
-                _wifiRefreshTimer.Start();
             }
         }
 

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- 
+      signType indicates which certificates are used to sign the output
+      signType = "StrongName = 72 , Authenticode = 10006 , Both = 72 & 10006"
+-->
+<SignConfigXML>
+  <!-- AnyCPU Release sign job -->
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
+    <file src="__RELBINPATH__\DeviceCenter.exe" signType="Authenticode" dest="__RELBINPATH__\signed\DeviceCenter.exe" />
+  </job>
+  <!-- AnyCPU Release sign job -->
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
+    <file src="__RELBINPATH__\DeviceDiscovery.dll" signType="Authenticode" dest="__RELBINPATH__\signed\DeviceDiscovery.dll" />
+  </job>
+  <!-- AnyCPU Release sign job -->
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
+    <file src="__RELBINPATH__\WlanAPIs.dll" signType="Authenticode" dest="__RELBINPATH__\signed\WlanAPIs.dll" />
+  </job>
+</SignConfigXML>
