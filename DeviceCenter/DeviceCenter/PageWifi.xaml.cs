@@ -126,7 +126,7 @@ namespace DeviceCenter
             DoConnectAsync(password);
         }
 
-        private async void DoConnectAsync(string password)
+        private void DoConnectAsync(string password)
         {
             try
             {
@@ -140,18 +140,21 @@ namespace DeviceCenter
                 OnPropertyChanged("ReadyToConnect");
                 OnPropertyChanged("ShowConnect");
 
-                try
-                {
-                    Collapse();
+                Collapse();
 
-                    await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
-                }
-                catch (WebException error)
+                Task.Factory.StartNew(async () =>
                 {
-                    Debug.WriteLine($"Error connecting, {error.Message}");
-                    Debug.WriteLine(error.ToString());
-                    // ignore errors, changes in Wifi will make existing TCP sockets unstable
-                }
+                    try
+                    {
+                        await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
+                    }
+                    catch (WebException error)
+                    {
+                        Debug.WriteLine($"Error connecting, {error.Message}");
+                        Debug.WriteLine(error.ToString());
+                        // ignore errors, changes in Wifi will make existing TCP sockets unstable
+                    }
+                }, TaskCreationOptions.LongRunning);
 
                 MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
                 this._navigationFrame.GoBack();
