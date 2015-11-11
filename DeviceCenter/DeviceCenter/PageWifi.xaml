@@ -1,4 +1,4 @@
-﻿<Page x:Class="DeviceCenter.PageWifi"
+﻿<Page x:Name="page" x:Class="DeviceCenter.PageWifi"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,7 +6,7 @@
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       xmlns:local="clr-namespace:DeviceCenter"
       mc:Ignorable="d" 
-      Title="Wi-Fi">
+      Title="Wi-Fi" RenderTransformOrigin="0.5,0.5">
     <Page.Resources>
         <DataTemplate x:Key="NetworkRouter">
             <ListViewItem IsHitTestVisible="{Binding Active}" Margin="0">
@@ -30,7 +30,38 @@
                 </StackPanel>
             </ListViewItem>
         </DataTemplate>
+        <Storyboard x:Key="OnLoadedFadeIn">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="page">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="page">
+                <EasingDoubleKeyFrame KeyTime="0" Value="300"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </Page.Resources>
+    <Page.RenderTransform>
+        <TransformGroup>
+            <ScaleTransform/>
+            <SkewTransform/>
+            <RotateTransform/>
+            <TranslateTransform/>
+        </TransformGroup>
+    </Page.RenderTransform>
+    <Page.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard x:Name="OnLoadedFadeIn_BeginStoryboard" Storyboard="{StaticResource OnLoadedFadeIn}"/>
+        </EventTrigger>
+    </Page.Triggers>
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <TextBlock x:Name="LabelDeviceName" x:Uid="Title" FontSize="30" DockPanel.Dock="Top" Text="{x:Static props:Strings.ConnetSubTitle}" />
