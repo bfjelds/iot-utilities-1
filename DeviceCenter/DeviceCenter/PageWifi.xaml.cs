@@ -126,7 +126,7 @@ namespace DeviceCenter
             DoConnectAsync(password);
         }
 
-        private void DoConnectAsync(string password)
+        private async void DoConnectAsync(string password)
         {
             try
             {
@@ -144,7 +144,7 @@ namespace DeviceCenter
                 {
                     Collapse();
 
-                    _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
+                    await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
                 }
                 catch (WebException error)
                 {
