@@ -133,16 +133,21 @@ namespace DeviceCenter.Helper
                 }
                 catch (WebException error)
                 {
+                    // HandleError() shows the authentication dialog box in case the WebException status code
+                    // is HttpStatusCode.Unauthorized
                     switch (HandleError(error))
                     {
+                        // Pass exception to the caller
                         case HttpErrorResult.Fail:
                             Debug.WriteLine($"Error in MakeRequest, url [{requestUrl}]");
                             Debug.WriteLine(error.ToString());
                             throw;
 
+                        // Keep going with the while loop
                         case HttpErrorResult.Retry:
                             break;
 
+                        // Return HttpWebResponse to the caller
                         case HttpErrorResult.Cancel:
                             // todo: can caller handle this?
                             return error.Response as HttpWebResponse;
@@ -165,13 +170,15 @@ namespace DeviceCenter.Helper
             // true when it's not using the password the app remembers.  this is used by set password page with oldpassword information.
             var isOneOffPassword = !string.IsNullOrEmpty(passwordToUse);
 
-            var password = isOneOffPassword ? passwordToUse : this.DeviceAuthentication.Password;
-
             while (true)
             {
                 try
                 {
                     var request = WebRequest.Create(requestUrl) as HttpWebRequest;
+
+                    // This should go here, otherwise we are not going to use the most up-to-date password
+                    // provided by the user in the dialog box
+                    var password = isOneOffPassword ? passwordToUse : this.DeviceAuthentication.Password;
 
                     // Tbd check for NULL.
                     request.Method = "POST";
@@ -196,16 +203,21 @@ namespace DeviceCenter.Helper
                         throw;
                     }
 
+                    // HandleError() shows the authentication dialog box in case the WebException status code
+                    // is HttpStatusCode.Unauthorized
                     switch (HandleError(error))
                     {
+                        // Pass exception to the caller
                         case HttpErrorResult.Fail:
                             Debug.WriteLine($"Error in MakeRequest, url [{requestUrl.AbsoluteUri}]");
                             Debug.WriteLine(error.ToString());
                             throw;
 
+                        // Keep going with the while loop
                         case HttpErrorResult.Retry:
                             break;
 
+                        // Return HttpStatusCode.Unauthorized to the caller
                         case HttpErrorResult.Cancel:
                             var httpWebResponse = error.Response as HttpWebResponse;
                             if (httpWebResponse != null)
@@ -248,16 +260,20 @@ namespace DeviceCenter.Helper
                 }
                 catch (WebException error)
                 {
+                    // HandleError() shows the authentication dialog box in case the WebException status code
+                    // is HttpStatusCode.Unauthorized
                     switch (HandleError(error))
                     {
+                        // Pass exception to the caller
                         case HttpErrorResult.Fail:
                             Debug.WriteLine($"Error in MakeRequest, url [{requestUrl.AbsolutePath}]");
                             Debug.WriteLine(error.ToString());
                             throw;
-
+                        // Keep going with the while loop
                         case HttpErrorResult.Retry:
                             break;
 
+                        // Return HttpStatusCode.Unauthorized to the caller
                         case HttpErrorResult.Cancel:
                             var httpWebResponse = error.Response as HttpWebResponse;
                             if (httpWebResponse != null)

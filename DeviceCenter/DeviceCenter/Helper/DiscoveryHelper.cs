@@ -190,12 +190,51 @@ namespace DeviceCenter.Helper
         /// <summary>
         /// Called externally by the ViewDevicesPage to display AllJoyn network
         /// </summary>
+        /// <param name="accessPoints">The AdHoc device instance list, 
+        /// 1) a new device instance will be created if the SSID doesn't exist. 
+        /// 2) the device instance will be remvoed if it doesn't exist in the list passed in</param>
+        public void RefreshAdhocDevices(IList<WlanInterop.WlanAvailableNetwork> accessPoints)
+        {
+            // get a list of ssid strings from the passed in list
+            var newNetworksSsid = new HashSet<string>();
+            foreach (var accesspoint in accessPoints)
+            {
+                newNetworksSsid.Add(accesspoint.SsidString);
+            }
+
+            // compare with the cached adhoc network to find out the ssids to be removed
+            var devicesToRemove = new List<string>();
+            foreach (var adhoNetwork in _adhocNetworks)
+            {
+                if (!newNetworksSsid.Contains(adhoNetwork.Key))
+                {
+                    devicesToRemove.Add(adhoNetwork.Key);
+                }
+            }
+
+            // add new devices
+            foreach (var accessPoint in accessPoints)
+            {
+                AddAdhocDevice(accessPoint);
+            }
+
+            // remove devices
+            foreach (var deviceToRemove in devicesToRemove)
+            {
+                RemoveAdhocDevice(deviceToRemove);
+            }
+        }
+
+        /// <summary>
+        /// Add a device into internal new device and all device list
+        /// </summary>
         /// <param name="accessPoint">The AdHoc device instance, a new device instance will be
-        /// created if the SSID doesn't exist.  If it does exist, the timeout will be reset</param>
-        public void AddAdhocDevice(WlanInterop.WlanAvailableNetwork accessPoint)
+        /// created if the SSID doesn't exist.</param>
+        private void AddAdhocDevice(WlanInterop.WlanAvailableNetwork accessPoint)
         {
             DiscoveredDevice device = _adhocNetworks.GetOrAdd(accessPoint.SsidString, (key) =>
             {
+                System.Diagnostics.Debug.WriteLine("---------- new device {0}", accessPoint.SsidString);
                 var newDevice = new DiscoveredDevice(accessPoint)
                 {
                     DeviceName = key
@@ -209,8 +248,30 @@ namespace DeviceCenter.Helper
 
                 return newDevice;
             });
+        }
 
-            device.Seen();
+        /// <summary>
+        /// Remove a device from internal new device and all device list
+        /// </summary>
+        /// <param name="ssidToRemove">The ssid to be removed from the list</param>
+        private void RemoveAdhocDevice(string ssidToRemove)
+        {
+            DiscoveredDevice device;
+            if (_adhocNetworks.TryRemove(ssidToRemove, out device))
+            {
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                {
+                    if (AllDevices.Contains(device))
+                    {
+                        AllDevices.Remove(device);
+                    }
+
+                    if (NewDevices.Contains(device))
+                    {
+                        NewDevices.Remove(device);
+                    }
+                }));
+            };
         }
 
         /// <summary>
@@ -356,16 +417,6 @@ namespace DeviceCenter.Helper
             // Scan for devices in the mDNS and ebootpinger lists.  Any that haven't responded
             // in the specified time can be added to the removeList above
             foreach (var cur in _foundDevices)
-            {
-                if (cur.Value.LastSeen < devicesTooOld)
-                {
-                    removeList.Add(cur.Value);
-                }
-            }
-
-            // Scan for WiFi only devices. Any that haven't announced themselves in the specified
-            // time can be added to the removeList above
-            foreach (var cur in _adhocNetworks)
             {
                 if (cur.Value.LastSeen < devicesTooOld)
                 {
