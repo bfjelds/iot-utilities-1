@@ -6,6 +6,42 @@ using WlanAPIs;
 
 namespace DeviceCenter
 {
+    public class IPAddressSortable : IPAddress, IComparable
+    {
+        public IPAddressSortable(IPAddress newAddress) : base(newAddress.GetAddressBytes()) { }
+
+        public IPAddressSortable(long newAddress) : base(newAddress) { }
+        public IPAddressSortable(byte[] address) : base(address) { }
+
+        public new static IPAddressSortable Parse(string ipAddressString)
+        {
+            return new IPAddressSortable(IPAddress.Parse(ipAddressString));
+        }
+
+        public int CompareTo(object obj)
+        {
+            IPAddress compareObject = obj as IPAddress;
+            if (compareObject != null)
+            {
+                byte[] a = compareObject.GetAddressBytes();
+                byte[] b = base.GetAddressBytes();
+
+                for (int i = 0, n = Math.Min(a.Length, b.Length); i < n; i++)
+                    if (a[i] < b[i])
+                        return 1;
+                    else if (a[i] > b[i])
+                        return -1;
+                if (a.Length < b.Length)
+                    return 1;
+                else if (a.Length > b.Length)
+                    return -1;
+            }
+
+            return 0;
+        }
+    }
+
+
     public class DiscoveredDevice
     {
         /// <summary>
@@ -83,7 +119,7 @@ namespace DeviceCenter
 
         public string DeviceModel { get; set; }
 
-        public IPAddress IpAddress { get; set; }
+        public IPAddressSortable IpAddress { get; set; }
 
         public string OsVersion { get; set; }
 
