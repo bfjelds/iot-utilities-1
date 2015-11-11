@@ -345,7 +345,7 @@ namespace DeviceCenter.Helper
                     OsVersion = osVersion,
                     IpAddress = ipAddress,
                     UniqueId = deviceGuid,
-                    Manage = new Uri($"http://administrator@{ipV4Address}/"),
+                    Manage = new Uri($"http://{ipV4Address}:8080/"),
                     Authentication = DialogAuthenticate.GetSavedPassword(deviceName)
                 };
 
