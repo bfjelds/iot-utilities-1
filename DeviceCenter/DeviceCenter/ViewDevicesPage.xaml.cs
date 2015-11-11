@@ -59,6 +59,8 @@ namespace DeviceCenter
             _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
             _telemetryTimer.Tick += TelemetryTimer_Tick;
             _telemetryTimer.Start();
+
+            Sort(_lastDirection, "DeviceName", "IpAddress");
         }
 
         private void SoftwareAccessPoint_OnWlanScanComplete(object sender, WlanScanCompleteArgs e)
@@ -263,6 +265,71 @@ namespace DeviceCenter
                     ListViewDevices.ItemsSource = _discoveryHelper.NewDevices;
                 else
                     ListViewDevices.ItemsSource = _discoveryHelper.AllDevices;
+            }
+        }
+
+        private GridViewColumnHeader _lastHeaderClicked = null;
+        private ListSortDirection _lastDirection = ListSortDirection.Ascending;
+
+        private void Sort(ListSortDirection direction, params string[] sortByList)
+        {
+            ICollectionView dataView = CollectionViewSource.GetDefaultView(ListViewDevices.ItemsSource);
+
+            using (dataView.DeferRefresh())
+            {
+                dataView.SortDescriptions.Clear();
+
+                foreach (var sortBy in sortByList)
+                {
+                    SortDescription sd = new SortDescription(sortBy, direction);
+                    dataView.SortDescriptions.Add(sd);
+                }
+            }
+        }
+
+        private void ListViewDevices_Click(object sender, RoutedEventArgs e)
+        {
+            GridViewColumnHeader headerClicked = e.OriginalSource as GridViewColumnHeader;
+            ListSortDirection direction;
+
+            if (headerClicked != null)
+            {
+                if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
+                {
+                    if (headerClicked != _lastHeaderClicked)
+                    {
+                        direction = ListSortDirection.Ascending;
+                    }
+                    else
+                    {
+                        if (_lastDirection == ListSortDirection.Ascending)
+                        {
+                            direction = ListSortDirection.Descending;
+                        }
+                        else
+                        {
+                            direction = ListSortDirection.Ascending;
+                        }
+                    }
+
+                    // callback will provide the localized name of the column clicked.  Reverse
+                    // it to get the column itself and sort it
+                    string header = headerClicked.Column.Header as string;
+                    if (header == Strings.Strings.DeviceListColName)
+                        Sort(direction, "DeviceName", "IpAddress");
+
+                    else if (header == Strings.Strings.DeviceListColType)
+                        Sort(direction, "DeviceModel", "DeviceName", "IpAddress");
+
+                    else if (header == Strings.Strings.DeviceListColIPAddress)
+                        Sort(direction, "IpAddress");
+
+                    else if (header == Strings.Strings.DeviceListOS)
+                        Sort(direction, "OsVersion", "DeviceName", "IpAddress");
+
+                    _lastHeaderClicked = headerClicked;
+                    _lastDirection = direction;
+                }
             }
         }
 
