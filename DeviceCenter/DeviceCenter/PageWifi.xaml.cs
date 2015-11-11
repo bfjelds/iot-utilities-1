@@ -144,7 +144,7 @@ namespace DeviceCenter
                 {
                     Collapse();
 
-                    _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password).Start();
+                    _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
                 }
                 catch (WebException error)
                 {

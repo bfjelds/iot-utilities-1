@@ -49,17 +49,11 @@
     <Grid>
         <ScrollViewer FontFamily="IOT MDL2 Assets" VerticalScrollBarVisibility="Auto">
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
-                <TextBlock Text="{x:Static props:Strings.IntroTitle}" FontSize="46" TextWrapping="Wrap" VerticalAlignment="Top"/>
-                <StackPanel Orientation="Horizontal" Margin="0 44 0 0">
-                    <TextBlock FontFamily="Wingdings" Text="&#xff;" FontSize="60" Margin="0,0,24,0"/>
-                    <TextBlock VerticalAlignment="Center" FontFamily="./Assets/#Segoe MDL2 Assets" Text="&#xE0AB;" FontSize="25" Margin="0,0,24,0"/>
-                    <TextBlock FontFamily="./Assets/#IOT MDL2 Assets" Text="&#xE959;" FontSize="60" Margin="0,0,24,0"/>
-                    <TextBlock VerticalAlignment="Center" FontFamily="./Assets/#Segoe MDL2 Assets" Text="&#xE0AB;" FontSize="25" Margin="0,0,24,0"/>
-                    <TextBlock FontFamily="./Assets/#IOT MDL2 Assets" Text="&#xE753;" FontSize="60" Margin="0,0,24,0"/>
-                </StackPanel>
-                <TextBlock Text="{x:Static props:Strings.IntroSubTitle}" FontSize="15" TextWrapping="Wrap" Margin="0,41,0,0"/>
-                <TextBlock Text="{x:Static props:Strings.IntroMessage}" FontSize="15" TextWrapping="Wrap" Margin="0,20,0,0"/>
-                <Button FontSize="15" Padding="30 5 30 5" HorizontalAlignment="Left" Content="{x:Static props:Strings.NewDeviceTitle}" Click="SetupDeviceButton_Click" Foreground="White" Margin="0,28,0,0">
+                <TextBlock Text="{x:Static props:Strings.IntroTitle}" FontSize="46" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI Light"/>
+                <Image Source="Assets/Logo.png" Height="54" HorizontalAlignment="Left" Margin="0 44 0 0" />
+                <TextBlock Text="{x:Static props:Strings.IntroSubTitle}" FontSize="15" TextWrapping="Wrap" Margin="0,41,0,0" FontFamily="IOT MDL2 Assets" />
+                <TextBlock Text="{x:Static props:Strings.IntroMessage}" FontSize="15" TextWrapping="Wrap" Margin="0,20,0,0" FontFamily="IOT MDL2 Assets"/>
+                <Button FontSize="15" Padding="30 5 30 5" HorizontalAlignment="Left" Content="{x:Static props:Strings.NewDeviceTitle}" Click="SetupDeviceButton_Click" Foreground="White" Margin="0,28,0,0" FontFamily="IOT MDL2 Assets">
                     <Button.BorderBrush>
                         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
                     </Button.BorderBrush>
