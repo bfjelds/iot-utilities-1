@@ -94,7 +94,7 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel>
-                                        <TextBlock FontSize="16" Text="" Foreground="Blue" Cursor="Hand" FontFamily="/DeviceCenter;component/Assets/#Segoe MDL2 Assets" MouseDown="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
+                                        <TextBlock FontSize="16" Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#Segoe MDL2 Assets" MouseDown="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
                                         <StackPanel Orientation="Horizontal" Visibility="{Binding ConnectVisible}" >
                                             <TextBlock FontSize="22" Text="{Binding WiFiSignalStrengthIconDisplay}" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#Segoe MDL2 Assets" MouseDown="ButtonConnect_Click" VerticalAlignment="Center"  />
                                             <TextBlock Margin="4 0 0 0" Text="{x:Static props:Strings.DevicesConfigureDevice}" Foreground="Blue" Cursor="Hand" MouseDown="ButtonConnect_Click" VerticalAlignment="Center" />
