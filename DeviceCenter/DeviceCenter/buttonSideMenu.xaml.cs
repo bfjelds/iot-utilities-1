@@ -16,6 +16,7 @@ namespace DeviceCenter
         public ButtonSideMenu()
         {
             InitializeComponent();
+            rectangleSelected.Opacity = 0;
         }
 
         [Category("Behavior")]
