@@ -99,7 +99,7 @@ namespace DeviceCenter.Helper
         private static int _refCount = 0;
         private static DiscoveryHelper _instance;
 
-        private bool disposedValue = false; // To detect redundant calls
+        private bool _disposedValue = false; // To detect redundant calls
 
         private DiscoveryHelper()
         {
@@ -127,7 +127,7 @@ namespace DeviceCenter.Helper
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
@@ -137,7 +137,7 @@ namespace DeviceCenter.Helper
                     _stopScanNewDevicesTimer.Tick -= StopScanNewDevicesTimerTick;
                 }
 
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 
@@ -197,31 +197,31 @@ namespace DeviceCenter.Helper
         {
             // get a list of ssid strings from the passed in list
             var newNetworksSsid = new HashSet<string>();
-            foreach (var accesspoint in accessPoints)
+            foreach (var item in accessPoints)
             {
-                newNetworksSsid.Add(accesspoint.SsidString);
+                newNetworksSsid.Add(item.SsidString);
             }
 
             // compare with the cached adhoc network to find out the ssids to be removed
             var devicesToRemove = new List<string>();
-            foreach (var adhoNetwork in _adhocNetworks)
+            foreach (var item in _adhocNetworks)
             {
-                if (!newNetworksSsid.Contains(adhoNetwork.Key))
+                if (!newNetworksSsid.Contains(item.Key))
                 {
-                    devicesToRemove.Add(adhoNetwork.Key);
+                    devicesToRemove.Add(item.Key);
                 }
             }
 
             // add new devices
-            foreach (var accessPoint in accessPoints)
+            foreach (var item in accessPoints)
             {
-                AddAdhocDevice(accessPoint);
+                AddAdhocDevice(item);
             }
 
             // remove devices
-            foreach (var deviceToRemove in devicesToRemove)
+            foreach (var item in devicesToRemove)
             {
-                RemoveAdhocDevice(deviceToRemove);
+                RemoveAdhocDevice(item);
             }
         }
 
@@ -293,7 +293,7 @@ namespace DeviceCenter.Helper
             string osVersion = "";
             Guid deviceGuid = Guid.Empty;
             string arch = "";
-            IPAddress ipAddress = IPAddress.Parse(ipV4Address);
+            IPAddressSortable ipAddress = IPAddressSortable.Parse(ipV4Address);
 
             // mDNS Discovered devices are in format "devicename.local". Remove the suffix
             if (deviceName.IndexOf('.') > 0)
