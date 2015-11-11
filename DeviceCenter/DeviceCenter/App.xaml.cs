@@ -87,9 +87,6 @@ namespace DeviceCenter
             GlobalStopwatch.Stop();
 
             DriveInfo.DisposeWatcher();
-
-            // remove entry DeviceCenter added in IP routing table
-            Helper.SoftApHelper.Instance.RemoveIPRoutingEntryIfNeeded();
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -100,9 +97,6 @@ namespace DeviceCenter
                 // Track exception
                 TelemetryClient.TrackException(exception);
             }
-
-            // remove entry DeviceCenter added in IP routing table
-            Helper.SoftApHelper.Instance.RemoveIPRoutingEntryIfNeeded();
         }
     }
 }
