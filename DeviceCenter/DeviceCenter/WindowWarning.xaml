@@ -14,7 +14,7 @@
         <DockPanel.Background>
             <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
         </DockPanel.Background>
-        <TextBlock DockPanel.Dock="Top" x:Name="labelMessageHeader" Margin="10" FontSize="20" FontFamily="Segoe UI SemiLight" Text="Title" />
+        <TextBlock DockPanel.Dock="Top" x:Name="labelMessageHeader" Margin="10" FontSize="20" Text="Title" />
         <Grid DockPanel.Dock="Bottom"  Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="234*"/>
