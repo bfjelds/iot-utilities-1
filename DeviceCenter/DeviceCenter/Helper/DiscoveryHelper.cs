@@ -346,7 +346,7 @@ namespace DeviceCenter.Helper
                     IpAddress = ipAddress,
                     UniqueId = deviceGuid,
                     Manage = new Uri($"http://{ipV4Address}:8080/"),
-                    Authentication = DialogAuthenticate.GetSavedPassword(deviceName)
+                    Authentication = DialogAuthenticate.GetSavedPassword(parsedDeviceName)
                 };
 
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
