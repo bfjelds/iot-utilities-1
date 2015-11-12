@@ -1,9 +1,11 @@
 ﻿using DeviceCenter.Helper;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -109,7 +111,26 @@ namespace DeviceCenter
 
                 try
                 {
-                    if (await webbRequest.IsAppRunning(this.AppItem.AppName))
+                    AppInformation.ApplicationFiles appFiles = null;
+
+                    var arch = await GetDeviceArchAsync(webbRequest);
+
+                    // If we can't get device arch, hide everything as we can't be sure
+                    // which app version to deploy
+                    if(string.IsNullOrEmpty(arch))
+                    {
+                        throw new WebBRest.RestError("Unable to get device architecture.", null);
+                    }
+
+                    // Should never happen
+                    if (!this.AppItem.PlatformFiles.TryGetValue(arch, out appFiles))
+                    {
+                        return;
+                    }
+
+                    string packageFullName = appFiles.PackageFullName;
+
+                    if (await webbRequest.IsAppRunning(packageFullName))
                     {
                         PanelDeployed.Visibility = Visibility.Visible;
                         PanelDeploy.Visibility = Visibility.Collapsed;
@@ -142,6 +163,38 @@ namespace DeviceCenter
             }
         }
 
+        private async Task<string> GetDeviceArchAsync(WebBRest webbRequest)
+        {
+            if (_device == null || webbRequest == null)
+            {
+                return string.Empty;
+            }
+
+            string arch = string.Empty;
+
+            // Device discovered with pinger, try to get architecture with WebB REST call
+            if (string.IsNullOrEmpty(_device.Architecture))
+            {
+                // GetDeviceInfoAsync does not throw
+                var osInfo = await webbRequest.GetDeviceInfoAsync();
+
+                if (osInfo != null)
+                {
+                    arch = osInfo.Arch;
+                }
+
+                // Update information for this device
+                _device.Architecture = arch;
+            }
+            // Device discovered with mDNS
+            else
+            {
+                arch = _device.Architecture;
+            }
+
+            return arch;
+        }
+
         private async void ButtonDeploy_Click(object sender, RoutedEventArgs e)
         {
             if (_device == null)
@@ -157,24 +210,7 @@ namespace DeviceCenter
 
                 var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
 
-                string arch = string.Empty;
-
-                // Device discovered with pinger, try to get architecture with WebB REST call
-                if(string.IsNullOrEmpty(_device.Architecture))
-                {
-                    // GetDeviceInfoAsync does not throw
-                    var osInfo = await webbRequest.GetDeviceInfoAsync();
-
-                    if(osInfo != null)
-                    {
-                        arch = osInfo.Arch;
-                    }
-                }
-                // Device discovered with mDNS
-                else
-                {
-                    arch = _device.Architecture;
-                }
+                string arch = await GetDeviceArchAsync(webbRequest);
 
                 // If we still could not get the device arch, give up
                 // and hide all the panels
@@ -188,9 +224,6 @@ namespace DeviceCenter
 
                     return;
                 }
-
-                // Make sure device architecture is up to date
-                _device.Architecture = arch;
 
                 StopTheOtherApp(arch);
 
