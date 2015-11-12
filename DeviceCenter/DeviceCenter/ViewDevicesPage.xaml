@@ -58,7 +58,7 @@
 
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel >
-            <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left" Margin="0 0 0 10"/>
+            <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left" Margin="0 0 0 10"/>
             <StackPanel DockPanel.Dock="Top" Margin="0 8" Orientation="Horizontal">
                 <TextBlock FontSize="13" Text="{x:Static props:Strings.DeviceListFilter}" VerticalAlignment="Center" />
                 <ComboBox x:Name="comboBoxFilter" Width="150" Margin="10 0" SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged">
