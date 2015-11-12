@@ -82,15 +82,15 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceListColType}">
+                        <GridViewColumn Width="220" Header="{x:Static props:Strings.DeviceListColType}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding DeviceModel}" Visibility="{Binding ManageVisible}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="100" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IpAddress}" />
-                        <GridViewColumn Width="130" Header="{x:Static props:Strings.DeviceListColSettings}">
+                        <GridViewColumn Width="120" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IpAddress}" />
+                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColSettings}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel>
