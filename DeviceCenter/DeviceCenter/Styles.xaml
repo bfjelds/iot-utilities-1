@@ -17,4 +17,9 @@
 
     <SolidColorBrush x:Key="RowBackgroundColorBrush" Color="{StaticResource RowBackgroundColor}"/>
     <SolidColorBrush x:Key="RowBackgroundAlternateColorBrush" Color="{StaticResource RowBackgroundAlternateColor}"/>
+
+    <Style TargetType="TextBlock">
+        <Setter Property="TextElement.FontSize" Value="15" />
+    </Style>
+
 </ResourceDictionary>

@@ -41,29 +41,26 @@ namespace DeviceCenter
             this._restHelper = new RestHelper(parent, ipAddress, userInfo);
         }
 
-        public Task<OsInfo> GetDeviceInfoAsync()
+        public async Task<OsInfo> GetDeviceInfoAsync()
         {
-            return Task<OsInfo>.Run(async () => 
+            string url = OsInfo;
+
+            try
             {
-                string url = OsInfo;
-
-                try
+                using (var response = await _restHelper.GetOrPostRequestAsync(url, true))
                 {
-                    using (var response = await _restHelper.GetOrPostRequestAsync(url, true))
-                    {
-                        var data = RestHelper.ProcessJsonResponse(response, typeof(OsInfo)) as OsInfo;
+                    var data = RestHelper.ProcessJsonResponse(response, typeof(OsInfo)) as OsInfo;
 
-                        // data might be null, caller should check
-                        return data;
-                    }
+                    // data might be null, caller should check
+                    return data;
                 }
-                catch(Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
 
-                    return null;
-                }
-            });
+                return null;
+            }
         }
 
         public async Task<bool> SetDeviceNameAsync(string newDeviceName)

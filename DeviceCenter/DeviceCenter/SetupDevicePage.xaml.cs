@@ -44,6 +44,7 @@ namespace DeviceCenter
             this.navigationFrame = navigationFrame;
             App.TelemetryClient.TrackPageView(this.GetType().Name);
 
+            PanelFlashing.Visibility = Visibility.Collapsed;
             PanelManualImage.Visibility = Visibility.Collapsed;
             PanelAutomaticImage.Visibility = Visibility.Visible;
         }
@@ -303,12 +304,13 @@ namespace DeviceCenter
                 double totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
                 double percentage = bytesIn / totalBytes * 100;
                 FlashingProgress.Value = int.Parse(Math.Truncate(percentage).ToString());
+                ProgressText.Text = string.Format(Strings.Strings.DownloadProgress, Math.Truncate(bytesIn / 1048576), Math.Truncate(percentage));
             }));
-
         }
 
         private async Task<string> ExtractFFU(string isoFilePath)
         {
+            ProgressText.Text = string.Empty;
             SetFlashingState(FlashingStates.Extracting);
             var deviceType = ComboBoxDeviceType.SelectedItem as LkgPlatform;
             string ffuPath = string.Empty;
@@ -341,6 +343,7 @@ namespace DeviceCenter
 
         private void FlashFFU(string ffuPath)
         {
+            ProgressText.Text = string.Empty;
             var driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
             SetFlashingState(FlashingStates.Flashing);
 
@@ -474,6 +477,7 @@ namespace DeviceCenter
                     case FlashingStates.Completed:
                         FlashingProgress.Value = 0;
                         PanelFlashing.Visibility = Visibility.Collapsed;
+                        ProgressText.Text = string.Empty;
                         break;
                     case FlashingStates.Downloading:
                         FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingDownload;
@@ -486,12 +490,14 @@ namespace DeviceCenter
                         buttonFlash.IsEnabled = false;
                         PanelFlashing.Visibility = Visibility.Visible;
                         buttonCancelDism.IsEnabled = false;
+                        ProgressText.Text = string.Empty;
                         break;
                     case FlashingStates.Flashing:
                         FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashing;
                         buttonFlash.IsEnabled = false;
                         PanelFlashing.Visibility = Visibility.Visible;
                         buttonCancelDism.IsEnabled = true;
+                        ProgressText.Text = string.Empty;
                         break;
                 }
             }));

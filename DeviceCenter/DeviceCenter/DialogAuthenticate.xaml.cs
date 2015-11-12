@@ -58,15 +58,10 @@
         private const string DefaultUser = "Administrator";
         private const string DefaultPassword = "p@ssw0rd";
 
-        static LoginInfoDictionary _savedPasswords = new Dictionary<string, UserInfo>();
+        static LoginInfoDictionary _savedPasswords = AppData.LoadWebBUserInfo();
 
         public static UserInfo GetSavedPassword(string deviceName)
         {
-            if (_savedPasswords == null)
-            {
-                _savedPasswords = AppData.LoadWebBUserInfo();
-            }
-
             UserInfo result;
 
             if (!_savedPasswords.TryGetValue(deviceName, out result))
