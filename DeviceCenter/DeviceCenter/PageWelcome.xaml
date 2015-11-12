@@ -49,7 +49,7 @@
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
-                <TextBlock Text="{x:Static props:Strings.IntroTitle}" FontSize="46" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI Light"/>
+                <TextBlock Text="{x:Static props:Strings.IntroTitle}" FontSize="46" TextWrapping="Wrap" VerticalAlignment="Top" />
                 <Image Source="Assets/Logo.png" Height="54" HorizontalAlignment="Left" Margin="0 44 0 0" />
                 <TextBlock Text="{x:Static props:Strings.IntroSubTitle}" FontSize="15" TextWrapping="Wrap" Margin="0,41,0,0" />
                 <TextBlock Text="{x:Static props:Strings.IntroMessage}" FontSize="15" TextWrapping="Wrap" Margin="0,20,0,0" />

@@ -78,11 +78,11 @@ namespace DeviceCenter
             ShowExpanded = Visibility.Visible;
             ReadyToConnect = true;
 
-            OnPropertyChanged("ShowConnect");
-            OnPropertyChanged("Active");
-            OnPropertyChanged("NeedPassword");
-            OnPropertyChanged("ShowExpanded");
-            OnPropertyChanged("ReadyToConnect");
+            OnPropertyChanged(nameof(ShowConnect));
+            OnPropertyChanged(nameof(Active));
+            OnPropertyChanged(nameof(NeedPassword));
+            OnPropertyChanged(nameof(ShowExpanded));
+            OnPropertyChanged(nameof(ReadyToConnect));
         }
 
         public void Collapse()
@@ -92,10 +92,10 @@ namespace DeviceCenter
             NeedPassword = Visibility.Collapsed;
             ShowExpanded = Visibility.Collapsed;
 
-            OnPropertyChanged("ShowConnect");
-            OnPropertyChanged("Active");
-            OnPropertyChanged("NeedPassword");
-            OnPropertyChanged("ShowExpanded");
+            OnPropertyChanged(nameof(ShowConnect));
+            OnPropertyChanged(nameof(Active));
+            OnPropertyChanged(nameof(NeedPassword));
+            OnPropertyChanged(nameof(ShowExpanded));
         }
 
         public void StartConnect()
@@ -107,9 +107,9 @@ namespace DeviceCenter
                 this.ShowConnect = Visibility.Collapsed;
                 this.EnableSecureConnect = false;
 
-                OnPropertyChanged("EnableSecureConnect");
-                OnPropertyChanged("NeedPassword");
-                OnPropertyChanged("ShowConnect");
+                OnPropertyChanged(nameof(EnableSecureConnect));
+                OnPropertyChanged(nameof(NeedPassword));
+                OnPropertyChanged(nameof(ShowConnect));
             }
             else
             {
@@ -121,12 +121,12 @@ namespace DeviceCenter
         public void DoConnect(string password)
         {
             this.ReadyToConnect = false;
-            OnPropertyChanged("ReadyToConnect");
+            OnPropertyChanged(nameof(ReadyToConnect));
 
-            DoConnectAsync(password);
+            ConnectDeviceToWifi(password);
         }
 
-        private void DoConnectAsync(string password)
+        private void ConnectDeviceToWifi(string password)
         {
             try
             {
@@ -135,10 +135,10 @@ namespace DeviceCenter
                 this.ReadyToConnect = false;
                 this.EnableSecureConnect = false;
 
-                OnPropertyChanged("EnableSecureConnect");
-                OnPropertyChanged("WaitingToConnect");
-                OnPropertyChanged("ReadyToConnect");
-                OnPropertyChanged("ShowConnect");
+                OnPropertyChanged(nameof(EnableSecureConnect));
+                OnPropertyChanged(nameof(WaitingToConnect));
+                OnPropertyChanged(nameof(ReadyToConnect));
+                OnPropertyChanged(nameof(ShowConnect));
 
                 Collapse();
 
@@ -166,10 +166,10 @@ namespace DeviceCenter
                 this.EnableSecureConnect = true;
                 this.ShowConnect = password == string.Empty ? Visibility.Visible : Visibility.Collapsed;
 
-                OnPropertyChanged("EnableSecureConnect");
-                OnPropertyChanged("WaitingToConnect");
-                OnPropertyChanged("ReadyToConnect");
-                OnPropertyChanged("ShowConnect");
+                OnPropertyChanged(nameof(EnableSecureConnect));
+                OnPropertyChanged(nameof(WaitingToConnect));
+                OnPropertyChanged(nameof(ReadyToConnect));
+                OnPropertyChanged(nameof(ShowConnect));
             }
         }
 
@@ -178,8 +178,8 @@ namespace DeviceCenter
             this.ReadyToConnect = enabled;
             this.EnableSecureConnect = enabled;
 
-            OnPropertyChanged("ReadyToConnect");
-            OnPropertyChanged("EnableSecureConnect");
+            OnPropertyChanged(nameof(ReadyToConnect));
+            OnPropertyChanged(nameof(EnableSecureConnect));
         }
 
         public bool EnableSecureConnect { get; private set; }
@@ -191,9 +191,9 @@ namespace DeviceCenter
             ShowConnect = Visibility.Visible;
             ReadyToConnect = true;
 
-            OnPropertyChanged("ReadyToConnect");
-            OnPropertyChanged("NeedPassword");
-            OnPropertyChanged("ShowConnect");
+            OnPropertyChanged(nameof(ReadyToConnect));
+            OnPropertyChanged(nameof(NeedPassword));
+            OnPropertyChanged(nameof(ShowConnect));
         }
 
         public bool Active { get; private set; }

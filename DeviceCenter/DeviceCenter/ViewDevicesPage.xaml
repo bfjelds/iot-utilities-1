@@ -58,7 +58,7 @@
 
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <DockPanel >
-            <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" FontFamily="Segoe UI Semilight" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left" Margin="0 0 0 10"/>
+            <TextBlock DockPanel.Dock="Top" x:Uid="Title" FontSize="30" Text="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left" Margin="0 0 0 10"/>
             <StackPanel DockPanel.Dock="Top" Margin="0 8" Orientation="Horizontal">
                 <TextBlock FontSize="13" Text="{x:Static props:Strings.DeviceListFilter}" VerticalAlignment="Center" />
                 <ComboBox x:Name="comboBoxFilter" Width="150" Margin="10 0" SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged">
@@ -82,15 +82,15 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="200" Header="{x:Static props:Strings.DeviceListColType}">
+                        <GridViewColumn Width="220" Header="{x:Static props:Strings.DeviceListColType}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding DeviceModel}" Visibility="{Binding ManageVisible}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="100" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IpAddress}" />
-                        <GridViewColumn Width="130" Header="{x:Static props:Strings.DeviceListColSettings}">
+                        <GridViewColumn Width="120" Header="{x:Static props:Strings.DeviceListColIPAddress}" DisplayMemberBinding="{Binding IpAddress}" />
+                        <GridViewColumn Width="150" Header="{x:Static props:Strings.DeviceListColSettings}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel>
