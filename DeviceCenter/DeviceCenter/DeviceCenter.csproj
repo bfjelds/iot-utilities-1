@@ -448,6 +448,9 @@
   <PropertyGroup>
     <PreBuildEvent>copy "$(TargetDir)DeviceDiscovery.dll"  "$(SolutionDir)DeviceCenter"</PreBuildEvent>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(IsTFSBuild)' == 'TRUE' ">
+    <PreBuildEvent>copy /Y "$(SolutionDir)DeviceCenter\ApplicationInsights.txt" "$(SolutionDir)DeviceCenter\ApplicationInsights.config"</PreBuildEvent>
+  </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
