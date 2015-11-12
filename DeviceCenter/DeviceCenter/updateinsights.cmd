@@ -1,0 +1,1 @@
+move /Y ApplicationInsights.txt ApplicationInsights.config
