@@ -370,11 +370,24 @@ namespace DeviceCenter
                 {
                     _deviceSetupHelper.FlashFFU(ffuPath, driveInfo);
                 }
-                catch (Exception ex)
+                catch (FileNotFoundException ex)
                 {
-                    HandleFlashFFUException(ex);
-                    return;
+                    Debug.WriteLine(ex.ToString());
+                    // the app name as caption
+                    var errorCaption = Strings.Strings.AppNameDisplay;
+
+                    // show the filename, use standard windows error
+                    var errorMsg = new Win32Exception(2).Message + ": " + ex.FileName;
+
+                    MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
+                catch (Win32Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    // This happens if UAC is declined, ignore and reset back
+                }
+
+                ResetProgressUi();
             }
         }
 
@@ -384,22 +397,6 @@ namespace DeviceCenter
             if (!e.Success)
             {
                 Debug.WriteLine("Flashing FFU to SD Card Failed");
-            }
-        }
-
-        private void HandleFlashFFUException(Exception ex)
-        {
-            Debug.WriteLine(ex.ToString());
-            var exception = ex as FileNotFoundException;
-            if (exception != null)
-            {
-                // the app name as caption
-                var errorCaption = Strings.Strings.AppNameDisplay;
-
-                // show the filename, use standard windows error
-                var errorMsg = new Win32Exception(2).Message + ": " + exception.FileName;
-
-                MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 

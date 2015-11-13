@@ -22,14 +22,16 @@ namespace DeviceCenter
         private readonly bool _needPassword;
         private readonly WebBRest _webbRequest;
         private readonly string _adapterGuid;
+        private readonly PageWifi _parent;
 
-        public WifiEntry(PageFlow pageFlow, string adapterGuid, AvailableNetwork ssid, WebBRest webbRequest, Visibility showConnecting = Visibility.Hidden)
+        public WifiEntry(PageWifi parent, PageFlow pageFlow, string adapterGuid, AvailableNetwork ssid, WebBRest webbRequest, Visibility showConnecting = Visibility.Hidden)
         {
             this._pageFlow = pageFlow;
             this._network = ssid;
             this._webbRequest = webbRequest;
-            ShowConnecting = showConnecting;
+            this.ShowConnecting = showConnecting;
             this._adapterGuid = adapterGuid;
+            this._parent = parent;
 
             this.Active = false;
             this.ShowConnect = Visibility.Collapsed;
@@ -157,7 +159,8 @@ namespace DeviceCenter
                 }, TaskCreationOptions.LongRunning);
 
                 MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
-                this._pageFlow.GoBack();
+
+                this._pageFlow.Close(this._parent);
             }
             finally
             {
@@ -253,7 +256,7 @@ namespace DeviceCenter
 
             MessageBox.Show(message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
-            _pageFlow.GoBack();
+            this._pageFlow.Close(this);
         }
 
         private async void delayStartTimer_Tick(object sender, EventArgs e)
@@ -305,20 +308,20 @@ namespace DeviceCenter
                     {
                         foreach (var ssid in networks.Items)
                         {
-                            result.Add(new WifiEntry(_pageFlow, adapters.Items[0].GUID, ssid, webbRequest));
+                            result.Add(new WifiEntry(this, _pageFlow, adapters.Items[0].GUID, ssid, webbRequest));
                         }
                     }
                 }
                 else
                 {
                     MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
-                    _pageFlow.GoBack();
+                    this._pageFlow.Close(this);
                 }
             }
             catch (Exception)
             {
                 MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
-                _pageFlow.GoBack();
+                this._pageFlow.Close(this);
             }
 
             return result;
@@ -415,7 +418,7 @@ namespace DeviceCenter
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            _pageFlow.GoBack();
+            this._pageFlow.Close(this);
         }
     }
 }

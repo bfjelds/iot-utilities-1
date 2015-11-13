@@ -20,6 +20,16 @@ namespace DeviceCenter
             this._navigationFrame.GoBack();
         }
 
+        public void Close(Page caller)
+        {
+            GoBack();
+
+            foreach (var item in _appPages.Where(kvp => kvp.Value == caller).ToList())
+            {
+                _appPages.Remove(item.Key);
+            }
+        }
+
         public void Navigate(Type pageType, params object[] arguments)
         {
             Page page;
@@ -28,8 +38,6 @@ namespace DeviceCenter
 
             if (!_appPages.TryGetValue(pageName, out page))
             {
-                fullParameters[0] = this;
-
                 page = Activator.CreateInstance(pageType, fullParameters) as Page;
                 System.Diagnostics.Debug.Assert(page != null);
 
