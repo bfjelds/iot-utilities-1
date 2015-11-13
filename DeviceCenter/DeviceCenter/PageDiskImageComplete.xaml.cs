@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -20,7 +21,18 @@ namespace DeviceCenter
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            try
+            {
+                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+            }
             e.Handled = true;
         }
 
