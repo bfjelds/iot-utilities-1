@@ -32,7 +32,7 @@ namespace DeviceCenter
         private readonly string _isoFileName = "windows_10_iot_core.iso";
         private readonly LastKnownGood _lkg = new LastKnownGood();
         private EventArrivedEventHandler _usbhandler = null;
-        private readonly PageFlow pageFlow;
+        private readonly PageFlow _pageFlow;
         private readonly WebClient _webClient = new WebClient();
         private DeviceSetupHelper _deviceSetupHelper = DeviceSetupHelper.Instance;
 
@@ -41,7 +41,7 @@ namespace DeviceCenter
         public SetupDevicePage(PageFlow pageFlow)
         {
             InitializeComponent();
-            this.pageFlow = pageFlow;
+            this._pageFlow = pageFlow;
             App.TelemetryClient.TrackPageView(this.GetType().Name);
 
             PanelFlashing.Visibility = Visibility.Collapsed;
@@ -145,6 +145,7 @@ namespace DeviceCenter
         private async Task RefreshDriveList()
         {
             RemoveableDevicesComboBox.IsEnabled = false;
+
             checkBoxEula.IsEnabled = false;
 
             List<DriveInfo> drives = null;
@@ -435,6 +436,9 @@ namespace DeviceCenter
 
                 if (ComboBoxIotBuild.Items.Count > 0)
                     ComboBoxIotBuild.SelectedIndex = 0;
+
+                ComboBoxDeviceType.UpdateLayout();
+                ComboBoxIotBuild.UpdateLayout();
 
                 PanelManualImage.Visibility = (item.Platform == "QCOM") ? Visibility.Visible : Visibility.Collapsed;
                 PanelAutomaticImage.Visibility = (item.Platform != "QCOM") ? Visibility.Visible : Visibility.Collapsed;

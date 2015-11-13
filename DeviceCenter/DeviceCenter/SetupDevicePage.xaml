@@ -52,9 +52,9 @@
                 <TextBlock x:Uid="Subtitle" FontSize="21.333" VerticalAlignment="Bottom" Text="{x:Static props:Strings.NewDeviceSubTitle}" Margin="0,20,0,0" TextWrapping="Wrap"/>
                 <TextBlock x:Uid="SelectDevice" Text="{x:Static props:Strings.NewDeviceSelectDeviceTypeLabel}" Margin="0,10,0,6" FontSize="16" />
                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                    <ComboBox x:Name="ComboBoxDeviceType" Width="279" SelectionChanged="ComboBoxDeviceType_SelectionChanged">
+                    <ComboBox x:Name="ComboBoxDeviceType" MinWidth="280" SelectionChanged="ComboBoxDeviceType_SelectionChanged">
                     </ComboBox>
-                    <ComboBox x:Name="ComboBoxIotBuild" Width="175" Margin="10,0,0,0" SelectionChanged="ComboBoxIotBuild_SelectionChanged">
+                    <ComboBox x:Name="ComboBoxIotBuild" MinWidth="175" Margin="10,0,0,0" SelectionChanged="ComboBoxIotBuild_SelectionChanged">
                     </ComboBox>
                 </StackPanel>
                 <StackPanel x:Name="PanelManualImage" Orientation="Vertical" Margin="0 36 0 0">

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace DeviceCenter
 {
     public class PageFlow
     {
+        private Dictionary<string, Page> _appPages = new Dictionary<string, Page>();
+        private Frame _navigationFrame;
+
         public PageFlow(Frame navigationFrame)
         {
             this._navigationFrame = navigationFrame;
@@ -16,36 +20,23 @@ namespace DeviceCenter
             this._navigationFrame.GoBack();
         }
 
-        private Dictionary<string, Page> _mainPages = new Dictionary<string, Page>();
-
         public void Navigate(Type pageType, params object[] arguments)
         {
             Page page;
-            string pageName = pageType.ToString();
+            string pageName = $"{pageType}:{string.Join(":", arguments)}";
+            var fullParameters = (new object[] { this }).Concat(arguments).ToArray();
 
-            object[] fullArguments = new object[arguments.Length + 1];
-            fullArguments[0] = this;
-
-            int i = 1;
-            foreach (var param in arguments)
+            if (!_appPages.TryGetValue(pageName, out page))
             {
-                fullArguments[i++] = param;
-                pageName += (":" + param.ToString());
-            }
+                fullParameters[0] = this;
 
-            if (!_mainPages.TryGetValue(pageName, out page))
-            {
-                fullArguments[0] = this;
-
-                page = Activator.CreateInstance(pageType, fullArguments) as Page;
+                page = Activator.CreateInstance(pageType, fullParameters) as Page;
                 System.Diagnostics.Debug.Assert(page != null);
 
-                _mainPages.Add(pageName, page);
+                _appPages.Add(pageName, page);
             }
 
             this._navigationFrame.Navigate(page);
         }
-
-        private Frame _navigationFrame;
     }
 }
