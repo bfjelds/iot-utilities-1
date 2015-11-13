@@ -447,16 +447,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy "$(TargetDir)DeviceDiscovery.dll"  "$(SolutionDir)DeviceCenter"
-echo $(IsTFSBuild)
 if  not "$(IsTFSBuild)"=="True" goto end
 echo Setting up ApplicationInsights
 copy /Y  "$(SolutionDir)DeviceCenter\ApplicationInsights.txt" "$(SolutionDir)DeviceCenter\ApplicationInsights.config"
-echo ***ApplicationInsights.txt***
-type "$(SolutionDir)DeviceCenter\ApplicationInsights.txt"
-echo ***ApplicationInsights.config***
-type "$(SolutionDir)DeviceCenter\ApplicationInsights.config"
-:end
-type "$(SolutionDir)DeviceCenter\ApplicationInsights.txt"</PreBuildEvent>
+:end</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
