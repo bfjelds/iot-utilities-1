@@ -25,6 +25,19 @@ namespace DeviceCenter
             TelemetryClient.Context.User.Id = getMachineId();
             TelemetryClient.Context.Session.Id = Guid.NewGuid().ToString();
 
+            // App is designed for Win 10.
+            const int MIN_OS = 10;
+            if (Environment.OSVersion.Version.Major < MIN_OS)
+            {
+                MessageBox.Show(
+                    "Unable to run this application. This application requires your system to be updated to Microsoft Windows Operating System Version 10.",
+                    Strings.Strings.AppNameDisplay,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation);
+
+                Shutdown();
+            }
+
             // Handle uncaught exceptions
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
