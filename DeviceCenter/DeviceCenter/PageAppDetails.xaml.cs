@@ -20,15 +20,15 @@ namespace DeviceCenter
         private const string InternetRadioAppName = "InternetRadioHeaded";
 
         public AppInformation AppItem { get; private set; }
-        public Frame navigation;
+        public PageFlow _pageFlow;
         private DiscoveredDevice _device = null;
         private bool initializing = true;
 
-        public PageAppDetails(Frame navigation, AppInformation item)
+        public PageAppDetails(PageFlow pageFlow, AppInformation item)
         {
             this.AppItem = item;
             this.DataContext = this.AppItem;
-            this.navigation = navigation;
+            this._pageFlow = pageFlow;
 
             InitializeComponent();
 
@@ -45,9 +45,9 @@ namespace DeviceCenter
             GetAppState();
         }
 
-        private void Page_Unloaded(object sender, object args)
+        public override string ToString()
         {
-            _device = null;
+            return this.AppItem.AppName;
         }
 
         ~PageAppDetails()
@@ -343,7 +343,7 @@ namespace DeviceCenter
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            navigation.GoBack();
+            _pageFlow.GoBack();
         }
 
         private void comboBoxDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)

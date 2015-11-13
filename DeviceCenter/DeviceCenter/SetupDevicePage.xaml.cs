@@ -32,24 +32,26 @@ namespace DeviceCenter
         private readonly string _isoFileName = "windows_10_iot_core.iso";
         private readonly LastKnownGood _lkg = new LastKnownGood();
         private EventArrivedEventHandler _usbhandler = null;
-        private readonly Frame navigationFrame;
+        private readonly PageFlow pageFlow;
         private readonly WebClient _webClient = new WebClient();
         private DeviceSetupHelper _deviceSetupHelper = DeviceSetupHelper.Instance;
 
         #endregion
 
-        public SetupDevicePage(Frame navigationFrame)
+        public SetupDevicePage(PageFlow pageFlow)
         {
             InitializeComponent();
-            this.navigationFrame = navigationFrame;
+            this.pageFlow = pageFlow;
             App.TelemetryClient.TrackPageView(this.GetType().Name);
 
             PanelFlashing.Visibility = Visibility.Collapsed;
             PanelManualImage.Visibility = Visibility.Collapsed;
             PanelAutomaticImage.Visibility = Visibility.Visible;
+
+            LoadStateAsync();
         }
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void LoadStateAsync()
         {
             ReadLkgFile();
             await RefreshDriveList();
@@ -518,21 +520,6 @@ namespace DeviceCenter
             buttonFlash.IsEnabled = UpdateStartState();
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
-        {
-            _deviceSetupHelper.ExtractFFUProgress -= ExtractFFUProgressChanged;
-            _deviceSetupHelper.FlashingCompleted += FlashingCompleted;
-
-            // Only cancel the download, do not cancel DISM
-            if (_deviceSetupHelper.CurrentFlashingState == FlashingStates.Downloading)
-            {
-                _webClient.CancelAsync();
-                _deviceSetupHelper.CurrentFlashingState = FlashingStates.Completed;
-            }
-
-            DriveInfo.RemoveUSBDetectionHandler();
-        }
-
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
@@ -548,6 +535,18 @@ namespace DeviceCenter
             {
                 if (disposing)
                 {
+                    _deviceSetupHelper.ExtractFFUProgress -= ExtractFFUProgressChanged;
+                    _deviceSetupHelper.FlashingCompleted -= FlashingCompleted;
+
+                    // Only cancel the download, do not cancel DISM
+                    if (_deviceSetupHelper.CurrentFlashingState == FlashingStates.Downloading)
+                    {
+                        _webClient.CancelAsync();
+                        _deviceSetupHelper.CurrentFlashingState = FlashingStates.Completed;
+                    }
+
+                    DriveInfo.RemoveUSBDetectionHandler();
+
                     _webClient.Dispose();
                 }
 
