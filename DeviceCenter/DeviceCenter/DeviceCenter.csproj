@@ -451,9 +451,9 @@ if  not "$(IsTFSBuild)"=="TRUE" goto end
 echo Setting up ApplicationInsights
 copy /Y  "$(SolutionDir)DeviceCenter\ApplicationInsights.txt" "$(SolutionDir)DeviceCenter\ApplicationInsights.config"
 echo ***ApplicationInsights.txt***
-echo "$(SolutionDir)DeviceCenter\ApplicationInsights.txt"
+type "$(SolutionDir)DeviceCenter\ApplicationInsights.txt"
 echo ***ApplicationInsights.config***
-echo "$(SolutionDir)DeviceCenter\ApplicationInsights.config"
+type "$(SolutionDir)DeviceCenter\ApplicationInsights.config"
 :end</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
