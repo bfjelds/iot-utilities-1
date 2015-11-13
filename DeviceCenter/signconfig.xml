@@ -7,7 +7,7 @@
 <SignConfigXML>
   <!-- AnyCPU Release sign job -->
   <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
-    <file src="__RELBINPATH__\DeviceCenter.exe" signType="Authenticode" dest="__RELBINPATH__\signed\DeviceCenter.exe" />
+    <file src="__RELBINPATH__\Windows 10 IoT Core Dashboard.exe" signType="Authenticode" dest="__RELBINPATH__\signed\Windows 10 IoT Core Dashboard.exe" />
   </job>
   <!-- AnyCPU Release sign job -->
   <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
