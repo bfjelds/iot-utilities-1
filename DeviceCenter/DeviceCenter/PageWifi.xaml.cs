@@ -16,6 +16,10 @@ namespace DeviceCenter
 {
     public class WifiEntry : INotifyPropertyChanged
     {
+        // This is the delay from sending the connect to wifi rest request to pop up the dialog
+        // that asks user to reboot their device, set to 30s based on the testing result on my MBM
+        private readonly TimeSpan Wifi_Persist_Profile_WaitTime = TimeSpan.FromSeconds(30);
+
         private readonly AvailableNetwork _network;
         private const string WifiIcons = "";
         private readonly Frame _navigationFrame;
@@ -118,59 +122,81 @@ namespace DeviceCenter
             }
         }
 
-        public void DoConnect(string password)
+        public async Task DoConnect(string password)
         {
             this.ReadyToConnect = false;
             OnPropertyChanged(nameof(ReadyToConnect));
 
-            ConnectDeviceToWifi(password);
+            await ConnectDeviceToWifi(password);
         }
 
-        private void ConnectDeviceToWifi(string password)
+        private async Task ConnectDeviceToWifi(string password)
         {
-            try
+            this.WaitingToConnect = Visibility.Visible;
+            this.ShowConnect = Visibility.Hidden;
+            this.ReadyToConnect = false;
+            this.EnableSecureConnect = false;
+
+            OnPropertyChanged(nameof(EnableSecureConnect));
+            OnPropertyChanged(nameof(WaitingToConnect));
+            OnPropertyChanged(nameof(ReadyToConnect));
+            OnPropertyChanged(nameof(ShowConnect));
+
+            Collapse();
+
+            var connectToNetworkTask = _webbRequest.ConnectToNetworkAsync(_adapterGuid, _network.SSID, password);
+            var timeoutTask = Task.Delay(Wifi_Persist_Profile_WaitTime);
+
+            var resultTask = await Task.WhenAny(connectToNetworkTask, timeoutTask);
+            if (resultTask == connectToNetworkTask)
             {
-                this.WaitingToConnect = Visibility.Visible;
-                this.ShowConnect = Visibility.Hidden;
-                this.ReadyToConnect = false;
-                this.EnableSecureConnect = false;
-
-                OnPropertyChanged(nameof(EnableSecureConnect));
-                OnPropertyChanged(nameof(WaitingToConnect));
-                OnPropertyChanged(nameof(ReadyToConnect));
-                OnPropertyChanged(nameof(ShowConnect));
-
-                Collapse();
-
-                Task.Factory.StartNew(async () =>
+                // 1) wrong password
+                if(resultTask.Status == TaskStatus.Faulted)
                 {
-                    try
+                    var webException = resultTask.Exception.InnerException as WebException;
+                    if (webException != null)
                     {
-                        await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
-                    }
-                    catch (WebException error)
-                    {
-                        Debug.WriteLine($"Error connecting, {error.Message}");
-                        Debug.WriteLine(error.ToString());
-                        // ignore errors, changes in Wifi will make existing TCP sockets unstable
-                    }
-                }, TaskCreationOptions.LongRunning);
+                        var response = webException.Response as HttpWebResponse;
+                        if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
+                        {
+                            Debug.WriteLine("ConnectDeviceToWifi: Wrong password");
+                            MessageBox.Show(Strings.Strings.MessageBadWifiPassword, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Error connecting, {webException.Message}");
+                            Debug.WriteLine(webException.ToString());
+                            // ignore errors, changes in Wifi will make existing TCP sockets unstable
 
+                            this._navigationFrame.GoBack();
+                        }
+                    }
+                }
+                // 2) 200 HTTP_OK
+                else if(resultTask.Status == TaskStatus.RanToCompletion)
+                {
+                    await Task.Delay(Wifi_Persist_Profile_WaitTime);
+
+                    MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
+                    this._navigationFrame.GoBack();
+                }
+            }
+            // 3) timeout, underlying connection disconnected
+            else
+            {
                 MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
                 this._navigationFrame.GoBack();
             }
-            finally
-            {
-                this.WaitingToConnect = Visibility.Collapsed;
-                this.ReadyToConnect = true;
-                this.EnableSecureConnect = true;
-                this.ShowConnect = password == string.Empty ? Visibility.Visible : Visibility.Collapsed;
 
-                OnPropertyChanged(nameof(EnableSecureConnect));
-                OnPropertyChanged(nameof(WaitingToConnect));
-                OnPropertyChanged(nameof(ReadyToConnect));
-                OnPropertyChanged(nameof(ShowConnect));
-            }
+            this.WaitingToConnect = Visibility.Collapsed;
+            this.ReadyToConnect = true;
+            this.EnableSecureConnect = true;
+            this.ShowConnect = password == string.Empty ? Visibility.Collapsed:Visibility.Visible;
+
+            OnPropertyChanged(nameof(EnableSecureConnect));
+            OnPropertyChanged(nameof(WaitingToConnect));
+            OnPropertyChanged(nameof(ReadyToConnect));
+            OnPropertyChanged(nameof(ShowConnect));
         }
 
         public void AllowSecure(bool enabled)
