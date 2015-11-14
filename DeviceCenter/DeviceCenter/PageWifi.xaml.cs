@@ -17,8 +17,8 @@ namespace DeviceCenter
     public class WifiEntry : INotifyPropertyChanged
     {
         // This is the delay from sending the connect to wifi rest request to pop up the dialog
-        // that asks user to reboot their device, set to 30s based on the testing result on my MBM
-        private readonly TimeSpan Wifi_Persist_Profile_WaitTime = TimeSpan.FromSeconds(30);
+        // that asks user to reboot their device, set to 45s based on the testing result on my MBM
+        private readonly TimeSpan Wifi_Persist_Profile_WaitTime = TimeSpan.FromSeconds(45);
 
         private readonly AvailableNetwork _network;
         private const string WifiIcons = "";
@@ -163,6 +163,18 @@ namespace DeviceCenter
                         {
                             Debug.WriteLine("ConnectDeviceToWifi: Wrong password");
                             MessageBox.Show(Strings.Strings.MessageBadWifiPassword, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                            this.Active = true;
+                            NeedPassword = Visibility.Visible;
+                            ShowExpanded = Visibility.Visible;
+                            WaitingToConnect = Visibility.Collapsed;
+
+                            OnPropertyChanged(nameof(Active));
+                            OnPropertyChanged(nameof(NeedPassword));
+                            OnPropertyChanged(nameof(ShowExpanded));
+                            OnPropertyChanged(nameof(WaitingToConnect));
+
+                            return;
                         }
                         else
                         {
@@ -170,7 +182,7 @@ namespace DeviceCenter
                             Debug.WriteLine(webException.ToString());
                             // ignore errors, changes in Wifi will make existing TCP sockets unstable
 
-                            this._navigationFrame.GoBack();
+                            this._pageFlow.GoBack();
                         }
                     }
                 }
@@ -180,7 +192,7 @@ namespace DeviceCenter
                     await Task.Delay(Wifi_Persist_Profile_WaitTime);
 
                     MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
-                    this._navigationFrame.GoBack();
+                    this._pageFlow.Close(this._parent);
                 }
             }
             // 3) timeout, underlying connection disconnected
@@ -194,7 +206,7 @@ namespace DeviceCenter
             this.WaitingToConnect = Visibility.Collapsed;
             this.ReadyToConnect = true;
             this.EnableSecureConnect = true;
-            this.ShowConnect = password == string.Empty ? Visibility.Collapsed:Visibility.Visible;
+            this.ShowConnect = password == string.Empty ? Visibility.Visible : Visibility.Collapsed;
 
             OnPropertyChanged(nameof(EnableSecureConnect));
             OnPropertyChanged(nameof(WaitingToConnect));
@@ -387,14 +399,18 @@ namespace DeviceCenter
             return findControl as PasswordBox;
         }
 
-        private void ButtonConnectSecure_Click(object sender, RoutedEventArgs e)
+        private async void ButtonConnectSecure_Click(object sender, RoutedEventArgs e)
         {
             var entry = ListViewWifi.SelectedItem as WifiEntry;
             if (entry != null)
             {
                 var editor = FindPasswordEdit(e.Source);
                 if (editor != null)
-                    entry.DoConnect(editor.Password);
+                {
+                    await entry.DoConnect(editor.Password);
+                    editor.Password = string.Empty;
+                    editor.Focus();
+                }
             }
         }
 
