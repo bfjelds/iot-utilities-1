@@ -11,11 +11,11 @@ namespace DeviceCenter
     public partial class PageDeviceConfiguration : Page
     {
         public DiscoveredDevice Device { get; private set; }
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
 
-        public PageDeviceConfiguration(Frame navigationFrame, DiscoveredDevice device)
+        public PageDeviceConfiguration(PageFlow pageFlow, DiscoveredDevice device)
         {
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
             this.Device = device;
 
             InitializeComponent();
@@ -33,13 +33,9 @@ namespace DeviceCenter
             linkPortal.NavigateUri = this.Device.Manage;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.GoBack();
+            _pageFlow.GoBack();
         }
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
@@ -79,7 +75,7 @@ namespace DeviceCenter
 
         private void Hyperlink_SetPassword(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            _navigationFrame.Navigate(new PageDevicePassword(this._navigationFrame, this.Device));
+            _pageFlow.Navigate(typeof(PageDevicePassword), this.Device);
             e.Handled = true;
         }        
     }

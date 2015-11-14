@@ -11,7 +11,7 @@ namespace DeviceCenter
     /// </summary>
     public partial class About : Page
     {
-        public About()
+        public About(PageFlow pageFlow)
         {
             InitializeComponent();
 

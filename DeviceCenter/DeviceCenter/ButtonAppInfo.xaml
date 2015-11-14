@@ -9,9 +9,9 @@
         <ItemsControl ItemsSource="{Binding Info}" />
         <Button VerticalAlignment="Top" x:Name="buttonMain" Padding="0" Background="{x:Null}" BorderBrush="{x:Null}">
             <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                <Image Height="150" Width="150" Source="{Binding PosterFile}" Margin="4"/>
-                <TextBlock MaxWidth="150" Text="{Binding Title}" Margin="4" FontSize="14" />
-                <TextBlock MaxWidth="150" TextWrapping="Wrap" Text="{Binding Description}" Margin="4" />
+                <Image Height="150" Width="225" Source="{Binding PosterFile}" Margin="4 4 4 0"/>
+                <TextBlock MaxWidth="225" Text="{Binding Title}" Margin="4" FontSize="15" />
+                <TextBlock MaxWidth="225" TextWrapping="Wrap" Text="{Binding Description}" Margin="4 0 4 4" FontSize="12" />
             </StackPanel>
         </Button>
     </Grid>

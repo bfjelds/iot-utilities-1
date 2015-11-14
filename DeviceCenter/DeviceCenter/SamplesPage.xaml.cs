@@ -11,9 +11,9 @@ namespace DeviceCenter
     /// </summary>
     public partial class SamplesPage : Page
     {
-        public SamplesPage(Frame navigation)
+        public SamplesPage(PageFlow pageFlow)
         {
-            this._navigation = navigation;
+            this._pageFlow = pageFlow;
 
             InitializeComponent();
 
@@ -30,10 +30,10 @@ namespace DeviceCenter
 
         private void ShowApp_Click(object sender, ButtonAppInfo.ButtonAppEventArgs e)
         {
-            this._navigation.Navigate(new PageAppDetails(_navigation, e.Info));
+            this._pageFlow.Navigate(typeof(PageAppDetails), e.Info);
         }
 
-        private readonly Frame _navigation;
+        private readonly PageFlow _pageFlow;
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

@@ -2,14 +2,13 @@
 {
     using System;
     using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Navigation;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        private PageFlow pageFlow;
         public MainWindow()
         {
             // Uncomment to test localization
@@ -17,9 +16,8 @@
 
             InitializeComponent();
 
-            Page welcomePage = new PageWelcome(_NavigationFrame);
-
-            _NavigationFrame.Navigate(welcomePage);
+            pageFlow = new PageFlow(_NavigationFrame);
+            pageFlow.Navigate(typeof(PageWelcome));
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -31,21 +29,21 @@
 
         private void buttonMyDevices_Click(object sender, RoutedEventArgs e)
         {
-            _NavigationFrame.Navigate(new ViewDevicesPage(_NavigationFrame));
+            pageFlow.Navigate(typeof(ViewDevicesPage));
         }
 
         private void buttonAddDevice_Click(object sender, RoutedEventArgs e)
         {
-            _NavigationFrame.Navigate(new SetupDevicePage(this._NavigationFrame));
+            pageFlow.Navigate(typeof(SetupDevicePage));
         }
         private void buttonSamples_Click(object sender, RoutedEventArgs e)
         {
-            _NavigationFrame.Navigate(new SamplesPage(_NavigationFrame));
+            pageFlow.Navigate(typeof(SamplesPage));
         }        
 
         private void buttonAbout_Click(object sender, RoutedEventArgs e)
         {
-            _NavigationFrame.Navigate(new About());
+            pageFlow.Navigate(typeof(About));
         }
     }
 }
