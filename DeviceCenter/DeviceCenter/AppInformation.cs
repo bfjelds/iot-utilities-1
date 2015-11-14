@@ -79,6 +79,11 @@ namespace DeviceCenter
 
         public string OnlineSourceCode { get; private set; }
 
+        public override string ToString()
+        {
+            return this.AppName;
+        }
+
         public static ObservableCollection<AppInformation> Initialize()
         {
             if (AppList.Count == 0)

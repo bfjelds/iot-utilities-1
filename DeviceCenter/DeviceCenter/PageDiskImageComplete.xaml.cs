@@ -11,12 +11,12 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageDiskImageComplete : Page
     {
-        private Frame navigationFrame;
+        private PageFlow _pageFlow;
 
-        public PageDiskImageComplete(Frame navigationFrame)
+        public PageDiskImageComplete(PageFlow pageFlow)
         {
             InitializeComponent();
-            this.navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -38,13 +38,13 @@ namespace DeviceCenter
 
         private void Hyperlink_SetupDevice(object sender, RequestNavigateEventArgs e)
         {
-            navigationFrame.GoBack();
+            _pageFlow.GoBack();
             e.Handled = true;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            navigationFrame.Navigate(new ViewDevicesPage(navigationFrame));
+            _pageFlow.Navigate(typeof(ViewDevicesPage));
         }
     }
 }

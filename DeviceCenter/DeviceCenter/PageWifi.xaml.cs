@@ -22,18 +22,20 @@ namespace DeviceCenter
 
         private readonly AvailableNetwork _network;
         private const string WifiIcons = "";
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
         private readonly bool _needPassword;
         private readonly WebBRest _webbRequest;
         private readonly string _adapterGuid;
+        private readonly PageWifi _parent;
 
-        public WifiEntry(Frame navigationFrame, string adapterGuid, AvailableNetwork ssid, WebBRest webbRequest, Visibility showConnecting = Visibility.Hidden)
+        public WifiEntry(PageWifi parent, PageFlow pageFlow, string adapterGuid, AvailableNetwork ssid, WebBRest webbRequest, Visibility showConnecting = Visibility.Hidden)
         {
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
             this._network = ssid;
             this._webbRequest = webbRequest;
-            ShowConnecting = showConnecting;
+            this.ShowConnecting = showConnecting;
             this._adapterGuid = adapterGuid;
+            this._parent = parent;
 
             this.Active = false;
             this.ShowConnect = Visibility.Collapsed;
@@ -185,7 +187,8 @@ namespace DeviceCenter
             else
             {
                 MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
-                this._navigationFrame.GoBack();
+
+                this._pageFlow.Close(this._parent);
             }
 
             this.WaitingToConnect = Visibility.Collapsed;
@@ -246,17 +249,17 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageWifi : Page
     {
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
         private readonly DiscoveredDevice _device;
         private readonly SoftApHelper _wifiManager;
         private readonly DispatcherTimer _delayStart;
 
-        public PageWifi(Frame navigationFrame, SoftApHelper wifiManager, DiscoveredDevice device)
+        public PageWifi(PageFlow pageFlow, SoftApHelper wifiManager, DiscoveredDevice device)
         {
             InitializeComponent();
 
             this._device = device;
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
             this._wifiManager = wifiManager;
 
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
@@ -279,7 +282,7 @@ namespace DeviceCenter
 
             MessageBox.Show(message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
-            _navigationFrame.GoBack();
+            this._pageFlow.Close(this);
         }
 
         private async void delayStartTimer_Tick(object sender, EventArgs e)
@@ -331,20 +334,20 @@ namespace DeviceCenter
                     {
                         foreach (var ssid in networks.Items)
                         {
-                            result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                            result.Add(new WifiEntry(this, _pageFlow, adapters.Items[0].GUID, ssid, webbRequest));
                         }
                     }
                 }
                 else
                 {
                     MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
-                    _navigationFrame.GoBack();
+                    this._pageFlow.Close(this);
                 }
             }
             catch (Exception)
             {
                 MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
-                _navigationFrame.GoBack();
+                this._pageFlow.Close(this);
             }
 
             return result;
@@ -441,7 +444,7 @@ namespace DeviceCenter
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.GoBack();
+            this._pageFlow.Close(this);
         }
     }
 }
