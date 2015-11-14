@@ -125,8 +125,8 @@ namespace DeviceCenter
                             }
                         }
                     },
-                    OnlineInfo = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm",
-                    OnlineSourceCode = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm"
+                    OnlineInfo = "http://go.microsoft.com/fwlink/?LinkID=703948",
+                    OnlineSourceCode = "http://go.microsoft.com/fwlink/?LinkID=703948"
                 });
 
                 AppList.Add(new AppInformation()
@@ -166,8 +166,8 @@ namespace DeviceCenter
                             }
                         }
                     },
-                    OnlineInfo = "https://www.hackster.io/windows-iot/connected-clock-radio-85c9fc",
-                    OnlineSourceCode = "https://www.hackster.io/windows-iot/connected-clock-radio-85c9fc"
+                    OnlineInfo = "http://go.microsoft.com/fwlink/?LinkID=703955",
+                    OnlineSourceCode = "http://go.microsoft.com/fwlink/?LinkID=703955"
                 });
             }
 

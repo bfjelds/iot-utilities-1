@@ -136,7 +136,18 @@ namespace DeviceCenter
         private void DeviceManage_Click(object sender, RoutedEventArgs e)
         {
             var link = (Hyperlink)e.OriginalSource;
-            Process.Start(link.NavigateUri.AbsoluteUri);
+            try
+            {
+                Process.Start(link.NavigateUri.AbsoluteUri);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+            }
         }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
@@ -207,7 +218,18 @@ namespace DeviceCenter
 
                 var deviceUrl = "http://" + device.IpAddress + ":8080"; //Append the port number as well for the URL to work
 
-                Process.Start(new ProcessStartInfo(deviceUrl));
+                try
+                {
+                    Process.Start(new ProcessStartInfo(deviceUrl));
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+                }
             }
         }
 
@@ -238,7 +260,18 @@ namespace DeviceCenter
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            try
+            {
+                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+            }
             e.Handled = true;
         }
 

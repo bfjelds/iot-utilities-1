@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DeviceCenter</RootNamespace>
-    <AssemblyName>DeviceCenter</AssemblyName>
+    <AssemblyName>Windows 10 IoT Core Dashboard</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -292,6 +292,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Resource Include="Assets\Logo.png" />
+    <Resource Include="Assets\completeImage.png" />
     <Content Include="DeviceDiscovery.dll" />
     <Content Include="msvcp140.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
