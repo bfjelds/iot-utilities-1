@@ -30,6 +30,7 @@ namespace DeviceCenter
         #region Private Members
 
         private readonly string _isoFileName = "windows_10_iot_core.iso";
+
         private readonly LastKnownGood _lkg = new LastKnownGood();
         private EventArrivedEventHandler _usbhandler = null;
         private readonly PageFlow _pageFlow;
@@ -201,7 +202,7 @@ namespace DeviceCenter
             buttonFlash.IsEnabled = false;
             string ffuPath = string.Empty;
             var buildInfo = ComboBoxIotBuild.SelectedItem as BuildInfo;
-            string isoFilePath = Path.Combine(Path.GetTempPath(), _isoFileName);
+            string isoFilePath = Path.Combine(Path.GetTempPath(), deviceType.Platform, _isoFileName);
 
             var BuildPathType = DeviceSetupHelper.GetTypeOfBuildPath(buildInfo.Path);
 
@@ -256,24 +257,17 @@ namespace DeviceCenter
 
         private async Task<bool> DownloadISO(Uri downloadUri, string isoFilePath)
         {
-            SetFlashingState(FlashingStates.Downloading);
-            var platform = ComboBoxDeviceType.SelectedItem as LkgPlatform;
-            _webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
-            _webClient.DownloadFileCompleted += (s, eventargs) =>
-            {
-                if (eventargs.Cancelled)
-                {
-                    ResetProgressUi();
-                    return;
-                }
-            };
+            long remoteFileSize = 0;
 
-            SetFlashingState(FlashingStates.Downloading);
-
-            // Download the ISO file
             try
             {
-                await _webClient.DownloadFileTaskAsync(downloadUri, isoFilePath);
+                HttpWebRequest headRequest = HttpWebRequest.CreateHttp(downloadUri);
+                headRequest.Method = "HEAD";
+
+                using (WebResponse response = await headRequest.GetResponseAsync())
+                {
+                    remoteFileSize = response.ContentLength;
+                }
             }
             catch (WebException exception)
             {
@@ -289,11 +283,52 @@ namespace DeviceCenter
                     return false;
                 }
             }
-            catch (Exception exception)
+
+            FileInfo isoFileInfo = new FileInfo(isoFilePath);
+            isoFileInfo.Directory.Create();
+
+            if (!isoFileInfo.Exists || (isoFileInfo.Length != remoteFileSize))
             {
-                var errorCaption = Strings.Strings.AppNameDisplay;
-                MessageBox.Show(exception.Message, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return false;
+                SetFlashingState(FlashingStates.Downloading);
+                var platform = ComboBoxDeviceType.SelectedItem as LkgPlatform;
+                _webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressChanged);
+                _webClient.DownloadFileCompleted += (s, eventargs) =>
+                {
+                    if (eventargs.Cancelled)
+                    {
+                        isoFileInfo.Delete();
+                        ResetProgressUi();
+                        return;
+                    }
+                };
+
+                SetFlashingState(FlashingStates.Downloading);
+
+                // Download the ISO file
+                try
+                {
+                    await _webClient.DownloadFileTaskAsync(downloadUri, isoFilePath);
+                }
+                catch (WebException exception)
+                {
+                    if (exception.Status != WebExceptionStatus.RequestCanceled)
+                    {
+                        var errorCaption = Strings.Strings.AppNameDisplay;
+                        MessageBox.Show(exception.Message, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        ResetProgressUi();
+                        return false;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception exception)
+                {
+                    var errorCaption = Strings.Strings.AppNameDisplay;
+                    MessageBox.Show(exception.Message, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    return false;
+                }
             }
 
             return true;
@@ -393,11 +428,18 @@ namespace DeviceCenter
 
         void FlashingCompleted(object sender, FlashingCompletedEventArgs e)
         {
-            ResetProgressUi();
-            if (!e.Success)
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                Debug.WriteLine("Flashing FFU to SD Card Failed");
-            }
+                ResetProgressUi();
+                if (!e.Success)
+                {
+                    Debug.WriteLine("Flashing FFU to SD Card Failed");
+                }
+                else
+                {
+                    _pageFlow.Navigate(typeof(PageDiskImageComplete));
+                }
+            }));
         }
 
         private void ResetProgressUi()
