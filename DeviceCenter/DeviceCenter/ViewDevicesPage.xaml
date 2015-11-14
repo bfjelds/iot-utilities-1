@@ -67,7 +67,7 @@
                 </ComboBox>
             </StackPanel>
             <TextBlock FontSize="13" Margin="0 0 0 10" DockPanel.Dock="Bottom">
-                <Hyperlink NavigateUri="http://ms-iot.github.io/content/en-US/GetStarted.htm" RequestNavigate="Hyperlink_RequestNavigate">
+                <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkID=698291" RequestNavigate="Hyperlink_RequestNavigate">
                     <TextBlock Text="{x:Static props:Strings.DeviceListLearnMore}" />
                 </Hyperlink>
             </TextBlock>
