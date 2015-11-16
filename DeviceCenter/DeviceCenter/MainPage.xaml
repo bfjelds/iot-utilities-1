@@ -76,7 +76,7 @@
                         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
                     </DockPanel.Background>
                     <local:ButtonSideMenu DockPanel.Dock="Top" Margin="0 20 0 0" Text="{x:Static props:Strings.FindMyDeviceButton}" Icon="&#xE959;" Click="buttonMyDevices_Click" IconFont="./Assets/#IOT MDL2 Assets" />
-                    <local:ButtonSideMenu DockPanel.Dock="Top" Text="{x:Static props:Strings.IntroSetUpNewDevice}" Icon="&#xEC7A;" Click="buttonAddDevice_Click" IconFont="Segoe MDL2 Assets" Selected="True"/>
+                    <local:ButtonSideMenu DockPanel.Dock="Top" Text="{x:Static props:Strings.IntroSetUpNewDevice}" Icon="&#xEC7A;" Click="buttonAddDevice_Click" IconFont="./Assets/#Segoe MDL2 Assets" Selected="True"/>
                     <local:ButtonSideMenu DockPanel.Dock="Top" Text="{x:Static props:Strings.LeftBarSamples}" Icon="&#xE179;" Click="buttonSamples_Click" />
                     <local:ButtonSideMenu DockPanel.Dock="Bottom" Text="{x:Static props:Strings.DeviceDetailSettings}" Icon="&#xE115;" Click="buttonAbout_Click"/>
                     <Rectangle/>
