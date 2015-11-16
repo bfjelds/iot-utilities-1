@@ -1,9 +1,11 @@
 ﻿using DeviceCenter.Helper;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -18,15 +20,15 @@ namespace DeviceCenter
         private const string InternetRadioAppName = "InternetRadioHeaded";
 
         public AppInformation AppItem { get; private set; }
-        public Frame navigation;
+        public PageFlow _pageFlow;
         private DiscoveredDevice _device = null;
         private bool initializing = true;
 
-        public PageAppDetails(Frame navigation, AppInformation item)
+        public PageAppDetails(PageFlow pageFlow, AppInformation item)
         {
             this.AppItem = item;
             this.DataContext = this.AppItem;
-            this.navigation = navigation;
+            this._pageFlow = pageFlow;
 
             InitializeComponent();
 
@@ -43,9 +45,9 @@ namespace DeviceCenter
             GetAppState();
         }
 
-        private void Page_Unloaded(object sender, object args)
+        public override string ToString()
         {
-            _device = null;
+            return this.AppItem.AppName;
         }
 
         ~PageAppDetails()
@@ -53,16 +55,16 @@ namespace DeviceCenter
             DiscoveryHelper.Release();
         }
 
-        private async void StopTheOtherApp(string arch)
+        private async void StopTheOtherApp(DiscoveredDevice device, string arch)
         {
-            if (_device == null)
+            if (device == null)
             {
                 PanelDeploy.Visibility = Visibility.Collapsed;
                 PanelDeployed.Visibility = Visibility.Collapsed;
             }
             else
             {
-                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
+                var webbRequest = new WebBRest(Window.GetWindow(this), device.IpAddress, device.Authentication);
 
                 string theOtherAppName = null;
 
@@ -70,7 +72,7 @@ namespace DeviceCenter
                 {
                     theOtherAppName = (this.AppItem.AppName == BlinkyAppName) ? AppInformation.InternetRadio_PackageFullName_x86 : AppInformation.Blinky_PackageFullName_x86;
                 }
-                else if(arch.Equals("arm"))
+                else if(arch.Equals("ARM"))
                 {
                     theOtherAppName = (this.AppItem.AppName == BlinkyAppName) ? AppInformation.InternetRadio_PackageFullName_arm : AppInformation.Blinky_PackageFullName_arm;
                 }
@@ -98,18 +100,37 @@ namespace DeviceCenter
         {
             var currentDevice = _device;
 
-            if (_device == null)
+            if (currentDevice == null)
             {
                 PanelDeploy.Visibility = Visibility.Collapsed;
                 PanelDeployed.Visibility = Visibility.Collapsed;
             }
             else
             {
-                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
+                var webbRequest = new WebBRest(Window.GetWindow(this), currentDevice.IpAddress, currentDevice.Authentication);
 
                 try
                 {
-                    if (await webbRequest.IsAppRunning(this.AppItem.AppName))
+                    AppInformation.ApplicationFiles appFiles = null;
+
+                    var arch = await GetDeviceArchAsync(currentDevice, webbRequest);
+
+                    // If we can't get device arch, hide everything as we can't be sure
+                    // which app version to deploy
+                    if(string.IsNullOrEmpty(arch))
+                    {
+                        throw new WebBRest.RestError("Unable to get device architecture.", null);
+                    }
+
+                    // Should never happen
+                    if (!this.AppItem.PlatformFiles.TryGetValue(arch, out appFiles))
+                    {
+                        return;
+                    }
+
+                    string packageFullName = appFiles.PackageFullName;
+
+                    if (await webbRequest.IsAppRunning(packageFullName))
                     {
                         PanelDeployed.Visibility = Visibility.Visible;
                         PanelDeploy.Visibility = Visibility.Collapsed;
@@ -142,9 +163,33 @@ namespace DeviceCenter
             }
         }
 
+        private async Task<string> GetDeviceArchAsync(DiscoveredDevice device, WebBRest webbRequest)
+        {
+            if (device == null || webbRequest == null)
+            {
+                return string.Empty;
+            }
+
+            string arch = string.Empty;
+
+            var osInfo = await webbRequest.GetDeviceInfoAsync();
+
+            if (osInfo != null)
+            {
+                arch = osInfo.Arch;
+
+                // Update information for this device
+                device.Architecture = arch;
+            }
+
+            return arch;
+        }
+
         private async void ButtonDeploy_Click(object sender, RoutedEventArgs e)
         {
-            if (_device == null)
+            var currentDevice = _device;
+
+            if (currentDevice == null)
             {
                 var errorCaption = Strings.Strings.AppNameDisplay;
                 var errorMsg = Strings.Strings.ErrorNullDevice;
@@ -153,28 +198,9 @@ namespace DeviceCenter
             }
             else
             {
-                var currentDevice = _device;                
+                var webbRequest = new WebBRest(Window.GetWindow(this), currentDevice.IpAddress, currentDevice.Authentication);
 
-                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
-
-                string arch = string.Empty;
-
-                // Device discovered with pinger, try to get architecture with WebB REST call
-                if(string.IsNullOrEmpty(_device.Architecture))
-                {
-                    // GetDeviceInfoAsync does not throw
-                    var osInfo = await webbRequest.GetDeviceInfoAsync();
-
-                    if(osInfo != null)
-                    {
-                        arch = osInfo.Arch;
-                    }
-                }
-                // Device discovered with mDNS
-                else
-                {
-                    arch = _device.Architecture;
-                }
+                string arch = await GetDeviceArchAsync(currentDevice, webbRequest);
 
                 // If we still could not get the device arch, give up
                 // and hide all the panels
@@ -189,10 +215,7 @@ namespace DeviceCenter
                     return;
                 }
 
-                // Make sure device architecture is up to date
-                _device.Architecture = arch;
-
-                StopTheOtherApp(arch);
+                StopTheOtherApp(currentDevice, arch);
 
                 PanelDeploy.Visibility = Visibility.Collapsed;
                 PanelDeploying.Visibility = Visibility.Visible;
@@ -228,7 +251,7 @@ namespace DeviceCenter
                         PanelDeployed.Visibility = Visibility.Visible;
                         PanelDeploy.Visibility = Visibility.Collapsed;
 
-                        var appUrl = "http://" + this._device.IpAddress + ":" + this.AppItem.AppPort;
+                        var appUrl = "http://" + currentDevice.IpAddress + ":" + this.AppItem.AppPort;
                         Process.Start(new ProcessStartInfo(appUrl));
                     }
                 }
@@ -251,6 +274,14 @@ namespace DeviceCenter
 
                     Debug.WriteLine(ex.Message);
                 }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+                }
             }
         }
 
@@ -263,7 +294,9 @@ namespace DeviceCenter
 
         private async void ButtonStopApp_Click(object sender, RoutedEventArgs e)
         {
-            if (_device == null)
+            var currentDevice = _device;
+
+            if (currentDevice == null)
             {
                 PanelDeployed.Visibility = Visibility.Collapsed;
                 PanelDeploying.Visibility = Visibility.Collapsed;
@@ -271,16 +304,14 @@ namespace DeviceCenter
             }
             else
             {
-                var currentDevice = _device;
-
-                var webbRequest = new WebBRest(Window.GetWindow(this), this._device.IpAddress, this._device.Authentication);
+                var webbRequest = new WebBRest(Window.GetWindow(this), currentDevice.IpAddress, currentDevice.Authentication);
 
                 AppInformation.ApplicationFiles appFiles = null;
 
-                Debug.Assert(_device.Architecture != null);
+                Debug.Assert(currentDevice.Architecture != null);
 
                 // Should never happen
-                if (!this.AppItem.PlatformFiles.TryGetValue(_device.Architecture, out appFiles))
+                if (!this.AppItem.PlatformFiles.TryGetValue(currentDevice.Architecture, out appFiles))
                 {
                     return;
                 }
@@ -320,7 +351,7 @@ namespace DeviceCenter
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            navigation.GoBack();
+            _pageFlow.GoBack();
         }
 
         private void comboBoxDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -348,7 +379,18 @@ namespace DeviceCenter
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            try
+            {
+                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+            }
             e.Handled = true;
         }
     }

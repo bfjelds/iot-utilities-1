@@ -79,6 +79,11 @@ namespace DeviceCenter
 
         public string OnlineSourceCode { get; private set; }
 
+        public override string ToString()
+        {
+            return this.AppName;
+        }
+
         public static ObservableCollection<AppInformation> Initialize()
         {
             if (AppList.Count == 0)
@@ -120,8 +125,8 @@ namespace DeviceCenter
                             }
                         }
                     },
-                    OnlineInfo = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm",
-                    OnlineSourceCode = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm"
+                    OnlineInfo = "http://go.microsoft.com/fwlink/?LinkID=703948",
+                    OnlineSourceCode = "http://go.microsoft.com/fwlink/?LinkID=703948"
                 });
 
                 AppList.Add(new AppInformation()
@@ -161,8 +166,8 @@ namespace DeviceCenter
                             }
                         }
                     },
-                    OnlineInfo = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm",
-                    OnlineSourceCode = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm"
+                    OnlineInfo = "http://go.microsoft.com/fwlink/?LinkID=703955",
+                    OnlineSourceCode = "http://go.microsoft.com/fwlink/?LinkID=703955"
                 });
             }
 

@@ -18,18 +18,20 @@ namespace DeviceCenter
     {
         private readonly AvailableNetwork _network;
         private const string WifiIcons = "";
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
         private readonly bool _needPassword;
         private readonly WebBRest _webbRequest;
         private readonly string _adapterGuid;
+        private readonly PageWifi _parent;
 
-        public WifiEntry(Frame navigationFrame, string adapterGuid, AvailableNetwork ssid, WebBRest webbRequest, Visibility showConnecting = Visibility.Hidden)
+        public WifiEntry(PageWifi parent, PageFlow pageFlow, string adapterGuid, AvailableNetwork ssid, WebBRest webbRequest, Visibility showConnecting = Visibility.Hidden)
         {
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
             this._network = ssid;
             this._webbRequest = webbRequest;
-            ShowConnecting = showConnecting;
+            this.ShowConnecting = showConnecting;
             this._adapterGuid = adapterGuid;
+            this._parent = parent;
 
             this.Active = false;
             this.ShowConnect = Visibility.Collapsed;
@@ -78,11 +80,11 @@ namespace DeviceCenter
             ShowExpanded = Visibility.Visible;
             ReadyToConnect = true;
 
-            OnPropertyChanged("ShowConnect");
-            OnPropertyChanged("Active");
-            OnPropertyChanged("NeedPassword");
-            OnPropertyChanged("ShowExpanded");
-            OnPropertyChanged("ReadyToConnect");
+            OnPropertyChanged(nameof(ShowConnect));
+            OnPropertyChanged(nameof(Active));
+            OnPropertyChanged(nameof(NeedPassword));
+            OnPropertyChanged(nameof(ShowExpanded));
+            OnPropertyChanged(nameof(ReadyToConnect));
         }
 
         public void Collapse()
@@ -92,10 +94,10 @@ namespace DeviceCenter
             NeedPassword = Visibility.Collapsed;
             ShowExpanded = Visibility.Collapsed;
 
-            OnPropertyChanged("ShowConnect");
-            OnPropertyChanged("Active");
-            OnPropertyChanged("NeedPassword");
-            OnPropertyChanged("ShowExpanded");
+            OnPropertyChanged(nameof(ShowConnect));
+            OnPropertyChanged(nameof(Active));
+            OnPropertyChanged(nameof(NeedPassword));
+            OnPropertyChanged(nameof(ShowExpanded));
         }
 
         public void StartConnect()
@@ -107,9 +109,9 @@ namespace DeviceCenter
                 this.ShowConnect = Visibility.Collapsed;
                 this.EnableSecureConnect = false;
 
-                OnPropertyChanged("EnableSecureConnect");
-                OnPropertyChanged("NeedPassword");
-                OnPropertyChanged("ShowConnect");
+                OnPropertyChanged(nameof(EnableSecureConnect));
+                OnPropertyChanged(nameof(NeedPassword));
+                OnPropertyChanged(nameof(ShowConnect));
             }
             else
             {
@@ -121,12 +123,12 @@ namespace DeviceCenter
         public void DoConnect(string password)
         {
             this.ReadyToConnect = false;
-            OnPropertyChanged("ReadyToConnect");
+            OnPropertyChanged(nameof(ReadyToConnect));
 
-            DoConnectAsync(password);
+            ConnectDeviceToWifi(password);
         }
 
-        private async void DoConnectAsync(string password)
+        private void ConnectDeviceToWifi(string password)
         {
             try
             {
@@ -135,26 +137,30 @@ namespace DeviceCenter
                 this.ReadyToConnect = false;
                 this.EnableSecureConnect = false;
 
-                OnPropertyChanged("EnableSecureConnect");
-                OnPropertyChanged("WaitingToConnect");
-                OnPropertyChanged("ReadyToConnect");
-                OnPropertyChanged("ShowConnect");
+                OnPropertyChanged(nameof(EnableSecureConnect));
+                OnPropertyChanged(nameof(WaitingToConnect));
+                OnPropertyChanged(nameof(ReadyToConnect));
+                OnPropertyChanged(nameof(ShowConnect));
 
-                try
-                {
-                    Collapse();
+                Collapse();
 
-                    await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
-                }
-                catch (WebException error)
+                Task.Factory.StartNew(async () =>
                 {
-                    Debug.WriteLine($"Error connecting, {error.Message}");
-                    Debug.WriteLine(error.ToString());
-                    // ignore errors, changes in Wifi will make existing TCP sockets unstable
-                }
+                    try
+                    {
+                        await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
+                    }
+                    catch (WebException error)
+                    {
+                        Debug.WriteLine($"Error connecting, {error.Message}");
+                        Debug.WriteLine(error.ToString());
+                        // ignore errors, changes in Wifi will make existing TCP sockets unstable
+                    }
+                }, TaskCreationOptions.LongRunning);
 
                 MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
-                this._navigationFrame.GoBack();
+
+                this._pageFlow.Close(this._parent);
             }
             finally
             {
@@ -163,10 +169,10 @@ namespace DeviceCenter
                 this.EnableSecureConnect = true;
                 this.ShowConnect = password == string.Empty ? Visibility.Visible : Visibility.Collapsed;
 
-                OnPropertyChanged("EnableSecureConnect");
-                OnPropertyChanged("WaitingToConnect");
-                OnPropertyChanged("ReadyToConnect");
-                OnPropertyChanged("ShowConnect");
+                OnPropertyChanged(nameof(EnableSecureConnect));
+                OnPropertyChanged(nameof(WaitingToConnect));
+                OnPropertyChanged(nameof(ReadyToConnect));
+                OnPropertyChanged(nameof(ShowConnect));
             }
         }
 
@@ -175,8 +181,8 @@ namespace DeviceCenter
             this.ReadyToConnect = enabled;
             this.EnableSecureConnect = enabled;
 
-            OnPropertyChanged("ReadyToConnect");
-            OnPropertyChanged("EnableSecureConnect");
+            OnPropertyChanged(nameof(ReadyToConnect));
+            OnPropertyChanged(nameof(EnableSecureConnect));
         }
 
         public bool EnableSecureConnect { get; private set; }
@@ -188,9 +194,9 @@ namespace DeviceCenter
             ShowConnect = Visibility.Visible;
             ReadyToConnect = true;
 
-            OnPropertyChanged("ReadyToConnect");
-            OnPropertyChanged("NeedPassword");
-            OnPropertyChanged("ShowConnect");
+            OnPropertyChanged(nameof(ReadyToConnect));
+            OnPropertyChanged(nameof(NeedPassword));
+            OnPropertyChanged(nameof(ShowConnect));
         }
 
         public bool Active { get; private set; }
@@ -217,17 +223,17 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageWifi : Page
     {
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
         private readonly DiscoveredDevice _device;
         private readonly SoftApHelper _wifiManager;
         private readonly DispatcherTimer _delayStart;
 
-        public PageWifi(Frame navigationFrame, SoftApHelper wifiManager, DiscoveredDevice device)
+        public PageWifi(PageFlow pageFlow, SoftApHelper wifiManager, DiscoveredDevice device)
         {
             InitializeComponent();
 
             this._device = device;
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
             this._wifiManager = wifiManager;
 
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
@@ -250,7 +256,7 @@ namespace DeviceCenter
 
             MessageBox.Show(message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
-            _navigationFrame.GoBack();
+            this._pageFlow.Close(this);
         }
 
         private async void delayStartTimer_Tick(object sender, EventArgs e)
@@ -302,20 +308,20 @@ namespace DeviceCenter
                     {
                         foreach (var ssid in networks.Items)
                         {
-                            result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                            result.Add(new WifiEntry(this, _pageFlow, adapters.Items[0].GUID, ssid, webbRequest));
                         }
                     }
                 }
                 else
                 {
                     MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
-                    _navigationFrame.GoBack();
+                    this._pageFlow.Close(this);
                 }
             }
             catch (Exception)
             {
                 MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
-                _navigationFrame.GoBack();
+                this._pageFlow.Close(this);
             }
 
             return result;
@@ -412,7 +418,7 @@ namespace DeviceCenter
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.GoBack();
+            this._pageFlow.Close(this);
         }
     }
 }

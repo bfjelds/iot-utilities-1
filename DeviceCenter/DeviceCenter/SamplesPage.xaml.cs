@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
@@ -9,9 +11,9 @@ namespace DeviceCenter
     /// </summary>
     public partial class SamplesPage : Page
     {
-        public SamplesPage(Frame navigation)
+        public SamplesPage(PageFlow pageFlow)
         {
-            this._navigation = navigation;
+            this._pageFlow = pageFlow;
 
             InitializeComponent();
 
@@ -28,14 +30,25 @@ namespace DeviceCenter
 
         private void ShowApp_Click(object sender, ButtonAppInfo.ButtonAppEventArgs e)
         {
-            this._navigation.Navigate(new PageAppDetails(_navigation, e.Info));
+            this._pageFlow.Navigate(typeof(PageAppDetails), e.Info);
         }
 
-        private readonly Frame _navigation;
+        private readonly PageFlow _pageFlow;
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            try
+            {
+                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+            }
             e.Handled = true;
         }
     }

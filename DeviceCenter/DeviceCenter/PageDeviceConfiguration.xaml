@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      Title="{x:Static props:Strings.NewDeviceTitle}" Loaded="Page_Loaded" d:DesignHeight="429.333" RenderTransformOrigin="0.5,0.5">
+      Title="{x:Static props:Strings.NewDeviceTitle}" d:DesignHeight="429.333" RenderTransformOrigin="0.5,0.5">
     <Page.Foreground>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     </Page.Foreground>
@@ -46,7 +46,7 @@
     </Page.Triggers>
 
     <Grid  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <ScrollViewer FontFamily="Segoe UI Light" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock x:Name="LabelDeviceName" x:Uid="Title" FontSize="30" Text="--" HorizontalAlignment="Left"/>
                 <TextBlock x:Uid="Subtitle" FontSize="21.333" Text="{x:Static props:Strings.DeviceDetailSettings}" HorizontalAlignment="Left" Margin="0,20,0,0" TextWrapping="Wrap"/>

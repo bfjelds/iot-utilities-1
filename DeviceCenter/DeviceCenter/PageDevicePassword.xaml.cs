@@ -10,13 +10,13 @@ namespace DeviceCenter
     public partial class PageDevicePassword : Page
     {
         public DiscoveredDevice Device { get; private set; }
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
 
-        public PageDevicePassword(Frame navigationFrame, DiscoveredDevice device)
+        public PageDevicePassword(PageFlow pageFlow, DiscoveredDevice device)
         {
             InitializeComponent();
 
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
             this.Device = device;
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
@@ -62,14 +62,14 @@ namespace DeviceCenter
                         Strings.Strings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.None);
-                    _navigationFrame.GoBack();
+                    _pageFlow.GoBack();
                 }
             }
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.GoBack();
+            _pageFlow.GoBack();
         }
     }
 }

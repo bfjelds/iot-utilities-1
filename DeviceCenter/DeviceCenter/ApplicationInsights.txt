@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" schemaVersion="2014-05-30">  
+  <InstrumentationKey>c726a042-b098-4b6e-b430-456b6b9b962b</InstrumentationKey>
+</ApplicationInsights>

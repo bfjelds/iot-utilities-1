@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -10,29 +11,40 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageDiskImageComplete : Page
     {
-        private Frame navigationFrame;
+        private PageFlow _pageFlow;
 
-        public PageDiskImageComplete(Frame navigationFrame)
+        public PageDiskImageComplete(PageFlow pageFlow)
         {
             InitializeComponent();
-            this.navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            try
+            {
+                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+            }
             e.Handled = true;
         }
 
         private void Hyperlink_SetupDevice(object sender, RequestNavigateEventArgs e)
         {
-            navigationFrame.GoBack();
+            _pageFlow.GoBack();
             e.Handled = true;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            navigationFrame.Navigate(new ViewDevicesPage(navigationFrame));
+            _pageFlow.Navigate(typeof(ViewDevicesPage));
         }
     }
 }

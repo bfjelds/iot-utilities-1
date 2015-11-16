@@ -24,13 +24,12 @@ namespace DeviceCenter
 
         private readonly SoftApHelper _softwareAccessPoint;
 
-        private readonly Frame _navigationFrame;
-        private PageWifi _wifiPage;
+        private readonly PageFlow _pageFlow;
 
-        public ViewDevicesPage(Frame navigationFrame)
+        public ViewDevicesPage(PageFlow pageFlow)
         {
             // initialize parameters
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
             this._newestBuildDevice = null;
             this._oldestBuildDevice = null;
 
@@ -49,7 +48,6 @@ namespace DeviceCenter
             view.SortDescriptions.Add(new SortDescription("DeviceName", ListSortDirection.Ascending));
 
             //Register the callbacks
-            _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
             _softwareAccessPoint.OnWlanScanComplete += SoftwareAccessPoint_OnWlanScanComplete;
 
             // Get avaliable wifi list once at startup
@@ -74,14 +72,6 @@ namespace DeviceCenter
 
             DiscoveryHelper.Release();
             _discoveryHelper = null;
-        }
-
-        private void SoftwareAccessPoint_OnSoftAPDisconnected(object sender, EventArgs e)
-        {
-        }
-
-        private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
-        {
         }
 
         private void TelemetryTimer_Tick(object sender, EventArgs e)
@@ -146,7 +136,18 @@ namespace DeviceCenter
         private void DeviceManage_Click(object sender, RoutedEventArgs e)
         {
             var link = (Hyperlink)e.OriginalSource;
-            Process.Start(link.NavigateUri.AbsoluteUri);
+            try
+            {
+                Process.Start(link.NavigateUri.AbsoluteUri);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+            }
         }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
@@ -183,9 +184,7 @@ namespace DeviceCenter
                             { "DeviceModel", device.DeviceModel }
                         });
 
-                        _wifiPage = new PageWifi(_navigationFrame, this._softwareAccessPoint, device);
-
-                        _navigationFrame.Navigate(_wifiPage);
+                        _pageFlow.Navigate(typeof(PageWifi), this._softwareAccessPoint, device);
 
                         return;
                     }
@@ -219,7 +218,18 @@ namespace DeviceCenter
 
                 var deviceUrl = "http://" + device.IpAddress + ":8080"; //Append the port number as well for the URL to work
 
-                Process.Start(new ProcessStartInfo(deviceUrl));
+                try
+                {
+                    Process.Start(new ProcessStartInfo(deviceUrl));
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+                }
             }
         }
 
@@ -244,13 +254,24 @@ namespace DeviceCenter
                     { "DeviceModel", device.DeviceModel }
                 });
 
-                _navigationFrame.Navigate(new PageDeviceConfiguration(_navigationFrame, device));
+                _pageFlow.Navigate(typeof(PageDeviceConfiguration), device);
             }
         }
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            try
+            {
+                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(
+                        ex.Message,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+            }
             e.Handled = true;
         }
 
