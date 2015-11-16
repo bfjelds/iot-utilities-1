@@ -40,13 +40,13 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            var webbRequest = new WebBRest(Window.GetWindow(this), this.Device.IpAddress, this.Device.Authentication);
+            var webbRequest = WebBRest.Instance;
             if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
             {
-                if (await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text))
+                if (await webbRequest.SetDeviceNameAsync(Device, textBoxDeviceName.Text))
                 {
                     MessageBox.Show(Strings.Strings.DeviceRebootingMessage);
-                    await webbRequest.RestartAsync();
+                    await webbRequest.RestartAsync(Device);
                 }
             }
         }
