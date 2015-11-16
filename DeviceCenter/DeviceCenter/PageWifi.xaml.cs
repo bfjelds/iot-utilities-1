@@ -159,7 +159,7 @@ namespace DeviceCenter
                 }, TaskCreationOptions.LongRunning);
 
                 MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
-                    Strings.Strings.SuccessWifiConfigured,
+                    Strings.Strings.AppNameDisplay,
                     MessageBoxButton.OK, 
                     MessageBoxImage.Information);
 
@@ -330,13 +330,13 @@ namespace DeviceCenter
                 }
                 else
                 {
-                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
+                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi, Strings.Strings.AppNameDisplay);
                     this._pageFlow.Close(this);
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
+                MessageBox.Show(Strings.Strings.MessageUnableToGetWifi, Strings.Strings.AppNameDisplay);
                 this._pageFlow.Close(this);
             }
 

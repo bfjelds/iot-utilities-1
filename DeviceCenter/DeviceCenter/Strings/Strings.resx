@@ -577,13 +577,10 @@
     <value>New devices</value>
   </data>
   <data name="DeviceRebootingMessage" xml:space="preserve">
-    <value>In order to change the device name, we must first restart your device. Your device will re-appear in My Devices as soon as it’s done restarting.</value>
+    <value>Rebooting the device now...</value>
   </data>
   <data name="MessageBadPassword" xml:space="preserve">
     <value>The old password is incorrect</value>
-  </data>
-  <data name="String1" xml:space="preserve">
-    <value />
   </data>
   <data name="ErrorNullDevice" xml:space="preserve">
     <value>Error in getting target device. Please try again.</value>
@@ -601,7 +598,9 @@
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
-    <value>In order to apply the changes, manually restart the device.  Your device will automatically appear in the device list after restart is complete.
+    <value>Your Wi-Fi is now set up. 
+
+In order to apply the changes, manually restart the device.  Your device will automatically appear in the device list after restart is complete.
 
 If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
