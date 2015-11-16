@@ -13,6 +13,14 @@ namespace DeviceCenter
         public PageFlow(Frame navigationFrame)
         {
             this._navigationFrame = navigationFrame;
+            this._navigationFrame.Navigating += _navigationFrame_Navigating;
+        }
+
+        private void _navigationFrame_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
+        {
+            // Cancel any REST call so that we don't get the results
+            // after this page was navigated away
+            WebBRest.Instance.TerminateAnyWebBCall();
         }
 
         public void GoBack()
