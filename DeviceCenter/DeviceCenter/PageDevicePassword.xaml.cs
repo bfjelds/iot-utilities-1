@@ -59,12 +59,12 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            var webbRequest = new WebBRest(Window.GetWindow(this), this.Device.IpAddress, this.Device.Authentication);
+            var webbRequest = WebBRest.Instance;
 
             if (!string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) && 
                 !string.IsNullOrWhiteSpace(textBoxPassword1.Password))
             {
-                var result = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
+                var result = await webbRequest.SetPasswordAsync(Device, textBoxCurrentPassword.Password, textBoxPassword1.Password);
 
                 // bring it back to setup screen if password setting is successful.
                 if (result == true)

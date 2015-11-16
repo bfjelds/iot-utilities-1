@@ -41,21 +41,20 @@ namespace DeviceCenter
 
         private void _navigationFrame_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
         {
+            // Cancel any REST call so that we don't get the results
+            // after this page was navigated away
+            WebBRest.Instance.TerminateAnyWebBCall();
+
             if (PageChange != null)
             {
                 PageChangeCancelEventArgs args = new PageChangeCancelEventArgs(_currentPage);
                 PageChange(this, args);
 
-                if (args.Cancel)
-                    e.Cancel = true;
-                else
+                if (args.Close && _currentPage != null)
                 {
-                    if (args.Close && _currentPage != null)
+                    foreach (var item in _appPages.Where(kvp => kvp.Value == _currentPage).ToList())
                     {
-                        foreach (var item in _appPages.Where(kvp => kvp.Value == _currentPage).ToList())
-                        {
-                            _appPages.Remove(item.Key);
-                        }
+                        _appPages.Remove(item.Key);
                     }
                 }
             }

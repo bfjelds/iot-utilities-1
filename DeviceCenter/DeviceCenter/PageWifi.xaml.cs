@@ -20,15 +20,15 @@ namespace DeviceCenter
         private const string WifiIcons = "";
         private readonly PageFlow _pageFlow;
         private readonly bool _needPassword;
-        private readonly WebBRest _webbRequest;
+        private readonly DiscoveredDevice _device;
         private readonly string _adapterGuid;
         private readonly PageWifi _parent;
 
-        public WifiEntry(PageWifi parent, PageFlow pageFlow, string adapterGuid, AvailableNetwork ssid, WebBRest webbRequest, Visibility showConnecting = Visibility.Hidden)
+        public WifiEntry(PageWifi parent, PageFlow pageFlow, string adapterGuid, AvailableNetwork ssid, DiscoveredDevice device, Visibility showConnecting = Visibility.Hidden)
         {
             this._pageFlow = pageFlow;
             this._network = ssid;
-            this._webbRequest = webbRequest;
+            this._device = device;
             this.ShowConnecting = showConnecting;
             this._adapterGuid = adapterGuid;
             this._parent = parent;
@@ -130,6 +130,8 @@ namespace DeviceCenter
 
         private void ConnectDeviceToWifi(string password)
         {
+            var webbRequest = WebBRest.Instance;
+
             try
             {
                 this.WaitingToConnect = Visibility.Visible;
@@ -148,7 +150,7 @@ namespace DeviceCenter
                 {
                     try
                     {
-                        await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
+                        await webbRequest.ConnectToNetworkAsync(_device, _adapterGuid, this._network.SSID, password);
                     }
                     catch (WebException error)
                     {
@@ -313,18 +315,18 @@ namespace DeviceCenter
                 var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
 
                 var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
-                var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
+                var webbRequest = WebBRest.Instance;
 
-                var adapters = await webbRequest.GetWirelessAdaptersAsync();
+                var adapters = await webbRequest.GetWirelessAdaptersAsync(_device);
 
                 if (adapters != null && adapters.Items != null)
                 {
-                    var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
+                    var networks = await webbRequest.GetAvaliableNetworkAsync(_device, adapters.Items[0].GUID);
                     if (networks != null)
                     {
                         foreach (var ssid in networks.Items)
                         {
-                            result.Add(new WifiEntry(this, _pageFlow, adapters.Items[0].GUID, ssid, webbRequest));
+                            result.Add(new WifiEntry(this, _pageFlow, adapters.Items[0].GUID, ssid, _device));
                         }
                     }
                 }
