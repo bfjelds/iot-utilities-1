@@ -304,7 +304,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows System Portal allows you to configure your device in detail.
+        ///   Looks up a localized string similar to Windows Device Portal allows you to configure your device in detail.
         /// </summary>
         public static string DeviceDetailsDevicePortalMessage1 {
             get {
@@ -601,7 +601,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rebooting the device now....
+        ///   Looks up a localized string similar to In order to change the device name, we must first restart your device. Your device will re-appear in My Devices as soon as it’s done restarting..
         /// </summary>
         public static string DeviceRebootingMessage {
             get {
@@ -1429,8 +1429,8 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your Wi-Fi is now set up. In order to apply the changes, please reboot your device.
-        ///Your device will automatically appear in the device list after reboot is complete.
+        ///   Looks up a localized string similar to In order to apply the changes, manually restart the device.  Your device will automatically appear in the device list after restart is complete.
+        ///
         ///If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up..
         /// </summary>
         public static string WiFiMayBeConfigured {

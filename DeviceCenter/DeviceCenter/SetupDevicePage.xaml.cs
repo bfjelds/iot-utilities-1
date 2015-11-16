@@ -45,6 +45,7 @@ namespace DeviceCenter
             this._pageFlow = pageFlow;
             App.TelemetryClient.TrackPageView(this.GetType().Name);
 
+            buttonFlash.IsEnabled = false;
             PanelFlashing.Visibility = Visibility.Collapsed;
             PanelManualImage.Visibility = Visibility.Collapsed;
             PanelAutomaticImage.Visibility = Visibility.Visible;
@@ -225,12 +226,10 @@ namespace DeviceCenter
                 case BuildPathType.ISOFile:
                     SetFlashingState(FlashingStates.Downloading);
                     PanelFlashing.Visibility = Visibility.Visible;
-                    FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingDownload;
-                    FlashingProgress.Value = 0;
+                    ProgressText.Text = Strings.Strings.NewDeviceFlashingDownload;
                     try
                     {
                         File.Copy(buildInfo.Path, isoFilePath, true);
-                        FlashingProgress.Value = 100;
                     }
                     catch (Exception)
                     {
@@ -371,17 +370,13 @@ namespace DeviceCenter
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
-                if (FlashingProgress.Value == 0)
-                {
-                    
-                }
-                FlashingProgress.Value = e.Progress;
+                // TODO: get real progress
+                //FlashingProgress.Value = e.Progress;
             }));
         }
 
         private void FlashFFU(string ffuPath)
         {
-            ProgressText.Text = string.Empty;
             var driveInfo = RemoveableDevicesComboBox.SelectedItem as DriveInfo;
             SetFlashingState(FlashingStates.Flashing);
 
@@ -404,6 +399,9 @@ namespace DeviceCenter
                 try
                 {
                     _deviceSetupHelper.FlashFFU(ffuPath, driveInfo);
+
+                    // end this early, flashing is asynchronous and will restore state
+                    return;
                 }
                 catch (FileNotFoundException ex)
                 {
@@ -520,29 +518,29 @@ namespace DeviceCenter
                 switch (_deviceSetupHelper.CurrentFlashingState)
                 {
                     case FlashingStates.Completed:
-                        FlashingProgress.Value = 0;
+                        FlashingProgress.Value = 100;
                         PanelFlashing.Visibility = Visibility.Collapsed;
                         ProgressText.Text = string.Empty;
                         break;
                     case FlashingStates.Downloading:
-                        FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingDownload;
+                        ProgressText.Text = Strings.Strings.NewDeviceFlashingDownload;
                         buttonFlash.IsEnabled = false;
                         PanelFlashing.Visibility = Visibility.Visible;
                         buttonCancelDism.IsEnabled = true;
                         break;
                     case FlashingStates.Extracting:
-                        FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashingExtractMSI;
+                        FlashingProgress.Value = 33;
+                        ProgressText.Text = Strings.Strings.NewDeviceFlashingExtractMSI;
                         buttonFlash.IsEnabled = false;
                         PanelFlashing.Visibility = Visibility.Visible;
                         buttonCancelDism.IsEnabled = false;
-                        ProgressText.Text = string.Empty;
                         break;
                     case FlashingStates.Flashing:
-                        FlashingStateTextBox.Text = Strings.Strings.NewDeviceFlashing;
+                        FlashingProgress.Value = 66;
+                        ProgressText.Text = Strings.Strings.NewDeviceFlashing;
                         buttonFlash.IsEnabled = false;
                         PanelFlashing.Visibility = Visibility.Visible;
                         buttonCancelDism.IsEnabled = true;
-                        ProgressText.Text = string.Empty;
                         break;
                 }
             }));

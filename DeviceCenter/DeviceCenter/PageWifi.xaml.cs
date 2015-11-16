@@ -158,7 +158,10 @@ namespace DeviceCenter
                     }
                 }, TaskCreationOptions.LongRunning);
 
-                MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
+                MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
+                    Strings.Strings.SuccessWifiConfigured,
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Information);
 
                 this._pageFlow.Close(this._parent);
             }
@@ -234,6 +237,8 @@ namespace DeviceCenter
 
             this._device = device;
             this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
+
             this._wifiManager = wifiManager;
 
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
@@ -248,6 +253,17 @@ namespace DeviceCenter
                 IsEnabled = true
             };
             _delayStart.Tick += delayStartTimer_Tick;
+        }
+
+        ~PageWifi()
+        {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
+        }
+
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.CurrentPage == this)
+                e.Close = true;
         }
 
         private void ReturnAsError(string message)

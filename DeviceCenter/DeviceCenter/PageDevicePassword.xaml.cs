@@ -17,9 +17,21 @@ namespace DeviceCenter
             InitializeComponent();
 
             this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
             this.Device = device;
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
+        }
+
+        ~PageDevicePassword()
+        {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
+        }
+
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.CurrentPage == this)
+                e.Close = true;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

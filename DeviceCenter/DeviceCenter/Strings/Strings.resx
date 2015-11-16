@@ -394,7 +394,7 @@
     <value>Device Portal</value>
   </data>
   <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
-    <value>Windows System Portal allows you to configure your device in detail</value>
+    <value>Windows Device Portal allows you to configure your device in detail</value>
   </data>
   <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
     <value>Open Device Portal in browser</value>
@@ -577,7 +577,7 @@
     <value>New devices</value>
   </data>
   <data name="DeviceRebootingMessage" xml:space="preserve">
-    <value>Rebooting the device now...</value>
+    <value>In order to change the device name, we must first restart your device. Your device will re-appear in My Devices as soon as it’s done restarting.</value>
   </data>
   <data name="MessageBadPassword" xml:space="preserve">
     <value>The old password is incorrect</value>
@@ -601,8 +601,8 @@
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
-    <value>Your Wi-Fi is now set up. In order to apply the changes, please reboot your device.
-Your device will automatically appear in the device list after reboot is complete.
+    <value>In order to apply the changes, manually restart the device.  Your device will automatically appear in the device list after restart is complete.
+
 If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
   </data>
