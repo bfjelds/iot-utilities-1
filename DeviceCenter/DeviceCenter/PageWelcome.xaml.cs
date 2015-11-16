@@ -20,24 +20,24 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageWelcome : Page
     {
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
 
-        public PageWelcome(Frame navigationFrame)
+        public PageWelcome(PageFlow pageFlow)
         {
             InitializeComponent();
-            _navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
         }
 
         private void SetupDeviceButton_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.Navigate(new SetupDevicePage(this._navigationFrame));
+            _pageFlow.Navigate(typeof(SetupDevicePage));
         }
 
         private void ViewDevices_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.Navigate(new ViewDevicesPage(_navigationFrame));
+            _pageFlow.Navigate(typeof(ViewDevicesPage));
         }
     }
 }

@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:DeviceCenter"
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
-      Title="{x:Static props:Strings.NewDeviceTitle}" Loaded="Page_Loaded" d:DesignHeight="429.333" RenderTransformOrigin="0.5,0.5">
+      Title="{x:Static props:Strings.NewDeviceTitle}" d:DesignHeight="429.333" RenderTransformOrigin="0.5,0.5">
     <Page.Foreground>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     </Page.Foreground>
