@@ -605,4 +605,7 @@ In order to apply the changes, manually restart the device.  Your device will au
 If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
   </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Password</value>
+  </data>
 </root>

@@ -637,6 +637,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string EnterPassword {
+            get {
+                return ResourceManager.GetString("EnterPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error in getting target device. Please try again..
         /// </summary>
         public static string ErrorNullDevice {

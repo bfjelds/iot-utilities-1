@@ -13,7 +13,7 @@
             <TextBlock Margin="10" FontSize="18" Text="{Binding DeviceName}" HorizontalAlignment="Left" />
             <TextBlock Margin="10 0" Text="{x:Static props:Strings.DeviceNamePwdUserNameLabel}" HorizontalAlignment="Left" />
             <TextBox x:Name="editUserName" Text="{Binding UserName}" Width="200" Margin="10 0" HorizontalAlignment="Left" TextChanged="TextBox_TextChanged" KeyUp="TextBox_KeyUp" />
-            <TextBlock Margin="10 10 10 0" Text="{x:Static props:Strings.DeviceNamePwdPassword1}" HorizontalAlignment="Left" />
+            <TextBlock Margin="10 10 10 0" Text="{x:Static props:Strings.EnterPassword}" HorizontalAlignment="Left" />
             <PasswordBox Margin="10 0" x:Name="editPassword" Width="200" HorizontalAlignment="Left" PasswordChanged="editPassword_PasswordChanged" KeyUp="TextBox_KeyUp" />
             <CheckBox x:Name="checkboxSavePassword" IsChecked="{Binding SavePassword}" Margin="10" HorizontalAlignment="Left" Content="{x:Static props:Strings.RememberMyCredentials}" />
             <Grid DockPanel.Dock="Bottom"  Margin="10">
