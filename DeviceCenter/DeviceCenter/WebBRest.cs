@@ -165,11 +165,13 @@ namespace DeviceCenter
             return false;
         }
 
-        public async Task<bool> RestartAsync(DiscoveredDevice device)
+        public async Task<WebExceptionStatus> RestartAsync(DiscoveredDevice device)
         {
             var url = ControlApiUrl + "restart";
 
             RestHelper restHelper = new RestHelper(null, device.IpAddress, device.Authentication);
+
+            WebExceptionStatus status = WebExceptionStatus.Success;
 
             CancellationToken? cts;
 
@@ -182,18 +184,23 @@ namespace DeviceCenter
                 {
                     if (result.StatusCode == HttpStatusCode.OK)
                     {
-                        return true;
+                        return status;
                     }
                     else
                     {
-                        return false;
+                        return WebExceptionStatus.ProtocolError;
                     }
                 }
+            }
+            catch (WebException webException)
+            {
+                Debug.WriteLine(webException.Message);
+                return webException.Status;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                return false;
+                return WebExceptionStatus.UnknownError;
             }
         }
 

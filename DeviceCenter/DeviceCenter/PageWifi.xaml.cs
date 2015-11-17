@@ -195,9 +195,11 @@ namespace DeviceCenter
             // the eboot issue should be fixed in RS1.the reset won't be necessary afterwards
             if (connectSuccess)
             {
-                if (await webbRequest.RestartAsync(_device))
+                var status = await webbRequest.RestartAsync(_device);
+                // 2.1) restart request succeeds
+                // 2.2) underlying connection is cut off, device is already restarting
+                if (status == WebExceptionStatus.Success || status == WebExceptionStatus.KeepAliveFailure)
                 {
-                    // 2.1) restart request succeeds
                     MessageBox.Show(Strings.Strings.SuccessWifiConfigured,
                         Strings.Strings.AppNameDisplay,
                         MessageBoxButton.OK,
@@ -205,7 +207,7 @@ namespace DeviceCenter
                 }
                 else
                 {
-                    // 2.2) restart request fails, pop up dialog to ask user to reset manually 
+                    // 2.3) restart request fails, pop up dialog to ask user to reset manually 
                     // after {Wifi_Persist_Profile_WaitTime} seconds
                     await Task.Delay(Wifi_Persist_Profile_WaitTime);
 
