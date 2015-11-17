@@ -55,7 +55,7 @@ namespace DeviceCenter
             DiscoveryHelper.Release();
         }
 
-        private async void StopTheOtherApp(DiscoveredDevice device, string arch)
+        private async Task StopTheOtherApp(DiscoveredDevice device, string arch)
         {
             if (device == null)
             {
@@ -64,7 +64,7 @@ namespace DeviceCenter
             }
             else
             {
-                var webbRequest = new WebBRest(Window.GetWindow(this), device.IpAddress, device.Authentication);
+                var webbRequest = WebBRest.Instance;
 
                 string theOtherAppName = null;
 
@@ -82,9 +82,9 @@ namespace DeviceCenter
 
                 try
                 {
-                    if (await webbRequest.IsAppRunning(theOtherAppName))
+                    if (await webbRequest.IsAppRunning(device, theOtherAppName))
                     {
-                        await webbRequest.StopAppAsync(theOtherAppName);
+                        await webbRequest.StopAppAsync(device, theOtherAppName);
                     }
                 }
                 catch (WebBRest.RestError)
@@ -107,7 +107,7 @@ namespace DeviceCenter
             }
             else
             {
-                var webbRequest = new WebBRest(Window.GetWindow(this), currentDevice.IpAddress, currentDevice.Authentication);
+                var webbRequest = WebBRest.Instance;
 
                 try
                 {
@@ -130,7 +130,7 @@ namespace DeviceCenter
 
                     string packageFullName = appFiles.PackageFullName;
 
-                    if (await webbRequest.IsAppRunning(packageFullName))
+                    if (await webbRequest.IsAppRunning(_device, packageFullName))
                     {
                         PanelDeployed.Visibility = Visibility.Visible;
                         PanelDeploy.Visibility = Visibility.Collapsed;
@@ -172,7 +172,7 @@ namespace DeviceCenter
 
             string arch = string.Empty;
 
-            var osInfo = await webbRequest.GetDeviceInfoAsync();
+            var osInfo = await webbRequest.GetDeviceInfoAsync(device);
 
             if (osInfo != null)
             {
@@ -198,7 +198,7 @@ namespace DeviceCenter
             }
             else
             {
-                var webbRequest = new WebBRest(Window.GetWindow(this), currentDevice.IpAddress, currentDevice.Authentication);
+                var webbRequest = WebBRest.Instance;
 
                 string arch = await GetDeviceArchAsync(currentDevice, webbRequest);
 
@@ -215,7 +215,7 @@ namespace DeviceCenter
                     return;
                 }
 
-                StopTheOtherApp(currentDevice, arch);
+                await StopTheOtherApp(currentDevice, arch);
 
                 PanelDeploy.Visibility = Visibility.Collapsed;
                 PanelDeploying.Visibility = Visibility.Visible;
@@ -239,7 +239,7 @@ namespace DeviceCenter
 
                     string packageFullName = appFiles.PackageFullName;
 
-                    if (!await webbRequest.RunAppxAsync(packageFullName, files))
+                    if (!await webbRequest.RunAppxAsync(_device, packageFullName, files))
                     {
                         PanelDeploying.Visibility = Visibility.Collapsed;
                         PanelDeployed.Visibility = Visibility.Collapsed;
@@ -304,7 +304,7 @@ namespace DeviceCenter
             }
             else
             {
-                var webbRequest = new WebBRest(Window.GetWindow(this), currentDevice.IpAddress, currentDevice.Authentication);
+                var webbRequest = WebBRest.Instance;
 
                 AppInformation.ApplicationFiles appFiles = null;
 
@@ -320,7 +320,7 @@ namespace DeviceCenter
 
                 try
                 {
-                    if (await webbRequest.StopAppAsync(packageFullName))
+                    if (await webbRequest.StopAppAsync(_device, packageFullName))
                     {
                         PanelDeployed.Visibility = Visibility.Collapsed;
                         PanelDeploying.Visibility = Visibility.Collapsed;

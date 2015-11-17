@@ -17,9 +17,21 @@ namespace DeviceCenter
             InitializeComponent();
 
             this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
             this.Device = device;
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
+        }
+
+        ~PageDevicePassword()
+        {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
+        }
+
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.CurrentPage == this)
+                e.Close = true;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -47,12 +59,12 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            var webbRequest = new WebBRest(Window.GetWindow(this), this.Device.IpAddress, this.Device.Authentication);
+            var webbRequest = WebBRest.Instance;
 
             if (!string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) && 
                 !string.IsNullOrWhiteSpace(textBoxPassword1.Password))
             {
-                var result = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
+                var result = await webbRequest.SetPasswordAsync(Device, textBoxCurrentPassword.Password, textBoxPassword1.Password);
 
                 // bring it back to setup screen if password setting is successful.
                 if (result == true)

@@ -292,6 +292,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Resource Include="Assets\Logo.png" />
+    <Resource Include="Assets\completeImage.png" />
     <Content Include="DeviceDiscovery.dll" />
     <Content Include="msvcp140.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -304,7 +304,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows System Portal allows you to configure your device in detail.
+        ///   Looks up a localized string similar to Windows Device Portal allows you to configure your device in detail.
         /// </summary>
         public static string DeviceDetailsDevicePortalMessage1 {
             get {
@@ -633,6 +633,15 @@ namespace DeviceCenter.Strings {
         public static string DownloadProgress {
             get {
                 return ResourceManager.GetString("DownloadProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string EnterPassword {
+            get {
+                return ResourceManager.GetString("EnterPassword", resourceCulture);
             }
         }
         
@@ -1312,15 +1321,6 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Open Windows Device Portal in browser.
         /// </summary>
         public static string SuccessAction1 {
@@ -1429,8 +1429,10 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your Wi-Fi is now set up. In order to apply the changes, please reboot your device.
-        ///Your device will automatically appear in the device list after reboot is complete.
+        ///   Looks up a localized string similar to Your Wi-Fi is now set up. 
+        ///
+        ///In order to apply the changes, manually restart the device.  Your device will automatically appear in the device list after restart is complete.
+        ///
         ///If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up..
         /// </summary>
         public static string WiFiMayBeConfigured {

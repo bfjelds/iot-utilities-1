@@ -24,15 +24,15 @@ namespace DeviceCenter
         private const string WifiIcons = "";
         private readonly PageFlow _pageFlow;
         private readonly bool _needPassword;
-        private readonly WebBRest _webbRequest;
+        private readonly DiscoveredDevice _device;
         private readonly string _adapterGuid;
         private readonly PageWifi _parent;
 
-        public WifiEntry(PageWifi parent, PageFlow pageFlow, string adapterGuid, AvailableNetwork ssid, WebBRest webbRequest, Visibility showConnecting = Visibility.Hidden)
+        public WifiEntry(PageWifi parent, PageFlow pageFlow, string adapterGuid, AvailableNetwork ssid, DiscoveredDevice device, Visibility showConnecting = Visibility.Hidden)
         {
             this._pageFlow = pageFlow;
             this._network = ssid;
-            this._webbRequest = webbRequest;
+            this._device = device;
             this.ShowConnecting = showConnecting;
             this._adapterGuid = adapterGuid;
             this._parent = parent;
@@ -138,6 +138,7 @@ namespace DeviceCenter
             this.ShowConnect = Visibility.Hidden;
             this.ReadyToConnect = false;
             this.EnableSecureConnect = false;
+            var webbRequest = WebBRest.Instance;
 
             OnPropertyChanged(nameof(EnableSecureConnect));
             OnPropertyChanged(nameof(WaitingToConnect));
@@ -146,7 +147,7 @@ namespace DeviceCenter
 
             Collapse();
 
-            var connectToNetworkTask = _webbRequest.ConnectToNetworkAsync(_adapterGuid, _network.SSID, password);
+            var connectToNetworkTask = webbRequest.ConnectToNetworkAsync(_device, _adapterGuid, _network.SSID, password);
             var timeoutTask = Task.Delay(Wifi_Persist_Profile_WaitTime);
 
             var resultTask = await Task.WhenAny(connectToNetworkTask, timeoutTask);
@@ -198,7 +199,10 @@ namespace DeviceCenter
             // 3) timeout, underlying connection disconnected
             else
             {
-                MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
+                MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
+                    Strings.Strings.AppNameDisplay,
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Information);
 
                 this._pageFlow.Close(this._parent);
             }
@@ -272,6 +276,8 @@ namespace DeviceCenter
 
             this._device = device;
             this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
+
             this._wifiManager = wifiManager;
 
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
@@ -286,6 +292,17 @@ namespace DeviceCenter
                 IsEnabled = true
             };
             _delayStart.Tick += delayStartTimer_Tick;
+        }
+
+        ~PageWifi()
+        {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
+        }
+
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.CurrentPage == this)
+                e.Close = true;
         }
 
         private void ReturnAsError(string message)
@@ -335,30 +352,37 @@ namespace DeviceCenter
                 var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
 
                 var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
-                var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
+                var webbRequest = WebBRest.Instance;
 
-                var adapters = await webbRequest.GetWirelessAdaptersAsync();
+                _device.IpAddress = new IPAddressSortable(ip);
+                _device.Authentication = new UserInfo()
+                {
+                    UserName = "Administrator",
+                    Password = "p@ssw0rd",
+                };
+
+                var adapters = await webbRequest.GetWirelessAdaptersAsync(_device);
 
                 if (adapters != null && adapters.Items != null)
                 {
-                    var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
+                    var networks = await webbRequest.GetAvaliableNetworkAsync(_device, adapters.Items[0].GUID);
                     if (networks != null)
                     {
                         foreach (var ssid in networks.Items)
                         {
-                            result.Add(new WifiEntry(this, _pageFlow, adapters.Items[0].GUID, ssid, webbRequest));
+                            result.Add(new WifiEntry(this, _pageFlow, adapters.Items[0].GUID, ssid, _device));
                         }
                     }
                 }
                 else
                 {
-                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
+                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi, Strings.Strings.AppNameDisplay);
                     this._pageFlow.Close(this);
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
+                MessageBox.Show(Strings.Strings.MessageUnableToGetWifi, Strings.Strings.AppNameDisplay);
                 this._pageFlow.Close(this);
             }
 
