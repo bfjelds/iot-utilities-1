@@ -29,6 +29,7 @@ namespace DeviceCenter
             this.AppItem = item;
             this.DataContext = this.AppItem;
             this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
 
             InitializeComponent();
 
@@ -43,6 +44,11 @@ namespace DeviceCenter
             PanelDeploy.Visibility = Visibility.Collapsed;
 
             GetAppState();
+        }
+
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            e.Close = true;
         }
 
         public override string ToString()
