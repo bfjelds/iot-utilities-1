@@ -59,9 +59,11 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
+            ButtonOk.IsEnabled = false;
+
             var webbRequest = WebBRest.Instance;
 
-            if (!string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) && 
+            if (!string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) &&
                 !string.IsNullOrWhiteSpace(textBoxPassword1.Password))
             {
                 var result = await webbRequest.SetPasswordAsync(Device, textBoxCurrentPassword.Password, textBoxPassword1.Password);
@@ -70,11 +72,12 @@ namespace DeviceCenter
                 if (result == true)
                 {
                     MessageBox.Show(
-                        "Password changed successfully",
+                        Strings.Strings.SuccessPasswordChanged,
                         Strings.Strings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.None);
-                    _pageFlow.GoBack();
+
+                    _pageFlow.Close(this);
                 }
             }
         }

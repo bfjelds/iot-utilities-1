@@ -52,22 +52,30 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(Strings.Strings.DevicesConfigureDevice,
-                Strings.Strings.DeviceRebootingMessage,
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Question,
-                MessageBoxResult.OK) == MessageBoxResult.OK)
+            ButtonOk.IsEnabled = false;
+
+            try
             {
-                var webbRequest = WebBRest.Instance;
-                if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
+                if (MessageBox.Show(Strings.Strings.DevicesConfigureDevice,
+                    Strings.Strings.DeviceRebootingMessage,
+                    MessageBoxButton.OKCancel,
+                    MessageBoxImage.Question,
+                    MessageBoxResult.OK) == MessageBoxResult.OK)
                 {
-                    if (await webbRequest.SetDeviceNameAsync(Device, textBoxDeviceName.Text))
+                    var webbRequest = WebBRest.Instance;
+                    if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
                     {
-                        MessageBox.Show(Strings.Strings.DeviceRebootingMessage);
-                        await webbRequest.RestartAsync(Device);
-                        _pageFlow.GoBack();
+                        if (await webbRequest.SetDeviceNameAsync(Device, textBoxDeviceName.Text))
+                        {
+                            await webbRequest.RestartAsync(Device);
+                            _pageFlow.Close(this);
+                        }
                     }
                 }
+            }
+            finally
+            {
+                ButtonOk.IsEnabled = true;
             }
         }
              
