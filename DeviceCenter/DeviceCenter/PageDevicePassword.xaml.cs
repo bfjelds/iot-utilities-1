@@ -61,24 +61,31 @@ namespace DeviceCenter
         {
             ButtonOk.IsEnabled = false;
 
-            var webbRequest = WebBRest.Instance;
-
-            if (!string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) &&
-                !string.IsNullOrWhiteSpace(textBoxPassword1.Password))
+            try
             {
-                var result = await webbRequest.SetPasswordAsync(Device, textBoxCurrentPassword.Password, textBoxPassword1.Password);
+                var webbRequest = WebBRest.Instance;
 
-                // bring it back to setup screen if password setting is successful.
-                if (result == true)
+                if (!string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) &&
+                    !string.IsNullOrWhiteSpace(textBoxPassword1.Password))
                 {
-                    MessageBox.Show(
-                        Strings.Strings.SuccessPasswordChanged,
-                        Strings.Strings.AppNameDisplay,
-                        MessageBoxButton.OK,
-                        MessageBoxImage.None);
+                    var result = await webbRequest.SetPasswordAsync(Device, textBoxCurrentPassword.Password, textBoxPassword1.Password);
 
-                    _pageFlow.Close(this);
+                    // bring it back to setup screen if password setting is successful.
+                    if (result == true)
+                    {
+                        MessageBox.Show(
+                            Strings.Strings.SuccessPasswordChanged,
+                            Strings.Strings.AppNameDisplay,
+                            MessageBoxButton.OK,
+                            MessageBoxImage.None);
+
+                        _pageFlow.Close(this);
+                    }
                 }
+            }
+            finally
+            {
+                ButtonOk.IsEnabled = true;
             }
         }
 

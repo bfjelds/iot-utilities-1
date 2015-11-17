@@ -48,7 +48,8 @@ namespace DeviceCenter
 
         private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
         {
-            e.Close = true;
+            if (e.CurrentPage == this)
+                e.Close = true;
         }
 
         public override string ToString()
@@ -58,6 +59,7 @@ namespace DeviceCenter
 
         ~PageAppDetails()
         {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
             DiscoveryHelper.Release();
         }
 
