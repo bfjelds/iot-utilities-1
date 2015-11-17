@@ -16,6 +16,10 @@ namespace DeviceCenter
 {
     public class WifiEntry : INotifyPropertyChanged
     {
+        // This is the delay from sending the connect to wifi rest request to pop up the dialog
+        // that asks user to reboot their device, set to 90s based on the testing result on my MBM
+        private readonly TimeSpan Wifi_Persist_Profile_WaitTime = TimeSpan.FromSeconds(90);
+
         private readonly AvailableNetwork _network;
         private const string WifiIcons = "";
         private readonly PageFlow _pageFlow;
@@ -143,22 +147,16 @@ namespace DeviceCenter
 
             Collapse();
 
+            bool connectSuccess = false;
+
             try
             {
-                await webbRequest.ConnectToNetworkAsync(_device, _adapterGuid, _network.SSID, password);
-                // send a restart request to device
-                await webbRequest.RestartAsync(_device);
-
-                MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
-                    Strings.Strings.AppNameDisplay,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-
-                this._pageFlow.Close(this._parent);
+                // 1) send connect to network rest request
+                connectSuccess = await webbRequest.ConnectToNetworkAsync(_device, _adapterGuid, _network.SSID, password);
             }
             catch (WebException webException)
             {
-                // 1) wrong password
+                // 1.1 wrong password, stay on the same page to allow user to retry
                 var response = webException.Response as HttpWebResponse;
                 if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
                 {
@@ -179,13 +177,46 @@ namespace DeviceCenter
                 }
                 else
                 {
+                    // 1.2) other errors, pop up dialog to ask user to reset manually 
+                    // after {Wifi_Persist_Profile_WaitTime} seconds
                     Debug.WriteLine($"Error connecting, {webException.Message}");
                     Debug.WriteLine(webException.ToString());
-                    // ignore errors, changes in Wifi will make existing TCP sockets unstable
 
-                    this._pageFlow.Close(this._parent);
+                    await Task.Delay(Wifi_Persist_Profile_WaitTime);
+
+                    MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                 }
             }
+
+            // 2) send a restart request to device since EBoot on device fails to run on new network.
+            // the eboot issue should be fixed in RS1.the reset won't be necessary afterwards
+            if (connectSuccess)
+            {
+                if (await webbRequest.RestartAsync(_device))
+                {
+                    // 2.1) restart request succeeds
+                    MessageBox.Show(Strings.Strings.SuccessWifiConfigured,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+                else
+                {
+                    // 2.2) restart request fails, pop up dialog to ask user to reset manually 
+                    // after {Wifi_Persist_Profile_WaitTime} seconds
+                    await Task.Delay(Wifi_Persist_Profile_WaitTime);
+
+                    MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
+                        Strings.Strings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+            }
+
+            this._pageFlow.Close(this._parent);
 
             this.WaitingToConnect = Visibility.Collapsed;
             this.ReadyToConnect = true;
@@ -302,12 +333,16 @@ namespace DeviceCenter
             if (connected)
             {
                 var authentication = DialogAuthenticate.GetSavedPassword(this._device.WifiInstance.SsidString);
+                var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
+
+                _device.IpAddress = new IPAddressSortable(ip);
+                _device.Authentication = authentication;
 
                 try
                 {
                     await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
                     {
-                        ListViewWifi.ItemsSource = await QueryWifiAsync(_device);
+                        ListViewWifi.ItemsSource = await QueryWifiAsync();
 
                         progressWaiting.Visibility = Visibility.Collapsed;
                     }));
@@ -323,23 +358,13 @@ namespace DeviceCenter
             }
         }
 
-        private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync(DiscoveredDevice device)
+        private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync()
         {
             var result = new ObservableCollection<WifiEntry>();
 
             try
             {
-                var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
-
-                var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
                 var webbRequest = WebBRest.Instance;
-
-                _device.IpAddress = new IPAddressSortable(ip);
-                _device.Authentication = new UserInfo()
-                {
-                    UserName = "Administrator",
-                    Password = "p@ssw0rd",
-                };
 
                 var adapters = await webbRequest.GetWirelessAdaptersAsync(_device);
 
