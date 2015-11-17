@@ -29,6 +29,7 @@ namespace DeviceCenter
             this.AppItem = item;
             this.DataContext = this.AppItem;
             this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
 
             InitializeComponent();
 
@@ -45,6 +46,12 @@ namespace DeviceCenter
             GetAppState();
         }
 
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.CurrentPage == this)
+                e.Close = true;
+        }
+
         public override string ToString()
         {
             return this.AppItem.AppName;
@@ -52,6 +59,7 @@ namespace DeviceCenter
 
         ~PageAppDetails()
         {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
             DiscoveryHelper.Release();
         }
 
