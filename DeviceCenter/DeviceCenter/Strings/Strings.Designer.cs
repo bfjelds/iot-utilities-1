@@ -664,6 +664,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to run this application. This application requires your system to be updated to Microsoft Windows Operating System Version 10..
+        /// </summary>
+        public static string ErrorWindowsIncompatible {
+            get {
+                return ResourceManager.GetString("ErrorWindowsIncompatible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
         public static string FilterAllDevices {
