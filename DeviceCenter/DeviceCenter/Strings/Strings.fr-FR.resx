@@ -223,7 +223,7 @@
     <value>Nom d’utilisateur</value>
   </data>
   <data name="FindDeviceMessage" xml:space="preserve">
-    <value>Recherche d’appareils Windows 10 IoT Core sur votre réseau</value>
+    <value>Recherche d’appareils Windows 10 IoT Standard sur votre réseau</value>
   </data>
   <data name="FindMyDeviceButton" xml:space="preserve">
     <value>Mes appareils</value>
@@ -248,7 +248,7 @@
     <value>Configurer un nouvel appareil</value>
   </data>
   <data name="IntroSubTitle" xml:space="preserve">
-    <value>Esquissez et concevez rapidement vos solutions Windows IoT sur un large choix d’appareils équipés de Windows IoT Core. Windows 10 vous offre des outils puissants vous permettant de développer rapidement votre solution et de la déployer sur votre appareil.</value>
+    <value>Esquissez et concevez rapidement vos solutions Windows IoT sur un large choix d’appareils équipés de Windows 10 IoT Standard. Windows 10 vous offre des outils puissants vous permettant de développer rapidement votre solution et de la déployer sur votre appareil.</value>
   </data>
   <data name="IntroSubTitle2" xml:space="preserve">
     <value>Pour configurer un appareil, il vous suffit de télécharger et d’installer Windows 10 IoT Standard sur ce dernier</value>
@@ -332,7 +332,7 @@
     <comment>the combo values should come from the online xml file</comment>
   </data>
   <data name="NewDeviceSubTitle" xml:space="preserve">
-    <value>Commençons par télécharger Windows 10 IoT Core sur votre appareil.</value>
+    <value>Commençons par télécharger Windows 10 IoT Standard sur votre appareil.</value>
   </data>
   <data name="NewDeviceTermsAndCondition" xml:space="preserve">
     <value>J’accepte les termes du contrat de licence logiciel</value>
