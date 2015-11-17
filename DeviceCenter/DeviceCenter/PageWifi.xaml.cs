@@ -16,10 +16,6 @@ namespace DeviceCenter
 {
     public class WifiEntry : INotifyPropertyChanged
     {
-        // This is the delay from sending the connect to wifi rest request to pop up the dialog
-        // that asks user to reboot their device, set to 45s based on the testing result on my MBM
-        private readonly TimeSpan Wifi_Persist_Profile_WaitTime = TimeSpan.FromSeconds(45);
-
         private readonly AvailableNetwork _network;
         private const string WifiIcons = "";
         private readonly PageFlow _pageFlow;
@@ -147,64 +143,48 @@ namespace DeviceCenter
 
             Collapse();
 
-            var connectToNetworkTask = webbRequest.ConnectToNetworkAsync(_device, _adapterGuid, _network.SSID, password);
-            var timeoutTask = Task.Delay(Wifi_Persist_Profile_WaitTime);
-
-            var resultTask = await Task.WhenAny(connectToNetworkTask, timeoutTask);
-            if (resultTask == connectToNetworkTask)
+            try
             {
-                // 1) wrong password
-                if(resultTask.Status == TaskStatus.Faulted)
-                {
-                    var webException = resultTask.Exception.InnerException as WebException;
-                    if (webException != null)
-                    {
-                        var response = webException.Response as HttpWebResponse;
-                        if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
-                        {
-                            Debug.WriteLine("ConnectDeviceToWifi: Wrong password");
-                            MessageBox.Show(Strings.Strings.MessageBadWifiPassword, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                await webbRequest.ConnectToNetworkAsync(_device, _adapterGuid, _network.SSID, password);
+                // send a restart request to device
+                await webbRequest.RestartAsync(_device);
 
-                            this.Active = true;
-                            NeedPassword = Visibility.Visible;
-                            ShowExpanded = Visibility.Visible;
-                            WaitingToConnect = Visibility.Collapsed;
-
-                            OnPropertyChanged(nameof(Active));
-                            OnPropertyChanged(nameof(NeedPassword));
-                            OnPropertyChanged(nameof(ShowExpanded));
-                            OnPropertyChanged(nameof(WaitingToConnect));
-
-                            return;
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Error connecting, {webException.Message}");
-                            Debug.WriteLine(webException.ToString());
-                            // ignore errors, changes in Wifi will make existing TCP sockets unstable
-
-                            this._pageFlow.GoBack();
-                        }
-                    }
-                }
-                // 2) 200 HTTP_OK
-                else if(resultTask.Status == TaskStatus.RanToCompletion)
-                {
-                    await Task.Delay(Wifi_Persist_Profile_WaitTime);
-
-                    MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
-                    this._pageFlow.Close(this._parent);
-                }
-            }
-            // 3) timeout, underlying connection disconnected
-            else
-            {
                 MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
                     Strings.Strings.AppNameDisplay,
-                    MessageBoxButton.OK, 
+                    MessageBoxButton.OK,
                     MessageBoxImage.Information);
 
                 this._pageFlow.Close(this._parent);
+            }
+            catch (WebException webException)
+            {
+                // 1) wrong password
+                var response = webException.Response as HttpWebResponse;
+                if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    Debug.WriteLine("ConnectDeviceToWifi: Wrong password");
+                    MessageBox.Show(Strings.Strings.MessageBadWifiPassword, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                    this.Active = true;
+                    NeedPassword = Visibility.Visible;
+                    ShowExpanded = Visibility.Visible;
+                    WaitingToConnect = Visibility.Collapsed;
+
+                    OnPropertyChanged(nameof(Active));
+                    OnPropertyChanged(nameof(NeedPassword));
+                    OnPropertyChanged(nameof(ShowExpanded));
+                    OnPropertyChanged(nameof(WaitingToConnect));
+
+                    return;
+                }
+                else
+                {
+                    Debug.WriteLine($"Error connecting, {webException.Message}");
+                    Debug.WriteLine(webException.ToString());
+                    // ignore errors, changes in Wifi will make existing TCP sockets unstable
+
+                    this._pageFlow.Close(this._parent);
+                }
             }
 
             this.WaitingToConnect = Visibility.Collapsed;

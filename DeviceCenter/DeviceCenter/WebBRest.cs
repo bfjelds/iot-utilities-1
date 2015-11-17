@@ -590,6 +590,11 @@ namespace DeviceCenter
                     return (response.StatusCode == HttpStatusCode.OK);
                 }
             }
+            catch(WebException webEx)
+            {
+                Debug.WriteLine(webEx.Message);
+                throw webEx;
+            }
             catch(Exception ex)
             {
                 Debug.WriteLine(ex.Message);
