@@ -24,8 +24,8 @@ namespace DeviceCenter
         public static string Blinky_PackageFullName_x86 = "BlinkyHeadedWebService_1.0.2.0_x86__4a1rdwapkt3r8";
         public static string Blinky_PackageFullName_arm = "BlinkyHeadedWebService_1.0.2.0_arm__4a1rdwapkt3r8";
 
-        public static string InternetRadio_PackageFullName_x86 = "InternetRadioHeaded_1.0.1.0_x86__4a1rdwapkt3r8";
-        public static string InternetRadio_PackageFullName_arm = "InternetRadioHeaded_1.0.1.0_arm__4a1rdwapkt3r8";
+        public static string InternetRadio_PackageFullName_x86 = "InternetRadioHeaded_1.0.2.0_x86__4a1rdwapkt3r8";
+        public static string InternetRadio_PackageFullName_arm = "InternetRadioHeaded_1.0.2.0_arm__4a1rdwapkt3r8";
 
         public string PosterFile { get; private set; }
 
@@ -79,6 +79,11 @@ namespace DeviceCenter
 
         public string OnlineSourceCode { get; private set; }
 
+        public override string ToString()
+        {
+            return this.AppName;
+        }
+
         public static ObservableCollection<AppInformation> Initialize()
         {
             if (AppList.Count == 0)
@@ -120,8 +125,8 @@ namespace DeviceCenter
                             }
                         }
                     },
-                    OnlineInfo = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm",
-                    OnlineSourceCode = "http://ms-iot.github.io/content/en-US/win10/samples/BlinkyWebServer.htm"
+                    OnlineInfo = "http://go.microsoft.com/fwlink/?LinkID=703948",
+                    OnlineSourceCode = "http://go.microsoft.com/fwlink/?LinkID=703948"
                 });
 
                 AppList.Add(new AppInformation()
@@ -137,11 +142,12 @@ namespace DeviceCenter
                         {
                             "x86", new ApplicationFiles()
                             {
-                                AppX = MakePath("InternetRadio\\x86\\InternetRadioHeaded_1.0.1.0_x86.appx"),
+                                AppX = MakePath("InternetRadio\\x86\\InternetRadioHeaded_1.0.2.0_x86.appx"),
                                 PackageFullName = InternetRadio_PackageFullName_x86, 
-                                Certificate = MakePath("InternetRadio\\X86\\InternetRadioHeaded_1.0.1.0_x86.cer"),
+                                Certificate = MakePath("InternetRadio\\X86\\InternetRadioHeaded_1.0.2.0_x86.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
+                                    MakePath("Dependencies\\x86\\Microsoft.NET.Native.Framework.1.2.appx"),
                                     MakePath("Dependencies\\X86\\Microsoft.NET.Native.Runtime.1.1.appx"),
                                     MakePath("Dependencies\\X86\\Microsoft.VCLibs.x86.14.00.appx")
                                 }
@@ -150,19 +156,20 @@ namespace DeviceCenter
                         {
                             "ARM", new ApplicationFiles()
                             {
-                                AppX = MakePath("InternetRadio\\ARM\\InternetRadioHeaded_1.0.1.0_ARM.appx"),
+                                AppX = MakePath("InternetRadio\\ARM\\InternetRadioHeaded_1.0.2.0_ARM.appx"),
                                 PackageFullName = InternetRadio_PackageFullName_arm,
-                                Certificate = MakePath("InternetRadio\\ARM\\InternetRadioHeaded_1.0.1.0_ARM.cer"),
+                                Certificate = MakePath("InternetRadio\\ARM\\InternetRadioHeaded_1.0.2.0_ARM.cer"),
                                 Dependencies = new List<FileInfo>()
                                 {
+                                    MakePath("Dependencies\\ARM\\Microsoft.NET.Native.Framework.1.2.appx"),
                                     MakePath("Dependencies\\ARM\\Microsoft.NET.Native.Runtime.1.1.appx"),
                                     MakePath("Dependencies\\ARM\\Microsoft.VCLibs.ARM.14.00.appx")
                                 }
                             }
                         }
                     },
-                    OnlineInfo = "https://www.hackster.io/windows-iot/connected-clock-radio-85c9fc",
-                    OnlineSourceCode = "https://www.hackster.io/windows-iot/connected-clock-radio-85c9fc"
+                    OnlineInfo = "http://go.microsoft.com/fwlink/?LinkID=703955",
+                    OnlineSourceCode = "http://go.microsoft.com/fwlink/?LinkID=703955"
                 });
             }
 

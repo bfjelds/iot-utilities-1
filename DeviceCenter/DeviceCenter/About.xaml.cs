@@ -11,7 +11,7 @@ namespace DeviceCenter
     /// </summary>
     public partial class About : Page
     {
-        public About()
+        public About(PageFlow pageFlow)
         {
             InitializeComponent();
 
@@ -36,7 +36,7 @@ namespace DeviceCenter
             {
                 MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
             }

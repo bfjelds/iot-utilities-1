@@ -11,16 +11,28 @@ namespace DeviceCenter
     public partial class PageDeviceConfiguration : Page
     {
         public DiscoveredDevice Device { get; private set; }
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
 
-        public PageDeviceConfiguration(Frame navigationFrame, DiscoveredDevice device)
+        public PageDeviceConfiguration(PageFlow pageFlow, DiscoveredDevice device)
         {
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
             this.Device = device;
 
             InitializeComponent();
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
+        }
+
+        ~PageDeviceConfiguration()
+        {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
+        }
+
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.CurrentPage == this)
+                e.Close = true;
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -33,25 +45,37 @@ namespace DeviceCenter
             linkPortal.NavigateUri = this.Device.Manage;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.GoBack();
+            _pageFlow.GoBack();
         }
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            var webbRequest = new WebBRest(Window.GetWindow(this), this.Device.IpAddress, this.Device.Authentication);
-            if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
+            ButtonOk.IsEnabled = false;
+
+            try
             {
-                if (await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text))
+                if (MessageBox.Show(Strings.Strings.DevicesConfigureDevice,
+                    Strings.Strings.DeviceRebootingMessage,
+                    MessageBoxButton.OKCancel,
+                    MessageBoxImage.Question,
+                    MessageBoxResult.OK) == MessageBoxResult.OK)
                 {
-                    MessageBox.Show(Strings.Strings.DeviceRebootingMessage);
-                    await webbRequest.RestartAsync();
+                    var webbRequest = WebBRest.Instance;
+                    if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
+                    {
+                        if (await webbRequest.SetDeviceNameAsync(Device, textBoxDeviceName.Text))
+                        {
+                            await webbRequest.RestartAsync(Device);
+                            _pageFlow.Close(this);
+                        }
+                    }
                 }
+            }
+            finally
+            {
+                ButtonOk.IsEnabled = true;
             }
         }
              
@@ -70,7 +94,7 @@ namespace DeviceCenter
             {
                 MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
             }
@@ -79,7 +103,7 @@ namespace DeviceCenter
 
         private void Hyperlink_SetPassword(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            _navigationFrame.Navigate(new PageDevicePassword(this._navigationFrame, this.Device));
+            _pageFlow.Navigate(typeof(PageDevicePassword), this.Device);
             e.Handled = true;
         }        
     }

@@ -30,8 +30,8 @@ namespace DeviceCenter
             if (Environment.OSVersion.Version.Major < MIN_OS)
             {
                 MessageBox.Show(
-                    "Unable to run this application. This application requires your system to be updated to Microsoft Windows Operating System Version 10.",
-                    Strings.Strings.AppNameDisplay,
+                    Strings.Strings.ErrorWindowsIncompatible,
+                    LocalStrings.AppNameDisplay,
                     MessageBoxButton.OK,
                     MessageBoxImage.Exclamation);
 

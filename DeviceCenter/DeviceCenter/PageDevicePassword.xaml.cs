@@ -10,16 +10,28 @@ namespace DeviceCenter
     public partial class PageDevicePassword : Page
     {
         public DiscoveredDevice Device { get; private set; }
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
 
-        public PageDevicePassword(Frame navigationFrame, DiscoveredDevice device)
+        public PageDevicePassword(PageFlow pageFlow, DiscoveredDevice device)
         {
             InitializeComponent();
 
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
             this.Device = device;
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
+        }
+
+        ~PageDevicePassword()
+        {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
+        }
+
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.CurrentPage == this)
+                e.Close = true;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -47,29 +59,39 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            var webbRequest = new WebBRest(Window.GetWindow(this), this.Device.IpAddress, this.Device.Authentication);
+            ButtonOk.IsEnabled = false;
 
-            if (!string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) && 
-                !string.IsNullOrWhiteSpace(textBoxPassword1.Password))
+            try
             {
-                var result = await webbRequest.SetPasswordAsync(textBoxCurrentPassword.Password, textBoxPassword1.Password);
+                var webbRequest = WebBRest.Instance;
 
-                // bring it back to setup screen if password setting is successful.
-                if (result == true)
+                if (!string.IsNullOrWhiteSpace(textBoxCurrentPassword.Password) &&
+                    !string.IsNullOrWhiteSpace(textBoxPassword1.Password))
                 {
-                    MessageBox.Show(
-                        "Password changed successfully",
-                        Strings.Strings.AppNameDisplay,
-                        MessageBoxButton.OK,
-                        MessageBoxImage.None);
-                    _navigationFrame.GoBack();
+                    var result = await webbRequest.SetPasswordAsync(Device, textBoxCurrentPassword.Password, textBoxPassword1.Password);
+
+                    // bring it back to setup screen if password setting is successful.
+                    if (result == true)
+                    {
+                        MessageBox.Show(
+                            Strings.Strings.SuccessPasswordChanged,
+                            LocalStrings.AppNameDisplay,
+                            MessageBoxButton.OK,
+                            MessageBoxImage.None);
+
+                        _pageFlow.Close(this);
+                    }
                 }
+            }
+            finally
+            {
+                ButtonOk.IsEnabled = true;
             }
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.GoBack();
+            _pageFlow.GoBack();
         }
     }
 }

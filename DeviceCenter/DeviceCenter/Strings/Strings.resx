@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppNameDisplay" xml:space="preserve">
+  <data name="AppNameDisplayNotUsed" xml:space="preserve">
     <value>IoT Dashboard</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
@@ -394,7 +394,7 @@
     <value>Device Portal</value>
   </data>
   <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
-    <value>Windows System Portal allows you to configure your device in detail</value>
+    <value>Windows Device Portal allows you to configure your device in detail</value>
   </data>
   <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
     <value>Open Device Portal in browser</value>
@@ -582,9 +582,6 @@
   <data name="MessageBadPassword" xml:space="preserve">
     <value>The old password is incorrect</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
   <data name="ErrorNullDevice" xml:space="preserve">
     <value>Error in getting target device. Please try again.</value>
   </data>
@@ -597,13 +594,24 @@
     <comment>After successful change of the device's password</comment>
   </data>
   <data name="SuccessWifiConfigured" xml:space="preserve">
-    <value>The device Wi-Fi is configured</value>
+    <value>The device's Wi-Fi is configured.  Restarting your device.</value>
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
-    <value>Your Wi-Fi is now set up. In order to apply the changes, please reboot your device.
-Your device will automatically appear in the device list after reboot is complete.
+    <value>Your Wi-Fi is now set up. 
+
+In order to apply the changes, manually restart the device.  Your device will automatically appear in the device list after restart is complete.
+
 If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="ErrorWindowsIncompatible" xml:space="preserve">
+    <value>Unable to run this application. This application requires your system to be updated to Microsoft Windows Operating System Version 10.</value>
+  </data>
+  <data name="SuccessWifiConfiguredNoReboot" xml:space="preserve">
+    <value>The device's Wi-Fi is configured.  If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
   </data>
 </root>

@@ -16,20 +16,27 @@ namespace DeviceCenter
 {
     public class WifiEntry : INotifyPropertyChanged
     {
+        // This is the delay from sending the connect to wifi rest request to pop up the dialog
+        // that asks user to reboot their device, set to 120s based on the testing result on my MBM
+        // this delay is for the wifi profile to flush to the disk on the device
+        private readonly TimeSpan Wifi_Persist_Profile_WaitTime = TimeSpan.FromSeconds(120);
+
         private readonly AvailableNetwork _network;
         private const string WifiIcons = "";
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
         private readonly bool _needPassword;
-        private readonly WebBRest _webbRequest;
+        private readonly DiscoveredDevice _device;
         private readonly string _adapterGuid;
+        private readonly PageWifi _parent;
 
-        public WifiEntry(Frame navigationFrame, string adapterGuid, AvailableNetwork ssid, WebBRest webbRequest, Visibility showConnecting = Visibility.Hidden)
+        public WifiEntry(PageWifi parent, PageFlow pageFlow, string adapterGuid, AvailableNetwork ssid, DiscoveredDevice device, Visibility showConnecting = Visibility.Hidden)
         {
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
             this._network = ssid;
-            this._webbRequest = webbRequest;
-            ShowConnecting = showConnecting;
+            this._device = device;
+            this.ShowConnecting = showConnecting;
             this._adapterGuid = adapterGuid;
+            this._parent = parent;
 
             this.Active = false;
             this.ShowConnect = Visibility.Collapsed;
@@ -68,6 +75,7 @@ namespace DeviceCenter
                 }
             }
         }
+
         public int SignalStrength { get; set; }
 
         public void Expand()
@@ -98,7 +106,7 @@ namespace DeviceCenter
             OnPropertyChanged(nameof(ShowExpanded));
         }
 
-        public void StartConnect()
+        public async Task StartConnect()
         {
             if (this._needPassword)
             {
@@ -114,63 +122,136 @@ namespace DeviceCenter
             else
             {
                 // do connect now
-                DoConnect(string.Empty);
+                await DoConnect(string.Empty);
             }
         }
 
-        public void DoConnect(string password)
+        public async Task DoConnect(string password)
         {
             this.ReadyToConnect = false;
             OnPropertyChanged(nameof(ReadyToConnect));
 
-            ConnectDeviceToWifi(password);
+            await ConnectDeviceToWifi(password);
         }
 
-        private void ConnectDeviceToWifi(string password)
+        private async Task ConnectDeviceToWifi(string password)
         {
+            this.WaitingToConnect = Visibility.Visible;
+            this.ShowConnect = Visibility.Hidden;
+            this.ReadyToConnect = false;
+            this.EnableSecureConnect = false;
+            var webbRequest = WebBRest.Instance;
+
+            OnPropertyChanged(nameof(EnableSecureConnect));
+            OnPropertyChanged(nameof(WaitingToConnect));
+            OnPropertyChanged(nameof(ReadyToConnect));
+            OnPropertyChanged(nameof(ShowConnect));
+
+            Collapse();
+
+            bool connectSuccess = false;
+
             try
             {
-                this.WaitingToConnect = Visibility.Visible;
-                this.ShowConnect = Visibility.Hidden;
-                this.ReadyToConnect = false;
-                this.EnableSecureConnect = false;
-
-                OnPropertyChanged(nameof(EnableSecureConnect));
-                OnPropertyChanged(nameof(WaitingToConnect));
-                OnPropertyChanged(nameof(ReadyToConnect));
-                OnPropertyChanged(nameof(ShowConnect));
-
-                Collapse();
-
-                Task.Factory.StartNew(async () =>
-                {
-                    try
-                    {
-                        await _webbRequest.ConnectToNetworkAsync(_adapterGuid, this._network.SSID, password);
-                    }
-                    catch (WebException error)
-                    {
-                        Debug.WriteLine($"Error connecting, {error.Message}");
-                        Debug.WriteLine(error.ToString());
-                        // ignore errors, changes in Wifi will make existing TCP sockets unstable
-                    }
-                }, TaskCreationOptions.LongRunning);
-
-                MessageBox.Show(Strings.Strings.WiFiMayBeConfigured);
-                this._navigationFrame.GoBack();
+                // 1) send connect to network rest request
+                connectSuccess = await webbRequest.ConnectToNetworkAsync(_device, _adapterGuid, _network.SSID, password);
             }
-            finally
+            catch (WebException webException)
             {
-                this.WaitingToConnect = Visibility.Collapsed;
-                this.ReadyToConnect = true;
-                this.EnableSecureConnect = true;
-                this.ShowConnect = password == string.Empty ? Visibility.Visible : Visibility.Collapsed;
+                // 1.1 wrong password, stay on the same page to allow user to retry
+                var response = webException.Response as HttpWebResponse;
+                if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    Debug.WriteLine("ConnectDeviceToWifi: Wrong password");
+                    MessageBox.Show(Strings.Strings.MessageBadWifiPassword, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
-                OnPropertyChanged(nameof(EnableSecureConnect));
-                OnPropertyChanged(nameof(WaitingToConnect));
-                OnPropertyChanged(nameof(ReadyToConnect));
-                OnPropertyChanged(nameof(ShowConnect));
+                    this.Active = true;
+                    NeedPassword = Visibility.Visible;
+                    ShowExpanded = Visibility.Visible;
+                    WaitingToConnect = Visibility.Collapsed;
+
+                    OnPropertyChanged(nameof(Active));
+                    OnPropertyChanged(nameof(NeedPassword));
+                    OnPropertyChanged(nameof(ShowExpanded));
+                    OnPropertyChanged(nameof(WaitingToConnect));
+
+                    return;
+                }
+                else
+                {
+                    // 1.2) other errors, pop up dialog to ask user to reset manually 
+                    // after {Wifi_Persist_Profile_WaitTime} seconds
+                    Debug.WriteLine($"Error connecting, {webException.Message}");
+                    Debug.WriteLine(webException.ToString());
+
+                    await Task.Delay(Wifi_Persist_Profile_WaitTime);
+
+                    MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
+                        LocalStrings.AppNameDisplay,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
             }
+
+            // 2) send a restart request to device since EBoot on device fails to run on new network.
+            // the eboot issue should be fixed in RS1.the reset won't be necessary afterwards
+            if (connectSuccess)
+            {
+                var restartTask = webbRequest.RestartAsync(_device);
+                var timeoutTask = Task.Delay(Wifi_Persist_Profile_WaitTime);
+
+                var resultTask = await Task.WhenAny(restartTask, timeoutTask);
+                if (resultTask == restartTask)
+                {
+                    if (resultTask.Status == TaskStatus.RanToCompletion)
+                    {
+                        var restartResult = restartTask.Result;
+
+                        // 2.1) restart request succeeds
+                        // 2.2) underlying connection is cut off, device is already restarting
+                        if (restartResult == WebExceptionStatus.Success || restartResult == WebExceptionStatus.KeepAliveFailure)
+                        {
+                            MessageBox.Show(Strings.Strings.SuccessWifiConfigured,
+                                LocalStrings.AppNameDisplay,
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+                        }
+                        else
+                        {
+                            // 2.3) restart request fails, pop up dialog to ask user to reset manually 
+                            // after {Wifi_Persist_Profile_WaitTime} seconds
+                            await Task.Delay(Wifi_Persist_Profile_WaitTime);
+
+                            MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
+                                LocalStrings.AppNameDisplay,
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+                        }
+                    }
+                }
+                // 2.4 timeout, no response after {Wifi_Persist_Profile_WaitTime} seconds
+                else
+                {
+                    webbRequest.TerminateAnyWebBCall();
+
+                    MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
+                                    LocalStrings.AppNameDisplay,
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Information);
+                }
+            }
+
+            this._pageFlow.Close(this._parent);
+
+            this.WaitingToConnect = Visibility.Collapsed;
+            this.ReadyToConnect = true;
+            this.EnableSecureConnect = true;
+            this.ShowConnect = password == string.Empty ? Visibility.Visible : Visibility.Collapsed;
+
+            OnPropertyChanged(nameof(EnableSecureConnect));
+            OnPropertyChanged(nameof(WaitingToConnect));
+            OnPropertyChanged(nameof(ReadyToConnect));
+            OnPropertyChanged(nameof(ShowConnect));
         }
 
         public void AllowSecure(bool enabled)
@@ -220,17 +301,19 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageWifi : Page
     {
-        private readonly Frame _navigationFrame;
+        private readonly PageFlow _pageFlow;
         private readonly DiscoveredDevice _device;
         private readonly SoftApHelper _wifiManager;
         private readonly DispatcherTimer _delayStart;
 
-        public PageWifi(Frame navigationFrame, SoftApHelper wifiManager, DiscoveredDevice device)
+        public PageWifi(PageFlow pageFlow, SoftApHelper wifiManager, DiscoveredDevice device)
         {
             InitializeComponent();
 
             this._device = device;
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
+
             this._wifiManager = wifiManager;
 
             ListViewWifi.SelectionChanged += ListViewWifi_SelectionChanged;
@@ -247,13 +330,24 @@ namespace DeviceCenter
             _delayStart.Tick += delayStartTimer_Tick;
         }
 
+        ~PageWifi()
+        {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
+        }
+
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.CurrentPage == this)
+                e.Close = true;
+        }
+
         private void ReturnAsError(string message)
         {
             _wifiManager.DisconnectIfNeeded();
 
-            MessageBox.Show(message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            MessageBox.Show(message, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
-            _navigationFrame.GoBack();
+            this._pageFlow.Close(this);
         }
 
         private async void delayStartTimer_Tick(object sender, EventArgs e)
@@ -264,12 +358,16 @@ namespace DeviceCenter
             if (connected)
             {
                 var authentication = DialogAuthenticate.GetSavedPassword(this._device.WifiInstance.SsidString);
+                var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
+
+                _device.IpAddress = new IPAddressSortable(ip);
+                _device.Authentication = authentication;
 
                 try
                 {
                     await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
                     {
-                        ListViewWifi.ItemsSource = await QueryWifiAsync(_device);
+                        ListViewWifi.ItemsSource = await QueryWifiAsync();
 
                         progressWaiting.Visibility = Visibility.Collapsed;
                     }));
@@ -285,40 +383,37 @@ namespace DeviceCenter
             }
         }
 
-        private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync(DiscoveredDevice device)
+        private async Task<ObservableCollection<WifiEntry>> QueryWifiAsync()
         {
             var result = new ObservableCollection<WifiEntry>();
 
             try
             {
-                var userInfo = DialogAuthenticate.GetSavedPassword(device.DeviceName);
+                var webbRequest = WebBRest.Instance;
 
-                var ip = System.Net.IPAddress.Parse(SoftApHelper.SoftApHostIp); // default on wifi
-                var webbRequest = new WebBRest(Window.GetWindow(this), ip, DialogAuthenticate.GetSavedPassword(ip.ToString()));
-
-                var adapters = await webbRequest.GetWirelessAdaptersAsync();
+                var adapters = await webbRequest.GetWirelessAdaptersAsync(_device);
 
                 if (adapters != null && adapters.Items != null)
                 {
-                    var networks = await webbRequest.GetAvaliableNetworkAsync(adapters.Items[0].GUID);
+                    var networks = await webbRequest.GetAvaliableNetworkAsync(_device, adapters.Items[0].GUID);
                     if (networks != null)
                     {
                         foreach (var ssid in networks.Items)
                         {
-                            result.Add(new WifiEntry(_navigationFrame, adapters.Items[0].GUID, ssid, webbRequest));
+                            result.Add(new WifiEntry(this, _pageFlow, adapters.Items[0].GUID, ssid, _device));
                         }
                     }
                 }
                 else
                 {
-                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
-                    _navigationFrame.GoBack();
+                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi, LocalStrings.AppNameDisplay);
+                    this._pageFlow.Close(this);
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show(Strings.Strings.MessageUnableToGetWifi);
-                _navigationFrame.GoBack();
+                MessageBox.Show(Strings.Strings.MessageUnableToGetWifi, LocalStrings.AppNameDisplay);
+                this._pageFlow.Close(this);
             }
 
             return result;
@@ -329,12 +424,12 @@ namespace DeviceCenter
             _wifiManager.DisconnectIfNeeded();
         }
 
-        private void ButtonConnect_Click(object sender, RoutedEventArgs e)
+        private async void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
             if (ListViewWifi.SelectedItem != null)
             {
                 var entry = ListViewWifi.SelectedItem as WifiEntry;
-                entry?.StartConnect();
+                await entry?.StartConnect();
 
                 if (entry != null && entry.NeedPassword == Visibility.Visible)
                 {
@@ -358,14 +453,18 @@ namespace DeviceCenter
             return findControl as PasswordBox;
         }
 
-        private void ButtonConnectSecure_Click(object sender, RoutedEventArgs e)
+        private async void ButtonConnectSecure_Click(object sender, RoutedEventArgs e)
         {
             var entry = ListViewWifi.SelectedItem as WifiEntry;
             if (entry != null)
             {
                 var editor = FindPasswordEdit(e.Source);
                 if (editor != null)
-                    entry.DoConnect(editor.Password);
+                {
+                    await entry.DoConnect(editor.Password);
+                    editor.Password = string.Empty;
+                    editor.Focus();
+                }
             }
         }
 
@@ -415,7 +514,7 @@ namespace DeviceCenter
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            _navigationFrame.GoBack();
+            this._pageFlow.Close(this);
         }
     }
 }

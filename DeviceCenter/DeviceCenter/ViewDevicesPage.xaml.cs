@@ -24,13 +24,12 @@ namespace DeviceCenter
 
         private readonly SoftApHelper _softwareAccessPoint;
 
-        private readonly Frame _navigationFrame;
-        private PageWifi _wifiPage;
+        private readonly PageFlow _pageFlow;
 
-        public ViewDevicesPage(Frame navigationFrame)
+        public ViewDevicesPage(PageFlow pageFlow)
         {
             // initialize parameters
-            this._navigationFrame = navigationFrame;
+            this._pageFlow = pageFlow;
             this._newestBuildDevice = null;
             this._oldestBuildDevice = null;
 
@@ -49,7 +48,6 @@ namespace DeviceCenter
             view.SortDescriptions.Add(new SortDescription("DeviceName", ListSortDirection.Ascending));
 
             //Register the callbacks
-            _softwareAccessPoint.OnSoftApDisconnected += SoftwareAccessPoint_OnSoftAPDisconnected;
             _softwareAccessPoint.OnWlanScanComplete += SoftwareAccessPoint_OnWlanScanComplete;
 
             // Get avaliable wifi list once at startup
@@ -74,14 +72,6 @@ namespace DeviceCenter
 
             DiscoveryHelper.Release();
             _discoveryHelper = null;
-        }
-
-        private void SoftwareAccessPoint_OnSoftAPDisconnected(object sender, EventArgs e)
-        {
-        }
-
-        private void ListViewDevices_Unloaded(object sender, RoutedEventArgs e)
-        {
         }
 
         private void TelemetryTimer_Tick(object sender, EventArgs e)
@@ -154,7 +144,7 @@ namespace DeviceCenter
             {
                 MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
             }
@@ -194,9 +184,7 @@ namespace DeviceCenter
                             { "DeviceModel", device.DeviceModel }
                         });
 
-                        _wifiPage = new PageWifi(_navigationFrame, this._softwareAccessPoint, device);
-
-                        _navigationFrame.Navigate(_wifiPage);
+                        _pageFlow.Navigate(typeof(PageWifi), this._softwareAccessPoint, device);
 
                         return;
                     }
@@ -238,7 +226,7 @@ namespace DeviceCenter
                 {
                     MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
                 }
@@ -266,7 +254,7 @@ namespace DeviceCenter
                     { "DeviceModel", device.DeviceModel }
                 });
 
-                _navigationFrame.Navigate(new PageDeviceConfiguration(_navigationFrame, device));
+                _pageFlow.Navigate(typeof(PageDeviceConfiguration), device);
             }
         }
 
@@ -280,7 +268,7 @@ namespace DeviceCenter
             {
                 MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
             }
