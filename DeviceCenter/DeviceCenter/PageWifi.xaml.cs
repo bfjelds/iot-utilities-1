@@ -17,8 +17,9 @@ namespace DeviceCenter
     public class WifiEntry : INotifyPropertyChanged
     {
         // This is the delay from sending the connect to wifi rest request to pop up the dialog
-        // that asks user to reboot their device, set to 90s based on the testing result on my MBM
-        private readonly TimeSpan Wifi_Persist_Profile_WaitTime = TimeSpan.FromSeconds(90);
+        // that asks user to reboot their device, set to 120s based on the testing result on my MBM
+        // this delay is for the wifi profile to flush to the disk on the device
+        private readonly TimeSpan Wifi_Persist_Profile_WaitTime = TimeSpan.FromSeconds(120);
 
         private readonly AvailableNetwork _network;
         private const string WifiIcons = "";
@@ -74,6 +75,7 @@ namespace DeviceCenter
                 }
             }
         }
+
         public int SignalStrength { get; set; }
 
         public void Expand()
