@@ -16,11 +16,23 @@ namespace DeviceCenter
         public PageDeviceConfiguration(PageFlow pageFlow, DiscoveredDevice device)
         {
             this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
             this.Device = device;
 
             InitializeComponent();
 
             App.TelemetryClient.TrackPageView(this.GetType().Name);
+        }
+
+        ~PageDeviceConfiguration()
+        {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
+        }
+
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.CurrentPage == this)
+                e.Close = true;
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -40,14 +52,30 @@ namespace DeviceCenter
 
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
-            var webbRequest = new WebBRest(Window.GetWindow(this), this.Device.IpAddress, this.Device.Authentication);
-            if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
+            ButtonOk.IsEnabled = false;
+
+            try
             {
-                if (await webbRequest.SetDeviceNameAsync(textBoxDeviceName.Text))
+                if (MessageBox.Show(Strings.Strings.DevicesConfigureDevice,
+                    Strings.Strings.DeviceRebootingMessage,
+                    MessageBoxButton.OKCancel,
+                    MessageBoxImage.Question,
+                    MessageBoxResult.OK) == MessageBoxResult.OK)
                 {
-                    MessageBox.Show(Strings.Strings.DeviceRebootingMessage);
-                    await webbRequest.RestartAsync();
+                    var webbRequest = WebBRest.Instance;
+                    if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
+                    {
+                        if (await webbRequest.SetDeviceNameAsync(Device, textBoxDeviceName.Text))
+                        {
+                            await webbRequest.RestartAsync(Device);
+                            _pageFlow.Close(this);
+                        }
+                    }
                 }
+            }
+            finally
+            {
+                ButtonOk.IsEnabled = true;
             }
         }
              
