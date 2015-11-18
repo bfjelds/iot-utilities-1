@@ -594,7 +594,7 @@
     <comment>After successful change of the device's password</comment>
   </data>
   <data name="SuccessWifiConfigured" xml:space="preserve">
-    <value>The device Wi-Fi is configured.  Reboot is now in progress</value>
+    <value>The device's Wi-Fi is configured.  Restarting your device.</value>
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
@@ -612,6 +612,6 @@ If your device does not appear in the list after a couple of minutes, you may ne
     <value>Unable to run this application. This application requires your system to be updated to Microsoft Windows Operating System Version 10.</value>
   </data>
   <data name="SuccessWifiConfiguredNoReboot" xml:space="preserve">
-    <value>The device Wi-Fi is configured.  If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
+    <value>The device's Wi-Fi is configured.  If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
   </data>
 </root>

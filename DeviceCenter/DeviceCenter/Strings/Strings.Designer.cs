@@ -1411,7 +1411,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The device Wi-Fi is configured.  Reboot is now in progress.
+        ///   Looks up a localized string similar to The device&apos;s Wi-Fi is configured.  Restarting your device..
         /// </summary>
         public static string SuccessWifiConfigured {
             get {
@@ -1420,7 +1420,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The device Wi-Fi is configured.  If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up..
+        ///   Looks up a localized string similar to The device&apos;s Wi-Fi is configured.  If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up..
         /// </summary>
         public static string SuccessWifiConfiguredNoReboot {
             get {
