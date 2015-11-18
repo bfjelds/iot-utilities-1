@@ -205,6 +205,34 @@ namespace DeviceCenter
             }
         }
 
+        public async Task<DateTime?> GetDateTimeAsync(DiscoveredDevice device)
+        {
+            CancellationToken? cts;
+
+            // If there is a REST call being made, this aborts the connection
+            EnterWebBCall(out cts);
+
+            RestHelper restHelper = new RestHelper(null, device.IpAddress, device.Authentication);
+
+            var url = string.Format("{0}datetime", DeviceApiUrl);
+
+            try
+            {
+                using (var response = await restHelper.SendRequestAsync(url, HttpMethod.Get, null, cts))
+                {
+                    var dateTime = RestHelper.ProcessJsonResponse(response, typeof(CurrentDateTime)) as CurrentDateTime;
+
+                    return dateTime.Current.DateTime;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null;
+        }
+
         public async Task<bool> RunCommandAsync(DiscoveredDevice device, string command, bool runAsDefaultAccount)
         {
             CancellationToken? cts;
