@@ -49,7 +49,7 @@ namespace WlanAPIs
             profileStr = profileStr.Replace("$encryption", AthensSoftApEncryption);
 
             var securityStr = SecuritySectionTemplate;
-            securityStr = securityStr.Replace("$key", "password");
+            securityStr = securityStr.Replace("$key", password);
             profileStr = profileStr.Replace("$securitySection", securityStr);
 
             return profileStr;

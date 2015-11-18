@@ -29,6 +29,7 @@ namespace DeviceCenter
             this.AppItem = item;
             this.DataContext = this.AppItem;
             this._pageFlow = pageFlow;
+            this._pageFlow.PageChange += _pageFlow_PageChange;
 
             InitializeComponent();
 
@@ -45,6 +46,12 @@ namespace DeviceCenter
             GetAppState();
         }
 
+        private void _pageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.CurrentPage == this)
+                e.Close = true;
+        }
+
         public override string ToString()
         {
             return this.AppItem.AppName;
@@ -52,10 +59,11 @@ namespace DeviceCenter
 
         ~PageAppDetails()
         {
+            this._pageFlow.PageChange -= _pageFlow_PageChange;
             DiscoveryHelper.Release();
         }
 
-        private async void StopTheOtherApp(DiscoveredDevice device, string arch)
+        private async Task StopTheOtherApp(DiscoveredDevice device, string arch)
         {
             if (device == null)
             {
@@ -64,7 +72,7 @@ namespace DeviceCenter
             }
             else
             {
-                var webbRequest = new WebBRest(Window.GetWindow(this), device.IpAddress, device.Authentication);
+                var webbRequest = WebBRest.Instance;
 
                 string theOtherAppName = null;
 
@@ -82,9 +90,9 @@ namespace DeviceCenter
 
                 try
                 {
-                    if (await webbRequest.IsAppRunning(theOtherAppName))
+                    if (await webbRequest.IsAppRunning(device, theOtherAppName))
                     {
-                        await webbRequest.StopAppAsync(theOtherAppName);
+                        await webbRequest.StopAppAsync(device, theOtherAppName);
                     }
                 }
                 catch (WebBRest.RestError)
@@ -107,7 +115,7 @@ namespace DeviceCenter
             }
             else
             {
-                var webbRequest = new WebBRest(Window.GetWindow(this), currentDevice.IpAddress, currentDevice.Authentication);
+                var webbRequest = WebBRest.Instance;
 
                 try
                 {
@@ -130,7 +138,7 @@ namespace DeviceCenter
 
                     string packageFullName = appFiles.PackageFullName;
 
-                    if (await webbRequest.IsAppRunning(packageFullName))
+                    if (await webbRequest.IsAppRunning(_device, packageFullName))
                     {
                         PanelDeployed.Visibility = Visibility.Visible;
                         PanelDeploy.Visibility = Visibility.Collapsed;
@@ -154,7 +162,7 @@ namespace DeviceCenter
                         // If inner exception is SoketException, let the user know
                         if (ex.InnerException is WebException)
                         {
-                            MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            MessageBox.Show(ex.Message, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         }
                     }
 
@@ -172,7 +180,7 @@ namespace DeviceCenter
 
             string arch = string.Empty;
 
-            var osInfo = await webbRequest.GetDeviceInfoAsync();
+            var osInfo = await webbRequest.GetDeviceInfoAsync(device);
 
             if (osInfo != null)
             {
@@ -191,14 +199,14 @@ namespace DeviceCenter
 
             if (currentDevice == null)
             {
-                var errorCaption = Strings.Strings.AppNameDisplay;
+                var errorCaption = LocalStrings.AppNameDisplay;
                 var errorMsg = Strings.Strings.ErrorNullDevice;
 
                 MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
             else
             {
-                var webbRequest = new WebBRest(Window.GetWindow(this), currentDevice.IpAddress, currentDevice.Authentication);
+                var webbRequest = WebBRest.Instance;
 
                 string arch = await GetDeviceArchAsync(currentDevice, webbRequest);
 
@@ -215,7 +223,7 @@ namespace DeviceCenter
                     return;
                 }
 
-                StopTheOtherApp(currentDevice, arch);
+                await StopTheOtherApp(currentDevice, arch);
 
                 PanelDeploy.Visibility = Visibility.Collapsed;
                 PanelDeploying.Visibility = Visibility.Visible;
@@ -239,7 +247,7 @@ namespace DeviceCenter
 
                     string packageFullName = appFiles.PackageFullName;
 
-                    if (!await webbRequest.RunAppxAsync(packageFullName, files))
+                    if (!await webbRequest.RunAppxAsync(_device, packageFullName, files))
                     {
                         PanelDeploying.Visibility = Visibility.Collapsed;
                         PanelDeployed.Visibility = Visibility.Collapsed;
@@ -268,7 +276,7 @@ namespace DeviceCenter
                         // If inner exception is SoketException, let the user know
                         if (ex.InnerException is WebException)
                         {
-                            MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            MessageBox.Show(ex.Message, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         }
                     }
 
@@ -278,7 +286,7 @@ namespace DeviceCenter
                 {
                     MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
                 }
@@ -304,7 +312,7 @@ namespace DeviceCenter
             }
             else
             {
-                var webbRequest = new WebBRest(Window.GetWindow(this), currentDevice.IpAddress, currentDevice.Authentication);
+                var webbRequest = WebBRest.Instance;
 
                 AppInformation.ApplicationFiles appFiles = null;
 
@@ -320,7 +328,7 @@ namespace DeviceCenter
 
                 try
                 {
-                    if (await webbRequest.StopAppAsync(packageFullName))
+                    if (await webbRequest.StopAppAsync(_device, packageFullName))
                     {
                         PanelDeployed.Visibility = Visibility.Collapsed;
                         PanelDeploying.Visibility = Visibility.Collapsed;
@@ -340,7 +348,7 @@ namespace DeviceCenter
                         // If inner exception is SoketException, let the user know
                         if (ex.InnerException is WebException)
                         {
-                            MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            MessageBox.Show(ex.Message, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         }
                     }
 
@@ -387,7 +395,7 @@ namespace DeviceCenter
             {
                 MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
             }

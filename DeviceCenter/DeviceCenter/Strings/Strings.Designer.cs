@@ -117,9 +117,9 @@ namespace DeviceCenter.Strings {
         /// <summary>
         ///   Looks up a localized string similar to IoT Dashboard.
         /// </summary>
-        public static string AppNameDisplay {
+        public static string AppNameDisplayNotUsed {
             get {
-                return ResourceManager.GetString("AppNameDisplay", resourceCulture);
+                return ResourceManager.GetString("AppNameDisplayNotUsed", resourceCulture);
             }
         }
         
@@ -304,7 +304,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windows System Portal allows you to configure your device in detail.
+        ///   Looks up a localized string similar to Windows Device Portal allows you to configure your device in detail.
         /// </summary>
         public static string DeviceDetailsDevicePortalMessage1 {
             get {
@@ -637,6 +637,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string EnterPassword {
+            get {
+                return ResourceManager.GetString("EnterPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error in getting target device. Please try again..
         /// </summary>
         public static string ErrorNullDevice {
@@ -651,6 +660,15 @@ namespace DeviceCenter.Strings {
         public static string ErrorUnknownArchitecture {
             get {
                 return ResourceManager.GetString("ErrorUnknownArchitecture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to run this application. This application requires your system to be updated to Microsoft Windows Operating System Version 10..
+        /// </summary>
+        public static string ErrorWindowsIncompatible {
+            get {
+                return ResourceManager.GetString("ErrorWindowsIncompatible", resourceCulture);
             }
         }
         
@@ -1312,15 +1330,6 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Open Windows Device Portal in browser.
         /// </summary>
         public static string SuccessAction1 {
@@ -1402,11 +1411,20 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The device Wi-Fi is configured.
+        ///   Looks up a localized string similar to The device&apos;s Wi-Fi is configured.  Restarting your device..
         /// </summary>
         public static string SuccessWifiConfigured {
             get {
                 return ResourceManager.GetString("SuccessWifiConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The device&apos;s Wi-Fi is configured.  If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up..
+        /// </summary>
+        public static string SuccessWifiConfiguredNoReboot {
+            get {
+                return ResourceManager.GetString("SuccessWifiConfiguredNoReboot", resourceCulture);
             }
         }
         
@@ -1429,8 +1447,10 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your Wi-Fi is now set up. In order to apply the changes, please reboot your device.
-        ///Your device will automatically appear in the device list after reboot is complete.
+        ///   Looks up a localized string similar to Your Wi-Fi is now set up. 
+        ///
+        ///In order to apply the changes, manually restart the device.  Your device will automatically appear in the device list after restart is complete.
+        ///
         ///If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up..
         /// </summary>
         public static string WiFiMayBeConfigured {
