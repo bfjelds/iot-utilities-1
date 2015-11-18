@@ -657,9 +657,9 @@ namespace DeviceCenter
 
             _hasPendingRESTCall = false;
 
-            //Free resources
+            // Issue a cancel. Can't dispose here because the HttpCancellationHelper is still holding on to this.  
+            // Expect it to be disposed by garbage collector.
             _tokenSource.Cancel();
-            _tokenSource.Dispose();
             _tokenSource = null;
         }
     }
