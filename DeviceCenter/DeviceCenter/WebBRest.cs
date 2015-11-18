@@ -27,6 +27,7 @@ namespace DeviceCenter
 
         private const string DeviceApiUrl = "/api/iot/device/";
         private const string OsInfo = "/api/os/info";
+        private const string RunCommandUrl = "/api/iot/processmanagement/runcommand";
         private const string ControlApiUrl = "/api/control/";
         private const string NetworkingApiUrl = "/api/networking/";
         private const string AppxApiUrl = "/api/appx/packagemanager/";
@@ -202,6 +203,46 @@ namespace DeviceCenter
                 Debug.WriteLine(ex.Message);
                 return WebExceptionStatus.UnknownError;
             }
+        }
+
+        public async Task<bool> RunCommandAsync(DiscoveredDevice device, string command, bool runAsDefaultAccount)
+        {
+            CancellationToken? cts;
+
+            if (string.IsNullOrWhiteSpace(command))
+            {
+                return false;
+            }
+
+            // If there is a REST call being made, this aborts the connection
+            EnterWebBCall(out cts);
+
+            Dictionary<string, string> commandArguments = new Dictionary<string, string>()
+            {
+                { "command", RestHelper.EscapeUriString(command) },
+                { "runasdefaultaccount", runAsDefaultAccount ? RestHelper.EscapeUriString("true") : RestHelper.EscapeUriString("false") }
+            };
+
+            RestHelper restHelper = new RestHelper(null, device.IpAddress, device.Authentication);
+
+            var url = restHelper.CreateUri(RunCommandUrl, commandArguments);
+
+            try
+            {
+                using (var response = await restHelper.SendRequestAsync(url, HttpMethod.Post, null, cts))
+                {
+                    if(response.StatusCode == HttpStatusCode.OK)
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return false;
         }
 
         public async Task<bool> RunAppxAsync(DiscoveredDevice device, string packageFullName, IEnumerable<FileInfo> files)
