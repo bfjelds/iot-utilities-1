@@ -1411,7 +1411,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The device Wi-Fi is configured.
+        ///   Looks up a localized string similar to The device Wi-Fi is configured.  Reboot is now in progress.
         /// </summary>
         public static string SuccessWifiConfigured {
             get {

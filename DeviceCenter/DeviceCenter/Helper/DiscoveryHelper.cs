@@ -234,7 +234,6 @@ namespace DeviceCenter.Helper
         {
             DiscoveredDevice device = _adhocNetworks.GetOrAdd(accessPoint.SsidString, (key) =>
             {
-                System.Diagnostics.Debug.WriteLine("---------- new device {0}", accessPoint.SsidString);
                 var newDevice = new DiscoveredDevice(accessPoint)
                 {
                     DeviceName = key
