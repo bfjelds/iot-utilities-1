@@ -7,7 +7,7 @@
       xmlns:props="clr-namespace:DeviceCenter.Strings"
       mc:Ignorable="d" 
       d:DesignWidth="800"
-      Title="{x:Static props:Strings.AppNameDisplay}" HorizontalAlignment="Left" MaxWidth="750"
+      Title="{x:Static local:LocalStrings.AppNameDisplay}" HorizontalAlignment="Left" MaxWidth="750"
       RenderTransformOrigin="0.5,0.5">
     <Page.Foreground>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}"/>

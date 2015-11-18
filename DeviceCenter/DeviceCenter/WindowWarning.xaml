@@ -7,7 +7,7 @@
         xmlns:props="clr-namespace:DeviceCenter.Strings"
         mc:Ignorable="d"
         SizeToContent="Height"
-        Title="{x:Static props:Strings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Width="497.683" Height="210.299" ShowInTaskbar="False">
+        Title="{x:Static local:LocalStrings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Width="497.683" Height="210.299" ShowInTaskbar="False">
     <Window.Foreground>
         <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
     </Window.Foreground>

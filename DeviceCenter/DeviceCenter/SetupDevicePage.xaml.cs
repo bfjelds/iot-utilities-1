@@ -272,7 +272,7 @@ namespace DeviceCenter
             {
                 if (exception.Status != WebExceptionStatus.RequestCanceled)
                 {
-                    var errorCaption = Strings.Strings.AppNameDisplay;
+                    var errorCaption = LocalStrings.AppNameDisplay;
                     MessageBox.Show(exception.Message, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     ResetProgressUi();
                     return false;
@@ -312,7 +312,7 @@ namespace DeviceCenter
                 {
                     if (exception.Status != WebExceptionStatus.RequestCanceled)
                     {
-                        var errorCaption = Strings.Strings.AppNameDisplay;
+                        var errorCaption = LocalStrings.AppNameDisplay;
                         MessageBox.Show(exception.Message, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         ResetProgressUi();
                         return false;
@@ -324,7 +324,7 @@ namespace DeviceCenter
                 }
                 catch (Exception exception)
                 {
-                    var errorCaption = Strings.Strings.AppNameDisplay;
+                    var errorCaption = LocalStrings.AppNameDisplay;
                     MessageBox.Show(exception.Message, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     return false;
                 }
@@ -407,7 +407,7 @@ namespace DeviceCenter
                 {
                     Debug.WriteLine(ex.ToString());
                     // the app name as caption
-                    var errorCaption = Strings.Strings.AppNameDisplay;
+                    var errorCaption = LocalStrings.AppNameDisplay;
 
                     // show the filename, use standard windows error
                     var errorMsg = new Win32Exception(2).Message + ": " + ex.FileName;
@@ -571,7 +571,7 @@ namespace DeviceCenter
             {
                 MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
             }

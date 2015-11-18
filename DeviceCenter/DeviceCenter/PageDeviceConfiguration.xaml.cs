@@ -94,7 +94,7 @@ namespace DeviceCenter
             {
                 MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
             }

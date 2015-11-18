@@ -75,7 +75,7 @@ namespace DeviceCenter
                     {
                         MessageBox.Show(
                             Strings.Strings.SuccessPasswordChanged,
-                            Strings.Strings.AppNameDisplay,
+                            LocalStrings.AppNameDisplay,
                             MessageBoxButton.OK,
                             MessageBoxImage.None);
 
