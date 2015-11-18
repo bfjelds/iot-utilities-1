@@ -106,7 +106,7 @@ namespace DeviceCenter
             OnPropertyChanged(nameof(ShowExpanded));
         }
 
-        public void StartConnect()
+        public async Task StartConnect()
         {
             if (this._needPassword)
             {
@@ -122,7 +122,7 @@ namespace DeviceCenter
             else
             {
                 // do connect now
-                DoConnect(string.Empty);
+                await DoConnect(string.Empty);
             }
         }
 
@@ -197,26 +197,47 @@ namespace DeviceCenter
             // the eboot issue should be fixed in RS1.the reset won't be necessary afterwards
             if (connectSuccess)
             {
-                var status = await webbRequest.RestartAsync(_device);
-                // 2.1) restart request succeeds
-                // 2.2) underlying connection is cut off, device is already restarting
-                if (status == WebExceptionStatus.Success || status == WebExceptionStatus.KeepAliveFailure)
+                var restartTask = webbRequest.RestartAsync(_device);
+                var timeoutTask = Task.Delay(Wifi_Persist_Profile_WaitTime);
+
+                var resultTask = await Task.WhenAny(restartTask, timeoutTask);
+                if (resultTask == restartTask)
                 {
-                    MessageBox.Show(Strings.Strings.SuccessWifiConfigured,
-                        Strings.Strings.AppNameDisplay,
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                    if (resultTask.Status == TaskStatus.RanToCompletion)
+                    {
+                        var restartResult = restartTask.Result;
+
+                        // 2.1) restart request succeeds
+                        // 2.2) underlying connection is cut off, device is already restarting
+                        if (restartResult == WebExceptionStatus.Success || restartResult == WebExceptionStatus.KeepAliveFailure)
+                        {
+                            MessageBox.Show(Strings.Strings.SuccessWifiConfigured,
+                                Strings.Strings.AppNameDisplay,
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+                        }
+                        else
+                        {
+                            // 2.3) restart request fails, pop up dialog to ask user to reset manually 
+                            // after {Wifi_Persist_Profile_WaitTime} seconds
+                            await Task.Delay(Wifi_Persist_Profile_WaitTime);
+
+                            MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
+                                Strings.Strings.AppNameDisplay,
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+                        }
+                    }
                 }
+                // 2.4 timeout, no response after {Wifi_Persist_Profile_WaitTime} seconds
                 else
                 {
-                    // 2.3) restart request fails, pop up dialog to ask user to reset manually 
-                    // after {Wifi_Persist_Profile_WaitTime} seconds
-                    await Task.Delay(Wifi_Persist_Profile_WaitTime);
+                    webbRequest.TerminateAnyWebBCall();
 
                     MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
-                        Strings.Strings.AppNameDisplay,
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
+                                    Strings.Strings.AppNameDisplay,
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Information);
                 }
             }
 
@@ -403,12 +424,12 @@ namespace DeviceCenter
             _wifiManager.DisconnectIfNeeded();
         }
 
-        private void ButtonConnect_Click(object sender, RoutedEventArgs e)
+        private async void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
             if (ListViewWifi.SelectedItem != null)
             {
                 var entry = ListViewWifi.SelectedItem as WifiEntry;
-                entry?.StartConnect();
+                await entry?.StartConnect();
 
                 if (entry != null && entry.NeedPassword == Visibility.Visible)
                 {
