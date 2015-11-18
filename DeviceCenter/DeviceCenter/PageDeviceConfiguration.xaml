@@ -51,7 +51,7 @@
                 <TextBlock x:Name="LabelDeviceName" x:Uid="Title" FontSize="30" Text="--" HorizontalAlignment="Left"/>
                 <TextBlock x:Uid="Subtitle" FontSize="21.333" Text="{x:Static props:Strings.DeviceDetailSettings}" HorizontalAlignment="Left" Margin="0,20,0,0" TextWrapping="Wrap"/>
                 <TextBlock x:Uid="LabelDeviceName" VerticalAlignment="Top" Text="{x:Static props:Strings.DeviceNamePwdDeviceNameLabel}" Margin="0,10,0,6" HorizontalAlignment="Left"/>
-                <TextBox x:Name="textBoxDeviceName" Height="23" Width="200" TextWrapping="Wrap"  Text="" HorizontalAlignment="Left" VerticalAlignment="Top" TextChanged="textBoxDeviceName_TextChanged"/>
+                <TextBox x:Name="textBoxDeviceName" Height="23" Width="200" TextWrapping="Wrap"  Text="" HorizontalAlignment="Left" VerticalAlignment="Top" TextChanged="textBoxDeviceName_TextChanged" MaxLength="15" />
                 <TextBlock Text="{x:Static props:Strings.DeviceDetailsUserNameLabel}" IsEnabled="False" Margin="0,20,0,6" HorizontalAlignment="Left"/>
                 <TextBox Height="23" Width="200" HorizontalAlignment="Left" IsEnabled="False" Text="{x:Static props:Strings.DeviceDetailsUserNameAdmin}" />
                 <TextBlock Margin="0,20,0,6">
