@@ -16,6 +16,7 @@ using System.Net.Http;
 
 namespace DeviceCenter
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     public class WebBRest
     {
         private static readonly WebBRest s_Instance = new WebBRest();
