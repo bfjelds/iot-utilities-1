@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:DeviceCenter"
         xmlns:props="clr-namespace:DeviceCenter.Strings"
         mc:Ignorable="d"
-        Title="{x:Static props:Strings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" SizeToContent="WidthAndHeight">
+        Title="{x:Static local:LocalStrings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" SizeToContent="WidthAndHeight">
     <Grid>
         <StackPanel Background="White">
-            <TextBlock Margin="10" FontSize="24" Text="{x:Static props:Strings.AppNameDisplay}" HorizontalAlignment="Stretch" Width="350" />
+            <TextBlock Margin="10" FontSize="24" Text="{x:Static local:LocalStrings.AppNameDisplay}" HorizontalAlignment="Stretch" Width="350" />
             <TextBlock Margin="10" FontSize="18" Text="{Binding DeviceName}" HorizontalAlignment="Left" />
             <TextBlock Margin="10 0" Text="{x:Static props:Strings.DeviceNamePwdUserNameLabel}" HorizontalAlignment="Left" />
             <TextBox x:Name="editUserName" Text="{Binding UserName}" Width="200" Margin="10 0" HorizontalAlignment="Left" TextChanged="TextBox_TextChanged" KeyUp="TextBox_KeyUp" />

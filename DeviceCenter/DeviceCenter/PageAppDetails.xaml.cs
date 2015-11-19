@@ -162,7 +162,7 @@ namespace DeviceCenter
                         // If inner exception is SoketException, let the user know
                         if (ex.InnerException is WebException)
                         {
-                            MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            MessageBox.Show(ex.Message, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         }
                     }
 
@@ -199,7 +199,7 @@ namespace DeviceCenter
 
             if (currentDevice == null)
             {
-                var errorCaption = Strings.Strings.AppNameDisplay;
+                var errorCaption = LocalStrings.AppNameDisplay;
                 var errorMsg = Strings.Strings.ErrorNullDevice;
 
                 MessageBox.Show(errorMsg, errorCaption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -276,7 +276,7 @@ namespace DeviceCenter
                         // If inner exception is SoketException, let the user know
                         if (ex.InnerException is WebException)
                         {
-                            MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            MessageBox.Show(ex.Message, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         }
                     }
 
@@ -286,7 +286,7 @@ namespace DeviceCenter
                 {
                     MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
                 }
@@ -348,7 +348,7 @@ namespace DeviceCenter
                         // If inner exception is SoketException, let the user know
                         if (ex.InnerException is WebException)
                         {
-                            MessageBox.Show(ex.Message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            MessageBox.Show(ex.Message, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         }
                     }
 
@@ -395,7 +395,7 @@ namespace DeviceCenter
             {
                 MessageBox.Show(
                         ex.Message,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Exclamation);
             }

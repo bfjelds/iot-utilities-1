@@ -31,7 +31,7 @@ namespace DeviceCenter
             {
                 MessageBox.Show(
                     Strings.Strings.ErrorWindowsIncompatible,
-                    Strings.Strings.AppNameDisplay,
+                    LocalStrings.AppNameDisplay,
                     MessageBoxButton.OK,
                     MessageBoxImage.Exclamation);
 

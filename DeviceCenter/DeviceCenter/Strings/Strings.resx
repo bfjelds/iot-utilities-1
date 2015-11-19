@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppNameDisplay" xml:space="preserve">
+  <data name="AppNameDisplayNotUsed" xml:space="preserve">
     <value>IoT Dashboard</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
@@ -594,7 +594,7 @@
     <comment>After successful change of the device's password</comment>
   </data>
   <data name="SuccessWifiConfigured" xml:space="preserve">
-    <value>The device Wi-Fi is configured.  Reboot is now in progress</value>
+    <value>The device's Wi-Fi is configured.  Restarting your device.</value>
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
@@ -610,5 +610,8 @@ If your device does not appear in the list after a couple of minutes, you may ne
   </data>
   <data name="ErrorWindowsIncompatible" xml:space="preserve">
     <value>Unable to run this application. This application requires your system to be updated to Microsoft Windows Operating System Version 10.</value>
+  </data>
+  <data name="SuccessWifiConfiguredNoReboot" xml:space="preserve">
+    <value>The device's Wi-Fi is configured.  If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
   </data>
 </root>

@@ -151,7 +151,7 @@ namespace DeviceCenter
                 {
                     MessageBox.Show(
                     Strings.Strings.MessageBadPassword,
-                    Strings.Strings.AppNameDisplay,
+                    LocalStrings.AppNameDisplay,
                     MessageBoxButton.OK,
                     MessageBoxImage.Exclamation);
                     return false;
@@ -324,7 +324,7 @@ namespace DeviceCenter
                     // I don't like to show a message box directly from here, but this call is nested in other call,
                     // and that call catch all the exceptions and return false, because of that we loose the localized
                     // exception message
-                    var errorCaption = Strings.Strings.AppNameDisplay;
+                    var errorCaption = LocalStrings.AppNameDisplay;
                     var errorMsg = ex.Message;
 
                     // The message in the exception is localized

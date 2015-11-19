@@ -163,7 +163,7 @@ namespace DeviceCenter
                 if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     Debug.WriteLine("ConnectDeviceToWifi: Wrong password");
-                    MessageBox.Show(Strings.Strings.MessageBadWifiPassword, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    MessageBox.Show(Strings.Strings.MessageBadWifiPassword, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
                     this.Active = true;
                     NeedPassword = Visibility.Visible;
@@ -187,7 +187,7 @@ namespace DeviceCenter
                     await Task.Delay(Wifi_Persist_Profile_WaitTime);
 
                     MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
-                        Strings.Strings.AppNameDisplay,
+                        LocalStrings.AppNameDisplay,
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);
                 }
@@ -212,7 +212,7 @@ namespace DeviceCenter
                         if (restartResult == WebExceptionStatus.Success || restartResult == WebExceptionStatus.KeepAliveFailure)
                         {
                             MessageBox.Show(Strings.Strings.SuccessWifiConfigured,
-                                Strings.Strings.AppNameDisplay,
+                                LocalStrings.AppNameDisplay,
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information);
                         }
@@ -223,7 +223,7 @@ namespace DeviceCenter
                             await Task.Delay(Wifi_Persist_Profile_WaitTime);
 
                             MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
-                                Strings.Strings.AppNameDisplay,
+                                LocalStrings.AppNameDisplay,
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information);
                         }
@@ -235,7 +235,7 @@ namespace DeviceCenter
                     webbRequest.TerminateAnyWebBCall();
 
                     MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
-                                    Strings.Strings.AppNameDisplay,
+                                    LocalStrings.AppNameDisplay,
                                     MessageBoxButton.OK,
                                     MessageBoxImage.Information);
                 }
@@ -345,7 +345,7 @@ namespace DeviceCenter
         {
             _wifiManager.DisconnectIfNeeded();
 
-            MessageBox.Show(message, Strings.Strings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            MessageBox.Show(message, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
             this._pageFlow.Close(this);
         }
@@ -406,13 +406,13 @@ namespace DeviceCenter
                 }
                 else
                 {
-                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi, Strings.Strings.AppNameDisplay);
+                    MessageBox.Show(Strings.Strings.MessageUnableToGetWifi, LocalStrings.AppNameDisplay);
                     this._pageFlow.Close(this);
                 }
             }
             catch (Exception)
             {
-                MessageBox.Show(Strings.Strings.MessageUnableToGetWifi, Strings.Strings.AppNameDisplay);
+                MessageBox.Show(Strings.Strings.MessageUnableToGetWifi, LocalStrings.AppNameDisplay);
                 this._pageFlow.Close(this);
             }
 
