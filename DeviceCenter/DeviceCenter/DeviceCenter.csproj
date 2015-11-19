@@ -147,6 +147,7 @@
     </Compile>
     <Compile Include="DataContract\AvailableNetworks.cs" />
     <Compile Include="DataContract\DeploymentState.cs" />
+    <Compile Include="DataContract\DeviceDateTime.cs" />
     <Compile Include="DataContract\IPConfigurations.cs" />
     <Compile Include="DataContract\IoTProcesses.cs" />
     <Compile Include="DataContract\OsInfo.cs" />
