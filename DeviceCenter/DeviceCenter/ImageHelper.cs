@@ -64,56 +64,36 @@ namespace DeviceCenter
         }
 
 
-        static ManagementEventWatcher _usbAddWatcher = null;
-
-        static ManagementEventWatcher _usbRemoveWatcher = null;
+        static ManagementEventWatcher _usbWatcher = null;        
 
         static public void InitializeWatcher()
         {
-            var query = "SELECT * FROM __InstanceCreationEvent WITHIN 1 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
-            _usbAddWatcher = new ManagementEventWatcher(new EventQuery(query));
-
-            query = "SELECT * FROM __InstanceDeletionEvent WITHIN 1 WHERE TargetInstance ISA \"Win32_LogicalDisk\"";
-            _usbRemoveWatcher = new ManagementEventWatcher(new EventQuery(query));
+            var query = "SELECT * FROM __InstanceModificationEvent WITHIN 1 WHERE TargetInstance ISA \'Win32_LogicalDisk\'";
+            _usbWatcher = new ManagementEventWatcher(new EventQuery(query));            
         }
 
         static public void DisposeWatcher()
         {
-            _usbAddWatcher?.Dispose();
-
-            _usbRemoveWatcher?.Dispose();
+            _usbWatcher?.Dispose();  
         }
 
         static public void AddUSBDetectionHandler(EventArrivedEventHandler usbDetectionHandler)
         {
             try
             {
-                _usbAddWatcher.EventArrived += usbDetectionHandler;
-                _usbAddWatcher.Start();
+                _usbWatcher.EventArrived += usbDetectionHandler;
+                _usbWatcher.Start();
             }
 
             catch (Exception)
             {
-                _usbAddWatcher?.Stop();
-            }            
-
-            try
-            {
-                _usbRemoveWatcher.EventArrived += usbDetectionHandler;
-                _usbRemoveWatcher.Start();
-            }
-
-            catch (Exception)
-            {
-                _usbRemoveWatcher?.Stop();
-            }
+                _usbWatcher?.Stop();
+            }                       
         }
 
         static public void RemoveUSBDetectionHandler()
         {
-            _usbAddWatcher?.Stop();
-
-            _usbRemoveWatcher?.Stop();
+            _usbWatcher?.Stop();            
         }
 
         static public List<DriveInfo> GetRemovableDriveList()
