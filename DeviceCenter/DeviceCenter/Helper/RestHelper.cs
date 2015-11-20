@@ -27,13 +27,10 @@ namespace DeviceCenter.Helper
 
         public IPAddress IpAddress { get; private set; }
 
-        private Window _parent;
-
         public RestHelper(Window parent, IPAddress ipAddress, UserInfo deviceAuthentication)
         {
             this.DeviceAuthentication = deviceAuthentication;
             this.IpAddress = ipAddress;
-            this._parent = parent;
         }
 
         private enum HttpErrorResult { Fail, Retry, Cancel };
@@ -45,7 +42,7 @@ namespace DeviceCenter.Helper
             if (errorResponse?.StatusCode == HttpStatusCode.Unauthorized)
             {
                 var dlg = new DialogAuthenticate(this.DeviceAuthentication);
-                dlg.Owner = this._parent;
+                dlg.Owner = Application.Current.MainWindow;
 
                 var dlgResult = dlg.ShowDialog();
 
