@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,6 +12,12 @@ namespace DeviceCenter
     /// </summary>
     public partial class PageDeviceConfiguration : Page
     {
+        /*
+            \\ is used to escape chars in the regex string itself
+            \  is used to escape the C# string
+        */
+        public static string InvalidCharsRegexPattern = "[ `~!@#\\$%\\^&\\*()=+\\[\\]\\{\\}\\|;:.'\",<>\\\\/?]";
+
         public DiscoveredDevice Device { get; private set; }
         private readonly PageFlow _pageFlow;
 
@@ -56,6 +64,21 @@ namespace DeviceCenter
 
             try
             {
+                if (string.IsNullOrWhiteSpace(textBoxDeviceName.Text) || Regex.IsMatch(textBoxDeviceName.Text, InvalidCharsRegexPattern))
+                {
+                    // Used to get error message from system
+                    //
+                    // ERROR_BAD_DEVICE
+                    //    1200(0x4B0)
+                    //    The specified device name is invalid.
+
+                    Win32Exception ex = new Win32Exception(1200);
+
+                    MessageBox.Show(ex.Message, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                    return;
+                }
+
                 if (MessageBox.Show(Strings.Strings.DevicesConfigureDevice,
                     Strings.Strings.DeviceRebootingMessage,
                     MessageBoxButton.OKCancel,
@@ -78,7 +101,7 @@ namespace DeviceCenter
                 ButtonOk.IsEnabled = true;
             }
         }
-             
+
         private void textBoxDeviceName_TextChanged(object sender, TextChangedEventArgs e)
         {
             ButtonOk.IsEnabled = textBoxDeviceName.Text.Length > 0 && textBoxDeviceName.Text != this.Device.DeviceName;
