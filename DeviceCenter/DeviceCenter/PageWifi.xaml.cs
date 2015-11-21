@@ -184,7 +184,11 @@ namespace DeviceCenter
                         if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
                         {
                             Debug.WriteLine("ConnectDeviceToWifi: Wrong password");
-                            MessageBox.Show(Strings.Strings.MessageBadWifiPassword, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            MessageBox.Show(Window.GetWindow(this._parent),
+                                Strings.Strings.MessageBadWifiPassword, 
+                                LocalStrings.AppNameDisplay, 
+                                MessageBoxButton.OK, 
+                                MessageBoxImage.Exclamation);
 
                             this.Active = true;
                             NeedPassword = Visibility.Visible;
@@ -215,10 +219,11 @@ namespace DeviceCenter
                 webbRequest.TerminateAnyWebBCall();
             }
 
-            MessageBox.Show(Strings.Strings.SuccessWifiConfiguredNoReboot,
-                            LocalStrings.AppNameDisplay,
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
+            MessageBox.Show(Window.GetWindow(this._parent),
+                Strings.Strings.SuccessWifiConfiguredNoReboot,
+                LocalStrings.AppNameDisplay,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
 
             // not cache the wifi config page
             this._pageFlow.Close(this._parent);
