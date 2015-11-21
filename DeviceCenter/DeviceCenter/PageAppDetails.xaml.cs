@@ -138,7 +138,7 @@ namespace DeviceCenter
 
                     string packageFullName = appFiles.PackageFullName;
 
-                    if (await webbRequest.IsAppRunning(_device, packageFullName))
+                    if (await webbRequest.IsAppRunning(currentDevice, packageFullName))
                     {
                         PanelDeployed.Visibility = Visibility.Visible;
                         PanelDeploy.Visibility = Visibility.Collapsed;
@@ -247,7 +247,7 @@ namespace DeviceCenter
 
                     string packageFullName = appFiles.PackageFullName;
 
-                    if (!await webbRequest.RunAppxAsync(_device, packageFullName, files))
+                    if (!await webbRequest.RunAppxAsync(currentDevice, packageFullName, files))
                     {
                         PanelDeploying.Visibility = Visibility.Collapsed;
                         PanelDeployed.Visibility = Visibility.Collapsed;
@@ -328,7 +328,7 @@ namespace DeviceCenter
 
                 try
                 {
-                    if (await webbRequest.StopAppAsync(_device, packageFullName))
+                    if (await webbRequest.StopAppAsync(currentDevice, packageFullName))
                     {
                         PanelDeployed.Visibility = Visibility.Collapsed;
                         PanelDeploying.Visibility = Visibility.Collapsed;

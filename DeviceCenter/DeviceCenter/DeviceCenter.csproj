@@ -147,6 +147,7 @@
     </Compile>
     <Compile Include="DataContract\AvailableNetworks.cs" />
     <Compile Include="DataContract\DeploymentState.cs" />
+    <Compile Include="DataContract\DeviceDateTime.cs" />
     <Compile Include="DataContract\IPConfigurations.cs" />
     <Compile Include="DataContract\IoTProcesses.cs" />
     <Compile Include="DataContract\OsInfo.cs" />
@@ -363,18 +364,6 @@
     <Content Include="Assets\Apps\Dependencies\X86\Microsoft.VCLibs.x86.14.00.appx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Apps\InternetRadio\ARM\InternetRadioHeaded_1.0.1.0_ARM.appx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Apps\InternetRadio\ARM\InternetRadioHeaded_1.0.1.0_ARM.cer">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Apps\InternetRadio\X86\InternetRadioHeaded_1.0.1.0_x86.appx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Apps\InternetRadio\X86\InternetRadioHeaded_1.0.1.0_x86.cer">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\Apps\Blinky\ARM\BlinkyHeadedWebService_1.0.2.0_ARM.appx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -390,19 +379,19 @@
     <Content Include="Assets\Apps\Dependencies\ARM\Microsoft.NET.Native.Framework.1.2.appx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Apps\InternetRadio\ARM\InternetRadioHeaded_1.0.2.0_ARM.appx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Apps\InternetRadio\ARM\InternetRadioHeaded_1.0.2.0_ARM.cer">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Apps\InternetRadio\X86\InternetRadioHeaded_1.0.2.0_x86.appx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Apps\InternetRadio\X86\InternetRadioHeaded_1.0.2.0_x86.cer">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\Apps\Dependencies\X86\Microsoft.NET.Native.Framework.1.2.appx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Apps\InternetRadio\ARM\InternetRadioHeaded_1.0.3.0_ARM.appx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Apps\InternetRadio\ARM\InternetRadioHeaded_1.0.3.0_ARM.cer">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Apps\InternetRadio\X86\InternetRadioHeaded_1.0.3.0_x86.appx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Apps\InternetRadio\X86\InternetRadioHeaded_1.0.3.0_x86.cer">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="DeviceCenterDevelopmentKey.snk" />

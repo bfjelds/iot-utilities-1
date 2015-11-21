@@ -16,10 +16,14 @@ namespace DeviceCenter
 {
     public class WifiEntry : INotifyPropertyChanged
     {
-        // This is the delay from sending the connect to wifi rest request to pop up the dialog
-        // that asks user to reboot their device, set to 120s based on the testing result on my MBM
-        // this delay is for the wifi profile to flush to the disk on the device
-        private readonly TimeSpan Wifi_Persist_Profile_WaitTime = TimeSpan.FromSeconds(120);
+        // command for restarting ebootpinger.exe
+        private const string Restart_Ebootpinger_CMD = "cmd /c kill ebootpinger.exe&start c:\\windows\\system32\\ebootpinger.exe";
+        // command for scheduling task that restarts ebootpinger
+        private readonly string Restart_Ebootpinger_Task_CMD = $"schtasks /create /f /tn \"RestartEbootPinger\" /tr \"{Restart_Ebootpinger_CMD}\" /sc minute /mo 1 /ru DefaultAccount /st $st /et $et /K";
+        // the reboot pinger task will run on every one minute in the next 5 minutes
+        private readonly TimeSpan Task_Run_Duration = TimeSpan.FromMinutes(5);
+        // when device connects to a new wifi, sometimes we never receive the response for the webB http call, this is the timeout for the http request
+        private readonly TimeSpan Configure_Wifi_Timeout = TimeSpan.FromSeconds(15);
 
         private readonly AvailableNetwork _network;
         private const string WifiIcons = "";
@@ -149,98 +153,79 @@ namespace DeviceCenter
 
             Collapse();
 
-            bool connectSuccess = false;
+            Debug.WriteLine("ConnectDeviceToWifi: RestartEbootPingerAsync");
+            // 1) Schedule a task to restart ebootpinger.exe on the device
+            // When the device connects to a new network, the host is unable to receive the Ebootpinger message from the device, rebooting ebootpinger fixes this issue
+            // This issue should be fixed in RS1.
+            await RestartEbootPingerAsync();
 
-            try
+            Debug.WriteLine("ConnectDeviceToWifi: ConnectToNetworkAsync");
+            // 2) send connect to network rest request
+            var connectToNetworkTask = webbRequest.ConnectToNetworkAsync(_device, _adapterGuid, _network.SSID, password);
+            var timeoutTask = Task.Delay(Configure_Wifi_Timeout);
+
+            var resultTask = await Task.WhenAny(connectToNetworkTask, timeoutTask);
+            if (resultTask == connectToNetworkTask)
             {
-                // 1) send connect to network rest request
-                connectSuccess = await webbRequest.ConnectToNetworkAsync(_device, _adapterGuid, _network.SSID, password);
-            }
-            catch (WebException webException)
-            {
-                // 1.1 wrong password, stay on the same page to allow user to retry
-                var response = webException.Response as HttpWebResponse;
-                if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
+                // 2.1) Everything successed
+                if (resultTask.Status == TaskStatus.RanToCompletion)
                 {
-                    Debug.WriteLine("ConnectDeviceToWifi: Wrong password");
-                    MessageBox.Show(Strings.Strings.MessageBadWifiPassword, LocalStrings.AppNameDisplay, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
-                    this.Active = true;
-                    NeedPassword = Visibility.Visible;
-                    ShowExpanded = Visibility.Visible;
-                    WaitingToConnect = Visibility.Collapsed;
-
-                    OnPropertyChanged(nameof(Active));
-                    OnPropertyChanged(nameof(NeedPassword));
-                    OnPropertyChanged(nameof(ShowExpanded));
-                    OnPropertyChanged(nameof(WaitingToConnect));
-
-                    return;
+                    Debug.WriteLine($"ConnectDeviceToWifi: succeeded!");
                 }
-                else
+                else if (resultTask.Status == TaskStatus.Faulted)
                 {
-                    // 1.2) other errors, pop up dialog to ask user to reset manually 
-                    // after {Wifi_Persist_Profile_WaitTime} seconds
-                    Debug.WriteLine($"Error connecting, {webException.Message}");
-                    Debug.WriteLine(webException.ToString());
-
-                    await Task.Delay(Wifi_Persist_Profile_WaitTime);
-
-                    MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
-                        LocalStrings.AppNameDisplay,
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                }
-            }
-
-            // 2) send a restart request to device since EBoot on device fails to run on new network.
-            // the eboot issue should be fixed in RS1.the reset won't be necessary afterwards
-            if (connectSuccess)
-            {
-                var restartTask = webbRequest.RestartAsync(_device);
-                var timeoutTask = Task.Delay(Wifi_Persist_Profile_WaitTime);
-
-                var resultTask = await Task.WhenAny(restartTask, timeoutTask);
-                if (resultTask == restartTask)
-                {
-                    if (resultTask.Status == TaskStatus.RanToCompletion)
+                    var webException = resultTask.Exception.InnerException as WebException;
+                    if (webException != null)
                     {
-                        var restartResult = restartTask.Result;
-
-                        // 2.1) restart request succeeds
-                        // 2.2) underlying connection is cut off, device is already restarting
-                        if (restartResult == WebExceptionStatus.Success || restartResult == WebExceptionStatus.KeepAliveFailure)
+                        var response = webException.Response as HttpWebResponse;
+                        // 2.2 wrong password, stay on the same page to allow user to retry
+                        // we don't cancel the scheduled task for restarting ebootpinger, when user enters a correct password
+                        // the task will be updated with the new start/end time
+                        if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
                         {
-                            MessageBox.Show(Strings.Strings.SuccessWifiConfigured,
-                                LocalStrings.AppNameDisplay,
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Information);
+                            Debug.WriteLine("ConnectDeviceToWifi: Wrong password");
+                            MessageBox.Show(Window.GetWindow(this._parent),
+                                Strings.Strings.MessageBadWifiPassword, 
+                                LocalStrings.AppNameDisplay, 
+                                MessageBoxButton.OK, 
+                                MessageBoxImage.Exclamation);
+
+                            this.Active = true;
+                            NeedPassword = Visibility.Visible;
+                            ShowExpanded = Visibility.Visible;
+                            WaitingToConnect = Visibility.Collapsed;
+
+                            OnPropertyChanged(nameof(Active));
+                            OnPropertyChanged(nameof(NeedPassword));
+                            OnPropertyChanged(nameof(ShowExpanded));
+                            OnPropertyChanged(nameof(WaitingToConnect));
+
+                            return;
                         }
                         else
                         {
-                            // 2.3) restart request fails, pop up dialog to ask user to reset manually 
+                            // 2.3) other errors, pop up dialog to ask user to reset manually 
                             // after {Wifi_Persist_Profile_WaitTime} seconds
-                            await Task.Delay(Wifi_Persist_Profile_WaitTime);
-
-                            MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
-                                LocalStrings.AppNameDisplay,
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Information);
+                            Debug.WriteLine($"ConnectDeviceToWifi: Error in ConnectToNetwork webB call, {webException.Message}");
+                            Debug.WriteLine(webException.ToString());
                         }
                     }
                 }
-                // 2.4 timeout, no response after {Wifi_Persist_Profile_WaitTime} seconds
-                else
-                {
-                    webbRequest.TerminateAnyWebBCall();
-
-                    MessageBox.Show(Strings.Strings.WiFiMayBeConfigured,
-                                    LocalStrings.AppNameDisplay,
-                                    MessageBoxButton.OK,
-                                    MessageBoxImage.Information);
-                }
+            }
+            // 2.4 Timeout, No response after x seconds, cancel the webB call request
+            else
+            {
+                Debug.WriteLine("ConnectDeviceToWifi: ConnectToNetworkAsync timeout");
+                webbRequest.TerminateAnyWebBCall();
             }
 
+            MessageBox.Show(Window.GetWindow(this._parent),
+                Strings.Strings.SuccessWifiConfiguredNoReboot,
+                LocalStrings.AppNameDisplay,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+
+            // not cache the wifi config page
             this._pageFlow.Close(this._parent);
 
             this.WaitingToConnect = Visibility.Collapsed;
@@ -252,6 +237,29 @@ namespace DeviceCenter
             OnPropertyChanged(nameof(WaitingToConnect));
             OnPropertyChanged(nameof(ReadyToConnect));
             OnPropertyChanged(nameof(ShowConnect));
+        }
+
+        private async Task<bool> RestartEbootPingerAsync()
+        {
+            var webbRequest = WebBRest.Instance;
+
+            var deviceCurrentTime = await webbRequest.GetDateTimeAsync(_device);
+            if(deviceCurrentTime == null)
+            {
+                Debug.WriteLine("GetDateTimeAsync returns null");
+                return false;
+            }
+
+            Debug.WriteLine("GetDateTimeAsync returns [{0}]", deviceCurrentTime.Value.ToShortTimeString());
+            var taskStartTime = deviceCurrentTime.Value;
+            var taskEndRunTime = deviceCurrentTime.Value + Task_Run_Duration;
+            string command = Restart_Ebootpinger_Task_CMD;
+            command = command.Replace("$st", taskStartTime.ToString("HH:mm"));
+            command = command.Replace("$et", taskEndRunTime.ToString("HH:mm"));
+
+            Debug.WriteLine("RunCommandAsync" + command);
+
+            return await webbRequest.RunCommandAsync(_device, command, false);
         }
 
         public void AllowSecure(bool enabled)
