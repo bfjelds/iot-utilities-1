@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppNameDisplay" xml:space="preserve">
-    <value>IoT ダッシュボード</value>
+  <data name="AppNameDisplayNotUsed" xml:space="preserve">
+    <value>IoT Dashboard</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>キャンセル</value>
@@ -394,7 +394,7 @@
     <value>Device Portal</value>
   </data>
   <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
-    <value>Windows System Portal ではデバイスの詳細な構成を行うことができます</value>
+    <value>Windows Device Portal ではデバイスの詳細な構成を行うことができます</value>
   </data>
   <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
     <value>ブラウザーで Device Portal を開く</value>
@@ -531,7 +531,7 @@
     <value>Microsoft サービス規約</value>
   </data>
   <data name="AboutSubtitle" xml:space="preserve">
-    <value>Windows 10 IoT Core ダッシュボード</value>
+    <value>Windows 10 IoT Core Dashboard</value>
   </data>
   <data name="AboutTitle" xml:space="preserve">
     <value>バージョン情報</value>
@@ -579,9 +579,6 @@
   <data name="MessageBadPassword" xml:space="preserve">
     <value>古いパスワードが正しくありません</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
   <data name="ErrorNullDevice" xml:space="preserve">
     <value>対象のデバイスの取得中にエラーが発生しました。もう一度お試しください。</value>
   </data>
@@ -594,13 +591,24 @@
     <comment>After successful change of the device's password</comment>
   </data>
   <data name="SuccessWifiConfigured" xml:space="preserve">
-    <value>Wi-Fi が構成されたデバイス</value>
+    <value>デバイスの Wi-Fi を構成しました。デバイスを再起動してください。</value>
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
-    <value>Wi-Fi の設定が完了しました。変更を適用するには、デバイスを再起動してください。
-再起動が完了すると、デバイス一覧にお使いのデバイスが自動的に表示されるようになります。
+    <value>Wi-Fi の設定が完了しました。
+
+変更を適用するには、デバイスを手動で再起動してください。再起動が完了すると、デバイス一覧にお使いのデバイスが自動的に表示されるようになります。
+
 数分たっても一覧にデバイスが表示されない場合は、Wi-Fi の再設定が必要になる場合があります。</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="ErrorWindowsIncompatible" xml:space="preserve">
+    <value>このアプリケーションを実行できません。このアプリケーションを実行するには、システムを Microsoft Windows オペレーティング システム バージョン 10 に更新する必要があります。</value>
+  </data>
+  <data name="SuccessWifiConfiguredNoReboot" xml:space="preserve">
+    <value>デバイスの Wi-Fi を構成しました。数分たっても一覧にデバイスが表示されない場合は、Wi-Fi の再設定が必要になる場合があります。</value>
   </data>
 </root>

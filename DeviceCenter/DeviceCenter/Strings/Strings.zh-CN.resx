@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppNameDisplay" xml:space="preserve">
-    <value>IoT 仪表板</value>
+  <data name="AppNameDisplayNotUsed" xml:space="preserve">
+    <value>IoT Dashboard</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>取消</value>
@@ -254,10 +254,10 @@
     <value>若要设置设备，你需要执行的所有操作就是将 Windows 10 IoT 核心版下载并安装到你的设备上</value>
   </data>
   <data name="IntroTitle" xml:space="preserve">
-    <value>在 Internet 上搜索你感兴趣的内容</value>
+    <value>搜索你的物联网世界</value>
   </data>
   <data name="LabelInsecureWifi" xml:space="preserve">
-    <value>打开</value>
+    <value>开放</value>
     <comment>Same as wifi list in Windows for open access points</comment>
   </data>
   <data name="LabelSaveWifiPassword" xml:space="preserve">
@@ -394,7 +394,7 @@
     <value>Device Portal</value>
   </data>
   <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
-    <value>使用 Windows System Portal 可以详细配置你的设备</value>
+    <value>使用 Windows Device Portal 可以详细配置你的设备</value>
   </data>
   <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
     <value>在浏览器中打开 Device Portal</value>
@@ -534,7 +534,7 @@
     <value>Microsoft 服务协议</value>
   </data>
   <data name="AboutSubtitle" xml:space="preserve">
-    <value>Windows 10 IoT 核心版仪表板</value>
+    <value>Windows 10 IoT Core Dashboard</value>
   </data>
   <data name="AboutTitle" xml:space="preserve">
     <value>关于此应用</value>
@@ -582,9 +582,6 @@
   <data name="MessageBadPassword" xml:space="preserve">
     <value>旧密码错误</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
   <data name="ErrorNullDevice" xml:space="preserve">
     <value>获取目标设备时出错。请再试一次。</value>
   </data>
@@ -597,13 +594,24 @@
     <comment>After successful change of the device's password</comment>
   </data>
   <data name="SuccessWifiConfigured" xml:space="preserve">
-    <value>已配置设备 WLAN</value>
+    <value>已配置设备的 WLAN。正在重启你的设备。</value>
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
-    <value>你的 WLAN 现在已设置完毕。若要应用更改，请重启你的设备。
-在重启完成后，你的设备将自动出现在设备列表中。
-如果几分钟后你的设备未出现在该列表中，你可能需要再次设置 WLAN。</value>
+    <value>你的 WLAN 现在已设置完毕。
+
+若要应用更改，请手动重启设备。在重启完成后，你的设备将自动出现在设备列表中。
+
+如果几分钟后你的设备未出现在列表中，你可能需要再次设置 WLAN。</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="ErrorWindowsIncompatible" xml:space="preserve">
+    <value>无法运行此应用程序。此应用程序需要你的系统更新到 Microsoft Windows 操作系统版本 10。</value>
+  </data>
+  <data name="SuccessWifiConfiguredNoReboot" xml:space="preserve">
+    <value>已配置设备的 WLAN。如果几分钟后你的设备未出现在列表中，你可能需要再次设置 WLAN。</value>
   </data>
 </root>
