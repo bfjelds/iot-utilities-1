@@ -154,6 +154,7 @@ namespace DeviceCenter
         {
             try
             {
+                // Need to get the Text control for the hyperlink, this contains the data binding.  Should never be null.
                 var hyperLink = sender as Hyperlink;
                 if (hyperLink == null)
                     return;
@@ -201,6 +202,7 @@ namespace DeviceCenter
 
         private void ButtonPortal_Click(object sender, RoutedEventArgs e)
         {
+            // Need to get the Text control for the hyperlink, this contains the data binding.  Should never be null.
             var hyperLink = sender as Hyperlink;
             if (hyperLink == null)
                 return;
@@ -243,6 +245,7 @@ namespace DeviceCenter
 
         private void ButtonManage_Click(object sender, RoutedEventArgs e)
         {
+            // Need to get the Text control for the hyperlink, this contains the data binding.  Should never be null.
             var hyperLink = sender as Hyperlink;
             if (hyperLink == null)
                 return;

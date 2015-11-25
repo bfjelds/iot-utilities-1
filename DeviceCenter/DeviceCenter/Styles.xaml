@@ -11,8 +11,9 @@
     <Color x:Key="ButtonBackgroundColor">#00769F</Color>
     <Color x:Key="RowBackgroundColor">#00769F</Color>
     <Color x:Key="RowBackgroundAlternateColor">#28A9E1</Color>
-    <Color x:Key="DisabledControlColor">#CCCCCC</Color>
-    <Color x:Key="CancelControlColor">#E6E6E6</Color>
+    <Color x:Key="DisabledControlColor">#cccccc</Color>
+    <Color x:Key="DisabledControlTextColor">#333333</Color>
+    <Color x:Key="CancelControlColor">#787878</Color>
 
     <SolidColorBrush x:Key="ApplicationPageBackgroundBrush" Color="{StaticResource BackgroundColor}"/>
     <SolidColorBrush x:Key="ApplicationPageControlForgroundTextBrushLight" Color="White" Opacity="0.3"/>
@@ -25,6 +26,7 @@
     <SolidColorBrush x:Key="DarkAccentColorBrush" Color="{StaticResource DarkAccentColor}"/>
     <SolidColorBrush x:Key="DisabledControlColorBrush" Color="{StaticResource DisabledControlColor}"/>
     <SolidColorBrush x:Key="CancelControlColorBrush" Color="{StaticResource CancelControlColor}"/>
+    <SolidColorBrush x:Key="DisabledControlTextColorBrush" Color="{StaticResource DisabledControlTextColor}"/>
 
     <Style TargetType="TextBlock">
         <Setter Property="TextElement.FontSize" Value="15" />
@@ -101,6 +103,7 @@
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter TargetName="Border" Property="Background" Value="{StaticResource DisabledControlColorBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource DisabledControlTextColorBrush}"/>
                         </Trigger>
                         <Trigger Property="IsCancel" Value="true">
                             <Setter TargetName="Border" Property="Background" Value="{StaticResource CancelControlColorBrush}" />

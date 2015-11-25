@@ -12,6 +12,7 @@ using System.Net;
 using System.Management.Automation;
 using System.Collections.ObjectModel;
 using DeviceCenter.Helper;
+using System.Globalization;
 
 namespace DeviceCenter
 {
@@ -36,7 +37,20 @@ namespace DeviceCenter
         private readonly PageFlow _pageFlow;
         private readonly WebClient _webClient = new WebClient();
         private DeviceSetupHelper _deviceSetupHelper = DeviceSetupHelper.Instance;
-        private int? knownDrives;
+        private int previousDriveListHash = -1;
+        private readonly Dictionary<string, int> licenseFwLinkLookup = new Dictionary<string, int>()
+        {
+            { "en", 703961 },
+            { "fr", 715644 },
+            { "it", 715645 },
+            { "de", 715646 },
+            { "zh-cn", 715647 },
+            { "zh-tw", 715649 },
+            { "ja", 715650 },
+            { "ko", 715651 },
+            { "pt", 715652 },
+            { "ru", 715653 },
+        };
 
         #endregion
 
@@ -153,7 +167,11 @@ namespace DeviceCenter
                 drives = DriveInfo.GetRemovableDriveList();
             }));
 
-            if (drives != null && (!knownDrives.HasValue || drives.Count != knownDrives.Value))
+            int newDriveListHash = 0;
+            foreach (var cur in drives)
+                newDriveListHash |= cur.ToString().GetHashCode();
+
+            if (drives != null && (previousDriveListHash == -1 || newDriveListHash != previousDriveListHash))
             {
                 RemoveableDevicesComboBox.Items.Clear();
 
@@ -175,7 +193,7 @@ namespace DeviceCenter
                     checkBoxEula.IsEnabled = true;
                 }
 
-                knownDrives = drives.Count;
+                previousDriveListHash = newDriveListHash;
                 RemoveableDevicesComboBox.SelectedIndex = 0;
 
                 buttonFlash.IsEnabled = UpdateStartState();
@@ -572,9 +590,18 @@ namespace DeviceCenter
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
+            int resourceId = -1;
+
+            if (licenseFwLinkLookup.ContainsKey(CultureInfo.CurrentUICulture.Name))
+                resourceId = licenseFwLinkLookup[CultureInfo.CurrentUICulture.Name];
+            else if (licenseFwLinkLookup.ContainsKey(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName))
+                resourceId = licenseFwLinkLookup[CultureInfo.CurrentUICulture.TwoLetterISOLanguageName];
+            else
+                resourceId = licenseFwLinkLookup["en"];
+
             try
             {
-                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+                Process.Start(new ProcessStartInfo(string.Format(e.Uri.AbsoluteUri, resourceId)));
             }
             catch(Exception ex)
             {
