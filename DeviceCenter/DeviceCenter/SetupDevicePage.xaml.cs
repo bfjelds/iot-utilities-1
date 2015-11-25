@@ -22,8 +22,8 @@ namespace DeviceCenter
     {
         #region DownloadLinks
 
-        private readonly string _rpi2DownloadLink = "http://go.microsoft.com/fwlink/?LinkId=619755";
-        private readonly string _mbmDownloadLink = "http://go.microsoft.com/fwlink/?LinkId=619756";
+        private readonly string _rpi2DownloadLink = "http://go.microsoft.com/fwlink/?LinkId=691711";
+        private readonly string _mbmDownloadLink = "http://go.microsoft.com/fwlink/?LinkId=691712";
 
         #endregion
 
