@@ -78,7 +78,7 @@
                     <StackPanel Orientation="Horizontal" Margin="0,32,0,0" HorizontalAlignment="Left">
                         <CheckBox x:Name="checkBoxEula" HorizontalAlignment="Left" Checked="checkBoxEula_Checked" Unchecked="checkBoxEula_Checked" VerticalAlignment="Center" />
                         <TextBlock Margin="6 0" VerticalAlignment="Center" >
-                        <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkID={0}" RequestNavigate="Hyperlink_RequestNavigate">
+                        <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkID=" RequestNavigate="Hyperlink_RequestNavigate">
                             <TextBlock Text="{x:Static props:Strings.NewDeviceTermsAndCondition}" />
                         </Hyperlink>
                     </TextBlock>
