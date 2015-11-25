@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppNameDisplay" xml:space="preserve">
-    <value>IoT 儀表板</value>
+  <data name="AppNameDisplayNotUsed" xml:space="preserve">
+    <value>IoT Dashboard</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>取消</value>
@@ -394,7 +394,7 @@
     <value>Device Portal</value>
   </data>
   <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
-    <value>Windows System Portal 可讓您詳細設定您的裝置</value>
+    <value>Windows Device Portal 可讓您詳細設定您的裝置</value>
   </data>
   <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
     <value>在瀏覽器中開啟 Device Portal</value>
@@ -534,7 +534,7 @@
     <value>Microsoft 服務合約</value>
   </data>
   <data name="AboutSubtitle" xml:space="preserve">
-    <value>Windows 10 IoT 核心版儀表板</value>
+    <value>Windows 10 IoT Core Dashboard</value>
   </data>
   <data name="AboutTitle" xml:space="preserve">
     <value>關於此應用程式</value>
@@ -582,9 +582,6 @@
   <data name="MessageBadPassword" xml:space="preserve">
     <value>舊密碼不正確</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
   <data name="ErrorNullDevice" xml:space="preserve">
     <value>取得目標裝置時發生錯誤。請再試一次。</value>
   </data>
@@ -597,13 +594,24 @@
     <comment>After successful change of the device's password</comment>
   </data>
   <data name="SuccessWifiConfigured" xml:space="preserve">
-    <value>裝置 Wi-Fi 已設定</value>
+    <value>裝置的 Wi-Fi 已設定。請重新啟動您的裝置。</value>
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
-    <value>您的 Wi-Fi 現在已設定完成。若要套用變更，請將您的裝置重新開機。
-完成重新開機之後，您的裝置將會自動出現在裝置清單中。
-若您的裝置在數分鐘後仍未出現在該清單中，您可能需要重新執行 Wi-Fi 設定步驟。</value>
+    <value>您的 Wi-Fi 現在已設定完成。若要套用變更，請手動重新啟動裝置。
+
+完成重新啟動之後，您的裝置將會自動出現在裝置清單中。
+
+若您的裝置在數分鐘後仍未出現在清單中，您可能需要重複 Wi-Fi 設定步驟。</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>密碼</value>
+  </data>
+  <data name="ErrorWindowsIncompatible" xml:space="preserve">
+    <value>無法執行此應用程式。此應用程式要求您的系統必須更新到 Microsoft Windows 作業系統第 10 版。</value>
+  </data>
+  <data name="SuccessWifiConfiguredNoReboot" xml:space="preserve">
+    <value>裝置的 Wi-Fi 已設定。若您的裝置在數分鐘後仍未出現在清單中，您可能需要重複 Wi-Fi 設定步驟。</value>
   </data>
 </root>
