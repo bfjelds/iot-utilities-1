@@ -70,17 +70,7 @@
                 <TextBlock Text="{x:Static props:Strings.ConnectEthernetMessage}" TextWrapping="Wrap" />
             </StackPanel>
         </DockPanel>
-        <Button Margin="0 10" Content="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left" Padding="20 4 20 4" Click="Button_Click" >
-            <Button.Foreground>
-                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
-            </Button.Foreground>
-            <Button.BorderBrush>
-                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
-            </Button.BorderBrush>
-            <Button.Background>
-                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
-            </Button.Background>
-        </Button>
+        <Button Margin="0 10" Content="{x:Static props:Strings.FindMyDeviceButton}" HorizontalAlignment="Left" Click="Button_Click" />
         <TextBlock Margin="0 10">
             <Hyperlink NavigateUri="asdf" RequestNavigate="Hyperlink_SetupDevice">
                 <TextBlock Text="{x:Static props:Strings.ConnectSetupAnotherDevice}" />

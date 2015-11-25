@@ -8,12 +8,14 @@ namespace DeviceCenter
 {
     public class PageChangeCancelEventArgs : CancelEventArgs
     {
-        public PageChangeCancelEventArgs(Page currentPage)
+        public PageChangeCancelEventArgs(Page currentPage, Page newPage)
         {
             this.CurrentPage = currentPage;
+            this.NewPage = newPage;
         }
 
         public Page CurrentPage { get; private set; }
+        public Page NewPage { get; private set; }
         public bool Close { get; set; }
     }
 
@@ -47,7 +49,7 @@ namespace DeviceCenter
 
             if (PageChange != null)
             {
-                PageChangeCancelEventArgs args = new PageChangeCancelEventArgs(_currentPage);
+                PageChangeCancelEventArgs args = new PageChangeCancelEventArgs(_currentPage, e.Content as Page);
                 PageChange(this, args);
 
                 if (args.Close && _currentPage != null)
