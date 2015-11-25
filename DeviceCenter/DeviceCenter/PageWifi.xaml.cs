@@ -373,7 +373,7 @@ namespace DeviceCenter
 
                 try
                 {
-                    await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+                    await this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
                     {
                         ListViewWifi.ItemsSource = await QueryWifiAsync();
 

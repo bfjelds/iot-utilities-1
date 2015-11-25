@@ -239,11 +239,12 @@ namespace DeviceCenter.Helper
                     DeviceName = key
                 };
 
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                {
-                    AllDevices.Add(newDevice);
-                    NewDevices.Add(newDevice);
-                }));
+                if (Application.Current != null)
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                    {
+                        AllDevices.Add(newDevice);
+                        NewDevices.Add(newDevice);
+                    }));
 
                 return newDevice;
             });
@@ -258,6 +259,9 @@ namespace DeviceCenter.Helper
             DiscoveredDevice device;
             if (_adhocNetworks.TryRemove(ssidToRemove, out device))
             {
+                if (Application.Current == null)
+                    return;
+
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                 {
                     if (AllDevices.Contains(device))
@@ -430,6 +434,9 @@ namespace DeviceCenter.Helper
             if (removeList.Count > 0)
             {
                 // From the UI thread,
+                if (Application.Current == null)
+                    return;
+
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                 {
                     // remove them from the observable collections
