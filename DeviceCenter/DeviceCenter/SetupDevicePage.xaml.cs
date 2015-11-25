@@ -44,7 +44,8 @@ namespace DeviceCenter
             { "fr", 715644 },
             { "it", 715645 },
             { "de", 715646 },
-            { "zh-cn", 715647 },
+            { "es", 715647 },
+            { "zh-cn", 715648 },
             { "zh-tw", 715649 },
             { "ja", 715650 },
             { "ko", 715651 },
@@ -601,7 +602,7 @@ namespace DeviceCenter
 
             try
             {
-                Process.Start(new ProcessStartInfo(string.Format(e.Uri.AbsoluteUri, resourceId)));
+                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri + resourceId.ToString(CultureInfo.InvariantCulture)));
             }
             catch(Exception ex)
             {
