@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppNameDisplay" xml:space="preserve">
-    <value>Панель мониторинга IoT</value>
+  <data name="AppNameDisplayNotUsed" xml:space="preserve">
+    <value>IoT Dashboard</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Отмена</value>
@@ -394,7 +394,7 @@
     <value>Device Portal</value>
   </data>
   <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
-    <value>Windows System Portal позволяет всесторонне настроить устройство</value>
+    <value>На портале Windows Device Portal можно настроить любые необходимые параметры устройства</value>
   </data>
   <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
     <value>Открыть Device Portal в браузере</value>
@@ -534,7 +534,7 @@
     <value>Соглашение об использовании служб Майкрософт</value>
   </data>
   <data name="AboutSubtitle" xml:space="preserve">
-    <value>Панель мониторинга Windows 10 IoT Базовая</value>
+    <value>Windows 10 IoT Core Dashboard</value>
   </data>
   <data name="AboutTitle" xml:space="preserve">
     <value>Об этом приложении</value>
@@ -582,9 +582,6 @@
   <data name="MessageBadPassword" xml:space="preserve">
     <value>Неправильный старый пароль</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
   <data name="ErrorNullDevice" xml:space="preserve">
     <value>Ошибка получения целевого устройства. Повторите попытку.</value>
   </data>
@@ -597,13 +594,24 @@
     <comment>After successful change of the device's password</comment>
   </data>
   <data name="SuccessWifiConfigured" xml:space="preserve">
-    <value>Wi-Fi на этом устройстве настроен</value>
+    <value>Функция Wi-Fi на этом устройстве настроена. Выполняется перезапуск устройства.</value>
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
-    <value>Функция Wi-Fi настроена.Чтобы изменения вступили в силу, перезагрузите устройство.
-После перезагрузки устройство автоматически отобразится в списке устройств.
+    <value>Функция Wi-Fi настроена. 
+
+Чтобы изменения вступили в силу, перезапустите устройство вручную. После перезапуска устройство автоматически отобразится в списке устройств.
+
 Если устройство не появилось в списке в течение нескольких минут, попробуйте настроить функцию Wi-Fi еще раз.</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="ErrorWindowsIncompatible" xml:space="preserve">
+    <value>Не удается запустить приложение — необходимо сначала обновить операционную систему Microsoft Windows до версии 10.</value>
+  </data>
+  <data name="SuccessWifiConfiguredNoReboot" xml:space="preserve">
+    <value>Функция Wi-Fi настроена. Если устройство не появилось в списке в течение нескольких минут, попробуйте настроить функцию Wi-Fi еще раз.</value>
   </data>
 </root>

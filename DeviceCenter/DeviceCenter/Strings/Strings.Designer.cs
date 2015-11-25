@@ -601,7 +601,9 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rebooting the device now....
+        ///   Looks up a localized string similar to For this change to be visible this device will need to be restarted.
+        ///
+        ///Restart now?.
         /// </summary>
         public static string DeviceRebootingMessage {
             get {
@@ -1425,6 +1427,15 @@ namespace DeviceCenter.Strings {
         public static string SuccessWifiConfiguredNoReboot {
             get {
                 return ResourceManager.GetString("SuccessWifiConfiguredNoReboot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device name has been changed.
+        /// </summary>
+        public static string TitleDeviceNameChanged {
+            get {
+                return ResourceManager.GetString("TitleDeviceNameChanged", resourceCulture);
             }
         }
         

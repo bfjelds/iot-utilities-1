@@ -21,28 +21,8 @@
                 <ColumnDefinition Width="234*"/>
                 <ColumnDefinition Width="235*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="ButtonOk" IsDefault="True" Content="{x:Static props:Strings.ContinueButton}" Padding="4" Click="ButtonOk_Click" Margin="0,0,10,0">
-                <Button.Foreground>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
-                </Button.Foreground>
-                <Button.BorderBrush>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
-                </Button.BorderBrush>
-                <Button.Background>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
-                </Button.Background>
-            </Button>
-            <Button x:Name="ButtonCancel" IsCancel="True" Content="{x:Static props:Strings.CancelButton}" Padding="4" Margin="10,0,0,0" Click="ButtonCancel_Click" Grid.Column="1">
-                <Button.Foreground>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
-                </Button.Foreground>
-                <Button.BorderBrush>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
-                </Button.BorderBrush>
-                <Button.Background>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
-                </Button.Background>
-            </Button>
+            <Button x:Name="ButtonOk" IsDefault="True" Content="{x:Static props:Strings.ContinueButton}" Click="ButtonOk_Click" Margin="0,0,4,0"/>
+            <Button x:Name="ButtonCancel" IsCancel="True" Content="{x:Static props:Strings.CancelButton}" Margin="4,0,0,0" Click="ButtonCancel_Click" Grid.Column="1" />
         </Grid>
         <TextBlock Margin="10" x:Name="labelMessageText" TextWrapping="Wrap" Text="Message" />
     </DockPanel>

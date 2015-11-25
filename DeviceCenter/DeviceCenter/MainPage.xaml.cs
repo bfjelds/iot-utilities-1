@@ -18,6 +18,17 @@
 
             pageFlow = new PageFlow(_NavigationFrame);
             pageFlow.Navigate(typeof(PageWelcome));
+            pageFlow.PageChange += PageFlow_PageChange;
+        }
+
+        private void PageFlow_PageChange(object sender, PageChangeCancelEventArgs e)
+        {
+            if (e.NewPage is ViewDevicesPage)
+                buttonMyDevices.Selected = true;
+            else if (e.NewPage is SetupDevicePage)
+                buttonSetupDevice.Selected = true;
+            else if (e.NewPage is SamplesPage)
+                buttonSamples.Selected = true;
         }
 
         protected override void OnSourceInitialized(EventArgs e)

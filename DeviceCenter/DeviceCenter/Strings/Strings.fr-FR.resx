@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppNameDisplay" xml:space="preserve">
-    <value>Tableau de bord IoT</value>
+  <data name="AppNameDisplayNotUsed" xml:space="preserve">
+    <value>IoT Dashboard</value>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Annuler</value>
@@ -394,7 +394,7 @@
     <value>Device Portal</value>
   </data>
   <data name="DeviceDetailsDevicePortalMessage1" xml:space="preserve">
-    <value>Windows System Portal vous permet de configurer votre appareil en détail</value>
+    <value>Windows Device Portal vous permet de configurer votre appareil en détail</value>
   </data>
   <data name="DeviceDetailsDevicePortalOpen" xml:space="preserve">
     <value>Ouvrir Device Portal dans le navigateur</value>
@@ -534,7 +534,7 @@
     <value>Contrat de services Microsoft</value>
   </data>
   <data name="AboutSubtitle" xml:space="preserve">
-    <value>Tableau de bord Windows 10 IoT Standard</value>
+    <value>Windows 10 IoT Core Dashboard</value>
   </data>
   <data name="AboutTitle" xml:space="preserve">
     <value>À propos de cette application</value>
@@ -582,9 +582,6 @@
   <data name="MessageBadPassword" xml:space="preserve">
     <value>L’ancien mot de passe est incorrect</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
   <data name="ErrorNullDevice" xml:space="preserve">
     <value>Erreur d’obtention de l’appareil cible. Réessayez.</value>
   </data>
@@ -597,13 +594,24 @@
     <comment>After successful change of the device's password</comment>
   </data>
   <data name="SuccessWifiConfigured" xml:space="preserve">
-    <value>Le Wi-Fi de l’appareil est configuré</value>
+    <value>Le service Wi-Fi de l’appareil est configuré.  Redémarrage en cours de votre appareil.</value>
     <comment>Successful Wifi configuration </comment>
   </data>
   <data name="WiFiMayBeConfigured" xml:space="preserve">
-    <value>Votre connexion Wi-Fi est désormais configurée. Pour appliquer les modifications, redémarrez votre appareil.
-Votre appareil apparaîtra automatiquement dans la liste des appareils après le redémarrage.
-Si ce dernier n’apparaît pas au bout de quelques minutes, il se peut que vous deviez reconfigurer la connexion Wi-Fi.</value>
+    <value>Votre service Wi-Fi est désormais configuré. 
+
+Pour appliquer les modifications, redémarrez manuellement l’appareil.  Votre appareil apparaîtra automatiquement dans la liste des appareils après le redémarrage.
+
+Si ce dernier n’apparaît pas au bout de quelques minutes, il se peut que vous deviez reconfigurer le Wi-Fi.</value>
     <comment>After Wi-Fi is configured.  IoT Dashboard apparently can't tell if it's successful or not since the device leaves the network and joins the network it is told to join.</comment>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="ErrorWindowsIncompatible" xml:space="preserve">
+    <value>Impossible d’exécuter cette application. Cette application requiert la mise à jour de votre système vers la version 10 du système d’exploitation Microsoft Windows.</value>
+  </data>
+  <data name="SuccessWifiConfiguredNoReboot" xml:space="preserve">
+    <value>Le service Wi-Fi de l’appareil est configuré.  Si votre appareil n’apparaît pas dans la liste au bout de quelques minutes, vous devrez peut-être reconfigurer le Wi-Fi.</value>
   </data>
 </root>

@@ -107,6 +107,9 @@ namespace DeviceCenter
                 {
                     try
                     {
+                        if (mo["MediaType"] == null)
+                            continue;
+
                         var mediaType = (string)mo["MediaType"];
                         if (!mediaType.ToLowerInvariant().Contains("removable"))
                         {

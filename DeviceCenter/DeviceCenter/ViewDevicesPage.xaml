@@ -67,7 +67,7 @@
                 </ComboBox>
             </StackPanel>
             <TextBlock FontSize="13" Margin="0 0 0 10" DockPanel.Dock="Bottom">
-                <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkID=698291" RequestNavigate="Hyperlink_RequestNavigate">
+                <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkID=708207" RequestNavigate="Hyperlink_RequestNavigate">
                     <TextBlock Text="{x:Static props:Strings.DeviceListLearnMore}" />
                 </Hyperlink>
             </TextBlock>
@@ -99,11 +99,17 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel>
-                                        <TextBlock FontSize="16" Text="" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#Segoe MDL2 Assets" MouseDown="ButtonManage_Click" Visibility="{Binding ManageVisible}" />
-                                        <StackPanel Orientation="Horizontal" Visibility="{Binding ConnectVisible}" >
-                                            <TextBlock FontSize="22" Text="{Binding WiFiSignalStrengthIconDisplay}" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#Segoe MDL2 Assets" MouseDown="ButtonConnect_Click" VerticalAlignment="Center"  />
-                                            <TextBlock Margin="4 0 0 0" Text="{x:Static props:Strings.DevicesConfigureDevice}" Foreground="Blue" Cursor="Hand" MouseDown="ButtonConnect_Click" VerticalAlignment="Center" />
-                                        </StackPanel>
+                                        <TextBlock Visibility="{Binding ManageVisible}">
+                                            <Hyperlink Click="ButtonManage_Click" >
+                                                <TextBlock FontSize="16" Text="" FontFamily="./Assets/#Segoe MDL2 Assets" />
+                                            </Hyperlink>
+                                        </TextBlock>
+                                        <TextBlock Visibility="{Binding ConnectVisible}">
+                                            <Hyperlink Click="ButtonConnect_Click" >
+                                                <TextBlock FontSize="22" Text="{Binding WiFiSignalStrengthIconDisplay}" FontFamily="./Assets/#Segoe MDL2 Assets" VerticalAlignment="Center"  />
+                                                <TextBlock Margin="4 0 0 0" Text="{x:Static props:Strings.DevicesConfigureDevice}" VerticalAlignment="Center" />
+                                            </Hyperlink>
+                                        </TextBlock>
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -111,7 +117,11 @@
                         <GridViewColumn Header="{x:Static props:Strings.DeviceListColOpenInDevicePortal}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock FontSize="16" Text="&#xE12B;" Foreground="Blue" Cursor="Hand" FontFamily="./Assets/#Segoe MDL2 Assets" MouseDown="ButtonPortal_Click" Visibility="{Binding ManageVisible}" />
+                                    <TextBlock Visibility="{Binding ManageVisible}">
+                                        <Hyperlink Click="ButtonPortal_Click">
+                                            <TextBlock FontSize="16" FontFamily="./Assets/#Segoe MDL2 Assets" Text="&#xE12B;"/>
+                                        </Hyperlink>
+                                    </TextBlock>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
