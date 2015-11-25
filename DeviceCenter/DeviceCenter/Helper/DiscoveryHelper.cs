@@ -240,18 +240,12 @@ namespace DeviceCenter.Helper
                     DeviceName = key
                 };
 
-                try
-                {
-                    if (Application.Current != null)
-                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                        {
-                            AllDevices.Add(newDevice);
-                            NewDevices.Add(newDevice);
-                        }));
-                }
-                catch (TaskCanceledException)
-                {
-                }
+                if (Application.Current != null)
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                    {
+                        AllDevices.Add(newDevice);
+                        NewDevices.Add(newDevice);
+                    }));
 
                 return newDevice;
             });
