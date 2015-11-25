@@ -36,6 +36,7 @@ namespace DeviceCenter
         private readonly PageFlow _pageFlow;
         private readonly WebClient _webClient = new WebClient();
         private DeviceSetupHelper _deviceSetupHelper = DeviceSetupHelper.Instance;
+        private int? knownDrives;
 
         #endregion
 
@@ -146,39 +147,39 @@ namespace DeviceCenter
 
         private async Task RefreshDriveList()
         {
-            RemoveableDevicesComboBox.IsEnabled = false;
-
-            checkBoxEula.IsEnabled = false;
-
             List<DriveInfo> drives = null;
             await Task.Run((Action)(() =>
             {
                 drives = DriveInfo.GetRemovableDriveList();
             }));
 
-            if (drives != null)
+            if (drives != null && (!knownDrives.HasValue || drives.Count != knownDrives.Value))
             {
                 RemoveableDevicesComboBox.Items.Clear();
 
                 if (drives.Count == 0)
                 {
                     RemoveableDevicesComboBox.Items.Add(Strings.Strings.NewDeviceInsertSDCardMessage);
+
                     RemoveableDevicesComboBox.IsEnabled = false;
+                    checkBoxEula.IsEnabled = false;
                 }
                 else
                 {
                     foreach (var drive in drives)
                     {
                         RemoveableDevicesComboBox.Items.Add(drive);
-                        RemoveableDevicesComboBox.IsEnabled = true;
                     }
+
+                    RemoveableDevicesComboBox.IsEnabled = true;
                     checkBoxEula.IsEnabled = true;
                 }
 
+                knownDrives = drives.Count;
                 RemoveableDevicesComboBox.SelectedIndex = 0;
-            }
 
-            buttonFlash.IsEnabled = UpdateStartState();
+                buttonFlash.IsEnabled = UpdateStartState();
+            }
         }
 
         public async void UsbAddedorRemoved(object sender, EventArgs e)
@@ -520,6 +521,7 @@ namespace DeviceCenter
                     case FlashingStates.Completed:
                         FlashingProgress.Value = 100;
                         PanelFlashing.Visibility = Visibility.Collapsed;
+                        ComboBoxDeviceType.IsEnabled = true;
                         ProgressText.Text = string.Empty;
                         break;
                     case FlashingStates.Downloading:
@@ -527,6 +529,7 @@ namespace DeviceCenter
                         buttonFlash.IsEnabled = false;
                         PanelFlashing.Visibility = Visibility.Visible;
                         buttonCancelDism.IsEnabled = true;
+                        ComboBoxDeviceType.IsEnabled = false;
                         break;
                     case FlashingStates.Extracting:
                         FlashingProgress.Value = 33;
@@ -534,6 +537,7 @@ namespace DeviceCenter
                         buttonFlash.IsEnabled = false;
                         PanelFlashing.Visibility = Visibility.Visible;
                         buttonCancelDism.IsEnabled = false;
+                        ComboBoxDeviceType.IsEnabled = false;
                         break;
                     case FlashingStates.Flashing:
                         FlashingProgress.Value = 66;
@@ -541,8 +545,13 @@ namespace DeviceCenter
                         buttonFlash.IsEnabled = false;
                         PanelFlashing.Visibility = Visibility.Visible;
                         buttonCancelDism.IsEnabled = true;
+                        ComboBoxDeviceType.IsEnabled = true;
                         break;
                 }
+
+                ComboBoxIotBuild.IsEnabled = ComboBoxDeviceType.IsEnabled;
+                RemoveableDevicesComboBox.IsEnabled = ComboBoxDeviceType.IsEnabled;
+                checkBoxEula.IsEnabled = ComboBoxDeviceType.IsEnabled;
             }));
         }
 

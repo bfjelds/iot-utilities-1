@@ -348,24 +348,27 @@ namespace DeviceCenter.Helper
                     Authentication = DialogAuthenticate.GetSavedPassword(parsedDeviceName)
                 };
 
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                if (Application.Current != null)
                 {
-                    bool found = false;
-                    foreach (DiscoveredDevice d in ConfiguredDevices)
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                     {
-                        if ((d.IpAddress != null) && d.IpAddress.Equals(newDevice.IpAddress))
+                        bool found = false;
+                        foreach (DiscoveredDevice d in ConfiguredDevices)
                         {
-                            found = true;
-                            break;
+                            if ((d.IpAddress != null) && d.IpAddress.Equals(newDevice.IpAddress))
+                            {
+                                found = true;
+                                break;
+                            }
                         }
-                    }
 
-                    if (!found)
-                    {
-                        ConfiguredDevices.Add(newDevice);
-                        AllDevices.Add(newDevice);
-                    }
-                }));
+                        if (!found)
+                        {
+                            ConfiguredDevices.Add(newDevice);
+                            AllDevices.Add(newDevice);
+                        }
+                    }));
+                }
 
                 return newDevice;
             });

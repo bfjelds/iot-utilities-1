@@ -154,7 +154,11 @@ namespace DeviceCenter
         {
             try
             {
-                var frameworkElement = sender as FrameworkElement;
+                var hyperLink = sender as Hyperlink;
+                if (hyperLink == null)
+                    return;
+
+                var frameworkElement = hyperLink.Parent as FrameworkElement;
 
                 DiscoveredDevice device = null;
 
@@ -195,9 +199,13 @@ namespace DeviceCenter
             }
         }
 
-        private void ButtonPortal_Click(object sender, MouseButtonEventArgs e)
+        private void ButtonPortal_Click(object sender, RoutedEventArgs e)
         {
-            var frameworkElement = sender as FrameworkElement;
+            var hyperLink = sender as Hyperlink;
+            if (hyperLink == null)
+                return;
+
+            var frameworkElement = hyperLink.Parent as FrameworkElement;
 
             DiscoveredDevice device = null;
 
@@ -233,9 +241,13 @@ namespace DeviceCenter
             }
         }
 
-        private void ButtonManage_Click(object sender, MouseButtonEventArgs e)
+        private void ButtonManage_Click(object sender, RoutedEventArgs e)
         {
-            var frameworkElement = sender as FrameworkElement;
+            var hyperLink = sender as Hyperlink;
+            if (hyperLink == null)
+                return;
+
+            var frameworkElement = hyperLink.Parent as FrameworkElement;
 
             DiscoveredDevice device = null;
 

@@ -34,6 +34,22 @@ namespace DeviceCenter
                         ((Storyboard)FindResource("StoryboardSelect")).Begin();
                     else
                         ((Storyboard)FindResource("StoryboardDeselect")).Begin();
+
+                    if (value)
+                    {
+                        var myParent = this.Parent as Panel;
+                        if (myParent != null)
+                        {
+                            foreach (var cur in myParent.Children)
+                            {
+                                var currentButton = cur as ButtonSideMenu;
+                                if (currentButton != null && currentButton != this && currentButton.Selected)
+                                {
+                                    currentButton.Selected = false;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -96,19 +112,6 @@ namespace DeviceCenter
         private void DoClick()
         {
             Selected = true;
-
-            var myParent = this.Parent as Panel;
-            if (myParent != null)
-            {
-                foreach (var cur in myParent.Children)
-                {
-                    var currentButton = cur as ButtonSideMenu;
-                    if (currentButton != null && currentButton != this)
-                    {
-                        currentButton.Selected = false;
-                    }
-                }
-            }
 
             Click?.Invoke(this, new RoutedEventArgs());
         }

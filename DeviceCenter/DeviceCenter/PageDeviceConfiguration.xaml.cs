@@ -79,21 +79,25 @@ namespace DeviceCenter
                     return;
                 }
 
-                if (MessageBox.Show(Strings.Strings.DevicesConfigureDevice,
-                    Strings.Strings.DeviceRebootingMessage,
-                    MessageBoxButton.OKCancel,
-                    MessageBoxImage.Question,
-                    MessageBoxResult.OK) == MessageBoxResult.OK)
+                var webbRequest = WebBRest.Instance;
+
+                if (await webbRequest.SetDeviceNameAsync(Device, textBoxDeviceName.Text))
                 {
-                    var webbRequest = WebBRest.Instance;
-                    if (!string.IsNullOrWhiteSpace(textBoxDeviceName.Text))
+                    var dlg = new WindowWarning()
                     {
-                        if (await webbRequest.SetDeviceNameAsync(Device, textBoxDeviceName.Text))
-                        {
-                            await webbRequest.RestartAsync(Device);
-                            _pageFlow.Close(this);
-                        }
+                        Header = Strings.Strings.TitleDeviceNameChanged,
+                        Message = Strings.Strings.DeviceRebootingMessage,
+                        Owner = Window.GetWindow(this)
+                    };
+
+                    var confirmation = dlg.ShowDialog();
+
+                    if (confirmation.HasValue && confirmation.Value)
+                    {
+                        await webbRequest.RestartAsync(Device);
                     }
+
+                    _pageFlow.Close(this);
                 }
             }
             finally

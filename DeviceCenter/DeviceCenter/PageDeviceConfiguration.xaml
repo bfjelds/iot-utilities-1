@@ -60,28 +60,8 @@
                     </Hyperlink>
                 </TextBlock>
                 <StackPanel Orientation="Horizontal" Margin="0,20,0,6" HorizontalAlignment="Left">
-                    <Button x:Name="ButtonCancel" IsCancel="True" Content="{x:Static props:Strings.DeviceNamePwdBackButton}" Padding="30 5 30 5" Margin="0,0,10,0" Click="ButtonCancel_Click" >
-                        <Button.Foreground>
-                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
-                        </Button.Foreground>
-                        <Button.BorderBrush>
-                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
-                        </Button.BorderBrush>
-                        <Button.Background>
-                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
-                        </Button.Background>
-                    </Button>
-                    <Button x:Name="ButtonOk" IsDefault="True" Content="{x:Static props:Strings.DeviceDetailsApplyButton}" Padding="50 5 50 5" Click="ButtonOk_Click" >
-                        <Button.Foreground>
-                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
-                        </Button.Foreground>
-                        <Button.BorderBrush>
-                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
-                        </Button.BorderBrush>
-                        <Button.Background>
-                            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
-                        </Button.Background>
-                    </Button>
+                    <Button x:Name="ButtonCancel" IsCancel="True" Content="{x:Static props:Strings.DeviceNamePwdBackButton}" Padding="30 5 30 5" Margin="0,0,10,0" Click="ButtonCancel_Click" />
+                    <Button x:Name="ButtonOk" IsDefault="True" Content="{x:Static props:Strings.DeviceDetailsApplyButton}" Padding="50 5 50 5" Click="ButtonOk_Click" />
                 </StackPanel>
                 <TextBlock Margin="0 20" FontSize="20" Text="{x:Static props:Strings.DeviceDetailsDevicePortal}" />
                 <TextBlock Text="{x:Static props:Strings.DeviceDetailsDevicePortalMessage1}" TextWrapping="Wrap" />

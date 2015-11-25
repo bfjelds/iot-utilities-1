@@ -577,7 +577,9 @@
     <value>New devices</value>
   </data>
   <data name="DeviceRebootingMessage" xml:space="preserve">
-    <value>Rebooting the device now...</value>
+    <value>For this change to be visible this device will need to be restarted.
+
+Restart now?</value>
   </data>
   <data name="MessageBadPassword" xml:space="preserve">
     <value>The old password is incorrect</value>
@@ -613,5 +615,8 @@ If your device does not appear in the list after a couple of minutes, you may ne
   </data>
   <data name="SuccessWifiConfiguredNoReboot" xml:space="preserve">
     <value>The device's Wi-Fi is configured.  If your device does not appear in the list after a couple of minutes, you may need to repeat the Wi-Fi set up.</value>
+  </data>
+  <data name="TitleDeviceNameChanged" xml:space="preserve">
+    <value>Device name has been changed</value>
   </data>
 </root>
