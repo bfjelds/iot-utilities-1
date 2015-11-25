@@ -203,10 +203,16 @@ namespace DeviceCenter
 
         public async void UsbAddedorRemoved(object sender, EventArgs e)
         {
-            await this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+            try
             {
-                await RefreshDriveList();
-            }));
+                await this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
+                {
+                    await RefreshDriveList();
+                }));
+            }
+            catch (TaskCanceledException)
+            {
+            }
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using WlanAPIs;
@@ -239,12 +240,18 @@ namespace DeviceCenter.Helper
                     DeviceName = key
                 };
 
-                if (Application.Current != null)
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                    {
-                        AllDevices.Add(newDevice);
-                        NewDevices.Add(newDevice);
-                    }));
+                try
+                {
+                    if (Application.Current != null)
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                        {
+                            AllDevices.Add(newDevice);
+                            NewDevices.Add(newDevice);
+                        }));
+                }
+                catch (TaskCanceledException)
+                {
+                }
 
                 return newDevice;
             });
