@@ -619,4 +619,7 @@ If your device does not appear in the list after a couple of minutes, you may ne
   <data name="TitleDeviceNameChanged" xml:space="preserve">
     <value>Device name has been changed</value>
   </data>
+  <data name="AboutEula" xml:space="preserve">
+    <value>Terms of Use</value>
+  </data>
 </root>

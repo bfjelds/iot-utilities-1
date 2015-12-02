@@ -70,6 +70,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Terms of Use.
+        /// </summary>
+        public static string AboutEula {
+            get {
+                return ResourceManager.GetString("AboutEula", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Privacy Statement.
         /// </summary>
         public static string AboutPrivacy {
