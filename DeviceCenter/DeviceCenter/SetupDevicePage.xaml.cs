@@ -186,16 +186,10 @@ namespace DeviceCenter
 
         public async void UsbAddedorRemoved(object sender, EventArgs e)
         {
-            try
+            await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
             {
-                await this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () =>
-                {
-                    await RefreshDriveList();
-                }));
-            }
-            catch (TaskCanceledException)
-            {
-            }
+                await RefreshDriveList();
+            }));
         }
 
         /// <summary>
@@ -344,7 +338,7 @@ namespace DeviceCenter
 
         private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 double bytesIn = double.Parse(e.BytesReceived.ToString());
                 double totalBytes = double.Parse(e.TotalBytesToReceive.ToString());
@@ -377,7 +371,7 @@ namespace DeviceCenter
 
         private void ExtractFFUProgressChanged(object sender, ExtractFFUProgressEventArgs e)
         {
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 // TODO: get real progress
                 //FlashingProgress.Value = e.Progress;
@@ -435,7 +429,7 @@ namespace DeviceCenter
 
         void FlashingCompleted(object sender, FlashingCompletedEventArgs e)
         {
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
                 ResetProgressUi();
                 if (!e.Success)
@@ -521,7 +515,7 @@ namespace DeviceCenter
         private void SetFlashingState(FlashingStates state)
         {
             _deviceSetupHelper.CurrentFlashingState = state;
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
                 buttonFlash.IsEnabled = UpdateStartState();
                 switch (_deviceSetupHelper.CurrentFlashingState)
