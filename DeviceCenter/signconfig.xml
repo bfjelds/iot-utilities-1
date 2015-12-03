@@ -11,7 +11,7 @@
   </job>
   <!-- AnyCPU Release sign job -->
   <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
-    <file src="__RELBINPATH__\DeviceDiscovery.dll" signType="Both" dest="__RELBINPATH__\signed\DeviceDiscovery.dll" />
+    <file src="__RELBINPATH__\DeviceDiscovery.dll" signType="Authenticode" dest="__RELBINPATH__\signed\DeviceDiscovery.dll" />
   </job>
   <!-- AnyCPU Release sign job -->
   <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
