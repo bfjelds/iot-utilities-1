@@ -52,6 +52,11 @@
         <TextBox x:Name="labelVersion"  Text="--" Margin="0 10"  IsReadOnly="True" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0"  />
         <TextBlock Text="{x:Static props:Strings.AboutCopyright}" />
         <TextBlock Margin="0 10">
+            <Hyperlink RequestNavigate="Hyperlink_ServicesAgreement" NavigateUri="http://go.microsoft.com/fwlink/?LinkId=">
+                <TextBlock Text="{x:Static props:Strings.AboutEula}" />
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock>
             <Hyperlink NavigateUri="http://go.microsoft.com/fwlink/?LinkId=521839" RequestNavigate="Hyperlink_RequestNavigate">
                 <TextBlock Text="{x:Static props:Strings.AboutPrivacy}" />
             </Hyperlink>
