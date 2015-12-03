@@ -7,7 +7,7 @@
 <SignConfigXML>
   <!-- AnyCPU Release sign job -->
   <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
-    <file src="__RELBINPATH__\Windows10IoTCoreDashboard.exe" signType="Authenticode" dest="__RELBINPATH__\signed\Windows10IoTCoreDashboard.exe" />
+    <file src="__RELBINPATH__\Windows10IoTCoreDashboard.exe" signType="Both" dest="__RELBINPATH__\signed\Windows10IoTCoreDashboard.exe" />
   </job>
   <!-- AnyCPU Release sign job -->
   <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
@@ -15,6 +15,6 @@
   </job>
   <!-- AnyCPU Release sign job -->
   <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
-    <file src="__RELBINPATH__\WlanAPIs.dll" signType="Authenticode" dest="__RELBINPATH__\signed\WlanAPIs.dll" />
+    <file src="__RELBINPATH__\WlanAPIs.dll" signType="Both" dest="__RELBINPATH__\signed\WlanAPIs.dll" />
   </job>
 </SignConfigXML>
