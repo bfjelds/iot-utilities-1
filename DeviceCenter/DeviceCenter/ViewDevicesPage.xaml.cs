@@ -53,10 +53,10 @@ namespace DeviceCenter
             // Get avaliable wifi list once at startup
             _softwareAccessPoint.GetAvailableNetworkList();
 
-            // Set up polling
-            _telemetryTimer.Interval = TimeSpan.FromSeconds(3);
+            // Set up time out for sending telemetry - this timer waits 3 seconds after the last device is seen before sending a telemetry event
+            _telemetryTimer.Interval = TimeSpan.FromSeconds(5);
             _telemetryTimer.Tick += TelemetryTimer_Tick;
-            _telemetryTimer.Start();
+            _discoveryHelper.AllDevices.CollectionChanged += AllDevices_CollectionChanged;
 
             Sort(_lastDirection, "DeviceName", "IpAddress");
         }
@@ -72,6 +72,50 @@ namespace DeviceCenter
 
             DiscoveryHelper.Release();
             _discoveryHelper = null;
+        }
+
+        private void AllDevices_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (DiscoveredDevice newDevice in e.NewItems)
+                {
+                    // Figure out which device has the latest build and the oldest build
+                    if (!string.IsNullOrWhiteSpace(newDevice.OsVersion))
+                    {
+                        // Set initial value if null
+                        if (_newestBuildDevice == null && _oldestBuildDevice == null)
+                        {
+                            _newestBuildDevice = _oldestBuildDevice = newDevice;
+                        }
+
+                        // Compare OS Versions
+                        try
+                        {
+                            if (_newestBuildDevice != null)
+                            {
+                                var compareResult = compareOsVersions(newDevice.OsVersion, _newestBuildDevice.OsVersion);
+
+                                if (compareResult > 0)
+                                {
+                                    _newestBuildDevice = newDevice;
+                                }
+                                else if (compareResult < 0)
+                                {
+                                    _oldestBuildDevice = newDevice;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.Message);
+                        }
+                    }
+                }
+
+                // Refresh the timeout for sending telemetry
+                _telemetryTimer.Start();
+            }
         }
 
         private void TelemetryTimer_Tick(object sender, EventArgs e)
