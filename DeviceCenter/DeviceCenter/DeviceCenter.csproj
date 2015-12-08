@@ -38,6 +38,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <XefDelaySign>true</XefDelaySign>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -460,9 +461,13 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy "$(TargetDir)DeviceDiscovery.dll"  "$(SolutionDir)DeviceCenter"
-if  not "$(IsTFSBuild)"=="True" goto end
+if  not "$(IsTFSBuild)"=="True" goto local
 echo Setting up ApplicationInsights
 copy /Y  "$(SolutionDir)DeviceCenter\ApplicationInsights.txt" "$(SolutionDir)DeviceCenter\ApplicationInsights.config"
+copy /Y  "$(SolutionDir)35MSSharedLib1024.snk" "$(IntermediateOutputPath)"
+goto end
+:local
+copy /Y  "$(SolutionDir)35MSSharedLib1024.snk" "$(ProjectDir)$(IntermediateOutputPath)"
 :end</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

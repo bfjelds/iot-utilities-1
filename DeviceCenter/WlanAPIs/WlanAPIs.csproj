@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <XefDelaySign>true</XefDelaySign>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,6 +52,14 @@
     <Compile Include="Interop\WlanInterop.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>if  not "$(IsTFSBuild)"=="True" goto local
+copy /Y  "$(SolutionDir)35MSSharedLib1024.snk" "$(IntermediateOutputPath)"
+goto end
+:local
+copy /Y  "$(SolutionDir)35MSSharedLib1024.snk" "$(ProjectDir)$(IntermediateOutputPath)"
+:end</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
