@@ -401,6 +401,10 @@ namespace DeviceCenter
             {
                 try
                 {
+                    // Set device type and build for telemetry
+                    _deviceSetupHelper.DeviceType = ComboBoxDeviceType.SelectedItem.ToString();
+                    _deviceSetupHelper.Build = ComboBoxIotBuild.SelectedItem.ToString();
+
                     _deviceSetupHelper.FlashFFU(ffuPath, driveInfo);
 
                     // end this early, flashing is asynchronous and will restore state
