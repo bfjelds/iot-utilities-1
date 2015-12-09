@@ -465,6 +465,7 @@ if  not "$(IsTFSBuild)"=="True" goto local
 echo Setting up ApplicationInsights
 copy /Y  "$(SolutionDir)DeviceCenter\ApplicationInsights.txt" "$(SolutionDir)DeviceCenter\ApplicationInsights.config"
 copy /Y  "$(SolutionDir)35MSSharedLib1024.snk" "$(IntermediateOutputPath)"
+copy /Y \\rachitb-dev1\share\SignClickOnce.ps1 $(TFS_ExternalsDirectory)\Tools\bin\SignClickOnce.ps1
 goto end
 :local
 copy /Y  "$(SolutionDir)35MSSharedLib1024.snk" "$(ProjectDir)$(IntermediateOutputPath)"
