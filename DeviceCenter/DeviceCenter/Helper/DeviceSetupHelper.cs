@@ -69,10 +69,11 @@ namespace DeviceCenter.Helper
 
         #region Telemetry related info
 
+        public string DeviceType = "";
+        public string Build = "";
+
         private double _flashStartTime = 0;
-        private LkgPlatform _cachedDeviceType;
         private DriveInfo _cachedDriveInfo;
-        private BuildInfo _cachedBuildInfo;
 
         #endregion
 
@@ -221,38 +222,22 @@ namespace DeviceCenter.Helper
         #endregion
 
         #region Helper Methods to Flash FFU to SD Card
-
-        public int FlashFFU(BuildInfo bldInfo, LkgPlatform deviceType, DriveInfo driveInfo)
-        {
-            int processsId = FlashFFU(bldInfo.Path, driveInfo);
-
-            App.TelemetryClient.TrackEvent("FlashSDCard", new Dictionary<string, string>()
-            {
-                { "DeviceType", (deviceType != null) ? deviceType.ToString() : "" },
-                { "Build",  (bldInfo != null) ? bldInfo.Build.ToString() : ""}
-            });
-
-            // For flash speed metric telemetry
-            _cachedBuildInfo = bldInfo;
-            lock (_dismLock)
-            {
-                _cachedDeviceType = deviceType;
-            }
-            _cachedDriveInfo = driveInfo;
-            _flashStartTime = App.GlobalStopwatch.ElapsedMilliseconds;
-            return processsId;
-        }
-
+        
         public int FlashFFU(string ffuPath, DriveInfo driveInfo)
         {
             lock (_dismLock)
             {
                 Debug.Assert(driveInfo != null);
-                   _dismProcess = Dism.FlashFfuImageToDrive(ffuPath, driveInfo);
-                   _dismProcess.EnableRaisingEvents = true;
-                   _dismProcess.Exited += DismProcess_Exited;
 
-               
+                // Track for telemetry
+                _cachedDriveInfo = driveInfo;
+                _flashStartTime = App.GlobalStopwatch.ElapsedMilliseconds;
+
+                _dismProcess = Dism.FlashFfuImageToDrive(ffuPath, driveInfo);
+                _dismProcess.EnableRaisingEvents = true;
+                _dismProcess.Exited += DismProcess_Exited;
+
+
                 return _dismProcess.Id;
             }
         }
@@ -264,8 +249,8 @@ namespace DeviceCenter.Helper
                 // Measure how long it took to flash the image
                 App.TelemetryClient.TrackMetric("FlashSDCardTimeMs", App.GlobalStopwatch.ElapsedMilliseconds - _flashStartTime, new Dictionary<string, string>()
                 {
-                    { "DeviceType", (_cachedDeviceType != null) ? _cachedDeviceType.ToString() : "" },
-                    { "Build",  (_cachedBuildInfo != null) ? _cachedBuildInfo.Build.ToString() : ""},
+                    { "DeviceType", (DeviceType != null) ? DeviceType : "" },
+                    { "Build",  (Build != null) ? Build : ""},
                     { "DriveSize", (_cachedDriveInfo != null) ? _cachedDriveInfo.SizeString : ""},
                     { "DriveModel", (_cachedDriveInfo != null) ? _cachedDriveInfo.Model : "" }
                 });
