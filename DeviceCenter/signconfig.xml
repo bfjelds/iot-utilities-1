@@ -17,4 +17,35 @@
   <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="IoT Utilities" approvers="artemz;alecont">
     <file src="__RELBINPATH__\WlanAPIs.dll" signType="Both" dest="__RELBINPATH__\signed\WlanAPIs.dll" />
   </job>
+  <!-- Windows10IoTCoreDashboard.resources.dll Release sign job -->
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="de-DE Windows10IoTCoreDashboard.resources.dll" approvers="artemz;alecont">
+    <file src="__RELBINPATH__\de-DE\Windows10IoTCoreDashboard.resources.dll" signType="Both" dest="__RELBINPATH__\signed\de-DE\Windows10IoTCoreDashboard.resources.dll" />
+  </job>	
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="es-ES Windows10IoTCoreDashboard.resources.dll" approvers="artemz;alecont">	
+    <file src="__RELBINPATH__\es-ES\Windows10IoTCoreDashboard.resources.dll" signType="Both" dest="__RELBINPATH__\signed\es-ES\Windows10IoTCoreDashboard.resources.dll" />
+  </job>	
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="fr-FR Windows10IoTCoreDashboard.resources.dll" approvers="artemz;alecont">
+    <file src="__RELBINPATH__\fr-FR\Windows10IoTCoreDashboard.resources.dll" signType="Both" dest="__RELBINPATH__\signed\fr-FR\Windows10IoTCoreDashboard.resources.dll" />
+  </job>	
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="it-IT Windows10IoTCoreDashboard.resources.dll" approvers="artemz;alecont">
+    <file src="__RELBINPATH__\it-IT\Windows10IoTCoreDashboard.resources.dll" signType="Both" dest="__RELBINPATH__\signed\it-IT\Windows10IoTCoreDashboard.resources.dll" />
+  </job>	
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="ja-JP Windows10IoTCoreDashboard.resources.dll" approvers="artemz;alecont">	
+    <file src="__RELBINPATH__\ja-JP\Windows10IoTCoreDashboard.resources.dll" signType="Both" dest="__RELBINPATH__\signed\ja-JP\Windows10IoTCoreDashboard.resources.dll" />
+  </job>	
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="ko-KR Windows10IoTCoreDashboard.resources.dll" approvers="artemz;alecont">	
+      <file src="__RELBINPATH__\ko-KR\Windows10IoTCoreDashboard.resources.dll" signType="Both" dest="__RELBINPATH__\signed\ko-KR\Windows10IoTCoreDashboard.resources.dll" />
+  </job>	  
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="pt-BR Windows10IoTCoreDashboard.resources.dll" approvers="artemz;alecont">
+    <file src="__RELBINPATH__\pt-BR\Windows10IoTCoreDashboard.resources.dll" signType="Both" dest="__RELBINPATH__\signed\pt-BR\Windows10IoTCoreDashboard.resources.dll" />
+  </job>	
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="ru-RU Windows10IoTCoreDashboard.resources.dll" approvers="artemz;alecont">	
+    <file src="__RELBINPATH__\ru-RU\Windows10IoTCoreDashboard.resources.dll" signType="Both" dest="__RELBINPATH__\signed\ru-RU\Windows10IoTCoreDashboard.resources.dll" />
+  </job>	
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="zh-CN Windows10IoTCoreDashboard.resources.dll" approvers="artemz;alecont">	
+    <file src="__RELBINPATH__\zh-CN\Windows10IoTCoreDashboard.resources.dll" signType="Both" dest="__RELBINPATH__\signed\zh-CN\Windows10IoTCoreDashboard.resources.dll" />
+  </job>	
+  <job platform="AnyCPU" configuration="Release" dest="__RELBINPATH__\signed" jobname="zh-TW Windows10IoTCoreDashboard.resources.dll" approvers="artemz;alecont">	
+    <file src="__RELBINPATH__\zh-TW\Windows10IoTCoreDashboard.resources.dll" signType="Both" dest="__RELBINPATH__\signed\zh-TW\Windows10IoTCoreDashboard.resources.dll" />
+  </job>
 </SignConfigXML>
