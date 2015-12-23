@@ -136,10 +136,10 @@
     <value>Ethernet</value>
   </data>
   <data name="ConnectMessage" xml:space="preserve">
-    <value>Insert your finished SD card into the device, then connect your board to the network using Wi-Fi or Ethernet</value>
+    <value>1. Insert your SD card into the device</value>
   </data>
   <data name="ConnectMessage2" xml:space="preserve">
-    <value>then connect your board to the network using Wi-Fi or Ethernet.</value>
+    <value>2. Get Connected</value>
   </data>
   <data name="ConnectSetupAnotherDevice" xml:space="preserve">
     <value>Set up another device</value>
@@ -148,7 +148,7 @@
     <value>Your SD card is ready.</value>
   </data>
   <data name="ConnectWiFiMessage1" xml:space="preserve">
-    <value>Plug in your Wi-Fi adapter and boot up your device. Click "Find my device" and it will be automatically detected.</value>
+    <value>Plug in your Wi-Fi adapter and boot up your device.</value>
   </data>
   <data name="ConnectWiFiMessage2" xml:space="preserve">
     <value>See a list of supported Wi-Fi adapters</value>
@@ -156,7 +156,7 @@
   <data name="ConnectWiFiTitle" xml:space="preserve">
     <value>Wi-Fi</value>
   </data>
-  <data name="ConnetSubTitle" xml:space="preserve">
+  <data name="ConnectSubTitle" xml:space="preserve">
     <value>Now, let's get connected</value>
   </data>
   <data name="ContinueButton" xml:space="preserve">
@@ -627,5 +627,17 @@ If your device does not appear in the list after a couple of minutes, you may ne
   </data>
   <data name="FlashingFailedMessage" xml:space="preserve">
     <value>Make sure you are using a compliant SD card and it has enough space</value>
+  </data>
+  <data name="ConnectEthernetTitle2" xml:space="preserve">
+    <value>(recommended)</value>
+  </data>
+  <data name="ConnectMessage3" xml:space="preserve">
+    <value>Connect your Ethernet cable to your local network and boot up your device</value>
+  </data>
+  <data name="ConnectMessage4" xml:space="preserve">
+    <value>3. Find your device</value>
+  </data>
+  <data name="ConnectMessage5" xml:space="preserve">
+    <value>Note: It will take a few minutes for your device to boot and appear in "My Devices"</value>
   </data>
 </root>

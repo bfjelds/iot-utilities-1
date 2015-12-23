@@ -187,6 +187,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (recommended).
+        /// </summary>
+        public static string ConnectEthernetTitle2 {
+            get {
+                return ResourceManager.GetString("ConnectEthernetTitle2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Find it later, just take me to my devices.
         /// </summary>
         public static string ConnectLater {
@@ -196,7 +205,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insert your finished SD card into the device, then connect your board to the network using Wi-Fi or Ethernet.
+        ///   Looks up a localized string similar to 1. Insert your SD card into the device.
         /// </summary>
         public static string ConnectMessage {
             get {
@@ -205,11 +214,38 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to then connect your board to the network using Wi-Fi or Ethernet..
+        ///   Looks up a localized string similar to 2. Get Connected.
         /// </summary>
         public static string ConnectMessage2 {
             get {
                 return ResourceManager.GetString("ConnectMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect your Ethernet cable to your local network and boot up your device.
+        /// </summary>
+        public static string ConnectMessage3 {
+            get {
+                return ResourceManager.GetString("ConnectMessage3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 3. Find your device.
+        /// </summary>
+        public static string ConnectMessage4 {
+            get {
+                return ResourceManager.GetString("ConnectMessage4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Note: It will take a few minutes for your device to boot and appear in &quot;My Devices&quot;.
+        /// </summary>
+        public static string ConnectMessage5 {
+            get {
+                return ResourceManager.GetString("ConnectMessage5", resourceCulture);
             }
         }
         
@@ -223,6 +259,15 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Now, let&apos;s get connected.
+        /// </summary>
+        public static string ConnectSubTitle {
+            get {
+                return ResourceManager.GetString("ConnectSubTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your SD card is ready..
         /// </summary>
         public static string ConnectTitle {
@@ -232,7 +277,7 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Plug in your Wi-Fi adapter and boot up your device. Click &quot;Find my device&quot; and it will be automatically detected..
+        ///   Looks up a localized string similar to Plug in your Wi-Fi adapter and boot up your device..
         /// </summary>
         public static string ConnectWiFiMessage1 {
             get {
@@ -255,15 +300,6 @@ namespace DeviceCenter.Strings {
         public static string ConnectWiFiTitle {
             get {
                 return ResourceManager.GetString("ConnectWiFiTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Now, let&apos;s get connected.
-        /// </summary>
-        public static string ConnetSubTitle {
-            get {
-                return ResourceManager.GetString("ConnetSubTitle", resourceCulture);
             }
         }
         
