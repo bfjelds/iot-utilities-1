@@ -622,4 +622,10 @@ If your device does not appear in the list after a couple of minutes, you may ne
   <data name="AboutEula" xml:space="preserve">
     <value>Terms of Use</value>
   </data>
+  <data name="FlashingFailedAlertTitle" xml:space="preserve">
+    <value>Flashing Unsuccessful</value>
+  </data>
+  <data name="FlashingFailedMessage" xml:space="preserve">
+    <value>Make sure you are using a compliant SD card and it has enough space</value>
+  </data>
 </root>

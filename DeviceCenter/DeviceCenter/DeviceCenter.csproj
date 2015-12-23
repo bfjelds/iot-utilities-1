@@ -16,6 +16,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>true</IsWebBootstrapper>
+    <XefDelaySign>true</XefDelaySign>
     <PublishUrl>\\scratch2\scratch\stjong\DeviceCenter\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -38,7 +39,6 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <XefDelaySign>true</XefDelaySign>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -205,6 +205,9 @@
     <Compile Include="ViewDevicesPage.xaml.cs">
       <DependentUpon>ViewDevicesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WindowError.xaml.cs">
+      <DependentUpon>WindowError.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WindowWarning.xaml.cs">
       <DependentUpon>WindowWarning.xaml</DependentUpon>
     </Compile>
@@ -275,6 +278,10 @@
     <Page Include="ViewDevicesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WindowError.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="WindowWarning.xaml">
       <SubType>Designer</SubType>

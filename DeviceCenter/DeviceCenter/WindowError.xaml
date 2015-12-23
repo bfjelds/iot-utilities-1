@@ -1,0 +1,27 @@
+﻿<Window x:Class="DeviceCenter.WindowError"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DeviceCenter"
+        xmlns:props="clr-namespace:DeviceCenter.Strings"
+        mc:Ignorable="d"
+        SizeToContent="Height"
+        Title="{x:Static local:LocalStrings.AppNameDisplay}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Width="497.683" Height="210.299" ShowInTaskbar="False">
+    <Window.Foreground>
+        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
+    </Window.Foreground>
+    <StackPanel>
+        <StackPanel.Background>
+            <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
+        </StackPanel.Background>
+        <TextBlock DockPanel.Dock="Top" x:Name="labelMessageHeader" Margin="10" FontSize="20" Text="Title" />
+        <TextBlock Margin="10" x:Name="labelMessageText" TextWrapping="Wrap" Text="Message" />
+        <TextBlock Margin="10" x:Name="labelMessageHelpLink" TextWrapping="Wrap">
+            <Hyperlink x:Name="labelMessageHelpLinkUrl" NavigateUri="url" RequestNavigate="Hyperlink_RequestNavigate" >
+                <TextBlock x:Name="labelMessageHelpLinkText" Text="Link" /> 
+            </Hyperlink>
+        </TextBlock>
+        <Button x:Name="ButtonOk" IsDefault="True" Content="{x:Static props:Strings.ContinueButton}" Click="ButtonOk_Click" Width="200" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+    </StackPanel>
+</Window>

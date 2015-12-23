@@ -729,6 +729,24 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Flashing Unsuccessful.
+        /// </summary>
+        public static string FlashingFailedAlertTitle {
+            get {
+                return ResourceManager.GetString("FlashingFailedAlertTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make sure you are using a compliant SD card and it has enough space.
+        /// </summary>
+        public static string FlashingFailedMessage {
+            get {
+                return ResourceManager.GetString("FlashingFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please enter network information.
         /// </summary>
         public static string FoundDeviceEnterNetworkInfo {

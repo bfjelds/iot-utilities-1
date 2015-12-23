@@ -438,6 +438,17 @@ namespace DeviceCenter
                 ResetProgressUi();
                 if (!e.Success)
                 {
+                    var dlg = new WindowError()
+                    {
+                        Header = Strings.Strings.FlashingFailedAlertTitle,
+                        Message = Strings.Strings.FlashingFailedMessage,
+                        HelpLinkText = Strings.Strings.ViewAcceptableSDCards,
+                        HelpLink = new Uri("http://go.microsoft.com/fwlink/?LinkID=698289"),
+                        HelpLink_Enabled = true, 
+                        Owner = Window.GetWindow(this),
+                    };
+
+                    var confirmation = dlg.ShowDialog();
                     Debug.WriteLine("Flashing FFU to SD Card Failed");
                 }
                 else
