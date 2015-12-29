@@ -538,11 +538,38 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to If the problem persists, please check here.
+        /// </summary>
+        public static string DeviceNameChangeErrorHelpLink {
+            get {
+                return ResourceManager.GetString("DeviceNameChangeErrorHelpLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try rebooting the device and trying again.
+        /// </summary>
+        public static string DeviceNameChangeErrorMessage {
+            get {
+                return ResourceManager.GetString("DeviceNameChangeErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
         public static string DeviceNamePwdBackButton {
             get {
                 return ResourceManager.GetString("DeviceNamePwdBackButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changing device name....
+        /// </summary>
+        public static string DeviceNamePwdDeviceNameChangeStatus {
+            get {
+                return ResourceManager.GetString("DeviceNamePwdDeviceNameChangeStatus", resourceCulture);
             }
         }
         
@@ -1499,6 +1526,15 @@ namespace DeviceCenter.Strings {
         public static string TitleDeviceNameChanged {
             get {
                 return ResourceManager.GetString("TitleDeviceNameChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong.
+        /// </summary>
+        public static string TitleDeviceNameChangeError {
+            get {
+                return ResourceManager.GetString("TitleDeviceNameChangeError", resourceCulture);
             }
         }
         

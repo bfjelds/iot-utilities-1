@@ -640,4 +640,16 @@ If your device does not appear in the list after a couple of minutes, you may ne
   <data name="ConnectMessage5" xml:space="preserve">
     <value>Note: It will take a few minutes for your device to boot and appear in "My Devices"</value>
   </data>
+  <data name="DeviceNamePwdDeviceNameChangeStatus" xml:space="preserve">
+    <value>Changing device name...</value>
+  </data>
+  <data name="DeviceNameChangeErrorHelpLink" xml:space="preserve">
+    <value>If the problem persists, please check here</value>
+  </data>
+  <data name="DeviceNameChangeErrorMessage" xml:space="preserve">
+    <value>Try rebooting the device and trying again</value>
+  </data>
+  <data name="TitleDeviceNameChangeError" xml:space="preserve">
+    <value>Something went wrong</value>
+  </data>
 </root>

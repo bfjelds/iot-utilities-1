@@ -61,7 +61,6 @@ namespace DeviceCenter
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
             ButtonOk.IsEnabled = false;
-
             try
             {
                 if (string.IsNullOrWhiteSpace(textBoxDeviceName.Text) || Regex.IsMatch(textBoxDeviceName.Text, InvalidCharsRegexPattern))
@@ -78,6 +77,8 @@ namespace DeviceCenter
 
                     return;
                 }
+
+                DeviceNameChangeStatus.Visibility = Visibility.Visible;
 
                 var webbRequest = WebBRest.Instance;
 
@@ -100,9 +101,22 @@ namespace DeviceCenter
                     _pageFlow.Close(this);
                 }
             }
+            catch(Exception)
+            {
+                var dlg = new WindowError()
+                {
+                    Header = Strings.Strings.TitleDeviceNameChangeError,
+                    Message = Strings.Strings.DeviceNameChangeErrorMessage,
+                    HelpLink = new Uri("http://www.windowsondevices.com"),
+                    HelpLinkText = Strings.Strings.DeviceNameChangeErrorHelpLink,
+                    Owner = Window.GetWindow(this)
+                };
+                dlg.ShowDialog();
+            }
             finally
             {
                 ButtonOk.IsEnabled = true;
+                DeviceNameChangeStatus.Visibility = Visibility.Collapsed;
             }
         }
 
