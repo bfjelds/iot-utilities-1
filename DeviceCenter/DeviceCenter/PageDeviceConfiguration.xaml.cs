@@ -100,6 +100,10 @@ namespace DeviceCenter
 
                     _pageFlow.Close(this);
                 }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch(Exception)
             {
