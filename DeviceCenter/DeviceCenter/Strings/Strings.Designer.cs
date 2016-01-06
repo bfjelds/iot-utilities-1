@@ -313,6 +313,24 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to If the problem persists, please check here.
+        /// </summary>
+        public static string DeviceAttributeChangeErrorHelpLink {
+            get {
+                return ResourceManager.GetString("DeviceAttributeChangeErrorHelpLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try rebooting the device and trying again.
+        /// </summary>
+        public static string DeviceAttributeChangeErrorMessage {
+            get {
+                return ResourceManager.GetString("DeviceAttributeChangeErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Device name.
         /// </summary>
         public static string DeviceDetailDeviceNameLabel {
@@ -538,24 +556,6 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If the problem persists, please check here.
-        /// </summary>
-        public static string DeviceNameChangeErrorHelpLink {
-            get {
-                return ResourceManager.GetString("DeviceNameChangeErrorHelpLink", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Try rebooting the device and trying again.
-        /// </summary>
-        public static string DeviceNameChangeErrorMessage {
-            get {
-                return ResourceManager.GetString("DeviceNameChangeErrorMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
         public static string DeviceNamePwdBackButton {
@@ -579,6 +579,15 @@ namespace DeviceCenter.Strings {
         public static string DeviceNamePwdDeviceNameLabel {
             get {
                 return ResourceManager.GetString("DeviceNamePwdDeviceNameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changing device password....
+        /// </summary>
+        public static string DeviceNamePwdDevicePasswordChangeStatus {
+            get {
+                return ResourceManager.GetString("DeviceNamePwdDevicePasswordChangeStatus", resourceCulture);
             }
         }
         
@@ -1521,20 +1530,20 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Something went wrong.
+        /// </summary>
+        public static string TitleDeviceAttributeChangeError {
+            get {
+                return ResourceManager.GetString("TitleDeviceAttributeChangeError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Device name has been changed.
         /// </summary>
         public static string TitleDeviceNameChanged {
             get {
                 return ResourceManager.GetString("TitleDeviceNameChanged", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Something went wrong.
-        /// </summary>
-        public static string TitleDeviceNameChangeError {
-            get {
-                return ResourceManager.GetString("TitleDeviceNameChangeError", resourceCulture);
             }
         }
         

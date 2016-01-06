@@ -109,10 +109,10 @@ namespace DeviceCenter
             {
                 var dlg = new WindowError()
                 {
-                    Header = Strings.Strings.TitleDeviceNameChangeError,
-                    Message = Strings.Strings.DeviceNameChangeErrorMessage,
-                    HelpLink = new Uri("http://www.windowsondevices.com"),
-                    HelpLinkText = Strings.Strings.DeviceNameChangeErrorHelpLink,
+                    Header = Strings.Strings.TitleDeviceAttributeChangeError,
+                    Message = Strings.Strings.DeviceAttributeChangeErrorMessage,
+                    HelpLink = new Uri("http://go.microsoft.com/fwlink/?LinkID=722169"),
+                    HelpLinkText = Strings.Strings.DeviceAttributeChangeErrorHelpLink,
                     Owner = Window.GetWindow(this)
                 };
                 dlg.ShowDialog();
@@ -120,7 +120,7 @@ namespace DeviceCenter
             finally
             {
                 ButtonOk.IsEnabled = true;
-                DeviceNameChangeStatus.Visibility = Visibility.Collapsed;
+                DeviceNameChangeStatus.Visibility = Visibility.Hidden;
             }
         }
 

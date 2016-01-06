@@ -643,13 +643,16 @@ If your device does not appear in the list after a couple of minutes, you may ne
   <data name="DeviceNamePwdDeviceNameChangeStatus" xml:space="preserve">
     <value>Changing device name...</value>
   </data>
-  <data name="DeviceNameChangeErrorHelpLink" xml:space="preserve">
+  <data name="DeviceAttributeChangeErrorHelpLink" xml:space="preserve">
     <value>If the problem persists, please check here</value>
   </data>
-  <data name="DeviceNameChangeErrorMessage" xml:space="preserve">
+  <data name="DeviceAttributeChangeErrorMessage" xml:space="preserve">
     <value>Try rebooting the device and trying again</value>
   </data>
-  <data name="TitleDeviceNameChangeError" xml:space="preserve">
+  <data name="TitleDeviceAttributeChangeError" xml:space="preserve">
     <value>Something went wrong</value>
+  </data>
+  <data name="DeviceNamePwdDevicePasswordChangeStatus" xml:space="preserve">
+    <value>Changing device password...</value>
   </data>
 </root>

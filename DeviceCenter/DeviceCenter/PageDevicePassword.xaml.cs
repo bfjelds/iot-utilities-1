@@ -60,7 +60,7 @@ namespace DeviceCenter
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
             ButtonOk.IsEnabled = false;
-
+            DevicePasswordChangeStatus.Visibility = Visibility.Visible;
             try
             {
                 var webbRequest = WebBRest.Instance;
@@ -86,6 +86,7 @@ namespace DeviceCenter
             finally
             {
                 ButtonOk.IsEnabled = true;
+                DevicePasswordChangeStatus.Visibility = Visibility.Hidden;
             }
         }
 
