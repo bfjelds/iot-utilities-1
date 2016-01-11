@@ -61,7 +61,6 @@ namespace DeviceCenter
         private async void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
             ButtonOk.IsEnabled = false;
-
             try
             {
                 if (string.IsNullOrWhiteSpace(textBoxDeviceName.Text) || Regex.IsMatch(textBoxDeviceName.Text, InvalidCharsRegexPattern))
@@ -78,6 +77,8 @@ namespace DeviceCenter
 
                     return;
                 }
+
+                DeviceNameChangeStatus.Visibility = Visibility.Visible;
 
                 var webbRequest = WebBRest.Instance;
 
@@ -99,10 +100,27 @@ namespace DeviceCenter
 
                     _pageFlow.Close(this);
                 }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            catch(Exception)
+            {
+                var dlg = new WindowError()
+                {
+                    Header = Strings.Strings.TitleDeviceAttributeChangeError,
+                    Message = Strings.Strings.DeviceAttributeChangeErrorMessage,
+                    HelpLink = new Uri("http://go.microsoft.com/fwlink/?LinkID=722169"),
+                    HelpLinkText = Strings.Strings.DeviceAttributeChangeErrorHelpLink,
+                    Owner = Window.GetWindow(this)
+                };
+                dlg.ShowDialog();
             }
             finally
             {
                 ButtonOk.IsEnabled = true;
+                DeviceNameChangeStatus.Visibility = Visibility.Hidden;
             }
         }
 

@@ -256,11 +256,6 @@ namespace DeviceCenter.Helper
                 }
                 catch (WebException error)
                 {
-                    if(isOneOffPassword)
-                    {
-                        throw new UnauthorizedAccessException();
-                    }
-
                     // HandleError() shows the authentication dialog box in case the WebException status code
                     // is HttpStatusCode.Unauthorized
                     switch (HandleError(error))

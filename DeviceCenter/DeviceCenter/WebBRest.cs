@@ -161,6 +161,15 @@ namespace DeviceCenter
             }
             catch (Exception ex)
             {
+                var dlg = new WindowError()
+                {
+                    Header = Strings.Strings.TitleDeviceAttributeChangeError,
+                    Message = Strings.Strings.DeviceAttributeChangeErrorMessage,
+                    HelpLink = new Uri("http://go.microsoft.com/fwlink/?LinkID=722169"),
+                    HelpLinkText = Strings.Strings.DeviceAttributeChangeErrorHelpLink,
+                    Owner = Window.GetWindow(Application.Current.MainWindow)
+                };
+                dlg.ShowDialog();
                 Debug.WriteLine(ex.Message);
             }
 
