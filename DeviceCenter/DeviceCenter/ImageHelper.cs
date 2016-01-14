@@ -91,8 +91,9 @@ namespace DeviceCenter
             }                       
         }
 
-        static public void RemoveUSBDetectionHandler()
+        static public void RemoveUSBDetectionHandler(EventArrivedEventHandler usbDetectionHandler)
         {
+            _usbWatcher.EventArrived -= usbDetectionHandler;
             _usbWatcher?.Stop();            
         }
 
