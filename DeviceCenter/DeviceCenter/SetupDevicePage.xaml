@@ -60,7 +60,7 @@
                 <StackPanel x:Name="PanelCustomImage" Visibility="Collapsed">
                     <TextBlock x:Uid="FlashPreDownloadedImage" Text="{x:Static props:Strings.NewDeviceSelectFFUTypeLabel}" Margin="0,10,0,6" FontSize="16" />
                     <DockPanel>
-                        <TextBox x:Name="imageFilePathTextBox" Height="34" Width="280" TextWrapping="NoWrap" Text="" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Left" TextElement.FontSize="16" TextChanged="imageFilePathTextBox_TextChanged"/>
+                        <TextBox x:Name="imageFilePathTextBox" Height="34" Width="280" TextWrapping="NoWrap" Text="" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="left" VerticalContentAlignment="Center" TextElement.FontSize="16" />
                         <Button x:Name="browseFFUButton"  Margin="10,0,0,0" HorizontalAlignment="Left"  Click="browseFFUButton_Click"  Content="{x:Static props:Strings.NewDeviceBrowseButtonText}"  />
                     </DockPanel>
                 </StackPanel>

@@ -530,12 +530,7 @@ namespace DeviceCenter
                 PanelManualImage.Visibility = (item.Platform == "QCOM" ) ? Visibility.Visible : Visibility.Collapsed;
                 PanelAutomaticImage.Visibility = (item.Platform != "QCOM" ) ? Visibility.Visible : Visibility.Collapsed;
                 PanelCustomImage.Visibility = (item.Platform == "Custom") ? Visibility.Visible : Visibility.Collapsed;
-
-                if (item.Platform == "Custom")
-                {
-                    ComboBoxIotBuild.Visibility = Visibility.Collapsed;
-                }
-
+                ComboBoxIotBuild.Visibility = (item.Platform == "Custom") ? Visibility.Collapsed : Visibility.Visible;
                 buttonFlash.IsEnabled = UpdateStartState();
             }
             else
@@ -686,26 +681,10 @@ namespace DeviceCenter
             }
         }
 
-        private void imageFilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (!String.IsNullOrWhiteSpace(imageFilePathTextBox.Text))
-            {
-                ChangeDeviceTypeAndBuildToCustom();
-            }
-            else
-            {
-                ComboBoxIotBuild.Visibility = Visibility.Visible;
-                ComboBoxIotBuild.IsEnabled = true;
-                ComboBoxDeviceType.IsEnabled = true;
-                ComboBoxDeviceType.SelectedIndex = 0;
-            }
-        }
-
         private void ChangeDeviceTypeAndBuildToCustom()
         {
             ComboBoxDeviceType.SelectedItem = _customPlatform;
             ComboBoxIotBuild.Visibility = Visibility.Collapsed;
-            ComboBoxDeviceType.IsEnabled = false;
         }
     }
 }
