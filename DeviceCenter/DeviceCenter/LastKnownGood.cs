@@ -68,6 +68,12 @@ namespace DeviceCenter
             return result;
         }
 
+        public static LkgPlatform CreateCustom()
+        {
+            var result = new LkgPlatform { Platform = "Custom" };
+            return result;
+        }
+
         public const string MbmName = "Minnowboard MAX";
         public const string RaspberryPi2Name = "Raspberry Pi 2";
         public const string DragonboardName = "Qualcomm DragonBoard 410c";
@@ -88,6 +94,8 @@ namespace DeviceCenter
                     return RaspberryPi2Name;
                 case "QCOM":
                     return DragonboardName;
+                case "Custom":
+                    return Strings.Strings.NewDeviceCustomeDevice;
             }
 
             return string.Empty;

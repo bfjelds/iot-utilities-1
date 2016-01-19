@@ -1044,11 +1044,29 @@ namespace DeviceCenter.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Browse.
+        /// </summary>
+        public static string NewDeviceBrowseButtonText {
+            get {
+                return ResourceManager.GetString("NewDeviceBrowseButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string NewDeviceCancelDownloading {
             get {
                 return ResourceManager.GetString("NewDeviceCancelDownloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom.
+        /// </summary>
+        public static string NewDeviceCustomeDevice {
+            get {
+                return ResourceManager.GetString("NewDeviceCustomeDevice", resourceCulture);
             }
         }
         
@@ -1202,6 +1220,15 @@ namespace DeviceCenter.Strings {
         public static string NewDeviceSelectDeviceTypeLabel {
             get {
                 return ResourceManager.GetString("NewDeviceSelectDeviceTypeLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flash the pre-downloaded image file (Flash.ffu) to the SD Card.
+        /// </summary>
+        public static string NewDeviceSelectFFUTypeLabel {
+            get {
+                return ResourceManager.GetString("NewDeviceSelectFFUTypeLabel", resourceCulture);
             }
         }
         

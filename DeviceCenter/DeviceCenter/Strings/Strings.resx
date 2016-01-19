@@ -655,4 +655,13 @@ If your device does not appear in the list after a couple of minutes, you may ne
   <data name="DeviceNamePwdDevicePasswordChangeStatus" xml:space="preserve">
     <value>Changing device password...</value>
   </data>
+  <data name="NewDeviceBrowseButtonText" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="NewDeviceSelectFFUTypeLabel" xml:space="preserve">
+    <value>Flash the pre-downloaded image file (Flash.ffu) to the SD Card</value>
+  </data>
+  <data name="NewDeviceCustomeDevice" xml:space="preserve">
+    <value>Custom</value>
+  </data>
 </root>

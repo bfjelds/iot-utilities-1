@@ -9,6 +9,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Windows.Threading;
 using System.Net;
+using Microsoft.Win32;
 using DeviceCenter.Helper;
 
 namespace DeviceCenter
@@ -35,6 +36,7 @@ namespace DeviceCenter
         private readonly WebClient _webClient = new WebClient();
         private DeviceSetupHelper _deviceSetupHelper = DeviceSetupHelper.Instance;
         private int previousDriveListHash = -1;
+        private LkgPlatform _customPlatform;
 
         #endregion
 
@@ -49,12 +51,14 @@ namespace DeviceCenter
             PanelManualImage.Visibility = Visibility.Collapsed;
             PanelAutomaticImage.Visibility = Visibility.Visible;
 
+
             LoadStateAsync();
         }
 
         private async void LoadStateAsync()
         {
             ReadLkgFile();
+
             await RefreshDriveList();
             this._usbhandler = new EventArrivedEventHandler(UsbAddedorRemoved);
             DriveInfo.AddUSBDetectionHandler(_usbhandler);
@@ -141,6 +145,19 @@ namespace DeviceCenter
             // Rpi2 is default
             ComboBoxDeviceType.SelectedIndex = 1;
             buttonFlash.IsEnabled = UpdateStartState();
+            
+            // Add custom platform 
+            _customPlatform = LkgPlatform.CreateCustom();
+            _customPlatform.LkgBuilds = new List<BuildInfo>();
+            _customPlatform.LkgBuilds.Add(new BuildInfo(Strings.Strings.NewDeviceCustomeDevice, "NA"));
+            ComboBoxDeviceType.Items.Add(_customPlatform);
+
+            // if the global property is set or not (double-click on filename)
+            if (!String.IsNullOrWhiteSpace((string)Application.Current.Properties["FFUFilePath"]))
+            {
+                imageFilePathTextBox.Text = (string)Application.Current.Properties["FFUFilePath"];
+                ChangeDeviceTypeAndBuildToCustom();
+            }
         }
 
         private async Task RefreshDriveList()
@@ -207,13 +224,28 @@ namespace DeviceCenter
             string ffuPath = string.Empty;
             var buildInfo = ComboBoxIotBuild.SelectedItem as BuildInfo;
             string isoFilePath = Path.Combine(Path.GetTempPath(), deviceType.Platform, _isoFileName);
+            BuildPathType buildPathType;
 
-            var BuildPathType = DeviceSetupHelper.GetTypeOfBuildPath(buildInfo.Path);
-
-            switch (BuildPathType)
+            // If the imageFilePathTextBox is populated, its a filepath. 
+            if (String.IsNullOrWhiteSpace(imageFilePathTextBox.Text))
+            {
+                buildPathType = DeviceSetupHelper.GetTypeOfBuildPath(buildInfo.Path);
+            }
+            else
+            {
+                buildPathType = BuildPathType.FFUFile;
+            }
+            switch (buildPathType)
             {
                 case BuildPathType.FFUFile:
-                    ffuPath = buildInfo.Path;
+                    if (String.IsNullOrWhiteSpace(imageFilePathTextBox.Text))
+                    {
+                        ffuPath = buildInfo.Path;
+                    }
+                    else
+                    {
+                        ffuPath = imageFilePathTextBox.Text;
+                    }
                     break;
 
                 case BuildPathType.HttpURL:
@@ -495,9 +527,10 @@ namespace DeviceCenter
                 ComboBoxDeviceType.UpdateLayout();
                 ComboBoxIotBuild.UpdateLayout();
 
-                PanelManualImage.Visibility = (item.Platform == "QCOM") ? Visibility.Visible : Visibility.Collapsed;
-                PanelAutomaticImage.Visibility = (item.Platform != "QCOM") ? Visibility.Visible : Visibility.Collapsed;
-
+                PanelManualImage.Visibility = (item.Platform == "QCOM" ) ? Visibility.Visible : Visibility.Collapsed;
+                PanelAutomaticImage.Visibility = (item.Platform != "QCOM" ) ? Visibility.Visible : Visibility.Collapsed;
+                PanelCustomImage.Visibility = (item.Platform == "Custom") ? Visibility.Visible : Visibility.Collapsed;
+                ComboBoxIotBuild.Visibility = (item.Platform == "Custom") ? Visibility.Collapsed : Visibility.Visible;
                 buttonFlash.IsEnabled = UpdateStartState();
             }
             else
@@ -623,7 +656,7 @@ namespace DeviceCenter
                         _deviceSetupHelper.CurrentFlashingState = FlashingStates.Completed;
                     }
 
-                    DriveInfo.RemoveUSBDetectionHandler();
+                    DriveInfo.RemoveUSBDetectionHandler(_usbhandler);
 
                     _webClient.Dispose();
                 }
@@ -637,6 +670,22 @@ namespace DeviceCenter
             Dispose(true);
         }
         #endregion
+
+        private void browseFFUButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image Files (*.ffu)|*.ffu";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                imageFilePathTextBox.Text = openFileDialog.FileName; 
+            }
+        }
+
+        private void ChangeDeviceTypeAndBuildToCustom()
+        {
+            ComboBoxDeviceType.SelectedItem = _customPlatform;
+            ComboBoxIotBuild.Visibility = Visibility.Collapsed;
+        }
     }
 }
 

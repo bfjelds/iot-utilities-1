@@ -88,6 +88,22 @@ namespace DeviceCenter
             });
             GlobalStopwatch.Start();
             DriveInfo.InitializeWatcher();
+            if (e.Args != null && e.Args.Length > 0)
+            {
+                string ffuFilePath = "";
+                try
+                {
+                    ffuFilePath = e.Args[0];
+                    Uri uri = new Uri(ffuFilePath);
+                    ffuFilePath = uri.LocalPath;
+                    Application.Current.Properties["FFUFilePath"] = ffuFilePath;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Failed to get file path from double click \n" + ex.InnerException);
+                }
+
+            }
         }
 
         protected override void OnExit(ExitEventArgs e)

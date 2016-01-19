@@ -57,6 +57,13 @@
                     <ComboBox x:Name="ComboBoxIotBuild" MinWidth="175" Margin="10,0,0,0" SelectionChanged="ComboBoxIotBuild_SelectionChanged">
                     </ComboBox>
                 </StackPanel>
+                <StackPanel x:Name="PanelCustomImage" Visibility="Collapsed">
+                    <TextBlock x:Uid="FlashPreDownloadedImage" Text="{x:Static props:Strings.NewDeviceSelectFFUTypeLabel}" Margin="0,10,0,6" FontSize="16" />
+                    <DockPanel>
+                        <TextBox x:Name="imageFilePathTextBox" Height="34" Width="280" TextWrapping="NoWrap" Text="" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="left" VerticalContentAlignment="Center" TextElement.FontSize="16" />
+                        <Button x:Name="browseFFUButton"  Margin="10,0,0,0" HorizontalAlignment="Left"  Click="browseFFUButton_Click"  Content="{x:Static props:Strings.NewDeviceBrowseButtonText}"  />
+                    </DockPanel>
+                </StackPanel>
                 <StackPanel x:Name="PanelManualImage" Orientation="Vertical" Margin="0 36 0 0">
                     <TextBlock TextWrapping="Wrap" Text="{x:Static props:Strings.NewDeviceDragonBoardMessage1}" />
                     <TextBlock Margin="0 8" >

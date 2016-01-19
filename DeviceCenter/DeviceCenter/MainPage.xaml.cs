@@ -17,7 +17,14 @@
             InitializeComponent();
 
             pageFlow = new PageFlow(_NavigationFrame);
-            pageFlow.Navigate(typeof(PageWelcome));
+            if (String.IsNullOrWhiteSpace((string)Application.Current.Properties["FFUFilePath"]))
+            {
+                pageFlow.Navigate(typeof(PageWelcome));
+            }
+            else
+            {
+                pageFlow.Navigate(typeof(SetupDevicePage));
+            }
             pageFlow.PageChange += PageFlow_PageChange;
         }
 
