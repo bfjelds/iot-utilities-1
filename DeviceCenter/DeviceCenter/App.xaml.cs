@@ -4,6 +4,7 @@ using System.Windows;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.Deployment.Application;
+using System.Globalization;
 
 namespace DeviceCenter
 {
@@ -84,7 +85,8 @@ namespace DeviceCenter
             TelemetryClient.TrackEvent("AppStart", new Dictionary<string, string>()
             {
                 { "MachineId", getMachineId() },
-                { "AppVersion", (ApplicationDeployment.IsNetworkDeployed) ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString() : "Private Build" }
+                { "AppVersion", (ApplicationDeployment.IsNetworkDeployed) ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString() : "Private Build" },
+                { "Language", CultureInfo.CurrentCulture.Name }
             });
             GlobalStopwatch.Start();
             DriveInfo.InitializeWatcher();

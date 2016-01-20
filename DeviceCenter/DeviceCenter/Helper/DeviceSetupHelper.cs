@@ -246,17 +246,18 @@ namespace DeviceCenter.Helper
         {
             lock (_dismLock)
             {
-                // Measure how long it took to flash the image
+                bool fSuccess = _dismProcess.ExitCode == 0 ? true : false;
+
+                // Measure how long it took to flash the image and whether it succeeded or not
                 App.TelemetryClient.TrackMetric("FlashSDCardTimeMs", App.GlobalStopwatch.ElapsedMilliseconds - _flashStartTime, new Dictionary<string, string>()
                 {
                     { "DeviceType", (DeviceType != null) ? DeviceType : "" },
                     { "Build",  (Build != null) ? Build : ""},
                     { "DriveSize", (_cachedDriveInfo != null) ? _cachedDriveInfo.SizeString : ""},
-                    { "DriveModel", (_cachedDriveInfo != null) ? _cachedDriveInfo.Model : "" }
+                    { "DriveModel", (_cachedDriveInfo != null) ? _cachedDriveInfo.Model : "" },
+                    { "DismSucceeded", fSuccess.ToString() }
                 });
 
-                bool fSuccess = _dismProcess.ExitCode == 0 ? true : false;
-                   
                 if (_dismProcess != null)
                 {
                     _dismProcess.Dispose();

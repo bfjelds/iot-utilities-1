@@ -33,6 +33,8 @@ namespace DeviceCenter
 
             InitializeComponent();
 
+            App.TelemetryClient.TrackPageView(this.AppItem.AppName + "Page");
+
             // this is to prevent the combobox from selecting the first item while loading.  This
             // can cause it to try to get application state which may trigger an authentication
             // message.
@@ -261,10 +263,20 @@ namespace DeviceCenter
 
                         var appUrl = "http://" + currentDevice.IpAddress + ":" + this.AppItem.AppPort;
                         Process.Start(new ProcessStartInfo(appUrl));
+
+                        App.TelemetryClient.TrackEvent("SampleAppDeployed", new Dictionary<string, string>()
+                        {
+                            { "AppName", this.AppItem.AppName }
+                        });
                     }
                 }
                 catch(WebBRest.RestError ex)
                 {
+                    App.TelemetryClient.TrackException(ex, new Dictionary<string, string>()
+                    {
+                        { "AppName", this.AppItem.AppName }
+                    });
+
                     // Only hide the panels and display message box
                     // if the selection didn't change
                     if (currentDevice == _device)
@@ -284,6 +296,11 @@ namespace DeviceCenter
                 }
                 catch(Exception ex)
                 {
+                    App.TelemetryClient.TrackException(ex, new Dictionary<string, string>()
+                    {
+                        { "AppName", this.AppItem.AppName }
+                    });
+
                     MessageBox.Show(
                         ex.Message,
                         LocalStrings.AppNameDisplay,

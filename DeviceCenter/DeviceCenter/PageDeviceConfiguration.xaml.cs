@@ -98,6 +98,8 @@ namespace DeviceCenter
                         await webbRequest.RestartAsync(Device);
                     }
 
+                    App.TelemetryClient.TrackEvent("DeviceNameChanged");
+
                     _pageFlow.Close(this);
                 }
                 else

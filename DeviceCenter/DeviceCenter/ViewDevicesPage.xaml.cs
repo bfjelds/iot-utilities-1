@@ -319,6 +319,8 @@ namespace DeviceCenter
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
+            App.TelemetryClient.TrackEvent("LearnMoreHyperLinkClick", new Dictionary<string, string>());
+
             try
             {
                 Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -73,6 +74,11 @@ namespace DeviceCenter
                     // bring it back to setup screen if password setting is successful.
                     if (result == true)
                     {
+                        App.TelemetryClient.TrackEvent("ChangePasswordButtonClick", new Dictionary<string, string>()
+                        {
+                            { "Result", result.ToString() }
+                        });
+
                         MessageBox.Show(
                             Strings.Strings.SuccessPasswordChanged,
                             LocalStrings.AppNameDisplay,
