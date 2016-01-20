@@ -26,6 +26,8 @@ namespace DeviceCenter
 
         private readonly PageFlow _pageFlow;
 
+        private DateTime _lastTelemetryEventTime = DateTime.Now.AddDays(-1);
+
         public ViewDevicesPage(PageFlow pageFlow)
         {
             // initialize parameters
@@ -120,28 +122,34 @@ namespace DeviceCenter
 
         private void TelemetryTimer_Tick(object sender, EventArgs e)
         {
-            // Only send a telemetry event if we've found build information
-            if (_oldestBuildDevice != null && _newestBuildDevice != null)
+            // Only send telemetry information if it's been more than 30 minutes since the last event was sent
+            if (_lastTelemetryEventTime < DateTime.Now.AddMinutes(-30))
             {
-                var deviceCount = _discoveryHelper.AllDevices.Count;
-
-                Debug.WriteLine("Sending telemetry event... ");
-                Debug.WriteLine("Max OS Version: " + _newestBuildDevice.OsVersion);
-                Debug.WriteLine("Min OS Version: " + _oldestBuildDevice.OsVersion);
-                Debug.WriteLine("Number of devices: " + deviceCount);
-
-                App.TelemetryClient.TrackEvent("DeviceDiscovery", new Dictionary<string, string>()
+                // Only send a telemetry event if we've found build information
+                if (_oldestBuildDevice != null && _newestBuildDevice != null)
                 {
-                    { "OldestDeviceId", _oldestBuildDevice.UniqueId.ToString() },
-                    { "OldestBuildVersion", _oldestBuildDevice.OsVersion },
-                    { "OldestDeviceModel", _oldestBuildDevice.DeviceModel },
-                    { "OldestArchitecture", _oldestBuildDevice.Architecture },
-                    { "NewestDeviceId", _newestBuildDevice.UniqueId.ToString() },
-                    { "NewestBuildVersion", _newestBuildDevice.OsVersion },
-                    { "NewestDeviceModel", _newestBuildDevice.DeviceModel },
-                    { "NewestArchitecture", _newestBuildDevice.Architecture },
-                    { "NumDevices", deviceCount.ToString() }
-                });
+                    var deviceCount = _discoveryHelper.AllDevices.Count;
+
+                    Debug.WriteLine("Sending telemetry event... ");
+                    Debug.WriteLine("Max OS Version: " + _newestBuildDevice.OsVersion);
+                    Debug.WriteLine("Min OS Version: " + _oldestBuildDevice.OsVersion);
+                    Debug.WriteLine("Number of devices: " + deviceCount);
+
+                    App.TelemetryClient.TrackEvent("DeviceDiscovery", new Dictionary<string, string>()
+                    {
+                        { "OldestDeviceId", _oldestBuildDevice.UniqueId.ToString() },
+                        { "OldestBuildVersion", _oldestBuildDevice.OsVersion },
+                        { "OldestDeviceModel", _oldestBuildDevice.DeviceModel },
+                        { "OldestArchitecture", _oldestBuildDevice.Architecture },
+                        { "NewestDeviceId", _newestBuildDevice.UniqueId.ToString() },
+                        { "NewestBuildVersion", _newestBuildDevice.OsVersion },
+                        { "NewestDeviceModel", _newestBuildDevice.DeviceModel },
+                        { "NewestArchitecture", _newestBuildDevice.Architecture },
+                        { "NumDevices", deviceCount.ToString() }
+                    });
+
+                    _lastTelemetryEventTime = DateTime.Now;
+                }
             }
 
             _telemetryTimer.Stop();
