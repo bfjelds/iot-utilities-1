@@ -74,11 +74,6 @@ namespace DeviceCenter
                     // bring it back to setup screen if password setting is successful.
                     if (result == true)
                     {
-                        App.TelemetryClient.TrackEvent("ChangePasswordButtonClick", new Dictionary<string, string>()
-                        {
-                            { "Result", result.ToString() }
-                        });
-
                         MessageBox.Show(
                             Strings.Strings.SuccessPasswordChanged,
                             LocalStrings.AppNameDisplay,
@@ -87,6 +82,11 @@ namespace DeviceCenter
 
                         _pageFlow.Close(this);
                     }
+
+                    App.TelemetryClient.TrackEvent("ChangePasswordButtonClick", new Dictionary<string, string>()
+                    {
+                        { "Result", result.ToString() }
+                    });
                 }
             }
             finally
