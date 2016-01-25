@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -81,6 +82,11 @@ namespace DeviceCenter
 
                         _pageFlow.Close(this);
                     }
+
+                    App.TelemetryClient.TrackEvent("ChangePasswordButtonClick", new Dictionary<string, string>()
+                    {
+                        { "Result", result.ToString() }
+                    });
                 }
             }
             finally

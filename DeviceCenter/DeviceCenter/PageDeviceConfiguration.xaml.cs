@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -98,10 +99,20 @@ namespace DeviceCenter
                         await webbRequest.RestartAsync(Device);
                     }
 
+                    App.TelemetryClient.TrackEvent("DeviceNameChanged", new Dictionary<string, string>()
+                    {
+                        { "Result", true.ToString() }
+                    });
+
                     _pageFlow.Close(this);
                 }
                 else
                 {
+                    App.TelemetryClient.TrackEvent("DeviceNameChanged", new Dictionary<string, string>()
+                    {
+                        { "Result", false.ToString() }
+                    });
+
                     throw new Exception();
                 }
             }
