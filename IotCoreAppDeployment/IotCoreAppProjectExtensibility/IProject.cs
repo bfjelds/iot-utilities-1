@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace IotCoreAppProjectExtensibility
 {
@@ -20,8 +22,9 @@ namespace IotCoreAppProjectExtensibility
 
         List<IContentChange> GetCapabilities();
         List<IContentChange> GetAppxContentChanges();
-        void GetAppxMapContents(List<String> resourceMetadata, List<String> files, String outputFolder);
+        bool GetAppxMapContents(List<String> resourceMetadata, List<String> files, String outputFolder);
         List<FileStreamInfo> GetAppxContents();
         List<FileStreamInfo> GetDependencies(List<IDependencyProvider> availableDependencyProviders);
+        Task<bool> BuildAsync(String outputFolder, StreamWriter logging);
     }
 }

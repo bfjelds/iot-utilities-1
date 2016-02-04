@@ -3,6 +3,7 @@ using System.IO;
 using IotCoreAppProjectExtensibility;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Python
 {
@@ -30,8 +31,8 @@ namespace Python
         public DependencyConfiguration DependencyConfiguration { set; get; }
         public String SourceInput { set; get; }
 
-        private String IdentityPublisher { get { return "CN=" + "MSFT" /*Environment.UserName*/; } }
-        private String PropertiesPublisherDisplayName { get { return "MSFT" /*Environment.UserName*/; } }
+        private String IdentityPublisher { get { return "CN=" + PropertiesPublisherDisplayName; } }
+        private String PropertiesPublisherDisplayName { get { return "MSFT"; } }
 
         private String _PhoneIdentityGuid = null;
         private String PhoneIdentityGuid
@@ -142,7 +143,7 @@ namespace Python
             return contents;
         }
 
-        public void GetAppxMapContents(List<String> resourceMetadata, List<String> files, String outputFolder)
+        public bool GetAppxMapContents(List<String> resourceMetadata, List<String> files, String outputFolder)
         {
             files.Add("\"" + outputFolder + "\\StartupTask.py\" \"StartupTask.py\"");
             files.Add("\"" + outputFolder + "\\PythonHome\\DLLs\\pyexpat.pyd\" \"PythonHome\\DLLs\\pyexpat.pyd\"");
@@ -164,13 +165,13 @@ namespace Python
             files.Add("\"" + outputFolder + "\\visualstudio_py_testlauncher.py\" \"visualstudio_py_testlauncher.py\"");
             files.Add("\"" + outputFolder + "\\visualstudio_py_util.py\" \"visualstudio_py_util.py\"");
             files.Add("\"" + outputFolder + "\\visualstudio_py_remote_launcher.py\" \"visualstudio_py_remote_launcher.py\"");
-
             files.Add("\"" + outputFolder + "\\ptvsd\\attach_server.py\" \"ptvsd\\attach_server.py\"");
             files.Add("\"" + outputFolder + "\\ptvsd\\visualstudio_py_debugger.py\" \"ptvsd\\visualstudio_py_debugger.py\"");
             files.Add("\"" + outputFolder + "\\ptvsd\\visualstudio_py_repl.py\" \"ptvsd\\visualstudio_py_repl.py\"");
             files.Add("\"" + outputFolder + "\\ptvsd\\visualstudio_py_util.py\" \"ptvsd\\visualstudio_py_util.py\"");
             files.Add("\"" + outputFolder + "\\ptvsd\\__init__.py\" \"ptvsd\\__init__.py\"");
             files.Add("\"" + outputFolder + "\\ptvsd\\__main__.py\" \"ptvsd\\__main__.py\"");
+            return true;
         }
 
         public List<FileStreamInfo> GetDependencies(List<IDependencyProvider> availableDependencyProviders)
@@ -186,5 +187,9 @@ namespace Python
             return new List<FileStreamInfo>();
         }
 
+        public async Task<bool> BuildAsync(String outputFolder, StreamWriter logging)
+        {
+            return true;
+        }
     }
 }
