@@ -292,6 +292,11 @@ namespace DeviceCenter.Helper
 
             var responseContent = string.Empty;
             var objStream = response.GetResponseStream();
+            if (objStream == null)
+            {
+                return null;
+            }
+
             using (var sr = new StreamReader(objStream))
             {
                 responseContent = sr.ReadToEnd();
@@ -300,7 +305,6 @@ namespace DeviceCenter.Helper
             var byteArray = Encoding.UTF8.GetBytes(responseContent);
             foreach (var dataContractType in dataContractTypes)
             {
-                // tbd check for NULL objStream
                 using (var stream = new MemoryStream(byteArray))
                 {
                     var serializer = new DataContractJsonSerializer(dataContractType);
