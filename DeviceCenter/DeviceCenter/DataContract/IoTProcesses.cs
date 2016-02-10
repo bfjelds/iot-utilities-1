@@ -9,14 +9,7 @@ namespace DeviceCenter.DataContract
 {
 
     [DataContract]
-    public class IoTProcessesTh2
-    {
-        [DataMember(Name = "Processes")]
-        public IoTProcessTh2[] Items { get; set; }
-    }
-
-    [DataContract]
-    public class IoTProcessTh2
+    public class IoTProcessCommon
     {
         [DataMember(Name = "AppName")]
         public string AppName { get; set; }
@@ -51,14 +44,25 @@ namespace DeviceCenter.DataContract
         [DataMember(Name = "UserName")]
         public string UserName { get; set; }
 
-        [DataMember(Name = "Version")]
-        public string Version { get; set; }
-
         [DataMember(Name = "VirtualSize")]
         public string VirtualSize { get; set; }
 
         [DataMember(Name = "WorkingSetSize")]
         public string WorkingSetSize { get; set; }
+    }
+
+    [DataContract]
+    public class IoTProcessesTh2
+    {
+        [DataMember(Name = "Processes")]
+        public IoTProcessTh2[] Items { get; set; }
+    }
+
+    [DataContract]
+    public class IoTProcessTh2 : IoTProcessCommon
+    {
+        [DataMember(Name = "Version")]
+        public string Version { get; set; }
     }
 
     [DataContract]
@@ -78,48 +82,9 @@ namespace DeviceCenter.DataContract
         public String Revision { get; set; }
     }
 
-    public class IoTProcessRs1
+    public class IoTProcessRs1 : IoTProcessCommon
     {
-        [DataMember(Name = "AppName")]
-        public string AppName { get; set; }
-
-        [DataMember(Name = "CPUUsage")]
-        public string CPUUsage { get; set; }
-
-        [DataMember(Name = "ImageName")]
-        public string ImageName { get; set; }
-
-        [DataMember(Name = "PackageFullName")]
-        public string PackageFullName { get; set; }
-
-        [DataMember(Name = "PageFileUsage")]
-        public string PageFileUsage { get; set; }
-
-        [DataMember(Name = "PrivateWorkingSet")]
-        public string PrivateWorkingSet { get; set; }
-
-        [DataMember(Name = "ProcessId")]
-        public string ProcessId { get; set; }
-
-        [DataMember(Name = "Publisher")]
-        public string Publisher { get; set; }
-
-        [DataMember(Name = "SessionId")]
-        public string SessionId { get; set; }
-
-        [DataMember(Name = "TotalCommit")]
-        public string TotalCommit { get; set; }
-
-        [DataMember(Name = "UserName")]
-        public string UserName { get; set; }
-
         [DataMember(Name = "Version")]
         public IoTProcessVersion Version { get; set; }
-
-        [DataMember(Name = "VirtualSize")]
-        public string VirtualSize { get; set; }
-
-        [DataMember(Name = "WorkingSetSize")]
-        public string WorkingSetSize { get; set; }
     }
 }
