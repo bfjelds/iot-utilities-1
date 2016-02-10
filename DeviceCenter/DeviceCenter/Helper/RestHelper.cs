@@ -281,34 +281,48 @@ namespace DeviceCenter.Helper
 
         public static object ProcessJsonResponse(HttpWebResponse response, Type dataContractType)
         {
+            return ProcessJsonResponse(response, new Type[] { dataContractType });
+        }
+        public static object ProcessJsonResponse(HttpWebResponse response, Type[] dataContractTypes)
+        {
+            if (dataContractTypes.Length == 0)
+            {
+                return null;
+            }
+
             var responseContent = string.Empty;
-            try
+            var objStream = response.GetResponseStream();
+            using (var sr = new StreamReader(objStream))
             {
-                var objStream = response.GetResponseStream();
-                
-                // tbd check for NULL objStream
-                var sr = new StreamReader(objStream);
-
                 responseContent = sr.ReadToEnd();
-                var byteArray = Encoding.UTF8.GetBytes(responseContent);
-                var stream = new MemoryStream(byteArray);
-                var serializer = new DataContractJsonSerializer(dataContractType);
-                var jsonObj = serializer.ReadObject(stream);
-
-                if (jsonObj != null)
-                {
-                    Debug.WriteLine(jsonObj.ToString());
-                }
-
-                return jsonObj;
             }
-            catch (SerializationException ex)
+
+            var byteArray = Encoding.UTF8.GetBytes(responseContent);
+            foreach (var dataContractType in dataContractTypes)
             {
-                Debug.WriteLine($"Error in ProcessResponse, response [{responseContent}]");
-                Debug.WriteLine(ex.ToString());
+                // tbd check for NULL objStream
+                using (var stream = new MemoryStream(byteArray))
+                {
+                    var serializer = new DataContractJsonSerializer(dataContractType);
+                    try
+                    {
+                        var jsonObj = serializer.ReadObject(stream);
 
-                return Activator.CreateInstance(dataContractType); // return a blank instance
+                        if (jsonObj != null)
+                        {
+                            Debug.WriteLine(jsonObj.ToString());
+                        }
+
+                        return jsonObj;
+                    }
+                    catch (SerializationException ex)
+                    {
+                        Debug.WriteLine($"Error in ProcessResponse, response [{responseContent}]");
+                        Debug.WriteLine(ex.ToString());
+                    }
+                }
             }
+            return Activator.CreateInstance(dataContractTypes[0]); // return a blank instance
         }
     }
 }

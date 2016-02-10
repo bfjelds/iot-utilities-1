@@ -470,10 +470,23 @@ namespace DeviceCenter
 
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        var runningProcesses = RestHelper.ProcessJsonResponse(response, typeof(IoTProcesses)) as IoTProcesses;
-                        if (runningProcesses != null && runningProcesses.Items.Any(runningProcess => runningProcess.PackageFullName == packageFullName))
+                        // Need to check for JSON from TH2 and RS1 (the Version format has changed)
+                        var runningProcesses = RestHelper.ProcessJsonResponse(response, new Type[] { typeof(IoTProcessesTh2), typeof(IoTProcessesRs1) });
+                        // Assume RS1 first
+                        var runningProcessesRs1 = runningProcesses as IoTProcessesRs1;
+                        if (runningProcessesRs1 != null && runningProcessesRs1.Items != null && runningProcessesRs1.Items.Any(runningProcess => runningProcess.PackageFullName == packageFullName))
                         {
                             return true;
+                        }
+
+                        // If not RS1, try TH2
+                        if (runningProcessesRs1 == null)
+                        {
+                            var runningProcessesTh2 = runningProcesses as IoTProcessesTh2;
+                            if (runningProcessesTh2 != null && runningProcessesTh2.Items != null && runningProcessesTh2.Items.Any(runningProcess => runningProcess.PackageFullName == packageFullName))
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
