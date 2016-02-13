@@ -1,12 +1,11 @@
-:: Run the following script from “Deployment and Imaging Tools Environment” as Admin.
 @echo off
 
 if NOT DEFINED PRJ_DIR (
-	echo Environment not defined. Call setenv_arm.cmd or setenv_x86.cmd
+	echo Environment not defined. Call setenv
 	goto CLEANUP
 )
 
-rmdir "%OUTPUT_DIRECTORY%" /S /Q 
+rmdir "%BLD_DIR%" /S /Q 
 
 echo Build directories cleaned
 :CLEANUP

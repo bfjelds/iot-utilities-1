@@ -5,18 +5,18 @@ if [%1] == [/?] goto Usage
 if [%1] == [-?] goto Usage
 if [%1] == [] goto Usage
 
-if NOT DEFINED PKG_OUTPUT (
-	echo Environment not defined. Call setenv_arm.cmd or setenv_x86.cmd
+if NOT DEFINED PKGBLD_DIR (
+	echo Environment not defined. Call setenv
 	goto End
 )
 
 if NOT DEFINED PRODUCT (
-	echo PRODUCT not set; Setting it to Undefined
-	set PRODUCT=Undefined
+	echo PRODUCT not set; Setting it to ProductA as default
+	set PRODUCT=ProductA
 )
 
 echo Creating %1 Package
-call "%KITSROOT%\Tools\bin\i386\pkggen.exe" "%1" /config:"%PKG_CONFIG_XML%" /output:"%PKG_OUTPUT%" /version:%BSP_VERSION% /build:fre /cpu:%BSP_ARCH% /variables:"HIVE_ROOT=%HIVE_ROOT%;WIM_ROOT=%WIM_ROOT%;_RELEASEDIR=%OUTPUT_DIRECTORY%\;ARCH=%BSP_ARCH%;PROD=%PRODUCT%;"
+call "%KITSROOT%\Tools\bin\i386\pkggen.exe" "%1" /config:"%PKG_CONFIG_XML%" /output:"%PKGBLD_DIR%" /version:%BSP_VERSION% /build:fre /cpu:%BSP_ARCH% /variables:"HIVE_ROOT=%HIVE_ROOT%;WIM_ROOT=%WIM_ROOT%;_RELEASEDIR=%BLD_DIR%\;ARCH=%BSP_ARCH%;PROD=%PRODUCT%;PRJDIR=%PRJ_DIR%" 
 
 if errorlevel 1 goto Error
 

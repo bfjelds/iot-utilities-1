@@ -25,8 +25,8 @@
   <AdditionalFMs>
     <AdditionalFM>%AKROOT%\FMFiles\arm\IoTUAPRPi2FM.xml</AdditionalFM>
 	<!-- Using custom version as GPIO is replaced by OEM version -->
-	<AdditionalFM>%PRODUCT_DIR%\bsp\OEM_RPi2FM.xml</AdditionalFM> 
-    <!-- <AdditionalFM>%PRODUCT_DIR%\bsp\RPi2FM.xml</AdditionalFM> -->
+	<AdditionalFM>%PRODSRC_DIR%\bsp\OEM_RPi2FM.xml</AdditionalFM> 
+    <!-- <AdditionalFM>%PRODSRC_DIR%\bsp\RPi2FM.xml</AdditionalFM> -->
 	<AdditionalFM>%PRJ_DIR%\Packages\OEMFM.xml</AdditionalFM>
   </AdditionalFMs>
   <Features>

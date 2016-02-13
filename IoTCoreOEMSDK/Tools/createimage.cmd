@@ -9,7 +9,7 @@ if NOT [%2] == [Retail] ( if NOT [%2] == [Test] goto Usage )
 
 REM Checking prerequisites
 if NOT DEFINED PRJ_DIR (
-	echo Environment not defined. Call setenv_arm.cmd or setenv_x86.cmd
+	echo Environment not defined. Call setenv
 	goto End
 )
 REM Start processing command
@@ -17,13 +17,14 @@ echo Creating %1 %2 Image
 echo Build Start Time : %TIME%
 
 set PRODUCT=%1
-set PRODUCT_DIR=%PRJ_DIR%\Products-%BSP_ARCH%\%PRODUCT%
+set PRODSRC_DIR=%PRJ_DIR%\Products-%BSP_ARCH%\%PRODUCT%
+set PRODBLD_DIR=%BLD_DIR%\%1\%2
 
 echo Building product specific packages
 call createpkg.cmd %PRJ_DIR%\packages\oemcustcmdpkg\OEMCustCmd.pkg.xml
 
 echo creating image...
-call imggen.cmd "%OUTPUT_DIRECTORY%\%1\%2\IoTCore.FFU" "%PRODUCT_DIR%\%2OEMInput.xml" "%KITSROOT%MSPackages" %BSP_ARCH%
+call imggen.cmd "%PRODBLD_DIR%\IoTCore.FFU" "%PRODSRC_DIR%\%2OEMInput.xml" "%KITSROOT%MSPackages" %BSP_ARCH%
 
 if errorlevel 1 goto Error
 

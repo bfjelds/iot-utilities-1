@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FeatureManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate">
   <BasePackages>
-    <PackageFile Path="C:\IoTCoreOEMSDK\Build\pkgs\$(cputype)" Name="OEMName.Registry.SubName.cab"/>
+  <!-- List OEM packages that are to be included by default here -->
+    <PackageFile Path="%PKG_OUTPUT%" Name="OEMName.Registry.SubName.cab"/>
   </BasePackages>
   <Features>
+  <!-- List OEM packages that are optional here, specify a feature id to include this in OEMInput file -->
     <OEM>
-      <PackageFile Path="C:\IoTCoreOEMSDK\Build\pkgs\$(cputype)" Name="OEMName.Appx.SubName.cab">
+      <PackageFile Path="%PKG_OUTPUT%" Name="OEMName.Appx.SubName.cab">
         <FeatureIDs>
           <FeatureID>OEMApps</FeatureID>
         </FeatureIDs>
@@ -13,11 +15,4 @@
     </OEM>
     <OEMFeatureGroups />
   </Features>
-  <OEMDevicePlatformPackages />
-  <DeviceLayoutPackages />
-  <SOCPackages />
-  <SVPackages />
-  <DeviceSpecificPackages />
-  <SpeechPackages />
-  <KeyboardPackages />
 </FeatureManifest>

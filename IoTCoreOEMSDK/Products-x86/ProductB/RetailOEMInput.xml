@@ -23,7 +23,7 @@
     <Resolution>1024x768</Resolution>
   </Resolutions>
   <AdditionalFMs>
-    <AdditionalFM>%PRODUCT_DIR%\bsp\MBMFM.xml</AdditionalFM>
+    <AdditionalFM>%PRODSRC_DIR%\bsp\MBMFM.xml</AdditionalFM>
 	<AdditionalFM>%PRJ_DIR%\Packages\OEMFM.xml</AdditionalFM>
   </AdditionalFMs>
   <Features>

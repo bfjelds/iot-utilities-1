@@ -3,9 +3,11 @@
 :: Environment configurations
 if NOT DEFINED BSP_VERSION (
 	echo BSP_Version not defined. Setting it to default
+	SET BSP_VERSION=10.0.0.0
 )
-SET BSP_VERSION=%1
+if NOT [%1] == [] SET BSP_VERSION=%1
+
 echo %BSP_VERSION% > versioninfo.txt
 
-set PROMPT=IoTCore:%BSP_ARCH%:%BSP_VERSION%$_$P$G
-TITLE IoTCore:%BSP_ARCH%:%BSP_VERSION%
+set PROMPT=IoTCore %BSP_ARCH% %BSP_VERSION%$_$P$G
+TITLE IoTCoreShell %BSP_ARCH% %BSP_VERSION%
