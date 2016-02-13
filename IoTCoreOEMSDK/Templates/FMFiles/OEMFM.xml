@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FeatureManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate">
+  <BasePackages>
+    <PackageFile Path="C:\IoTCoreOEMSDK\Build\pkgs\$(cputype)" Name="OEMName.Registry.SubName.cab"/>
+  </BasePackages>
+  <Features>
+    <OEM>
+      <PackageFile Path="C:\IoTCoreOEMSDK\Build\pkgs\$(cputype)" Name="OEMName.Appx.SubName.cab">
+        <FeatureIDs>
+          <FeatureID>OEMApps</FeatureID>
+        </FeatureIDs>
+      </PackageFile>
+    </OEM>
+    <OEMFeatureGroups />
+  </Features>
+  <OEMDevicePlatformPackages />
+  <DeviceLayoutPackages />
+  <SOCPackages />
+  <SVPackages />
+  <DeviceSpecificPackages />
+  <SpeechPackages />
+  <KeyboardPackages />
+</FeatureManifest>

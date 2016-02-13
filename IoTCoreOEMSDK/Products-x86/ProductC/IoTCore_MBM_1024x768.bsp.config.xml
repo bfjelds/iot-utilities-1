@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<BSP Version="1.0"> 
+<Config> 
+    <EnvironmentVariables> 
+      <Variable Name="CPUTYPE" Value="X86"/> 
+    </EnvironmentVariables> 
+    <OEMInputFiles>
+      <Retail>%BSPROOT%\RetailOEMInput.xml</Retail>
+      <Production>%BSPROOT%\ProductionOEMInput.xml</Production>
+    </OEMInputFiles> 
+  </Config> 
+</BSP> 
