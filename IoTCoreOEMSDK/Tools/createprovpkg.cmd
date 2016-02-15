@@ -12,9 +12,10 @@ if NOT DEFINED PRJ_DIR (
 REM Start processing command
 set PRODUCT=%1
 set PRODSRC_DIR=%PRJ_DIR%\Products\%PRODUCT%
+set STORE_DIR=%KITSROOT%\Assessment and Deployment Kit\Imaging and Configuration Designer\x86
 
 echo Creating Provisioning Package for %PRODUCT% using %PRODSRC_DIR%\prov\customizations.xml
-icd.exe /Build-ProvisioningPackage /CustomizationXML:"%PRODSRC_DIR%\prov\customizations.xml" /PackagePath:%PRODSRC_DIR%\prov\%PRODUCT%Prov /StoreFile:"%KITSROOT%\Assessment and Deployment Kit\Imaging and Configuration Designer\x86\Microsoft-Common-Provisioning.dat" +Overwrite
+icd.exe /Build-ProvisioningPackage /CustomizationXML:"%PRODSRC_DIR%\prov\customizations.xml" /PackagePath:%PRODSRC_DIR%\prov\%PRODUCT%Prov /StoreFile:"%STORE_DIR%\Microsoft-IoTUAP-Provisioning.dat,%STORE_DIR%\Microsoft-Common-Provisioning.dat" +Overwrite
 if errorlevel 1 goto Error
 
 goto End
