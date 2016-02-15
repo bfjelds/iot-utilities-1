@@ -12,14 +12,14 @@ if NOT DEFINED PRJ_DIR (
 )
 :: Error Checks
 
-if /i EXIST %PRJ_DIR%\%BSP_ARCH%Products\%1 (
+if /i EXIST %PRJ_DIR%\Products\%1 (
 	echo %1 already exists
 	goto End
 )
 :: Start processing command
 echo Creating %1 Product
-set PRODUCT=%1
-SET PRODSRC_DIR=%PRJ_DIR%\Products-%BSP_ARCH%\%PRODUCT%
+SET PRODUCT=%1
+SET PRODSRC_DIR=%PRJ_DIR%\Products\%PRODUCT%
 
 mkdir "%PRODSRC_DIR%"
 mkdir "%PRODSRC_DIR%\bsp"

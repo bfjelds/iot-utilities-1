@@ -17,11 +17,11 @@ echo Creating %1 %2 Image
 echo Build Start Time : %TIME%
 
 set PRODUCT=%1
-set PRODSRC_DIR=%PRJ_DIR%\Products-%BSP_ARCH%\%PRODUCT%
+set PRODSRC_DIR=%PRJ_DIR%\Products\%PRODUCT%
 set PRODBLD_DIR=%BLD_DIR%\%1\%2
 
 echo Building product specific packages
-call createpkg.cmd %PRJ_DIR%\packages\oemcustcmdpkg\OEMCustCmd.pkg.xml
+call createpkg.cmd %PRJ_DIR%\Packages\Custom.Cmd\Custom.Cmd.pkg.xml
 
 echo creating image...
 call imggen.cmd "%PRODBLD_DIR%\IoTCore.FFU" "%PRODSRC_DIR%\%2OEMInput.xml" "%KITSROOT%MSPackages" %BSP_ARCH%

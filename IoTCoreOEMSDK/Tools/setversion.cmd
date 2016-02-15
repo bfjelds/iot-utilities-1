@@ -7,7 +7,7 @@ if NOT DEFINED BSP_VERSION (
 )
 if NOT [%1] == [] SET BSP_VERSION=%1
 
-echo %BSP_VERSION% > versioninfo.txt
+echo %BSP_VERSION%> %PRJ_DIR%\versioninfo.txt
 
 set PROMPT=IoTCore %BSP_ARCH% %BSP_VERSION%$_$P$G
 TITLE IoTCoreShell %BSP_ARCH% %BSP_VERSION%

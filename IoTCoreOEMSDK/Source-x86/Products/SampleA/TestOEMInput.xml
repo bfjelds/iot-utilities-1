@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <OEMInput xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate">
-  <Description>Windows 10 IoT Core RPi2 Test FFU generation for arm.fre with build number 20150824-1908 by wincbld</Description>
-  <SOC>RPi2</SOC>
-  <SV>RASPBERRY PI</SV>
-  <Device>RPi2</Device>
+  <Description>Windows 10 IoT Core MBM Test VHD generation for x86.fre with build number 20150824-1849 by wincbld</Description>
+  <SOC>MBM</SOC>
+  <SV>Intel</SV>
+  <Device>MBM</Device>
   <ReleaseType>Test</ReleaseType>
   <BuildType>fre</BuildType>
   <SupportedLanguages>
@@ -24,20 +24,21 @@
   </Resolutions>
   <AdditionalFMs>
     <!-- Including BSP feature manifest -->
-    <AdditionalFM>%AKROOT%\FMFiles\arm\IoTUAPRPi2FM.xml</AdditionalFM>
-    <AdditionalFM>%AKROOT%\FMFiles\arm\RPi2FM.xml</AdditionalFM>
+	<AdditionalFM>%PRODSRC_DIR%\bsp\MBMFM.xml</AdditionalFM>
 	<!-- Including OEM feature manifest -->
 	<AdditionalFM>%PRJ_DIR%\Packages\OEMFM.xml</AdditionalFM>
-	<!-- Including the test features -->
-	<AdditionalFM>%AKROOT%\FMFiles\arm\IoTUAPNonProductionPartnerShareFM.xml</AdditionalFM>
+		<!-- Including the test features -->
+	<AdditionalFM>%KITSROOT%\FMFiles\x86\IoTUAPNonProductionPartnerShareFM.xml</AdditionalFM>
   </AdditionalFMs>
   <Features>
-    <Microsoft> 
-      <Feature>IOT_EFIESP</Feature>
-      <Feature>IOT_DMAP_DRIVER</Feature>
+   <Microsoft> 
+      <Feature>IOT_EFIESP</Feature> 
+      <Feature>IOT_EFIESP_BCD</Feature> 
+      <Feature>IOT_DMAP_DRIVER</Feature> 
+      <Feature>IOT_POWER_SETIINGS</Feature>
 	  <!-- Following two required for Appx Installation -->
 	  <Feature>IOT_UAP_OOBE</Feature> 
-	  <Feature>IOT_APP_TOOLKIT</Feature>
+	  <Feature>IOT_APP_TOOLKIT</Feature> 
       <!-- for Connectivity -->
 	  <Feature>IOT_TOOLKIT</Feature> 
 	  <Feature>IOT_WEBB_EXTN</Feature>
@@ -47,19 +48,19 @@
 	  <Feature>IOT_SIREP</Feature>
 	  <!-- Enabling Test images -->
 	  <Feature>IOT_DISABLE_UMCI</Feature> 
-	  <Feature>IOT_ENABLE_TESTSIGNING</Feature>	  
-</Microsoft> 
-<OEM>
+	  <Feature>IOT_ENABLE_TESTSIGNING</Feature>		  
+    </Microsoft>
+    <OEM>
 	  <!-- Inclide BSP Features -->
-      <Feature>RPI2_DEVICE_TARGETINGINFO</Feature>
-      <Feature>PLACEHOLDER_FEATURE</Feature>
-      <Feature>RPI2_DRIVERS</Feature>
+      <Feature>MBM_DEVICE_TARGETINGINFO</Feature> 
+      <Feature>PLACEHOLDER_FEATURE</Feature> 
+      <Feature>MBM_DRIVERS</Feature> 
 	  <!-- Include OEM features -->
-	  <Feature>OEMApps</Feature>
-	  <Feature>OEMCustomCmd</Feature>
-	  <Feature>OEMSingleProv</Feature>
-</OEM> 
+	  <Feature>Contoso_AppxMain</Feature>
+	  <Feature>Contoso_CustomCmd</Feature>
+	  <Feature>Contoso_ProvAuto</Feature> 
+   </OEM> 
   </Features>
   <PackageFiles />
-  <Product>Windows 10 IoT Core</Product>
+ <Product>Windows 10 IoT Core</Product>
 </OEMInput>

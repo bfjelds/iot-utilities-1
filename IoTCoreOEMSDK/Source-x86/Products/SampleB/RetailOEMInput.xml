@@ -23,7 +23,8 @@
     <Resolution>1024x768</Resolution>
   </Resolutions>
   <AdditionalFMs>
-    <AdditionalFM>%AKROOT%\FMFiles\x86\MBMFM.xml</AdditionalFM>
+    <AdditionalFM>%PRODSRC_DIR%\bsp\MBMFM.xml</AdditionalFM>
+	<AdditionalFM>%PRJ_DIR%\Packages\OEMFM.xml</AdditionalFM>
   </AdditionalFMs>
   <Features>
     <Microsoft>
@@ -31,14 +32,26 @@
       <Feature>IOT_EFIESP_BCD</Feature>
       <Feature>IOT_DMAP_DRIVER</Feature>
       <Feature>IOT_POWER_SETIINGS</Feature>
+	  <!-- Following two required for Appx Installation -->
       <Feature>IOT_UAP_OOBE</Feature> 
+	  <Feature>IOT_APP_TOOLKIT</Feature> 
+      <!-- for Connectivity -->
+	  <Feature>IOT_WEBB_EXTN</Feature>
+      <Feature>IOT_POWERSHELL</Feature>
+	  <Feature>IOT_NETCMD</Feature> 	  
+	  <Feature>IOT_SSH</Feature> 
+	  <Feature>IOT_SIREP</Feature>
     </Microsoft>
     <OEM>
-      <Feature>MBM_DEVICE_TARGETINGINFO</Feature>
+	  <!-- Include BSP Features -->
+      <Feature>Contoso_POP</Feature>
       <Feature>PLACEHOLDER_FEATURE</Feature>
       <Feature>MBM_DRIVERS</Feature> 
+	  <!-- Include OEM features -->
+	  <Feature>Contoso_AppxMain</Feature>
+	  <Feature>Contoso_CustomCmd</Feature>
+	   <Feature>Contoso_ProvManual</Feature> 
     </OEM>
   </Features>
-  <PackageFiles />
   <Product>Windows 10 IoT Core</Product>
 </OEMInput>

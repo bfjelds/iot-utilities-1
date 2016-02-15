@@ -1,31 +1,47 @@
-:: Run the following script from “Deployment and Imaging Tools Environment” as Admin.
-:: Run setenv before running this script
-:: Usage : createpkg packagefile.pkg.xml
 @echo off
-:: Help 
-if "%1"=="/?" (
-	echo Usage: createprovpkg customization.xml
-	goto CLEANUP
+setlocal
+REM Input validation
+if [%1] == [/?] goto Usage
+if [%1] == [-?] goto Usage
+if [%1] == [] goto Usage
+if [%2] == [] goto Usage
+REM Checking prerequisites
+if NOT DEFINED PRJ_DIR (
+	echo Environment not defined. Call setenv
+	goto End
 )
-:: Checking prerequisites
-if "%1"=="" (
-	echo createprovpkg customization.xml
-	goto CLEANUP
-)
+REM Start processing command
+set PRODUCT=%1
+set PRODSRC_DIR=%PRJ_DIR%\Products-%BSP_ARCH%\%PRODUCT%
+set PRODBLD_DIR=%BLD_DIR%\%1\%2
 
-if NOT DEFINED PKGBLD_DIR (
-	echo Environment not defined. Call setenv_arm.cmd or setenv_x86.cmd
-	goto CLEANUP
-)
+echo Creating Provisioning Package with %PRODUCT%
 
-echo Creating Provisioning Package with %1
-CustomizationGen.cmd "%BLD_DIR%\%PRODUCT%\%BSP_ARCH%\Retail\" "%PRJ_DIR%\Products\%PRODUCT%\%BSP_ARCH%\RetailOEMInput.xml" "%KITSROOT%MSPackages" "%1" "%BSP_VERSION%"
+CustomizationGen-iotcore.cmd %BLD_DIR%\%PRODUCT%\%2 "%PRODSRC_DIR%\%2OEMInput.xml" "%KITSROOT%MSPackages" "%PRODSRC_DIR%\customizations.xml" "%BSP_VERSION%"
+
 ::icd.exe /Build-ProvisioningPackage /CustomizationXML:"%1" /PackagePath:"%PKGBLD_DIR%" /StoreFile:"%KITSROOT%\Assessment and Deployment Kit\Imaging and Configuration Designer\x86\Microsoft-Common-Provisioning.dat"
-::"%KITSROOT%\Assessment and Deployment Kit\Imaging and Configuration Designer\x86\icd.exe" 
+t::"%KITSROOT%\Assessment and Deployment Kit\Imaging and Configuration Designer\x86\icd.exe" 
 ::icd.exe /Build-ProvisioningPackage /CustomizationXML:<path_to_xml> /PackagePath:<path_to_ppkg> 
 ::[/StoreFile:<path_to_storefile>]  [/MSPackageRoot:<path_to_mspackage_directory>]  [/OEMInputXML:<path_to_xml>]
 ::[/ProductName:<product_name>]  [/Variables:<name>:<value>] [[+|-]Encrypted] [[+|-]Overwrite] [/?]  
 
 ::/StoreFile:C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Imaging and Configuration Designer\x86\Microsoft-Common-Provisioning.dat
 ::/MSPackageRoot:"%KITSROOT%MSPackages" /OEMInputXML:"%PRJ_DIR%\Products\%PRODUCT%\%BSP_ARCH%\RetailOEMInput.xml"
-:CLEANUP
+
+:Usage
+echo Usage: createprovpkg ProductName customization.xml
+echo    ProductName............. Required Product Name 
+echo    customization.xml....... Required Customisation input file. 
+echo    [/?].............. Displays this usage string. 
+echo    Example:
+echo        createprovpkg ProductA customization.xml
+
+exit /b 1
+
+:Error
+echo "createprovpkg %1" failed with error %ERRORLEVEL%
+exit /b 1
+
+:End
+endlocal
+exit /b 0

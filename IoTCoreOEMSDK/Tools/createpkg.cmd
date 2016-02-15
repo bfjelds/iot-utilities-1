@@ -11,12 +11,12 @@ if NOT DEFINED PKGBLD_DIR (
 )
 
 if NOT DEFINED PRODUCT (
-	echo PRODUCT not set; Setting it to ProductA as default
-	set PRODUCT=ProductA
+	echo PRODUCT not set; Setting it to SampleA as default
+	set PRODUCT=SampleA
 )
 
 echo Creating %1 Package
-call "%KITSROOT%\Tools\bin\i386\pkggen.exe" "%1" /config:"%PKG_CONFIG_XML%" /output:"%PKGBLD_DIR%" /version:%BSP_VERSION% /build:fre /cpu:%BSP_ARCH% /variables:"HIVE_ROOT=%HIVE_ROOT%;WIM_ROOT=%WIM_ROOT%;_RELEASEDIR=%BLD_DIR%\;ARCH=%BSP_ARCH%;PROD=%PRODUCT%;PRJDIR=%PRJ_DIR%" 
+call "%KITSROOT%\Tools\bin\i386\pkggen.exe" "%1" /config:"%PKG_CONFIG_XML%" /output:"%PKGBLD_DIR%" /version:%BSP_VERSION% /build:fre /cpu:%BSP_ARCH% /variables:"HIVE_ROOT=%HIVE_ROOT%;WIM_ROOT=%WIM_ROOT%;_RELEASEDIR=%BLD_DIR%\;PROD=%PRODUCT%;PRJDIR=%PRJ_DIR%" 
 
 if errorlevel 1 goto Error
 
