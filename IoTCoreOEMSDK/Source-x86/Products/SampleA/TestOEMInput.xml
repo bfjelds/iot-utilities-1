@@ -24,7 +24,7 @@
   </Resolutions>
   <AdditionalFMs>
     <!-- Including BSP feature manifest -->
-	<AdditionalFM>%PRODSRC_DIR%\bsp\MBMFM.xml</AdditionalFM>
+	<AdditionalFM>%PRODSRC_DIR%\bsp\OEM_MBMFM.xml</AdditionalFM>
 	<!-- Including OEM feature manifest -->
 	<AdditionalFM>%PRJ_DIR%\Packages\OEMFM.xml</AdditionalFM>
 		<!-- Including the test features -->

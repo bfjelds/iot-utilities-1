@@ -23,6 +23,7 @@ SET PRODSRC_DIR=%PRJ_DIR%\Products\%PRODUCT%
 
 mkdir "%PRODSRC_DIR%"
 mkdir "%PRODSRC_DIR%\bsp"
+mkdir "%PRODSRC_DIR%\prov"
 
 if [%BSP_ARCH%] ==[arm] (
 :: Copying template files
@@ -38,7 +39,7 @@ copy "%KITSROOT%\FMFiles\x86\MBMFM.xml" %PRODSRC_DIR%\bsp\OEM_MBMFM.xml
 )
 
 copy "%PRJ_DIR%\Templates\oemcustomization.cmd" %PRODSRC_DIR%\oemcustomization.cmd
-copy "%PRJ_DIR%\Templates\customizations.xml" %PRODSRC_DIR%\customizations.xml
+copy "%PRJ_DIR%\Templates\customizations.xml" %PRODSRC_DIR%\prov\customizations.xml
 
 echo %1 product directories ready
 goto End
@@ -48,7 +49,7 @@ echo Usage: newproduct ProductName
 echo    ProductName....... Required, Name of the product to be created. 
 echo    [/?].............. Displays this usage string. 
 echo    Example:
-echo        newproduct ProductA 
+echo        newproduct SampleA 
 
 exit /b 1
 

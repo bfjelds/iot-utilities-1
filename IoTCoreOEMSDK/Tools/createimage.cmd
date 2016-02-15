@@ -38,7 +38,7 @@ echo    ProductName....... Required, Name of the product to be created.
 echo    BuildType......... Required, Retail/Test 
 echo    [/?].............. Displays this usage string. 
 echo    Example:
-echo        createimage ProductA Retail
+echo        createimage SampleA Retail
 
 exit /b 1
 
