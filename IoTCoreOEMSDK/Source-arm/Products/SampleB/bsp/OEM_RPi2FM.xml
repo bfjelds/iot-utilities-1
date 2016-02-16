@@ -14,10 +14,7 @@
   <OEMDevicePlatformPackages>
     <PackageFile Device="RPi2" Path="%PKGBLD_DIR%" Name="Contoso.BSP.DevicePlatform.cab" />    
   </OEMDevicePlatformPackages>
-  
-  <DeviceLayoutPackages>
-    <PackageFile SOC="RPi2" Path="%PKGBLD_DIR%" Name="Contoso.BSP.DeviceLayout.cab" />
-  </DeviceLayoutPackages>
+ 
 
   <Features>
     <Microsoft />    

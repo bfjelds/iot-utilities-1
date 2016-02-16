@@ -23,7 +23,7 @@
     <Resolution>1024x768</Resolution>
   </Resolutions>
   <AdditionalFMs>
-    <AdditionalFM>%PRODSRC_DIR%\bsp\IoTUAPRPi2FM.xml</AdditionalFM>
+    <AdditionalFM>%KITSROOT%\FMFiles\arm\IoTUAPRPi2FM.xml</AdditionalFM>
 	 <!-- Using custom version as GPIO is replaced by OEM version -->
 	<AdditionalFM>%PRODSRC_DIR%\bsp\OEM_RPi2FM.xml</AdditionalFM>
     <!-- <AdditionalFM>%PRODSRC_DIR%\bsp\RPi2FM.xml</AdditionalFM> -->
