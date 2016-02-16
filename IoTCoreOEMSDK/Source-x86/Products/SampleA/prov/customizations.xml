@@ -11,9 +11,11 @@
     <Customizations>
       <Common>
         <Policies>
-          <Update>
-            <AllowAutoUpdate>5</AllowAutoUpdate>
-          </Update>
+          <Connectivity>
+            <AllowBluetooth>Yes</AllowBluetooth>
+            <AllowNFC>Yes</AllowNFC>
+            <AllowUSBConnection>Yes</AllowUSBConnection>
+          </Connectivity>
         </Policies>
       </Common>
     </Customizations>
