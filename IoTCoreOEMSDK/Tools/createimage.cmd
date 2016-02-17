@@ -27,7 +27,12 @@ echo Build Start Time : %TIME%
 
 echo Building product specific packages
 call createpkg.cmd %PRJ_DIR%\Packages\Custom.Cmd\Custom.Cmd.pkg.xml
-call createpkg.cmd %PRJ_DIR%\Packages\Provisioning.Auto\Provisioning.Auto.pkg.xml
+
+if NOT exist %PRODSRC_DIR%\prov\%PRODUCT%Prov.ppkg (
+ REM Create the provisioning ppkg
+ call createprovpkg.cmd %PRODUCT%
+)
+call createpkg.cmd %PRJ_DIR%\Packages\Provisioning.Auto\Provisioning.Auto.pkg.xml 
 
 echo creating image...
 call imggen.cmd "%PRODBLD_DIR%\IoTCore.FFU" "%PRODSRC_DIR%\%2OEMInput.xml" "%KITSROOT%MSPackages" %BSP_ARCH%

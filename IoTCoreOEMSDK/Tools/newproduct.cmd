@@ -38,8 +38,8 @@ copy "%KITSROOT%\OEMInputSamples\MBM\ProductionOEMInput.xml" %PRODSRC_DIR%\TestO
 copy "%KITSROOT%\FMFiles\x86\MBMFM.xml" %PRODSRC_DIR%\bsp\OEM_MBMFM.xml
 )
 
-copy "%PRJ_DIR%\Templates\oemcustomization.cmd" %PRODSRC_DIR%\oemcustomization.cmd
-copy "%PRJ_DIR%\Templates\customizations.xml" %PRODSRC_DIR%\prov\customizations.xml
+copy "%OEMSDK_ROOT%\Templates\oemcustomization.cmd" %PRODSRC_DIR%\oemcustomization.cmd
+copy "%OEMSDK_ROOT%\Templates\customizations.xml" %PRODSRC_DIR%\prov\customizations.xml
 
 echo %1 product directories ready
 goto End
