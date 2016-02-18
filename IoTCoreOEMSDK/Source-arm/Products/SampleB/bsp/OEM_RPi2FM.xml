@@ -19,7 +19,6 @@
   <Features>
     <Microsoft />    
     <MSFeatureGroups />
-   
     <OEM>
       <PackageFile Path="$(mspackageroot)\Retail\$(cputype)\$(buildtype)" Name="RASPBERRYPI.RPi2.bcm2836pwm.cab" >
         <FeatureIDs>

@@ -24,11 +24,12 @@
   </Resolutions>
   <AdditionalFMs>
     <!-- Including BSP feature manifest -->
-	<AdditionalFM>%PRODSRC_DIR%\bsp\OEM_MBMFM.xml</AdditionalFM>
+	<AdditionalFM>%AKROOT%\FMFiles\x86\MBMFM.xml</AdditionalFM>
 	<!-- Including OEM feature manifest -->
+	<AdditionalFM>%COMMON_DIR%\Packages\OEMCommonFM.xml</AdditionalFM>
 	<AdditionalFM>%PRJ_DIR%\Packages\OEMFM.xml</AdditionalFM>
 		<!-- Including the test features -->
-	<AdditionalFM>%KITSROOT%\FMFiles\x86\IoTUAPNonProductionPartnerShareFM.xml</AdditionalFM>
+	<AdditionalFM>%AKROOT%\FMFiles\x86\IoTUAPNonProductionPartnerShareFM.xml</AdditionalFM>
   </AdditionalFMs>
   <Features>
    <Microsoft> 

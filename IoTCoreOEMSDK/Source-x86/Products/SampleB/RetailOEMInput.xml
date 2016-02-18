@@ -24,6 +24,7 @@
   </Resolutions>
   <AdditionalFMs>
     <AdditionalFM>%PRODSRC_DIR%\bsp\OEM_MBMFM.xml</AdditionalFM>
+	<AdditionalFM>%COMMON_DIR%\Packages\OEMCommonFM.xml</AdditionalFM>
 	<AdditionalFM>%PRJ_DIR%\Packages\OEMFM.xml</AdditionalFM>
   </AdditionalFMs>
   <Features>

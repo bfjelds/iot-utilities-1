@@ -16,7 +16,7 @@ if NOT DEFINED PRODUCT (
 )
 
 echo Creating %1 Package
-call "%KITSROOT%\Tools\bin\i386\pkggen.exe" "%1" /config:"%PKG_CONFIG_XML%" /output:"%PKGBLD_DIR%" /version:%BSP_VERSION% /build:fre /cpu:%BSP_ARCH% /variables:"HIVE_ROOT=%HIVE_ROOT%;WIM_ROOT=%WIM_ROOT%;_RELEASEDIR=%BLD_DIR%\;PROD=%PRODUCT%;PRJDIR=%PRJ_DIR%" 
+call "%KITSROOT%\Tools\bin\i386\pkggen.exe" "%1" /config:"%PKG_CONFIG_XML%" /output:"%PKGBLD_DIR%" /version:%BSP_VERSION% /build:fre /cpu:%BSP_ARCH% /variables:"HIVE_ROOT=%HIVE_ROOT%;WIM_ROOT=%WIM_ROOT%;_RELEASEDIR=%BLD_DIR%\;PROD=%PRODUCT%;PRJDIR=%PRJ_DIR%;COMDIR=%COMMON_DIR%" 
 
 if errorlevel 1 goto Error
 

@@ -21,7 +21,7 @@ if errorlevel 1 goto Error
 goto End
 
 :Usage
-echo Usage: createprovpkg ProductName customization.xml
+echo Usage: createprovpkg ProductName 
 echo    ProductName............. Required Product Name 
 echo    [/?].............. Displays this usage string. 
 echo    Example:
