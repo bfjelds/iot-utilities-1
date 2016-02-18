@@ -44,8 +44,10 @@ namespace DeviceCenter.Helper
     {
         #region Constants
 
-        private readonly string _rpi2MsiName = "Windows_10_IoT_Core_RPi2.msi";
-        private readonly string _mbmMsiName = "Windows_10_IoT_Core_Mbm.msi";
+        private readonly string _rpi2MsiNameTh2 = "Windows_10_IoT_Core_RPi2.msi";
+        private readonly string _mbmMsiNameTh2 = "Windows_10_IoT_Core_Mbm.msi";
+        private readonly string _rpi2MsiNameRs1 = "Windows 10 IoT Core Raspberry Pi 2-x86_en-us.msi";
+        private readonly string _mbmMsiNameRs1 = "Windows 10 IoT Core MinnowBoard Max-x86_en-us.msi";
         private readonly string _mbmFfuSubPath = @"Microsoft IoT\FFU\MinnowBoardMax\Flash.ffu";
         private readonly string _rpi2FfuSubPath = @"Microsoft IoT\FFU\RaspberryPi2\Flash.ffu";
 
@@ -110,16 +112,19 @@ namespace DeviceCenter.Helper
             ExtractFFUProgressArgs.Progress = 0;
             OnExtractFFUProgress(ExtractFFUProgressArgs);
 
-            string msiName;
+            string msiNameRs1;
+            string msiNameTh2;
             string ffuPath;
             switch (lkgPlatform.Platform)
             {
                 case "MBM":
-                    msiName = _mbmMsiName;
+                    msiNameRs1 = _mbmMsiNameRs1;
+                    msiNameTh2 = _mbmMsiNameTh2;
                     ffuPath = _mbmFfuSubPath;
                     break;
                 case "RPi2":
-                    msiName = _rpi2MsiName;
+                    msiNameRs1 = _rpi2MsiNameRs1;
+                    msiNameTh2 = _rpi2MsiNameTh2;
                     ffuPath = _rpi2FfuSubPath;
                     break;
                 default:
@@ -154,7 +159,12 @@ namespace DeviceCenter.Helper
                 string msiPath;
                 if (!string.IsNullOrEmpty(driveLetter))
                 {
-                    msiPath = driveLetter + Path.VolumeSeparatorChar + Path.DirectorySeparatorChar + msiName;
+                    var msiFiles = Directory.EnumerateFiles(driveLetter + Path.VolumeSeparatorChar + Path.DirectorySeparatorChar, msiNameRs1);
+                    if (msiFiles.Count() == 0)
+                    {
+                        msiFiles = Directory.EnumerateFiles(driveLetter + Path.VolumeSeparatorChar + Path.DirectorySeparatorChar, msiNameTh2);
+                    }
+                    msiPath = msiFiles.First();
                 }
                 else
                 {
