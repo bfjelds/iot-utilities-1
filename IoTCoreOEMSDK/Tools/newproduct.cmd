@@ -13,7 +13,8 @@ if NOT DEFINED PRJ_DIR (
 :: Error Checks
 
 if /i EXIST %PRJ_DIR%\Products\%1 (
-	echo %1 already exists
+	echo %1 already exists; Existing products are
+	dir /b %PRJ_DIR%\Products
 	goto End
 )
 :: Start processing command
@@ -38,8 +39,8 @@ copy "%KITSROOT%\OEMInputSamples\MBM\ProductionOEMInput.xml" %PRODSRC_DIR%\TestO
 copy "%KITSROOT%\FMFiles\x86\MBMFM.xml" %PRODSRC_DIR%\bsp\OEM_MBMFM.xml
 )
 
-copy "%PRJ_DIR%\Templates\oemcustomization.cmd" %PRODSRC_DIR%\oemcustomization.cmd
-copy "%PRJ_DIR%\Templates\customizations.xml" %PRODSRC_DIR%\prov\customizations.xml
+copy "%OEMSDK_ROOT%\Templates\oemcustomization.cmd" %PRODSRC_DIR%\oemcustomization.cmd
+copy "%OEMSDK_ROOT%\Templates\customizations.xml" %PRODSRC_DIR%\prov\customizations.xml
 
 echo %1 product directories ready
 goto End
@@ -50,6 +51,8 @@ echo    ProductName....... Required, Name of the product to be created.
 echo    [/?].............. Displays this usage string. 
 echo    Example:
 echo        newproduct SampleA 
+echo Existing products are
+dir /b %PRJ_DIR%\Products
 
 exit /b 1
 
