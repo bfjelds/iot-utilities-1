@@ -21,6 +21,7 @@ namespace DeviceCenter.Helper
         public PingHandler OnPing { get; set; }
         Dictionary<IPAddress, EthernetInstance> NetworkAdapters = new Dictionary<IPAddress, EthernetInstance>();
         Dictionary<IPAddress, UdpClient> UdpClientObjects = new Dictionary<IPAddress, UdpClient>();
+        private object sessionLock = new object();
 
         private void UnpackBuffer(byte[] buffer, out string sName, out string sIP, out string sMac)
         {
@@ -75,8 +76,16 @@ namespace DeviceCenter.Helper
             var args = (object[])result.AsyncState;
             var session = (UdpClient)args[0];
             var local = (IPEndPoint)args[1];
+            byte[] buffer;
 
-            byte[] buffer = session.EndReceive(result, ref ep);
+            lock (sessionLock)
+            {
+                if (session.Client == null)
+                {
+                    return;
+                }
+                buffer = session.EndReceive(result, ref ep);
+            }
 
             if (buffer.Length == (75 * sizeof(char)))
             {
@@ -94,10 +103,17 @@ namespace DeviceCenter.Helper
 
             try
             {
-                //We make the next call to the begin receive
-                session.BeginReceive(OnReceiveSink, args);
+                lock (sessionLock)
+                {
+                    if (session.Client == null)
+                    {
+                        return;
+                    }
+                    //We make the next call to the begin receive
+                    session.BeginReceive(OnReceiveSink, args);
+                }
             }
-            catch(Exception)
+            catch (Exception)
             {
             }
         }
@@ -209,7 +225,13 @@ namespace DeviceCenter.Helper
         {
             foreach (UdpClient uc in UdpClientObjects.Values)
             {
+                IPAddress multicastaddress = IPAddress.Parse("239.0.0.222");
+                uc.DropMulticastGroup(multicastaddress);
                 uc.Client.Shutdown(SocketShutdown.Both);
+                lock (sessionLock)
+                {
+                    uc.Close();
+                }
             }
 
             UdpClientObjects.Clear();
