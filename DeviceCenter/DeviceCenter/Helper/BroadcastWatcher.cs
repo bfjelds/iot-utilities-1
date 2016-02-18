@@ -21,7 +21,7 @@ namespace DeviceCenter.Helper
         public PingHandler OnPing { get; set; }
         Dictionary<IPAddress, EthernetInstance> NetworkAdapters = new Dictionary<IPAddress, EthernetInstance>();
         Dictionary<IPAddress, UdpClient> UdpClientObjects = new Dictionary<IPAddress, UdpClient>();
-        private object sessionLock = new object();
+        private object ucpClientLock = new object();
 
         private void UnpackBuffer(byte[] buffer, out string sName, out string sIP, out string sMac)
         {
@@ -78,7 +78,7 @@ namespace DeviceCenter.Helper
             var local = (IPEndPoint)args[1];
             byte[] buffer;
 
-            lock (sessionLock)
+            lock (ucpClientLock)
             {
                 if (session.Client == null)
                 {
@@ -103,7 +103,7 @@ namespace DeviceCenter.Helper
 
             try
             {
-                lock (sessionLock)
+                lock (ucpClientLock)
                 {
                     if (session.Client == null)
                     {
@@ -228,7 +228,7 @@ namespace DeviceCenter.Helper
                 IPAddress multicastaddress = IPAddress.Parse("239.0.0.222");
                 uc.DropMulticastGroup(multicastaddress);
                 uc.Client.Shutdown(SocketShutdown.Both);
-                lock (sessionLock)
+                lock (ucpClientLock)
                 {
                     uc.Close();
                 }
