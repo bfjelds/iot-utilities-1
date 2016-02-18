@@ -5,7 +5,7 @@ if [%1] == [/?] goto Usage
 if [%1] == [-?] goto Usage
 if [%1] == [] goto Usage
 if [%2] == [] goto Usage
-if NOT [%2] == [Retail] ( if NOT [%2] == [Test] goto Usage )
+if /I NOT [%2] == [Retail] ( if /I NOT [%2] == [Test] goto Usage )
 
 REM Checking prerequisites
 if NOT DEFINED PRJ_DIR (

@@ -13,7 +13,8 @@ if NOT DEFINED PRJ_DIR (
 :: Error Checks
 
 if /i EXIST %PRJ_DIR%\Products\%1 (
-	echo %1 already exists
+	echo %1 already exists; Existing products are
+	dir /b %PRJ_DIR%\Products
 	goto End
 )
 :: Start processing command
@@ -50,6 +51,8 @@ echo    ProductName....... Required, Name of the product to be created.
 echo    [/?].............. Displays this usage string. 
 echo    Example:
 echo        newproduct SampleA 
+echo Existing products are
+dir /b %PRJ_DIR%\Products
 
 exit /b 1
 
